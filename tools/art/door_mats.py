@@ -1,5 +1,5 @@
-"""Add cute doormat tiles for the lobby street / daily doors, and tidy the elevator
-so its frame matches the brown wall (no brown 'bleed' into bare gray).
+"""Cute rectangular doormats with a single letter (T / D) for the lobby street and daily doors.
+Also rebuilds the elevator so its frame matches the brown wall.
 
     python3 -I tools/art/door_mats.py public/tiles/plumpurse.png app/floor/maps/tiles.json
 """
@@ -14,25 +14,50 @@ from PIL import Image
 
 T = 16
 
+# 3×5 pixel capital letters, drawn into the mat.
+GLYPHS: dict[str, list[str]] = {
+    "T": [
+        "###",
+        ".#.",
+        ".#.",
+        ".#.",
+        ".#.",
+    ],
+    "D": [
+        "##.",
+        "#.#",
+        "#.#",
+        "#.#",
+        "##.",
+    ],
+}
 
-def mat(fill: tuple[int, int, int, int], accent: tuple[int, int, int, int]) -> Image.Image:
-    """A welcome mat: border, fill, and a little chevron pointing 'out' the door."""
-    edge = (48, 36, 28, 255)
-    stitch = (255, 248, 230, 255)
+
+def mat(fill: tuple[int, int, int, int], ink: tuple[int, int, int, int], letter: str) -> Image.Image:
+    """A wide rectangular welcome mat (inset from the tile) with one letter in the middle."""
+    edge = (56, 40, 32, 255)
+    stitch = (255, 250, 236, 255)
     im = Image.new("RGBA", (T, T), (0, 0, 0, 0))
     px = im.load()
-    for y in range(T):
-        for x in range(T):
-            if x in (0, T - 1) or y in (0, T - 1):
+    # Horizontal rug: leave 2px clear top/bottom so it reads as a mat on the floor, not a full tile.
+    y0, y1 = 3, 12
+    for y in range(y0, y1 + 1):
+        for x in range(1, 15):
+            if x in (1, 14) or y in (y0, y1):
                 px[x, y] = edge
-            elif x in (1, T - 2) or y in (1, T - 2):
+            elif x in (2, 13) or y in (y0 + 1, y1 - 1):
                 px[x, y] = stitch
             else:
                 px[x, y] = fill
-    # Chevron / arrow toward the bottom (out through the front wall).
-    for y, xs in ((5, range(5, 11)), (6, range(6, 10)), (7, range(7, 9)), (8, [7]), (9, [7]), (10, [7])):
-        for x in xs:
-            px[x, y] = accent
+    # Letter centred on the mat.
+    g = GLYPHS[letter]
+    gw, gh = len(g[0]), len(g)
+    ox = (T - gw) // 2
+    oy = y0 + 2
+    for gy, row in enumerate(g):
+        for gx, ch in enumerate(row):
+            if ch == "#":
+                px[ox + gx, oy + gy] = ink
     return im
 
 
@@ -40,7 +65,6 @@ def elevator(wall: Image.Image) -> Image.Image:
     """Gray double doors set in a wall-colored frame so brown doesn't look like a bleed."""
     im = wall.copy().convert("RGBA")
     px = im.load()
-    # Sample the wall so the housing matches neighbouring tiles.
     frame = wall.getpixel((8, 8))
     if frame[3] < 200:
         frame = (60, 40, 30, 255)
@@ -50,30 +74,23 @@ def elevator(wall: Image.Image) -> Image.Image:
     door_hi = (190, 196, 206, 255)
     seam = (70, 72, 80, 255)
     gold = (240, 200, 80, 255)
-    # Full-tile housing first (matches wall).
     for y in range(T):
         for x in range(T):
             px[x, y] = frame
-    # Inset door opening.
     for y in range(2, 15):
         for x in range(2, 14):
             px[x, y] = door
-    # Center seam (double doors).
     for y in range(2, 15):
         px[7, y] = seam
         px[8, y] = seam
-    # Inner highlight on each panel.
     for y in range(3, 14):
         px[3, y] = door_hi
         px[10, y] = door_hi
-    # Top bevel + call light.
     for x in range(2, 14):
         px[x, 2] = frame_hi
+        px[x, 14] = frame_lo
     for x in range(6, 10):
         px[x, 1] = gold
-    # Bottom sill.
-    for x in range(2, 14):
-        px[x, 14] = frame_lo
     return im
 
 
@@ -103,7 +120,6 @@ def main() -> None:
     cols = catalog["columns"]
     sheet = Image.open(sheet_path).convert("RGBA")
 
-    # Elevator: rebuild in place from the executive wall swatch.
     widx = catalog["tiles"]["wall_executive"]["index"]
     wall = sheet.crop(((widx % cols) * T, (widx // cols) * T, (widx % cols) * T + T, (widx // cols) * T + T))
     eidx = catalog["tiles"]["elevator"]["index"]
@@ -112,9 +128,8 @@ def main() -> None:
     sheet.alpha_composite(elevator(wall), (ex, ey))
     print(f"elevator repaired @ {eidx}")
 
-    # Cute mats: mint for tutorial (street), lilac for daily.
-    sheet = append_or_replace(sheet, catalog, "mat_tutorial", mat((126, 196, 168, 255), (46, 110, 92, 255)), "walk")
-    sheet = append_or_replace(sheet, catalog, "mat_daily", mat((196, 158, 220, 255), (110, 70, 150, 255)), "walk")
+    sheet = append_or_replace(sheet, catalog, "mat_tutorial", mat((126, 196, 168, 255), (36, 92, 74, 255), "T"), "walk")
+    sheet = append_or_replace(sheet, catalog, "mat_daily", mat((196, 158, 220, 255), (92, 52, 130, 255), "D"), "walk")
 
     sheet.save(sheet_path)
     catalog_path.write_text(json.dumps(catalog, indent=2) + "\n")

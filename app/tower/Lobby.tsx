@@ -10,7 +10,7 @@ import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_TAG, TUTORIAL_TAG } from "./lobbyMap";
+import { DAILY_TAG, DAILY_X, LOBBY_H, LOBBY_W, TUTORIAL_TAG } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
@@ -75,10 +75,16 @@ export function Lobby({
       if (e.to === "/daily") return !cleared[0]; // the Daily Case opens after the tutorial
       return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
     });
+    const dailyCell = DAILY_X + (LOBBY_H - 1) * LOBBY_W;
+    // Server map may still block Daily when only this browser cleared Floor 0 — unblock it.
+    const blocked = [
+      ...(serverMap.blocked ?? []).filter((i) => !(cleared[0] && i === dailyCell)),
+      ...closed.map((e) => e.y * serverMap.width + e.x),
+    ];
     return {
       ...serverMap,
       exits: serverMap.exits?.filter((e) => !closed.includes(e)),
-      blocked: [...(serverMap.blocked ?? []), ...closed.map((e) => e.y * serverMap.width + e.x)],
+      blocked,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverMap, guest, key]);

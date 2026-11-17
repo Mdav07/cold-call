@@ -431,21 +431,24 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       // On-map text keeps the same size on screen whatever the zoom: sizes below are map pixels at 2x zoom.
       const u = 2 / scale;
 
-      // Names above heads: small pixel text on a dark plate (box + text share one middle baseline).
+      // Names above heads: small pixel text on a dark plate. Press Start's measureText runs short,
+      // so pad generously and size the box from real glyph bounds when the browser reports them.
       const nameTag = (x: number, y: number, text: string) => {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "middle";
-        const pad = 4 * u;
-        const wdt = Math.ceil(c.measureText(text).width + pad);
-        const h = Math.round(6 * u);
-        // Sprite art sits in the middle of the 16px frame; center the plate on that.
+        const m = c.measureText(text);
+        const glyphW = Math.max(m.width, (m.actualBoundingBoxLeft ?? 0) + (m.actualBoundingBoxRight ?? 0));
+        const glyphH = Math.max(5 * u, (m.actualBoundingBoxAscent ?? 0) + (m.actualBoundingBoxDescent ?? 0));
+        const padX = 5 * u, padY = 3 * u;
+        const wdt = Math.ceil(glyphW + padX * 2);
+        const h = Math.ceil(glyphH + padY * 2);
         const cx = Math.round(x + TILE / 2);
         const cy = Math.round(y - (FRAME_H - TILE) + 8);
-        c.fillStyle = "rgba(21, 20, 26, 0.72)";
+        c.fillStyle = "rgba(21, 20, 26, 0.82)";
         c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
         c.fillStyle = "#f2efe6";
-        c.fillText(text, cx, cy + u); // +u optical: Press Start sits high in its em box
+        c.fillText(text, cx, cy);
       };
       const nm = namesRef.current;
       // The person the player is facing gets one caption instead (below), so labels never stack.
@@ -513,7 +516,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       // TUTORIAL + DAILY CASE stay visible from spawn; FLOOR N lights up when close.
       if (!pausedRef.current) {
         for (const t of tagsRef.current ?? []) {
-          const always = t.text === "TUTORIAL" || t.text === "DAILY CASE";
+          // T / D mats stay lit from spawn; FLOOR N is proximity-only.
+          const always = t.text === "T" || t.text === "D" || t.text === "TUTORIAL" || t.text === "DAILY CASE";
           const dist = Math.abs(p.x - t.x) + Math.abs(p.y - t.y);
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
@@ -521,16 +525,18 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           c.font = `${5 * u}px ${pixelFont}, monospace`;
           c.textAlign = "center";
           c.textBaseline = "middle";
-          const pad = 4 * u;
-          const wdt = Math.ceil(c.measureText(t.text).width + pad);
-          const h = Math.round(6 * u);
-          // endAt "x": plate sits just left of the tile; otherwise centred on the mat.
+          const m = c.measureText(t.text);
+          const glyphW = Math.max(m.width, (m.actualBoundingBoxLeft ?? 0) + (m.actualBoundingBoxRight ?? 0));
+          const glyphH = Math.max(5 * u, (m.actualBoundingBoxAscent ?? 0) + (m.actualBoundingBoxDescent ?? 0));
+          const padX = 4 * u, padY = 2.5 * u;
+          const wdt = Math.ceil(glyphW + padX * 2);
+          const h = Math.ceil(glyphH + padY * 2);
           const cx = Math.round(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2);
           const cy = Math.round(t.y * TILE + TILE / 2);
           c.fillStyle = "rgba(21, 20, 26, 0.82)";
           c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
           c.fillStyle = "#f4c95d";
-          c.fillText(t.text, cx, cy + u);
+          c.fillText(t.text, cx, cy);
           c.globalAlpha = 1;
         }
       }
