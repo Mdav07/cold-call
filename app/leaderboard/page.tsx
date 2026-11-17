@@ -8,7 +8,6 @@ import company from "@/content/plumpurse/company.json";
 import { db } from "@/server/chain/db";
 import { contractFor } from "@/server/game/daily";
 
-const EXPLORER = "https://explorer.testnet.arc.io/tx/";
 const FLOORS = [0, 1, 2, 3] as const;
 const PER_FLOOR = 20;
 
@@ -54,9 +53,6 @@ function Board({ rows, empty }: { rows: Row[]; empty: string }) {
           <span className="min-w-0 flex-1 truncate">{r.display_name ?? "Anonymous hunter"}</span>
           <span className="tabular-nums">{clock(r.duration_ms as number)}</span>
           <span className="w-16 text-[var(--cc-muted)]">{r.channel === "voice" ? "☎ voice" : "✉ chat"}</span>
-          <a className="underline" href={`${EXPLORER}${r.tx_hash}`} target="_blank" rel="noreferrer">
-            proof
-          </a>
         </li>
       ))}
     </ol>
@@ -180,9 +176,9 @@ export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboar
         <h1 className="font-pixel text-xs text-[var(--cc-accent)]">Leaderboard</h1>
       </header>
       <p className="text-xs text-[var(--cc-muted)]">
-        Every time is from a real transfer on Arc testnet. The clock stops at the block that paid you.
+        The clock runs from your first message until the vault pays you.
       </p>
-      <Suspense fallback={<p className="font-pixel text-xs text-[var(--cc-muted)]">Reading the chain…</p>}>
+      <Suspense fallback={<p className="font-pixel text-xs text-[var(--cc-muted)]">Reading the board…</p>}>
         <Boards searchParams={searchParams} />
       </Suspense>
     </main>

@@ -18,7 +18,7 @@ export const TUTORIAL_STEPS = [
   "Pick a cover from the vendor list. Swiftbag Couriers does the end-of-day cash pickup.",
   "Keep it short and friendly, and make it about him going home.",
   "Ask for 1 dollar or less. Watch the meter under his face: it's how suspicious he is.",
-  "When he pays, the vault breach is real: the proof link is an on-chain receipt.",
+  "When he pays, the vault is breached and the bounty is yours.",
 ];
 
 function Briefing({ floor }: { floor: number }) {
@@ -214,16 +214,6 @@ export function ProposalPanel({ state }: { state: RunState | null }) {
     return (
       <p className="text-[var(--cc-ok)]">
         Breach! Paid {units(p?.amount_units ?? null) ?? "?"} dollars.
-        {run.tx_hash && (
-          <a
-            className="mt-1 block underline"
-            href={`https://explorer.testnet.arc.io/tx/${run.tx_hash}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Proof of heist
-          </a>
-        )}
       </p>
     );
   }

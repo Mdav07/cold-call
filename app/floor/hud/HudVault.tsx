@@ -10,7 +10,7 @@ export async function HudVault({ floor }: { floor: number }) {
   const contract = daily?.contract?.floor === floor ? daily.contract : null;
   return (
     <>
-      <span title={`${f?.vault ?? "Floor"} vault balance (USDC on Arc testnet)`}>
+      <span title={`${f?.vault ?? "Floor"} vault balance`}>
         <span className="text-[var(--cc-muted)]">VAULT </span>
         <span className="text-[var(--cc-ok)]">{balance == null ? "?" : `$${balance.toFixed(2)}`}</span>
       </span>
