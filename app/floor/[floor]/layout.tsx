@@ -1,8 +1,15 @@
-import { Press_Start_2P } from "next/font/google";
-import "@/app/play/play.css";
+import type { Viewport } from "next";
 
-const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], variable: "--font-pixel" });
+// The root layout loads the pixel font and the game styles.
+// On phones the on-screen keyboard resizes the page (Android Chrome), so the dialogue box and its
+// text field stay above it; iOS is handled in the box with the visual viewport.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+};
 
 export default function FloorLayout({ children }: LayoutProps<"/floor/[floor]">) {
-  return <div className={`${pixel.variable} flex min-h-full flex-1 flex-col`}>{children}</div>;
+  return <div className="flex min-h-full flex-1 flex-col">{children}</div>;
 }

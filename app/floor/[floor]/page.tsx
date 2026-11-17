@@ -10,6 +10,7 @@ import floor1 from "@/app/floor/maps/floor-1.json";
 import floor2 from "@/app/floor/maps/floor-2.json";
 import floor3 from "@/app/floor/maps/floor-3.json";
 import { FloorGame } from "./FloorGame";
+import { Gate } from "./Gate";
 
 /** One map per floor, from B (app/floor/maps/src compiles to these). */
 const MAPS: Record<string, FloorMap> = {
@@ -50,6 +51,11 @@ export default async function FloorPage({ params }: PageProps<"/floor/[floor]">)
       vault={
         <Suspense fallback={<span className="text-[var(--cc-muted)]">VAULT …</span>}>
           <HudVault floor={map.floor} />
+        </Suspense>
+      }
+      gate={
+        <Suspense fallback={null}>
+          <Gate floor={map.floor} />
         </Suspense>
       }
     />

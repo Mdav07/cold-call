@@ -12,6 +12,7 @@ import { PORTRAITS } from "@/app/play/portraits";
 import { useTypewriter } from "./useTypewriter";
 import { Choices, type Choice } from "./Choices";
 import { ProposalPanel, SuspicionMeter, clock, moodFor } from "./parts";
+import { blip, voicePitch } from "@/app/floor/hud/sound";
 
 export interface NpcInfo {
   id: EmployeeId;
@@ -19,17 +20,62 @@ export interface NpcInfo {
   title: string;
 }
 
-/** The frame every box shares. */
-function Frame({ name, portrait, side, children }: { name: string; portrait?: ReactNode; side?: ReactNode; children: ReactNode }) {
+/**
+ * Height of the on-screen keyboard that covers the page (iOS keeps the layout viewport and
+ * shrinks only the visual one). Android Chrome resizes the page instead (see the viewport export
+ * in layout.tsx), and there this stays 0.
+ */
+function useKeyboardInset() {
+  const [inset, setInset] = useState(0);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const on = () => setInset(Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)));
+    on();
+    vv.addEventListener("resize", on);
+    vv.addEventListener("scroll", on);
+    return () => {
+      vv.removeEventListener("resize", on);
+      vv.removeEventListener("scroll", on);
+    };
+  }, []);
+  return inset;
+}
+
+/** Hidden when the screen is short (a phone with the keyboard open) to keep the text field in view. */
+const SHORT = "[@media(max-height:560px)]:hidden";
+
+/** The frame every box shares. `above` stacks on top of the box (the conversation log). */
+function Frame({
+  name,
+  portrait,
+  side,
+  above,
+  children,
+}: {
+  name: string;
+  portrait?: ReactNode;
+  side?: ReactNode;
+  above?: ReactNode;
+  children: ReactNode;
+}) {
+  const keyboard = useKeyboardInset();
   return (
-    <div data-dialogue-box className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4">
+    <div
+      data-dialogue-box
+      className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4"
+      style={keyboard ? { bottom: keyboard } : undefined}
+    >
+      {above && <div className="mx-auto mb-5 max-w-4xl">{above}</div>}
       <div className="relative mx-auto max-w-4xl">
         <p className="pixel-frame absolute -top-4 left-4 z-10 bg-[var(--cc-accent)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]">
           {name}
         </p>
         <div className="pixel-frame flex gap-3 bg-[var(--cc-dialog)] p-3 pt-5 sm:gap-4 sm:p-4 sm:pt-6">
           {portrait && (
-            <div className="pixel-frame grid h-16 w-16 shrink-0 place-items-center overflow-hidden bg-[var(--cc-portrait)] sm:h-28 sm:w-28 [&>svg]:h-full [&>svg]:w-full">
+            <div
+              className={`pixel-frame grid h-16 w-16 shrink-0 place-items-center overflow-hidden bg-[var(--cc-portrait)] sm:h-28 sm:w-28 [&>svg]:h-full [&>svg]:w-full ${keyboard ? "hidden" : SHORT}`}
+            >
               {portrait}
             </div>
           )}
@@ -41,10 +87,17 @@ function Frame({ name, portrait, side, children }: { name: string; portrait?: Re
   );
 }
 
-/** Typewriter text. A key press or a click while it is typing shows the rest. */
-function Say({ text, onDone }: { text: string; onDone?: (done: boolean) => void }) {
+/**
+ * Typewriter text with a blip per couple of letters (muted by the HUD switch; with reduced motion
+ * the text appears at once and makes no sound). A key press or a click while it types shows the rest.
+ */
+function Say({ text, pitch, onDone }: { text: string; pitch?: number; onDone?: (done: boolean) => void }) {
   const { visible, done, skip } = useTypewriter(text);
   useEffect(() => onDone?.(done), [done, onDone]);
+  const n = visible.length;
+  useEffect(() => {
+    if (!done && n > 0 && n % 2 === 0 && /\S/.test(text[n - 1] ?? "")) blip(pitch);
+  }, [n, done, text, pitch]);
   useEffect(() => {
     if (done) return;
     const onKey = (e: KeyboardEvent) => {
@@ -92,7 +145,7 @@ export function PropDialogue({ label, text, onClose }: { label: string; text: st
   useEscape(onClose);
   return (
     <Frame name={label}>
-      <Say text={text} onDone={setDone} />
+      <Say text={text} pitch={260} onDone={setDone} />
       <Choices active={done} choices={[{ label: "Close", onSelect: onClose }]} />
     </Frame>
   );
@@ -234,30 +287,30 @@ export function NpcDialogue({
 
   return (
     <>
-      {showLog && chat.lines.length > 0 && (
-        <div className="pointer-events-auto absolute inset-x-0 bottom-48 z-20 px-3 sm:bottom-56 sm:px-4">
-          <ul className="pixel-frame mx-auto flex max-h-60 max-w-4xl flex-col gap-2 overflow-y-auto bg-[var(--cc-panel)] p-3 text-sm">
-            {chat.lines.map((l) => (
-              <li key={l.id} className={l.role === "system" ? "text-xs text-[var(--cc-muted)]" : "text-[var(--cc-ink)]"}>
-                {l.role !== "system" && (
-                  <span className="font-pixel mr-2 text-[10px] text-[var(--cc-accent)]">{l.role === "agent" ? first : "You"}</span>
-                )}
-                {l.text}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       <Frame
         name={npc.name}
         portrait={Art ? <Art mood={moodFor(suspicion)} /> : <span className="font-pixel text-xl">{first[0]}</span>}
         side={side}
+        above={
+          showLog && chat.lines.length > 0 ? (
+            <ul className="pixel-frame flex max-h-60 flex-col gap-2 overflow-y-auto bg-[var(--cc-panel)] p-3 text-sm [@media(max-height:560px)]:max-h-28">
+              {chat.lines.map((l) => (
+                <li key={l.id} className={l.role === "system" ? "text-xs text-[var(--cc-muted)]" : "text-[var(--cc-ink)]"}>
+                  {l.role !== "system" && (
+                    <span className="font-pixel mr-2 text-[10px] text-[var(--cc-accent)]">{l.role === "agent" ? first : "You"}</span>
+                  )}
+                  {l.text}
+                </li>
+              ))}
+            </ul>
+          ) : null
+        }
       >
-        <Say text={text} onDone={setTyped} />
+        <Say text={text} pitch={voicePitch(npc.id)} onDone={setTyped} />
         {chat.waiting && channel === "chat" && <p className="text-xs text-[var(--cc-muted)]">{first} is typing…</p>}
 
         {/* Phones have no side column: show the meter under the text. */}
-        <div className="md:hidden">
+        <div className={`md:hidden ${SHORT}`}>
           <SuspicionMeter value={suspicion} />
         </div>
 
