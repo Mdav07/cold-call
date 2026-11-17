@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { EmployeeId } from "@/shared/interfaces";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -98,6 +98,17 @@ export function FloorGame({
             : null;
   }
 
+  // Keep the player above the dialogue box: measure it while it is open.
+  const [inset, setInset] = useState(0);
+  const boxOpen = !!open;
+  useEffect(() => {
+    const box = boxOpen ? document.querySelector<HTMLElement>("[data-dialogue-box]") : null;
+    if (!box) return setInset(0);
+    const ro = new ResizeObserver(() => setInset(box.offsetHeight));
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, [boxOpen, open]);
+
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   const finished = !!state?.run?.ended_at;
@@ -105,7 +116,7 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome} onEvent={onEvent} emotes={emotes} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
       </div>
 
       <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} />

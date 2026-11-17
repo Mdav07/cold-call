@@ -11,7 +11,7 @@ import type { RunState } from "@/app/play/useRunState";
 import { PORTRAITS } from "@/app/play/portraits";
 import { useTypewriter } from "./useTypewriter";
 import { Choices, type Choice } from "./Choices";
-import { ProposalLine, SuspicionMeter, clock, moodFor } from "./parts";
+import { ProposalPanel, SuspicionMeter, clock, moodFor } from "./parts";
 
 export interface NpcInfo {
   id: EmployeeId;
@@ -22,7 +22,7 @@ export interface NpcInfo {
 /** The frame every box shares. */
 function Frame({ name, portrait, side, children }: { name: string; portrait?: ReactNode; side?: ReactNode; children: ReactNode }) {
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4">
+    <div data-dialogue-box className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4">
       <div className="relative mx-auto max-w-4xl">
         <p className="pixel-frame absolute -top-4 left-4 z-10 bg-[var(--cc-accent)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]">
           {name}
@@ -223,10 +223,10 @@ export function NpcDialogue({
           {state.reason.delta > 0 ? "▲" : "▼"} {first} noticed: {state.reason.text}
         </p>
       )}
-      <p>
+      <div>
         <span className="font-pixel block text-[10px]">Request</span>
-        <ProposalLine state={state} />
-      </p>
+        <ProposalPanel state={state} />
+      </div>
       {stage === "talk" && talkLeft != null && <p className="font-pixel text-[10px]">TALK {clock(talkLeft)}</p>}
       {chat.session?.stub && <p className="text-[var(--cc-warn)]">Stub mode: nothing is saved.</p>}
     </>
