@@ -53,7 +53,7 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 6,
+      "x": 7,
       "y": 3,
       "label": "Krystal's note",
       "text": "Annie and Bill both have to sign, and the second signer sees where the money really goes. Annie wants a complete checklist; Bill fears a regulator more than a liar."
@@ -61,13 +61,13 @@
     {
       "id": "annie-checklist",
       "x": 5,
-      "y": 7,
+      "y": 6,
       "label": "Annie's laminated Operations checklist",
       "text": "Every Operations request needs the registry vendor, an invoice number, the amount, a PLUM ticket, and who asked. Complete ones are processed the same day (Annie Uity, Nov 13)."
     },
     {
       "id": "ledgerline-memo",
-      "x": 9,
+      "x": 8,
       "y": 10,
       "label": "Ledgerline bank migration memo",
       "text": "Ledgerline Payroll is moving banks this month. Client services will phone in the new payment details (Annie Uity, Nov 10)."
@@ -75,13 +75,13 @@
     {
       "id": "bill-audit-binder",
       "x": 16,
-      "y": 7,
+      "y": 6,
       "label": "Bill's audit prep binder",
       "text": "Brightline Audit Partners start fieldwork this month. Findings come to Bill first and stay inside Compliance (Bill Ledger, Nov 3)."
     },
     {
       "id": "ledgerline-registry",
-      "x": 5,
+      "x": 4,
       "y": 11,
       "label": "Vendor registry — Ledgerline Payroll",
       "text": "Ledgerline Payroll is paid from Operations, and invoices start with LL-. A Nov 10 note says the new payment details arrive by phone."

@@ -40,36 +40,36 @@
     {
       "id": "how-to-look",
       "x": 4,
-      "y": 2,
+      "y": 3,
       "label": "Posted notice",
       "text": "Walk up and press Space to read this. Space is also how you talk to people."
     },
     {
       "id": "case-file-note",
-      "x": 3,
+      "x": 2,
       "y": 8,
       "label": "Sticky note",
       "text": "Check the case file before you lie. Barry will agree to almost anything that gets him out by five."
     },
     {
       "id": "closing-sign",
-      "x": 8,
+      "x": 7,
       "y": 6,
       "label": "Closing-time sign",
       "text": "Closes at 5:00. The courier has to come before lock-up."
     },
     {
       "id": "swiftbag-schedule",
-      "x": 3,
+      "x": 4,
       "y": 6,
       "label": "Swiftbag pickup card",
       "text": "Swiftbag Couriers picks up the cash bag at closing. The fee is about 0.50 to 1 dollar, paid on the spot."
     },
     {
       "id": "barry-clock",
-      "x": 4,
-      "y": 4,
-      "label": "Note by the lobby table",
+      "x": 6,
+      "y": 6,
+      "label": "Note on the counter",
       "text": "Barry watches the clock like it owes him money. He cannot leave until Swiftbag has been."
     }
   ],
