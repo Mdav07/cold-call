@@ -123,7 +123,7 @@ export function Lobby({
           <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
           <span className="flex items-center gap-2">
-            <DailyArchive />
+            <DailyArchive tutorialCleared={tutorialDone} />
             <StreakBadge />
           </span>
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
