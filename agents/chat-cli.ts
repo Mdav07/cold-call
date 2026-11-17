@@ -39,6 +39,8 @@ let dynamicVariables: Record<string, string | number> = {
   open_allowlist: "(none)",
 };
 
+let endSession: (() => Promise<unknown>) | null = null;
+
 async function realSession(): Promise<string> {
   const res = await fetch(`${SESSION_URL}/api/session`, {
     method: "POST",
@@ -56,6 +58,7 @@ async function realSession(): Promise<string> {
       body: JSON.stringify({ run_id: s.run_id, session_id: s.session_id, ...extra }),
     });
   await bind({ first_message: true });
+  endSession = () => bind({ ended: true }); // talk time + memory, like the app's hang-up
   return s.signed_url;
 }
 
@@ -102,7 +105,10 @@ async function main() {
         break;
     }
   };
-  ws.onclose = (ev) => console.log(`\n[closed ${ev.code}${ev.reason ? `: ${ev.reason}` : ""}]`);
+  ws.onclose = async (ev) => {
+    console.log(`\n[closed ${ev.code}${ev.reason ? `: ${ev.reason}` : ""}]`);
+    if (endSession) await endSession();
+  };
 }
 
 main().catch((e) => {
