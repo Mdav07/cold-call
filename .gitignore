@@ -50,3 +50,7 @@ contracts/cache/
 # from b/vault-v1
 contracts/broadcast/*/31337/
 .env
+
+# local tool state
+supabase/.temp/
+contracts/broadcast/**/*.lock
