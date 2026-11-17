@@ -72,8 +72,7 @@ export function Briefing({
   // Focus follows the page, so Enter walks through: Next, then Start.
   useEffect(() => (page === 0 ? nextRef : startRef).current?.focus(), [page]);
   const b = briefingFor(floor);
-  if (!b) return null;
-  const [one, two] = halves(b.text);
+  const [one, two] = halves(b?.text ?? "");
   // Flip when the spoken progress crosses the first screen's share of the memo.
   const flipAt = one.length / Math.max(1, one.length + two.length);
   const Face = PORTRAITS.krystal;
@@ -86,6 +85,23 @@ export function Briefing({
     tick();
     setPage(p);
   };
+  // Enter / Space always step the briefing, even if focus landed on Play or Case file.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return;
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      if (page === 0) go(1);
+      else start();
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+    // go/start are stable enough for this overlay's lifetime
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, floor]);
+  if (!b) return null;
   const onAudioTime = (current: number, duration: number) => {
     if (current < 0.05) {
       flippedRef.current = false;

@@ -17,36 +17,30 @@ THEMES = ["branch", "bullpen", "management", "executive"]
 
 
 def board_on(wall: Image.Image, seed: int) -> Image.Image:
-    im = wall.copy()
+    # Keep the wall under the board so the wall row doesn't show floor through gaps.
+    # Frame is flush with the top of the tile (no brown stalk above the cork for the glint).
+    im = wall.copy().convert("RGBA")
     px = im.load()
     rnd = random.Random(seed)
     frame, cork, cork2 = (92, 60, 32, 255), (196, 150, 92, 255), (178, 132, 78, 255)
-    x0, y0, x1, y1 = 2, 3, 13, 12
+    x0, y0, x1, y1 = 2, 0, 13, 12
     for y in range(y0, y1 + 1):
         for x in range(x0, x1 + 1):
             edge = x in (x0, x1) or y in (y0, y1)
             px[x, y] = frame if edge else (cork2 if rnd.random() < 0.25 else cork)
-    for y in range(y0 + 1, y1 + 2):  # shadow under and right of the frame
-        if y < T and x1 + 1 < T:
-            r, g, b, a = px[x1 + 1, y]
-            px[x1 + 1, y] = (int(r * 0.7), int(g * 0.7), int(b * 0.7), a)
-    if y1 + 1 < T:
-        for x in range(x0 + 1, x1 + 2):
-            r, g, b, a = px[x, y1 + 1]
-            px[x, y1 + 1] = (int(r * 0.7), int(g * 0.7), int(b * 0.7), a)
     # two pinned papers: a white sheet with lines and a yellow sticky
     sheet, line, sticky, pin = (244, 240, 226, 255), (150, 160, 182, 255), (247, 222, 120, 255), (192, 57, 43, 255)
-    for y in range(5, 11):
+    for y in range(2, 8):
         for x in range(4, 9):
             px[x, y] = sheet
-    for y in (7, 9):
+    for y in (4, 6):
         for x in range(5, 8):
             px[x, y] = line
-    px[6, 5] = pin
-    for y in range(6, 10):
+    px[6, 2] = pin
+    for y in range(3, 7):
         for x in range(10, 13):
             px[x, y] = sticky
-    px[11, 6] = (40, 90, 160, 255)
+    px[11, 3] = (40, 90, 160, 255)
     return im
 
 

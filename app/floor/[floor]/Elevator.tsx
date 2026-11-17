@@ -4,10 +4,13 @@
 // leaves through an exit (or the HUD's tower link). With reduced motion the doors don't slide:
 // the floor label shows briefly and the page switches.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ding } from "@/app/floor/hud/sound";
 
 const reduced = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+
+/** Ignore a second arrival ding within this window (Strict Mode remount / fast remount). */
+let lastArrivalDing = 0;
 
 export function Elevator({
   label,
@@ -24,16 +27,28 @@ export function Elevator({
   const [open, setOpen] = useState(false);
   const [gone, setGone] = useState(false);
   const [instant, setInstant] = useState(false);
+  const closedRef = useRef(false);
+  const onClosedRef = useRef(onClosed);
+  onClosedRef.current = onClosed;
 
   useEffect(() => {
     const r = reduced();
     setInstant(r);
+    let cancelled = false;
     const t1 = setTimeout(() => {
+      if (cancelled) return;
       setOpen(true);
-      ding();
+      const now = performance.now();
+      if (now - lastArrivalDing > 900) {
+        lastArrivalDing = now;
+        ding();
+      }
     }, r ? 250 : 350);
-    const t2 = setTimeout(() => setGone(true), r ? 260 : 1100);
+    const t2 = setTimeout(() => {
+      if (!cancelled) setGone(true);
+    }, r ? 260 : 1100);
     return () => {
+      cancelled = true;
       clearTimeout(t1);
       clearTimeout(t2);
     };
@@ -41,16 +56,23 @@ export function Elevator({
 
   const closing = !!leaving;
   useEffect(() => {
-    if (!closing) return;
+    if (!closing) {
+      closedRef.current = false;
+      return;
+    }
     setGone(false);
     // One frame with the doors still open, so the close animates.
     const raf = requestAnimationFrame(() => setOpen(false));
-    const t = setTimeout(onClosed, instant ? 200 : 650);
+    const t = setTimeout(() => {
+      if (closedRef.current) return;
+      closedRef.current = true;
+      onClosedRef.current();
+    }, instant ? 200 : 650);
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(t);
     };
-  }, [closing, instant, onClosed]);
+  }, [closing, instant]);
 
   if (gone && !closing) return null;
   const doors = instant ? "" : "transition-transform duration-500 ease-in-out";
@@ -70,7 +92,7 @@ export function Elevator({
         className={`absolute inset-0 grid place-items-center p-4 ${instant ? "" : "transition-opacity duration-300"}`}
         style={{ opacity: open ? 0 : 1 }}
       >
-        <p className="pixel-frame bg-[var(--cc-panel)] px-4 py-3 text-center font-pixel text-xs text-[var(--cc-accent)]">
+        <p className="pixel-frame bg-[var(--cc-panel)] px-4 py-3 text-center font-pixel text-xs leading-none text-[var(--cc-accent)]">
           {leaving ? "▼ " : "▲ "}
           {text}
         </p>

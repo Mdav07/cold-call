@@ -55,7 +55,7 @@ export function Hud({
 }) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-1 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">
+      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-1 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
         <a
           href="/tower"
           onClick={(e) => {

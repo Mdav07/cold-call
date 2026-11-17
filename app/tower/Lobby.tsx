@@ -1,7 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -27,19 +27,23 @@ export function Lobby({
   const [prop, setProp] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
 
+  const leavingRef = useRef(leaving);
+  leavingRef.current = leaving;
   const onEvent = useCallback((e: SceneEvent) => {
     if (e.type === "exit") {
+      if (leavingRef.current) return;
       const n = e.to.split("/").pop();
       setLeaving({ to: e.to, label: n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}` });
     } else if (e.type === "interact-prop") setProp(e.id);
   }, []);
   const arrived = useCallback(() => {
-    if (!leaving) return;
-    router.push(leaving.to);
+    const ride = leavingRef.current;
+    if (!ride) return;
+    router.push(ride.to);
     // Next keeps this page's state for when you come back; a ride still set then would close the
     // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
     setLeaving(null);
-  }, [leaving, router]);
+  }, [router]);
 
   // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
   useEffect(() => {
@@ -83,7 +87,7 @@ export function Lobby({
         <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
       </div>
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-        <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">
+        <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
           <span className="text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>

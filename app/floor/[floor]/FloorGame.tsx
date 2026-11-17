@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { markClearedHere } from "@/app/floor/guestProgress";
 import { useRouter } from "next/navigation";
 import type { EmployeeId } from "@/shared/interfaces";
@@ -97,21 +97,22 @@ export function FloorGame({
 
   // Leaving: the elevator doors close, then the page changes.
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
-  const leave = useCallback(
-    (to: string) => {
-      router.prefetch(to);
-      setOpen(null);
-      setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
-    },
-    [router],
-  );
+  const leavingRef = useRef(leaving);
+  leavingRef.current = leaving;
+  const leave = useCallback((to: string) => {
+    if (leavingRef.current) return;
+    router.prefetch(to);
+    setOpen(null);
+    setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
+  }, [router]);
   const arrived = useCallback(() => {
-    if (!leaving) return;
-    router.push(leaving.to);
+    const ride = leavingRef.current;
+    if (!ride) return;
+    router.push(ride.to);
     // Next keeps this page's state for when you come back; a ride still set then would close the
     // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
     setLeaving(null);
-  }, [leaving, router]);
+  }, [router]);
 
   // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
   const [briefing, setBriefing] = useState<boolean | null>(null);

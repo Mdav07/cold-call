@@ -62,11 +62,13 @@ export function Walker({ sprite, scale = 4, walking = true }: { sprite: string; 
 
 /** One beat of the cutscene, typed out with Krystal's (or the narrator's) voice blips. */
 function Beat({ speaker, text, onTyped }: { speaker: "Krystal" | null; text: string; onTyped: (skip: () => void, done: boolean) => void }) {
-  const { visible, done, skip } = useTypewriter(text, 45);
+  // Quotes are part of the typed line so the closer doesn't sit there while the sentence is still rolling.
+  const line = speaker ? `“${text}”` : text;
+  const { visible, done, skip } = useTypewriter(line, 45);
   const n = visible.length;
   useEffect(() => {
-    if (!done && n % 2 === 0 && /\S/.test(text[n - 1] ?? "")) blip(speaker ? voicePitch("krystal") : 220);
-  }, [n, done, text, speaker]);
+    if (!done && n % 2 === 0 && /\S/.test(line[n - 1] ?? "")) blip(speaker ? voicePitch("krystal") : 220);
+  }, [n, done, line, speaker]);
   useEffect(() => onTyped(skip, done), [skip, done, onTyped]);
   const Face = PORTRAITS.krystal;
   const t = themeFor("krystal");
@@ -77,16 +79,14 @@ function Beat({ speaker, text, onTyped }: { speaker: "Krystal" | null; text: str
           <div className="pixel-frame grid h-24 w-24 place-items-center overflow-hidden bg-[var(--cc-portrait)] sm:h-32 sm:w-32 [&>svg]:h-full [&>svg]:w-full" style={{ borderColor: t.border }}>
             <Face mood="neutral" />
           </div>
-          <p className="border-2 px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]" style={{ background: t.tag, borderColor: t.border }}>
+          <p className="flex items-center border-2 px-3 py-1 font-pixel text-[10px] leading-none text-[var(--cc-edge)]" style={{ background: t.tag, borderColor: t.border }}>
             Krystal Klear
           </p>
         </div>
       )}
       <p className={`max-w-2xl font-pixel leading-[1.9] text-[var(--cc-ink)] ${speaker ? "text-[15px] sm:text-xl" : "text-[14px] text-[#cfd8e3] sm:text-lg"}`} aria-live="polite">
-        {speaker ? "“" : ""}
         {visible}
-        {!done && <span className="opacity-0">{text.slice(n)}</span>}
-        {speaker ? "”" : ""}
+        {!done && <span className="opacity-0">{line.slice(n)}</span>}
         {done && <span aria-hidden className="cc-next ml-3 align-middle text-sm text-[var(--cc-accent)]">▼</span>}
       </p>
     </div>
@@ -120,13 +120,19 @@ export function Intro() {
     if (stage !== "story") return;
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      // Don't steal typing from inputs; Skip has its own button.
+      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return;
       if (e.key === "Enter" || e.key === " ") {
+        // preventDefault stops a focused <button> from also synthesizing a click (double-advance).
         e.preventDefault();
+        e.stopPropagation();
         advance();
       } else if (e.key === "Escape") setStage("pick");
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    // Capture so we win over the big stage control.
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [stage, advance]);
 
   useEffect(() => {
@@ -156,9 +162,10 @@ export function Intro() {
               Skip ▶▶
             </button>
           </div>
-          {/* The whole stage is the "next" button, like tapping through a cutscene. */}
-          <button
-            type="button"
+          {/* Click / tap the stage to advance; Enter and Space are handled on window (above). */}
+          <div
+            role="button"
+            tabIndex={0}
             onClick={advance}
             aria-label={i < screens - 1 ? "Next" : "Pick your hunter"}
             className="flex flex-1 cursor-pointer flex-col items-center justify-center px-5 pb-6 outline-none"
@@ -173,7 +180,7 @@ export function Intro() {
                 <span className="pixel-button">Pick your hunter ▶</span>
               </div>
             )}
-          </button>
+          </div>
           <div className="flex justify-center gap-2 pb-6" aria-hidden>
             {Array.from({ length: screens }, (_, k) => (
               <span key={k} className={`h-2 w-2 ${k === i ? "bg-[var(--cc-accent)]" : "bg-[var(--cc-panel-2)]"}`} />

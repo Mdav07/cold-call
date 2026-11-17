@@ -69,6 +69,34 @@ def dominant(im: Image.Image, box) -> tuple:
     return Counter(cs).most_common(1)[0][0] if cs else (90, 90, 110, 255)
 
 
+def fix_eyes(head: Image.Image, skin) -> Image.Image:
+    """Collapse wide dark runs on the eye row to single pixels so halved portraits don't get a dash eye."""
+    out = head.copy()
+    px = out.load()
+    w, h = out.size
+    # Eye row is usually just under the hairline in the cropped head.
+    for y in range(2, min(8, h)):
+        dark = [x for x in range(w) if px[x, y][3] > 0 and sum(px[x, y][:3]) < 160]
+        if len(dark) < 2:
+            continue
+        # Group into runs; keep the center pixel of each run, restore skin elsewhere.
+        runs, start = [], dark[0]
+        for i in range(1, len(dark)):
+            if dark[i] != dark[i - 1] + 1:
+                runs.append((start, dark[i - 1]))
+                start = dark[i]
+        runs.append((start, dark[-1]))
+        if not any(b > a for a, b in runs):
+            continue
+        eye = min((px[x, y] for x in dark), key=lambda c: sum(c[:3]))
+        for a, b in runs:
+            for x in range(a, b + 1):
+                px[x, y] = skin
+            px[(a + b) // 2, y] = eye
+        break
+    return out
+
+
 def head_from_portrait(im32: Image.Image):
     """Returns (head16, skin, hair, outfit): the head rows of the halved portrait, cropped to its width."""
     small = halve(im32)
@@ -79,6 +107,7 @@ def head_from_portrait(im32: Image.Image):
     skin = dominant(im32, (12, 11, 20, 17))
     hair = dominant(im32, (8, 2, 24, 6))
     outfit = dominant(im32, (8, 25, 24, 32))
+    head = fix_eyes(head, skin)
     return head, skin, hair, outfit
 
 

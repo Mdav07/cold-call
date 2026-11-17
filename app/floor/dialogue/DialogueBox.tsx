@@ -76,7 +76,7 @@ function Frame({
       <div className="relative mx-auto max-w-4xl">
         <p
           // One line only: a long sign name is cut with an ellipsis rather than covering the text.
-          className="absolute -top-4 left-4 z-10 max-w-[calc(100%-2rem)] truncate border-2 bg-[var(--cc-tag)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]"
+          className="absolute -top-4 left-4 z-10 flex max-w-[calc(100%-2rem)] items-center truncate border-2 bg-[var(--cc-tag)] px-3 py-1.5 font-pixel text-[10px] leading-none text-[var(--cc-edge)]"
           style={{ borderColor: "var(--cc-border)", boxShadow: "3px 3px 0 0 var(--cc-edge)" }}
           title={name}
         >

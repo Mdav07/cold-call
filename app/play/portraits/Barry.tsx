@@ -27,15 +27,15 @@ export function Barry({ mood }: PortraitProps) {
       <R x={18} y={11} w={4} h={1} fill={BROW} />
       <R x={11} y={12} w={1} h={1} fill={BROW} />
       <R x={21} y={12} w={1} h={1} fill={BROW} />
-      {/* sleepy/droopy eyes — lids hang low */}
-      <R x={12} y={13} w={3} h={eyeOpen} fill={EYE} />
-      <R x={18} y={13} w={3} h={eyeOpen} fill={EYE} />
-      <R x={12} y={13} w={3} h={1} fill={SKIN} />
-      <R x={18} y={13} w={3} h={1} fill={SKIN} />
+      {/* sleepy/droopy eyes — 2px wide so the walker sheet halves to one pixel each (not a dash) */}
+      <R x={12} y={13} w={2} h={eyeOpen} fill={EYE} />
+      <R x={18} y={13} w={2} h={eyeOpen} fill={EYE} />
+      <R x={12} y={13} w={2} h={1} fill={SKIN} />
+      <R x={18} y={13} w={2} h={1} fill={SKIN} />
       {mood === "suspicious" && (
         <>
-          <R x={12} y={12} w={3} h={1} fill={BROW} />
-          <R x={18} y={12} w={3} h={1} fill={BROW} />
+          <R x={12} y={12} w={2} h={1} fill={BROW} />
+          <R x={18} y={12} w={2} h={1} fill={BROW} />
         </>
       )}
       {/* mouth */}

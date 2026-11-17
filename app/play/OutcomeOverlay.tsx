@@ -95,11 +95,13 @@ export function OutcomeOverlay({
           <span className="cc-stamp">{breach ? "⚠ VAULT BREACHED" : "LOCKED OUT"}</span>
         </p>
 
-        {/* The agents learn from every run: say so at the moment it matters. */}
-        <p className="mt-3 border-l-4 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-3 py-2 text-sm text-[var(--cc-ink)]">
-          <span className="font-pixel text-[10px] text-[var(--cc-accent)]">THEY LEARN · </span>
-          {employeeName} will remember this next run. {breach ? "The same trick won't work twice." : "Come back with a different story."}
-        </p>
+        {/* Tower floors remember tricks; the tutorial does not. */}
+        {run.floor > 0 && (
+          <p className="mt-3 border-l-4 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-3 py-2 text-sm text-[var(--cc-ink)]">
+            <span className="font-pixel text-[10px] text-[var(--cc-accent)]">THEY LEARN · </span>
+            {employeeName} will remember this next run. {breach ? "The same trick won't work twice." : "Come back with a different story."}
+          </p>
+        )}
 
         {breach ? (
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm">

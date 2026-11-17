@@ -19,7 +19,7 @@ export async function writeConversationMemory(sessionId: string): Promise<string
   if (!conv) return null;
 
   const [{ data: run }, { data: events }, { data: proposals }] = await Promise.all([
-    db().from("runs").select("user_id, cover, outcome").eq("id", conv.run_id).maybeSingle().throwOnError(),
+    db().from("runs").select("user_id, cover, outcome, floor").eq("id", conv.run_id).maybeSingle().throwOnError(),
     db()
       .from("suspicion_events")
       .select("delta, reason")
@@ -36,6 +36,8 @@ export async function writeConversationMemory(sessionId: string): Promise<string
       .throwOnError(),
   ]);
   if (!run) return null;
+  // Pocket Branch is practice: never store tricks, so Barry always treats the player as new.
+  if (run.floor === 0) return null;
 
   const lowered = (events ?? []).filter((e) => e.delta < 0).map((e) => e.reason.trim().replace(/\.$/, ""));
   const raised = (events ?? []).filter((e) => e.delta > 0).map((e) => e.reason.trim().replace(/\.$/, ""));

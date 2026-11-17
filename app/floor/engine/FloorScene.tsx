@@ -299,8 +299,11 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           const exit = map.exits?.find((e) => e.x === p.x && e.y === p.y);
           // Exits arm only after the player has walked onto a tile that isn't an exit, so arriving
           // next to the door (or with a key still held from the previous page) can't bounce you out.
-          if (exit && exitsArmed) onEventRef.current({ type: "exit", to: exit.to });
-          else if (!exit) exitsArmed = true;
+          // Disarm on fire so a held key / double step can't queue two rides.
+          if (exit && exitsArmed) {
+            exitsArmed = false;
+            onEventRef.current({ type: "exit", to: exit.to });
+          } else if (!exit) exitsArmed = true;
         }
       }
       const want = held.current[held.current.length - 1] ?? tapped.current;
@@ -333,13 +336,11 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
 
     const draw = (c: CanvasRenderingContext2D, w: number, h: number, now: number) => {
       const dpr = window.devicePixelRatio || 1;
-      // Zoom in far enough that the painted map always covers the screen: no empty void at the edges.
+      // Same tile scale on every floor: zoom from the viewport, not the map size. Small rooms
+      // letterbox on the void; big rooms scroll. (Fitting each map made Floor 0 huge and Floor 3 tiny.)
       const scale = Math.max(
         MIN_SCALE,
         Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1,
-        // On phones the map scrolls instead: covering a tall screen would zoom far too close.
-        w >= 700 ? Math.ceil(w / ((bx1 - bx0) * TILE)) : 0,
-        w >= 700 ? Math.ceil(h / ((by1 - by0) * TILE)) : Math.floor((h * 0.75) / ((by1 - by0) * TILE)),
       );
       const inset = Math.min(insetRef.current, h * 0.6) / scale; // map pixels hidden under the dialogue box
       c.setTransform(1, 0, 0, 1, 0, 0);
@@ -420,18 +421,21 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       // On-map text keeps the same size on screen whatever the zoom: sizes below are map pixels at 2x zoom.
       const u = 2 / scale;
 
-      // Names above heads: small pixel text on a dark plate.
+      // Names above heads: small pixel text on a dark plate (box + text share one middle baseline).
       const nameTag = (x: number, y: number, text: string) => {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "middle";
-        const wdt = c.measureText(text).width + 4 * u;
-        const cx = x + TILE / 2, cy = y - (FRAME_H - TILE) + 6; // heads start about 10 px into the frame
-        c.fillStyle = "rgba(21, 20, 26, 0.6)";
-        c.fillRect(Math.round(cx - wdt / 2), Math.round(cy - 3 * u), Math.round(wdt), Math.round(6 * u));
+        const pad = 4 * u;
+        const wdt = Math.ceil(c.measureText(text).width + pad);
+        const h = Math.round(6 * u);
+        // Sprite art sits in the middle of the 16px frame; center the plate on that.
+        const cx = Math.round(x + TILE / 2);
+        const cy = Math.round(y - (FRAME_H - TILE) + 8);
+        c.fillStyle = "rgba(21, 20, 26, 0.72)";
+        c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
         c.fillStyle = "#f2efe6";
-        c.textBaseline = "alphabetic";
-        c.fillText(text, cx, cy + 2.5 * u);
+        c.fillText(text, cx, cy + u); // +u optical: Press Start sits high in its em box
       };
       const nm = namesRef.current;
       // The person the player is facing gets one caption instead (below), so labels never stack.
@@ -478,7 +482,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const near = Math.abs(pr.x - p.x) + Math.abs(pr.y - p.y) <= 2;
         const tw = reduceMotion ? 0.6 : (Math.sin(now / 520 + pr.x * 1.7 + pr.y) + 1) / 2;
         const a = near ? 0.55 + tw * 0.45 : 0.12 + tw * 0.3;
-        const gx = pr.x * TILE + 11, gy = pr.y * TILE + 3;
+        // Sit the sparkle on the cork face (board frame is flush with the tile top).
+        const gx = pr.x * TILE + 11, gy = pr.y * TILE + 4;
         c.fillStyle = `rgba(255, 246, 214, ${a})`;
         c.fillRect(gx, gy - 1, 1, 3);
         c.fillRect(gx - 1, gy, 3, 1);
@@ -491,7 +496,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Tags over doors are little wooden signs (a plank = a place; a dark plate = a person).
+      // Tags over doors (TUTORIAL / FLOOR N / LOBBY): Madhav's agent owns the look — leave as on main.
       for (const t of tagsRef.current ?? []) {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";

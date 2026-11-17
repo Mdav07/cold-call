@@ -4,7 +4,7 @@ import type { EmployeeId } from "@/shared/interfaces";
 
 export type Facing = "up" | "down" | "left" | "right";
 
-/** One floor. Tile size is 16 px, drawn at an integer scale (3x on desktop). */
+/** One floor. Tile size is 16 px, drawn at a shared integer scale from the viewport (not fit-to-map). */
 export interface FloorMap {
   floor: 0 | 1 | 2 | 3;
   name: string;                 // shown in the HUD
