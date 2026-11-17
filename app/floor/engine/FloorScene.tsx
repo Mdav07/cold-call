@@ -491,7 +491,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Tags over doors are little wooden signs (a plank = a place; a dark plate = a person).
+      // Door signs: a small backlit office sign, like an elevator floor indicator. Dark housing with a
+      // lighter bevel, amber lettering with a faint glow, and the same hard drop shadow as the HUD panels.
       for (const t of tagsRef.current ?? []) {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
@@ -499,16 +500,18 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const tw = Math.round(c.measureText(t.text).width + 6 * u);
         const th = Math.round(7 * u);
         const x0 = Math.round(t.x * TILE + TILE / 2 - tw / 2), y0 = Math.round(t.y * TILE - 2 - th / 2);
-        c.fillStyle = "#4a2e18"; // outline
+        const glow = reduceMotion ? 0.5 : (Math.sin(now / 900) + 1) / 2; // a slow, gentle hum
+        c.fillStyle = "rgba(10, 9, 14, 0.55)"; // drop shadow
+        c.fillRect(x0 + 1, y0 + 1, tw + 1, th + 1);
+        c.fillStyle = "#15141a"; // outline
         c.fillRect(x0 - 1, y0 - 1, tw + 2, th + 2);
-        c.fillStyle = "#7a4e2a"; // plank
+        c.fillStyle = "#2a2833"; // housing
         c.fillRect(x0, y0, tw, th);
-        c.fillStyle = "#9a6a3e"; // lit top edge
+        c.fillStyle = "#3d3a4a"; // top bevel
         c.fillRect(x0, y0, tw, 1);
-        c.fillStyle = "#3a2412"; // two nails
-        c.fillRect(x0 + 1, y0 + 2, 1, 1);
-        c.fillRect(x0 + tw - 2, y0 + 2, 1, 1);
-        c.fillStyle = "#f2efe6";
+        c.fillStyle = `rgba(244, 201, 93, ${0.1 + glow * 0.06})`; // the backlight behind the lettering
+        c.fillRect(x0 + 1, y0 + 2, tw - 2, th - 3);
+        c.fillStyle = "#f4c95d";
         c.fillText(t.text, x0 + tw / 2, y0 + th / 2 + 2.5 * u);
       }
 
