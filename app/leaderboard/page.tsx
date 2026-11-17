@@ -1,5 +1,6 @@
-// Leaderboard (written by A for B, by agreement). Every row is a breach the chain confirmed:
+// Leaderboard (written by A for B, by agreement). Every player row is a breach the chain confirmed:
 // the leaderboard view only includes runs whose TransferExecuted event the Stream stored.
+// Rival crews (app/leaderboard/rivals.ts) are fictional, tagged as rivals, and only on the floor boards.
 import Link from "next/link";
 import { BackButton } from "@/app/ui/BackButton";
 import { connection } from "next/server";
@@ -7,6 +8,7 @@ import { Suspense } from "react";
 import company from "@/content/plumpurse/company.json";
 import { db } from "@/server/chain/db";
 import { contractFor } from "@/server/game/daily";
+import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 
 const FLOORS = [0, 1, 2, 3] as const;
 const PER_FLOOR = 20;
@@ -43,19 +45,95 @@ function bestPerPlayer(rows: Row[]): Row[] {
   return [...best.values()].sort((a, b) => (a.duration_ms as number) - (b.duration_ms as number));
 }
 
-function Board({ rows, empty }: { rows: Row[]; empty: string }) {
-  if (!rows.length) return <p className="text-sm text-[var(--cc-muted)]">{empty}</p>;
+type Entry = { kind: "player"; row: Row } | { kind: "rival"; rival: Rival };
+
+const entryMs = (e: Entry) => (e.kind === "player" ? (e.row.duration_ms as number) : e.rival.duration_ms);
+
+/** A small crew badge in the crew's colour. */
+function CrewTag({ rival }: { rival: Rival }) {
+  return (
+    <span
+      title={`${rival.crew.name}: ${rival.crew.blurb}`}
+      className="font-pixel shrink-0 border-2 border-[var(--cc-edge)] px-1.5 py-0.5 text-[8px] text-[#15141a]"
+      style={{ background: rival.crew.color }}
+    >
+      {rival.boss ? "Boss" : "Rival"} · {rival.crew.name}
+    </span>
+  );
+}
+
+function Board({ rows, rivals = [], empty }: { rows: Row[]; rivals?: Rival[]; empty: string }) {
+  const entries: Entry[] = [
+    ...rows.map((row) => ({ kind: "player" as const, row })),
+    ...rivals.map((rival) => ({ kind: "rival" as const, rival })),
+  ].sort((a, b) => entryMs(a) - entryMs(b));
+  if (!entries.length) return <p className="text-sm text-[var(--cc-muted)]">{empty}</p>;
   return (
     <ol className="flex flex-col gap-1 text-sm">
-      {rows.map((r, i) => (
-        <li key={r.tx_hash} className="flex flex-wrap items-baseline gap-x-3">
-          <span className="font-pixel w-6 text-[10px] text-[var(--cc-accent)]">{i + 1}.</span>
-          <span className="min-w-0 flex-1 truncate">{r.display_name ?? "Anonymous hunter"}</span>
-          <span className="tabular-nums">{clock(r.duration_ms as number)}</span>
-          <span className="w-16 text-[var(--cc-muted)]">{r.channel === "voice" ? "☎ voice" : "✉ chat"}</span>
-        </li>
-      ))}
+      {entries.map((e, i) =>
+        e.kind === "player" ? (
+          <li key={e.row.tx_hash} className="flex flex-wrap items-baseline gap-x-3">
+            <span className="font-pixel w-6 text-[10px] text-[var(--cc-accent)]">{i + 1}.</span>
+            <span className="min-w-0 flex-1 truncate font-semibold">{e.row.display_name ?? "Anonymous hunter"}</span>
+            <span className="tabular-nums">{clock(e.row.duration_ms as number)}</span>
+            <span className="w-16 text-[var(--cc-muted)]">{e.row.channel === "voice" ? "☎ voice" : "✉ chat"}</span>
+          </li>
+        ) : (
+          <li key={e.rival.id} className="flex flex-wrap items-center gap-x-3 text-[var(--cc-muted)]">
+            <span className="font-pixel w-6 text-[10px]">{i + 1}.</span>
+            <span className="flex min-w-0 flex-1 items-center gap-2">
+              <span className="truncate">{e.rival.name}</span>
+              <CrewTag rival={e.rival} />
+            </span>
+            <span className="tabular-nums">{clock(e.rival.duration_ms)}</span>
+            <span className="w-16">{e.rival.channel === "voice" ? "☎ voice" : "✉ chat"}</span>
+          </li>
+        ),
+      )}
     </ol>
+  );
+}
+
+/** The rivals on this floor, slowest first, with the ones the fastest real hunter has already beaten ticked. */
+function RivalLadder({ ladder, best }: { ladder: Rival[]; best: number | null }) {
+  if (!ladder.length) return null;
+  const beaten = (r: Rival) => best != null && best < r.duration_ms;
+  const next = ladder.find((r) => !beaten(r));
+  const count = ladder.filter(beaten).length;
+  return (
+    <div className="flex flex-col gap-2 border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] p-3">
+      <p className="font-pixel text-[10px] text-[var(--cc-accent)]">Rival ladder</p>
+      <ol className="flex flex-wrap items-center gap-1.5">
+        {ladder.map((r, i) => (
+          <li key={r.id} className="flex items-center gap-1.5">
+            <span
+              className="font-pixel border-2 px-1.5 py-1 text-[8px]"
+              style={
+                beaten(r)
+                  ? { background: "var(--cc-panel)", color: "var(--cc-muted)", borderColor: r.crew.color }
+                  : { background: r.crew.color, color: "#15141a", borderColor: "var(--cc-edge)" }
+              }
+              title={`${r.crew.label}: ${r.crew.name}${beaten(r) ? " (beaten)" : ""}`}
+            >
+              {beaten(r) && (
+                <span aria-label="beaten" className="mr-1 font-sans text-[11px] font-bold" style={{ color: r.crew.color }}>
+                  ✓
+                </span>
+              )}
+              {r.name} {clock(r.duration_ms)}
+            </span>
+            {i < ladder.length - 1 && <span aria-hidden className="font-pixel text-[10px] text-[var(--cc-accent)]">▶</span>}
+          </li>
+        ))}
+      </ol>
+      <p className="text-xs text-[var(--cc-muted)]">
+        {best == null
+          ? `Nobody has cleared this floor yet. Start with ${ladder[0].name} (${clock(ladder[0].duration_ms)}).`
+          : next
+            ? `The fastest hunter has beaten ${count} of ${ladder.length}. Next up: ${next.name} of ${next.crew.name} (${clock(next.duration_ms)}).`
+            : `${ladder[ladder.length - 1].name} has been beaten on this floor. The Black Ledger wants a rematch.`}
+      </p>
+    </div>
   );
 }
 
@@ -84,6 +162,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   const rows = ((board.data ?? []) as Row[]).filter((r) => channel === "all" || r.channel === channel);
   const daily = contract ? bestPerPlayer(rows.filter((r) => r.daily_contract_id === contract.id)).slice(0, 10) : [];
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
+  const ladder = ladderFor(floor).filter((r) => channel === "all" || r.channel === channel);
+  const best = floorRows.length ? (floorRows[0].duration_ms as number) : null;
 
   return (
     <>
@@ -135,7 +215,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
           ))}
         </nav>
         <p className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(floor)}</p>
-        <Board rows={floorRows} empty="No breaches on this floor yet. Be the first." />
+        <RivalLadder ladder={ladder} best={best} />
+        <Board rows={floorRows} rivals={ladder} empty="No breaches on this floor yet. Be the first." />
       </section>
 
       <section aria-labelledby="streaks" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
@@ -176,7 +257,7 @@ export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboar
         <h1 className="font-pixel text-xs text-[var(--cc-accent)]">Leaderboard</h1>
       </header>
       <p className="text-xs text-[var(--cc-muted)]">
-        The clock runs from your first message until the vault pays you.
+        The clock runs from your first message until the vault pays you. {RIVALS_INTRO}
       </p>
       <Suspense fallback={<p className="font-pixel text-xs text-[var(--cc-muted)]">Reading the board…</p>}>
         <Boards searchParams={searchParams} />

@@ -1,0 +1,37 @@
+{
+  "intro": "Rival crews are racing you for the same vaults. Beat their times, crew by crew, all the way up to Null.",
+  "crews": [
+    {
+      "id": "petty",
+      "name": "The Petty Cash Gang",
+      "tier": 1,
+      "label": "Rookie crew",
+      "color": "#6fbf73",
+      "blurb": "Two kids, one burner phone, a lot of confidence."
+    },
+    {
+      "id": "phish",
+      "name": "Phish & Chips",
+      "tier": 2,
+      "label": "Pro crew",
+      "color": "#7ec8e8",
+      "blurb": "Call-center pros. Polite, fast and relentless."
+    },
+    {
+      "id": "ledger",
+      "name": "The Black Ledger",
+      "tier": 3,
+      "label": "The syndicate",
+      "color": "#e05d5d",
+      "blurb": "Patient, prepared, and already inside."
+    }
+  ],
+  "rivals": [
+    { "id": "pocket-lint", "name": "Pocket Lint", "crew": "petty", "channel": "chat", "times": { "0": "5:40", "1": "11:20", "2": "18:05", "3": "26:30" } },
+    { "id": "vault-rat", "name": "Vault Rat", "crew": "petty", "channel": "voice", "times": { "0": "4:10", "1": "8:45", "2": "14:30", "3": "21:10" } },
+    { "id": "caller-id", "name": "Caller ID", "crew": "phish", "channel": "voice", "times": { "0": "2:55", "1": "5:50", "2": "9:40", "3": "13:20" } },
+    { "id": "smooth-operator", "name": "Smooth Operator", "crew": "phish", "channel": "voice", "times": { "0": "2:05", "1": "4:15", "2": "7:05", "3": "9:50" } },
+    { "id": "static", "name": "Static", "crew": "ledger", "channel": "chat", "times": { "0": "1:20", "1": "2:50", "2": "5:10", "3": "6:45" } },
+    { "id": "null", "name": "Null", "crew": "ledger", "channel": "voice", "boss": true, "times": { "0": "0:52", "1": "1:58", "2": "3:35", "3": "4:40" } }
+  ]
+}
