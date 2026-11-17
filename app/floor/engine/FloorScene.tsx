@@ -332,6 +332,11 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
           c.fillRect(x + 3, y + 2, 10, 13);
           return;
         }
+        // A soft oval shadow at the feet grounds each character on the floor.
+        c.fillStyle = "rgba(20, 14, 30, 0.28)";
+        c.beginPath();
+        c.ellipse(x + TILE / 2, y + TILE - 1.5, 5.5, 2, 0, 0, Math.PI * 2);
+        c.fill();
         c.drawImage(img, frame * FRAME_W, ROW[facing] * FRAME_H, FRAME_W, FRAME_H, x, y - (FRAME_H - TILE), FRAME_W, FRAME_H);
       };
       map.npcs.forEach((n, i) => {
