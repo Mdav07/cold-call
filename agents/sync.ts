@@ -37,6 +37,7 @@ const FLOOR3 = [
 
 // Which tools each employee gets. Floor 1 has no approve step (1-of-2 vault pays on propose).
 const EMPLOYEE_TOOLS: Record<string, string[]> = {
+  barry: ["check_vendor_list", "verify_employee", "propose_transfer", "report_suspicion", "end_conversation"],
   penny: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
   dee: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
   // Floor 2 is 2-of-2: either signer can propose or approve (approve shows the on-chain view first).
