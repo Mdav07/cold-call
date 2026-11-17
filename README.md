@@ -14,8 +14,10 @@ The chain is the referee: a run counts as a breach only when the vault contract 
 | --- | --- |
 | ![Walking Floor 1 and talking to Dee](docs/screenshots/floor-1-dialogue.png) | ![Plumpurse Tower: floors, live vault balances, Daily Contract](docs/screenshots/tower.png) |
 | Walk up to an employee and press Space to talk or call | The tower: floors unlock in order; vault balances are read live from Arc |
-| ![Floor 3, the executive suite](docs/screenshots/floor-3.png) | ![Leaderboard with proof-of-heist links](docs/screenshots/leaderboard.png) |
-| Floor 3: the executive suite | Leaderboard: every time links to its transaction |
+| ![Vault breached: bounty, run time, proof-of-heist link, Krystal's note and the debrief](docs/screenshots/breach.png) | ![Floor 3, the executive suite](docs/screenshots/floor-3.png) |
+| A real breach on production: the bounty, the run time, the on-chain receipt, a new note on Krystal's trail and the debrief | Floor 3: the executive suite |
+| ![Leaderboard with proof-of-heist links](docs/screenshots/leaderboard.png) | |
+| Leaderboard: every time links to its transaction | |
 | ![Case file](docs/screenshots/casefile.png) | ![Title screen](docs/screenshots/title.png) |
 | Krystal's case file: staff, vendors, memos, gossip | Title screen |
 
