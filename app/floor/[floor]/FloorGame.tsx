@@ -151,6 +151,7 @@ export function FloorGame({
         <NpcDialogue
           key={npc.id}
           npc={npc}
+          floor={map.floor}
           // A finished run is not continued: talking again starts a new one.
           runId={finished ? null : runId}
           cover={cover}

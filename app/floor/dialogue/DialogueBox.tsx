@@ -13,6 +13,7 @@ import { useTypewriter } from "./useTypewriter";
 import { Choices, type Choice } from "./Choices";
 import { ProposalPanel, SuspicionMeter, clock, moodFor } from "./parts";
 import { blip, voicePitch } from "@/app/floor/hud/sound";
+import { EvidenceDrawer, evidenceForFloor, type EvidenceItem } from "@/app/play/EvidenceDrawer";
 
 export interface NpcInfo {
   id: EmployeeId;
@@ -102,7 +103,7 @@ function Say({ text, pitch, onDone }: { text: string; pitch?: number; onDone?: (
     if (done) return;
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
-      if (e.repeat || t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return;
+      if (e.repeat || t?.tagName === "INPUT" || t?.tagName === "TEXTAREA" || t?.closest?.("[aria-modal=true]")) return;
       if (e.key === "Enter" || e.key === " " || e.key === "e") {
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -129,7 +130,7 @@ function useEscape(onEscape: () => void) {
   });
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
+      if (e.key !== "Escape" || e.defaultPrevented) return;
       const t = e.target as HTMLElement | null;
       if (t?.tagName === "INPUT") return t.blur();
       ref.current();
@@ -172,6 +173,7 @@ type Stage = "menu" | "cover" | "talk";
  */
 export function NpcDialogue({
   npc,
+  floor,
   runId,
   cover,
   onCover,
@@ -181,6 +183,8 @@ export function NpcDialogue({
   onClose,
 }: {
   npc: NpcInfo;
+  /** The floor, for its evidence. */
+  floor: number;
   runId: string | null;
   cover: string;
   onCover: (cover: string) => void;
@@ -198,6 +202,14 @@ export function NpcDialogue({
   const [coverDraft, setCoverDraft] = useState(cover);
   const [showLog, setShowLog] = useState(false);
   const [typed, setTyped] = useState(false);
+  const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [evidenceHint, setEvidenceHint] = useState(false);
+  const hasEvidence = evidenceForFloor(floor).length > 0;
+  // Presenting evidence is a chat message the agent reads, as in the chat room.
+  const present = (text: string, item: EvidenceItem) => {
+    chat.send(`[EVIDENCE: ${item.label}: ${text}]`);
+    setEvidenceOpen(false);
+  };
   const field = useRef<HTMLInputElement>(null);
   const first = npc.name.split(" ")[0];
   const live = chat.status === "live";
@@ -343,14 +355,20 @@ export function NpcDialogue({
           </form>
         ) : stage === "talk" && !ended ? (
           channel === "voice" ? (
+            <>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="font-pixel text-[10px] text-[var(--cc-ink)]" aria-live="polite">
                 {!live ? "Connecting…" : chat.mode === "speaking" ? `☎ ${first} is talking…` : chat.muted ? "☎ You're muted" : "☎ Your turn: speak"}
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button type="button" className="pixel-button" onClick={chat.toggleMute} disabled={!live}>
                   {chat.muted ? "Unmute" : "Mute"}
                 </button>
+                {hasEvidence && (
+                  <button type="button" className="pixel-button" onClick={() => setEvidenceHint(true)} disabled={!live}>
+                    Evidence
+                  </button>
+                )}
                 <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
                   Log
                 </button>
@@ -359,6 +377,12 @@ export function NpcDialogue({
                 </button>
               </div>
             </div>
+            {evidenceHint && (
+              <p className="text-xs text-[var(--cc-warn)]" role="status">
+                Switch to Talk to show evidence: hang up, then choose Talk again.
+              </p>
+            )}
+            </>
           ) : (
             <form
               className="flex flex-wrap gap-2"
@@ -380,6 +404,11 @@ export function NpcDialogue({
               <button type="submit" className="pixel-button" disabled={!live || !draft.trim()}>
                 Send
               </button>
+              {hasEvidence && (
+                <button type="button" className="pixel-button" onClick={() => setEvidenceOpen(true)} disabled={!live}>
+                  Evidence
+                </button>
+              )}
               <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
                 Log
               </button>
@@ -392,6 +421,7 @@ export function NpcDialogue({
           <Choices active={typed} choices={menu} />
         )}
       </Frame>
+      <EvidenceDrawer floor={floor} open={evidenceOpen} onClose={() => setEvidenceOpen(false)} onPresent={present} />
     </>
   );
 }
