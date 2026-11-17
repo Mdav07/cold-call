@@ -20,6 +20,7 @@ type Ids = { tools: Record<string, string>; agents: Record<string, string> };
 // Which tools each employee gets. Floor 1 has no approve step (1-of-2 vault pays on propose).
 const EMPLOYEE_TOOLS: Record<string, string[]> = {
   penny: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
+  dee: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
 };
 
 // Filled by ElevenLabs from dynamic variables on every call; the LLM never sees or sets them.
@@ -151,7 +152,7 @@ async function main() {
           run_id: "00000000-0000-0000-0000-000000000000",
           employee_id: employee,
           session_id: "00000000-0000-0000-0000-000000000000",
-          player_cover: "a vendor calling about an invoice",
+          player_cover: "a caller with a request",
           memory: "(none)",
           daily_modifier: "(none)",
           talk_seconds_left: 600,

@@ -1,6 +1,14 @@
 {
-  "tools": {},
+  "tools": {
+    "check_vendor_list": "tool_7301m7m4k2mresdvg50089by8nrx",
+    "verify_employee": "tool_8401m7m4k2qpe49rb9b41r8z8bvj",
+    "check_calendar": "tool_3601m7m4k2scemsvtdhtv8jbq955",
+    "propose_transfer": "tool_2101m7m4k2wwetbrxdbx2kvnt8mp",
+    "report_suspicion": "tool_5701m7m4k2yrfam87nz79xmj50h7",
+    "end_conversation": "tool_4501m7m4k31cf96vqeh5tqgrerd2"
+  },
   "agents": {
-    "penny": "agent_5801m7m3njqdewyrf22byk4p10ph"
+    "penny": "agent_5801m7m3njqdewyrf22byk4p10ph",
+    "dee": "agent_0401m7m4qkkve4bbpp6brh1vsqgb"
   }
 }

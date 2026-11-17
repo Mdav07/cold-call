@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import agentIds from "@/agents/elevenlabs-ids.json";
 import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
+import { signedInUserId } from "@/server/game/auth";
 import { getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
@@ -92,8 +93,12 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     run_id = input.run_id ?? randomUUID();
     session_id = randomUUID();
   } else {
-    // TODO(auth): use the signed-in player once magic-link sign-in exists.
-    const userId = await getDemoUserId();
+    // Signed-in player; the shared demo player only when nobody is signed in (and allowed).
+    let userId = await signedInUserId();
+    if (!userId) {
+      if (process.env.ALLOW_DEMO_PLAYER === "false") throw new SessionError("Sign in to play", 401);
+      userId = await getDemoUserId();
+    }
     run_id = input.run_id ? await continueRun(input.run_id, userId, floor) : await newRun(userId, floor, cover, input.channel);
 
     const { data: conv } = await db()
