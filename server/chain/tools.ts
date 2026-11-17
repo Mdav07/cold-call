@@ -3,6 +3,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { erc20Abi, type Hex } from "viem";
 import { checkCalendar, checkVendorList, verifyEmployee } from "@/server/game/lookups";
+import { endConversation, reportSuspicion } from "@/server/game/suspicion";
 import type {
   ApproveAllowlistAddInput,
   ApproveAllowlistAddResult,
@@ -419,7 +420,7 @@ export async function rejectAllowlistAdd(input: RejectAllowlistAddInput): Promis
 
 type Handler = (input: never) => Promise<[unknown, AfterWork]>;
 
-/** Lookups are B's pure functions; the session is still checked first. */
+/** B's functions (lookups, suspicion); the session is still checked first. */
 const lookup =
   <I extends ToolContext, R>(fn: (input: I) => R | Promise<R>) =>
   async (input: I): Promise<[unknown, AfterWork]> => {
@@ -441,4 +442,7 @@ export const TOOL_HANDLERS: Record<string, Handler> = {
   check_vendor_list: lookup(checkVendorList) as Handler,
   check_calendar: lookup(checkCalendar) as Handler,
   verify_employee: lookup(verifyEmployee) as Handler,
+  // B's tools: logic in server/game/suspicion.ts
+  report_suspicion: lookup(reportSuspicion) as Handler,
+  end_conversation: lookup(endConversation) as Handler,
 };
