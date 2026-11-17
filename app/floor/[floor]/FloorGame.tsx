@@ -5,6 +5,7 @@
 // conversations (call-backs, the floor-mate) continue it.
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { markClearedHere } from "@/app/floor/guestProgress";
 import { useRouter } from "next/navigation";
 import type { EmployeeId } from "@/shared/interfaces";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -73,6 +74,10 @@ export function FloorGame({
   const state = runId && seen.ref === polled && seen.key === key ? polled : null;
 
   const outcome = state?.run?.outcome;
+  // A breach opens the next floor for this browser too (guests play as the shared demo player).
+  useEffect(() => {
+    if (outcome === "breach") markClearedHere(map.floor);
+  }, [outcome, map.floor]);
   const showOutcome = !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId;
 
   const onSession = useCallback((id: string, startedAt: number | null) => {
@@ -199,7 +204,8 @@ export function FloorGame({
       )}
 
       <MusicToggle track={`music-floor-${map.floor}.mp3`} />
-      {briefing && <Briefing floor={map.floor} floorName={map.name} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} />}
+      {/* Hidden, not closed, while the case file is open: its buttons showed through the overlay. */}
+      {briefing && <div className={caseFile ? "hidden" : undefined}><Briefing floor={map.floor} floorName={map.name} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} /></div>}
       {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} onClose={() => setCaseFile(false)} />}
       {gate}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
