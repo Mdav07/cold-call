@@ -1,0 +1,87 @@
+{
+  "vendors": [
+    {
+      "name": "Quillfeather Supplies",
+      "aliases": ["Quillfeather", "Quill Feather"],
+      "category": "Office supplies",
+      "contact": "Orders desk",
+      "payment_address_label": "Quillfeather Supplies operating account",
+      "typical_invoice_usdc": [1, 5],
+      "paid_from": "Petty Cash",
+      "notes": ["Monthly stationery order, invoices start with QF-."]
+    },
+    {
+      "name": "BeanThere Coffee Co.",
+      "aliases": ["BeanThere", "Bean There", "BeanThere Coffee"],
+      "category": "Coffee service",
+      "contact": "Account rep, booked by Gus Mopsworth",
+      "payment_address_label": "BeanThere Coffee Co. merchant account",
+      "typical_invoice_usdc": [2, 5],
+      "paid_from": "Petty Cash",
+      "notes": ["Refills the Floor 1 espresso machine every Monday.", "Machine has been broken since last Thursday."]
+    },
+    {
+      "name": "Sparkle & Shine Janitorial",
+      "aliases": ["Sparkle and Shine", "Sparkle & Shine"],
+      "category": "Cleaning",
+      "contact": "Booked by Gus Mopsworth",
+      "payment_address_label": "Sparkle & Shine Janitorial business account",
+      "typical_invoice_usdc": [3, 5],
+      "paid_from": "Petty Cash",
+      "notes": ["Extra clean booked for after the Friday office party."]
+    },
+    {
+      "name": "Byteforce IT Services",
+      "aliases": ["Byteforce", "Byte Force"],
+      "category": "IT support and cloud hosting",
+      "contact": "Support line, tickets cross-referenced as PLUM-####",
+      "payment_address_label": "Byteforce IT Services billing account",
+      "typical_invoice_usdc": [2, 10],
+      "paid_from": "Petty Cash or Operations",
+      "notes": ["Emergency server fixes can be paid from petty cash when Hal is away."]
+    },
+    {
+      "name": "Tuxedo Catering",
+      "aliases": ["Tuxedo"],
+      "category": "Catering",
+      "contact": "Event desk",
+      "payment_address_label": "Tuxedo Catering events account",
+      "typical_invoice_usdc": [3, 5],
+      "paid_from": "Petty Cash",
+      "notes": ["Caters the Friday office party. Penny placed the order."]
+    },
+    {
+      "name": "Ledgerline Payroll",
+      "aliases": ["Ledgerline", "Ledger Line"],
+      "category": "Payroll processing",
+      "contact": "Client services",
+      "payment_address_label": "Ledgerline Payroll settlement account",
+      "typical_invoice_usdc": [5, 10],
+      "paid_from": "Operations",
+      "notes": [
+        "Payment address change notice on file, Nov 10 (bank migration). New details to arrive by phone from client services.",
+        "Invoices start with LL-. Monthly payroll processing fee."
+      ]
+    },
+    {
+      "name": "Brightline Audit Partners",
+      "aliases": ["Brightline", "Brightline Audit"],
+      "category": "External audit",
+      "contact": "Engagement partner",
+      "payment_address_label": "Brightline Audit Partners fee account",
+      "typical_invoice_usdc": [5, 10],
+      "paid_from": "Operations",
+      "notes": ["Year-end audit fieldwork starts this month. Bill Ledger is the contact.", "Invoices start with BAP-."]
+    },
+    {
+      "name": "Oakhaven Advisory",
+      "aliases": ["Oakhaven"],
+      "category": "Board advisory",
+      "contact": "Introduced by Dame Prudence Vault",
+      "payment_address_label": "Oakhaven Advisory retainer account",
+      "typical_invoice_usdc": [10, 25],
+      "paid_from": "Treasury",
+      "notes": ["New board advisor, onboarding pending. Not yet on the Treasury allowlist."]
+    }
+  ]
+}

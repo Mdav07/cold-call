@@ -1,0 +1,57 @@
+/* Game UI tokens. Each floor gets its own palette (drab bullpen, polished management, gold suite). */
+
+.cc-floor-1 {
+  --cc-bg: #2b2a33;
+  --cc-panel: #3a3944;
+  --cc-panel-2: #4a4856;
+  --cc-dialog: #1f2a44;
+  --cc-portrait: #6b6878;
+  --cc-player: #3f5a4a;
+  --cc-ink: #f2efe6;
+  --cc-muted: #b9b4c4;
+  --cc-accent: #f4c95d;
+  --cc-ok: #6fbf73;
+  --cc-warn: #e8a33d;
+  --cc-danger: #e05d5d;
+  --cc-edge: #15141a;
+  background: var(--cc-bg);
+  color: var(--cc-ink);
+}
+
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+  line-height: 1.6;
+}
+
+/* Chunky 2px pixel border with a hard offset shadow. */
+.pixel-frame {
+  border: 2px solid var(--cc-edge);
+  box-shadow: 4px 4px 0 0 var(--cc-edge);
+}
+
+.pixel-button {
+  font-family: var(--font-pixel), monospace;
+  font-size: 0.7rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--cc-accent);
+  color: var(--cc-edge);
+  border: 2px solid var(--cc-edge);
+  box-shadow: 3px 3px 0 0 var(--cc-edge);
+}
+
+.pixel-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--cc-edge);
+}
+
+.pixel-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pixel-button:focus-visible,
+.pixel-frame:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--cc-accent);
+  outline-offset: 2px;
+}

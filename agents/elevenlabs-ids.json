@@ -1,0 +1,18 @@
+{
+  "tools": {
+    "check_vendor_list": "tool_7301m7m4k2mresdvg50089by8nrx",
+    "verify_employee": "tool_8401m7m4k2qpe49rb9b41r8z8bvj",
+    "check_calendar": "tool_3601m7m4k2scemsvtdhtv8jbq955",
+    "propose_transfer": "tool_2101m7m4k2wwetbrxdbx2kvnt8mp",
+    "report_suspicion": "tool_5701m7m4k2yrfam87nz79xmj50h7",
+    "end_conversation": "tool_4501m7m4k31cf96vqeh5tqgrerd2",
+    "approve_transfer": "tool_6901m7m62rx1epx8apwp1epeqtcj",
+    "reject_transfer": "tool_6001m7m62rywfrfvts6e71d1p0fd"
+  },
+  "agents": {
+    "penny": "agent_5801m7m3njqdewyrf22byk4p10ph",
+    "dee": "agent_0401m7m4qkkve4bbpp6brh1vsqgb",
+    "annie": "agent_3701m7m62s5afcbs8y94zkn9ww21",
+    "bill": "agent_4701m7m62varemt8r2emcz5mz9tq"
+  }
+}

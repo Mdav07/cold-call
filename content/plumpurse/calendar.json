@@ -1,0 +1,77 @@
+{
+  "_comment": "weekly = recurring meetings by weekday (mon..sun). pto = inclusive date ranges. Lookups pick the weekday of the requested date.",
+  "people": [
+    {
+      "id": "penny",
+      "weekly": {
+        "mon": ["9:00 Coffee machine standoff with BeanThere"],
+        "wed": ["12:00 Lunch-and-learn sign-in desk"],
+        "fri": ["15:00 Office party setup", "16:00 Friday office party"]
+      },
+      "pto": []
+    },
+    {
+      "id": "dee",
+      "weekly": {
+        "mon": ["10:00 Sprint planning"],
+        "tue": ["10:00 Standup"],
+        "wed": ["10:00 Standup"],
+        "thu": ["10:00 Standup", "14:00 Incident review"],
+        "fri": ["10:00 Standup"]
+      },
+      "pto": []
+    },
+    {
+      "id": "barry",
+      "weekly": {},
+      "pto": []
+    },
+    {
+      "id": "annie",
+      "weekly": {
+        "mon": ["9:00 Vendor registry review"],
+        "tue": ["11:00 Process improvement circle"],
+        "thu": ["11:00 Checklist audit"]
+      },
+      "pto": [{ "start": "2026-11-25", "end": "2026-11-27", "label": "Thanksgiving" }]
+    },
+    {
+      "id": "bill",
+      "weekly": {
+        "mon": ["14:00 Audit prep with Brightline"],
+        "wed": ["14:00 Regulator readiness drill"],
+        "fri": ["9:00 Compliance attestations"]
+      },
+      "pto": []
+    },
+    {
+      "id": "cassius",
+      "weekly": {
+        "tue": ["8:00 Board risk call with Dame Prudence Vault"],
+        "thu": ["16:00 Treasury review"]
+      },
+      "pto": []
+    },
+    {
+      "id": "max",
+      "weekly": {
+        "mon": ["All day: back-to-back calls"],
+        "tue": ["All day: back-to-back calls"],
+        "wed": ["Golf with investors"],
+        "thu": ["All day: back-to-back calls"],
+        "fri": ["Yacht photo shoot"]
+      },
+      "pto": []
+    },
+    {
+      "id": "hal",
+      "weekly": {},
+      "pto": [{ "start": "2026-11-09", "end": "2026-12-04", "label": "Hiking, no signal" }]
+    },
+    {
+      "id": "gus",
+      "weekly": { "mon": ["8:00 Cleaner walkthrough"] },
+      "pto": [{ "start": "2026-11-16", "end": "2026-11-20", "label": "Jury duty" }]
+    }
+  ]
+}
