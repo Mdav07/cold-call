@@ -6,6 +6,7 @@
 
 import { useEffect, useRef } from "react";
 import debriefs from "@/content/plumpurse/debriefs.json";
+import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
 
 type Debrief = {
@@ -101,6 +102,16 @@ export function OutcomeOverlay({
             {employeeName} hung up and warned the floor. Null and the Black Ledger got in first.
             {state.reason && <span className="block mt-2 text-[var(--cc-muted)]">What gave you away: {state.reason.text}</span>}
           </p>
+        )}
+
+        {breach && (krystal.clues as Record<string, { title: string; text: string }>)[String(run.floor)] && (
+          <div className="mt-5 border-t-2 border-[var(--cc-edge)] pt-4 text-sm">
+            <p className="font-pixel text-xs text-[var(--cc-accent)]">
+              New note on Krystal&apos;s trail: {(krystal.clues as Record<string, { title: string }>)[String(run.floor)].title}
+            </p>
+            <p className="mt-2">{(krystal.clues as Record<string, { text: string }>)[String(run.floor)].text}</p>
+            {run.floor === 3 && <p className="mt-2 text-[var(--cc-muted)]">Open the tower to read it.</p>}
+          </div>
         )}
 
         {debrief && (

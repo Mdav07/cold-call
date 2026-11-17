@@ -23,6 +23,7 @@ export default async function PlayPage({ params }: PageProps<"/play/[employee]">
     name: e.name,
     title: e.title,
     floorName: floor?.name ?? `Floor ${e.floor}`,
+    floor: e.floor,
   };
   return <ChatRoom card={card} />;
 }

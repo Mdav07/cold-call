@@ -1,6 +1,7 @@
 import Link from "next/link";
 import company from "@/content/plumpurse/company.json";
-import dossier from "@/content/plumpurse/dossier.json";
+import krystal from "@/content/plumpurse/krystal.json";
+import { KrystalMemo } from "./play/KrystalMemo";
 
 export default function TitlePage() {
   return (
@@ -15,10 +16,9 @@ export default function TitlePage() {
           otherwise. Get into the vaults first: talk, call and bluff your way up the tower of AI employees, and every
           con you pull is a real payout.
         </p>
-        <blockquote className="border-l-4 border-[var(--cc-accent)] pl-4 text-[var(--cc-muted)] italic">
-          &ldquo;{dossier.intro}&rdquo;
-          <span className="mt-1 block not-italic font-pixel text-[10px]">— {dossier.author}, the case file</span>
-        </blockquote>
+        <div className="border-l-4 border-[var(--cc-accent)] pl-4">
+          <KrystalMemo title={`${krystal.name}'s last voice memo`} audio={krystal.intro.audio} text={krystal.intro.text} />
+        </div>
         <div className="flex flex-wrap gap-3">
           <Link href="/tower" className="pixel-button">
             Start the case

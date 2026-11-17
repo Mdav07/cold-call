@@ -3,6 +3,42 @@ import { Suspense } from "react";
 import { signedInUserId } from "@/server/game/auth";
 import { getDemoUserId } from "@/server/game/players";
 import { getTower, type TowerFloor } from "@/server/game/tower";
+import krystal from "@/content/plumpurse/krystal.json";
+import { KrystalMemo } from "../play/KrystalMemo";
+
+function Trail({ floors }: { floors: TowerFloor[] }) {
+  const clues = krystal.clues as Record<string, { title: string; text: string }>;
+  const cleared = (n: number) => floors.some((f) => f.floor === n && f.cleared);
+  const found = [0, 1, 2, 3].filter(cleared).length;
+  return (
+    <section aria-labelledby="trail" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 id="trail" className="font-pixel text-xs text-[var(--cc-accent)]">Krystal&apos;s trail</h2>
+        <span className="font-pixel text-[10px] text-[var(--cc-muted)]">{found} / 4 notes found</span>
+      </div>
+      <ol className="flex flex-col gap-2 text-sm">
+        {[0, 1, 2, 3].map((n) =>
+          cleared(n) ? (
+            <li key={n}>
+              <span className="font-pixel text-[10px] text-[var(--cc-ink)]">{clues[n].title}</span>
+              <p className="text-[var(--cc-muted)]">{clues[n].text}</p>
+            </li>
+          ) : (
+            <li key={n} className="text-[var(--cc-muted)]">
+              <span className="font-pixel text-[10px]">???</span> Clear {n === 0 ? "the Pocket Branch" : `Floor ${n}`} to find this note.
+            </li>
+          ),
+        )}
+      </ol>
+      {cleared(3) && (
+        <div className="mt-2 border-t-2 border-[var(--cc-edge)] pt-3">
+          <KrystalMemo title="Krystal's last note" audio={krystal.ending.audio} text={krystal.ending.text} />
+          <p className="mt-2 font-pixel text-[10px] text-[var(--cc-accent)]">{krystal.season_tease}</p>
+        </div>
+      )}
+    </section>
+  );
+}
 
 const clock = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
@@ -74,6 +110,7 @@ async function Floors() {
   // The tower reads top-down: the executive suite first, the Pocket Branch at street level.
   return (
     <div className="flex flex-col gap-4">
+      <Trail floors={floors} />
       {[...floors].reverse().map((f) => (
         <FloorCard key={f.floor} f={f} />
       ))}

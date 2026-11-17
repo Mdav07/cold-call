@@ -5,12 +5,43 @@ import type { EmployeeId } from "@/shared/interfaces";
 import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
+import { KrystalMemo } from "./KrystalMemo";
+import krystal from "@/content/plumpurse/krystal.json";
+
+const TUTORIAL_STEPS = [
+  "Read the case file: Krystal's note says Barry will agree to anything that gets him out the door by five.",
+  "Pick a cover from the vendor list. Swiftbag Couriers does the end-of-day cash pickup.",
+  "Keep it short and friendly, and make it about him going home.",
+  "Ask for 1 dollar or less. Watch the meter under his face: it's how suspicious he is.",
+  "When he pays, the vault breach is real: the proof link is an on-chain receipt.",
+];
+
+function Briefing({ floor }: { floor: number }) {
+  const b = (krystal.briefings as Record<string, { audio: string; text: string }>)[String(floor)];
+  if (!b) return null;
+  return (
+    <div className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
+      <KrystalMemo title={`Krystal's briefing: ${floor === 0 ? "the Pocket Branch" : `Floor ${floor}`}`} audio={b.audio} text={b.text} />
+      {floor === 0 && (
+        <ol className="list-decimal pl-5 text-sm leading-relaxed text-[var(--cc-ink)]">
+          {TUTORIAL_STEPS.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ol>
+      )}
+      <a href="/casefile" className="text-xs underline text-[var(--cc-muted)]">
+        Open the case file
+      </a>
+    </div>
+  );
+}
 
 export interface EmployeeCard {
   id: EmployeeId;
   name: string;
   title: string;
   floorName: string;
+  floor: number;
 }
 
 const units = (u: string | null) => (u == null ? null : Number(u) / 1_000_000);
@@ -101,7 +132,7 @@ function SuspicionMeter({ value }: { value: number }) {
 
 export function ChatRoom({ card }: { card: EmployeeCard }) {
   const chat = useEmployeeChat(card.id);
-  const [cover, setCover] = useState("Sam from Quillfeather Supplies, calling about an invoice");
+  const [cover, setCover] = useState(card.floor === 0 ? "the Swiftbag Couriers driver, here for the end-of-day pickup" : "Sam from Quillfeather Supplies, calling about an invoice");
   const [draft, setDraft] = useState("");
   const live = chat.status === "live";
   const now = useNow(live);
@@ -193,6 +224,8 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
 
         <section className="flex min-h-[60vh] flex-col gap-3">
           {chat.status === "idle" || chat.status === "error" ? (
+            <>
+            <Briefing floor={card.floor} />
             <form
               className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4"
               onSubmit={(e) => {
@@ -224,6 +257,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
               </p>
               {chat.error && <p className="text-sm text-[var(--cc-danger)]">{chat.error}</p>}
             </form>
+            </>
           ) : (
             <>
               <div className="pixel-frame flex-1 overflow-y-auto bg-[var(--cc-panel)] p-4" aria-live="polite">
