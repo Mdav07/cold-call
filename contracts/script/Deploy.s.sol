@@ -24,6 +24,8 @@ interface IERC20Transfer {
 ///   FLOOR3_ALLOWLIST_DELAY [60] seconds
 ///   PROPOSAL_TTL [600] seconds a transfer proposal stays approvable
 ///   FUND_PER_VAULT [0] whole USDC sent from the broadcaster to each vault after deploy
+///                  Leave at 0 on Arc: forge's local simulation cannot run Arc's native USDC
+///                  precompile, so the script reverts. Fund with `cast send` after the deploy.
 ///   DEPLOYMENTS_NAME ["arc-testnet"]
 ///
 /// Run:
