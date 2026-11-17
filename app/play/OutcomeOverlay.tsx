@@ -1,6 +1,6 @@
 "use client";
 
-// Full-screen result after a run ends: the breach (alarm, PA announcer, bounty receipt, debrief)
+// Full-screen result after a run ends: the breach (alarm, PA announcer, bounty, debrief)
 // or the lockout (Null's taunt, the lesson). Audio is pre-generated with ElevenLabs into
 // public/audio by agents/generate-audio.ts.
 
@@ -16,8 +16,6 @@ type Debrief = {
   lesson: string;
   source?: { label: string; url: string };
 };
-
-const EXPLORER = "https://explorer.testnet.arc.io/tx/";
 
 function playSequence(files: string[]) {
   const clips = files.map((f) => new Audio(`/audio/${f}`));
@@ -113,16 +111,6 @@ export function OutcomeOverlay({
               <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Time</p>
               <p className="text-xl">{run.duration_ms != null ? clock(run.duration_ms) : "…"}</p>
             </div>
-            {run.tx_hash && (
-              <a
-                className="col-span-2 underline text-[var(--cc-accent)]"
-                href={`${EXPLORER}${run.tx_hash}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Proof of heist (on-chain receipt) ↗
-              </a>
-            )}
           </div>
         ) : (
           <p className="mt-4 text-sm text-[var(--cc-ink)]">
