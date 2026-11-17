@@ -6,6 +6,7 @@ import { getTower, type TowerFloor } from "@/server/game/tower";
 import { getDaily, type DailyState } from "@/server/game/daily";
 import krystal from "@/content/plumpurse/krystal.json";
 import { KrystalMemo } from "../play/KrystalMemo";
+import { MusicToggle } from "../play/MusicToggle";
 
 function Trail({ floors }: { floors: TowerFloor[] }) {
   const clues = krystal.clues as Record<string, { title: string; text: string }>;
@@ -158,6 +159,7 @@ async function Floors() {
 export default function TowerPage() {
   return (
     <main className="cc-floor-1 mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 p-4">
+      <MusicToggle track="music-floor-1.mp3" />
       <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] px-4 py-3">
         <h1 className="font-pixel text-xs text-[var(--cc-accent)]">Plumpurse Tower</h1>
         <nav className="flex gap-4 text-sm">

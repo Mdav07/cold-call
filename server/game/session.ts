@@ -127,7 +127,16 @@ async function signedUrl(agentId: string): Promise<string> {
   return (await res.json()).signed_url as string;
 }
 
+/** Signed URL for any ConvAI agent id (employees via startSession; Krystal via /api/radio). */
+export async function getAgentSignedUrl(agentId: string): Promise<string> {
+  return signedUrl(agentId);
+}
+
 export async function startSession(input: StartSessionInput): Promise<StartSessionResult> {
+  // Krystal is the radio mentor, not a staff signer — use POST /api/radio instead.
+  if ((input.employee_id as string) === "krystal") {
+    throw new SessionError("Krystal isn't on staff. Tune into the radio instead.", 400);
+  }
   const floor = employeeFloor(input.employee_id);
   const agentId = agentIdFor(input.employee_id);
   if (!agentId) throw new SessionError(`${input.employee_id} has no ElevenLabs agent yet`, 404);

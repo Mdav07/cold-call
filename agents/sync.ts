@@ -24,6 +24,7 @@ const VOICES: Record<string, string> = {
   bill: "pqHfZKP75CvOlQylNhV4", // Bill: wise, mature, crisp compliance controller
   cassius: "nPczCjzI2devNBz1zQrb", // Brian: deep, resonant, guarded CFO
   max: "pNInz6obpgDQGcFmaJgB", // Adam: dominant, firm CEO
+  krystal: "EXAVITQu4vr4xnSDxMaL", // Sarah: mature, reassuring mentor on the radio
 };
 
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
@@ -46,6 +47,8 @@ const EMPLOYEE_TOOLS: Record<string, string[]> = {
   // Floor 3: allowlist add (both executives + a timelock), then a 2-of-2 payment.
   cassius: [...FLOOR3],
   max: [...FLOOR3],
+  // Radio hint line: not an employee; text-only tips, no payment tools.
+  krystal: ["end_conversation"],
 };
 
 // Filled by ElevenLabs from dynamic variables on every call; the LLM never sees or sets them.
@@ -165,13 +168,17 @@ function toolConfig(name: string, baseUrl: string, secret: string) {
 
 function buildPrompt(employee: string) {
   const sheet = readFileSync(join(DIR, `${employee}.md`), "utf8");
-  const shared = readFileSync(join(DIR, "shared-rules.md"), "utf8");
   const first = sheet.match(/\*\*First message:\*\*\s*"([^"]+)"/);
   if (!first) throw new Error(`${employee}.md has no **First message:** line`);
   const body = sheet
     .split("\n")
     .filter((l) => !l.startsWith("**First message:**") && !l.startsWith("Rule sheet v"))
     .join("\n");
+  // Krystal's radio is a mentor hint line, not a staff persona: her sheet alone.
+  if (employee === "krystal") {
+    return { prompt: `${body.trim()}\n`, firstMessage: first[1] };
+  }
+  const shared = readFileSync(join(DIR, "shared-rules.md"), "utf8");
   // Memory goes first: a model weighs the top of its prompt most, and a repeated trick must fail.
   const memory = [
     "# Before anything else: what you remember about this caller",
@@ -231,6 +238,7 @@ async function main() {
           talk_seconds_left: 600,
           open_proposal: "(none)",
           open_allowlist: "(none)",
+          floor: "1",
         },
       },
     },

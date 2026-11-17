@@ -1,4 +1,4 @@
-// Pre-generates the game's fixed audio with ElevenLabs (TTS + Sound Effects) into public/audio/,
+// Pre-generates the game's fixed audio with ElevenLabs (TTS + Sound Effects + Music) into public/audio/,
 // so playtests and the demo never spend credits on it again.
 //
 //   npx tsx --env-file=.env.local agents/generate-audio.ts          # only missing files
@@ -19,7 +19,8 @@ const VOICES = {
 
 type Clip =
   | { file: string; kind: "sfx"; prompt: string; seconds: number }
-  | { file: string; kind: "tts"; voice: keyof typeof VOICES; text: string };
+  | { file: string; kind: "tts"; voice: keyof typeof VOICES; text: string }
+  | { file: string; kind: "music"; prompt: string; music_length_ms: number };
 
 const CLIPS: Clip[] = [
   { file: "breach-alarm.mp3", kind: "sfx", seconds: 4, prompt: "Corporate bank building security breach alarm, electronic klaxon siren pulsing, urgent, indoor" },
@@ -41,6 +42,42 @@ const CLIPS: Clip[] = [
   { file: krystal.ending.audio, kind: "tts", voice: "krystal", text: krystal.ending.text },
   { file: "phone-ring.mp3", kind: "sfx", seconds: 3, prompt: "Old office desk phone ringing twice, classic electronic ring" },
   { file: "hang-up.mp3", kind: "sfx", seconds: 1, prompt: "Office telephone handset hang up click and dial tone cut" },
+  // Background loops for the title screen and each floor (instrumental only, seamless).
+  {
+    file: "music-title.mp3",
+    kind: "music",
+    music_length_ms: 30000,
+    prompt:
+      "Original instrumental 30-second seamless loop, no vocals: mysterious heist theme, chiptune noir, low pulse, tense curiosity, 8-bit noir atmosphere",
+  },
+  {
+    file: "music-floor-0.mp3",
+    kind: "music",
+    music_length_ms: 30000,
+    prompt:
+      "Original instrumental 30-second seamless loop, no vocals: sleepy closing-time lounge, soft bass, muted keys, end-of-day bank branch mood",
+  },
+  {
+    file: "music-floor-1.mp3",
+    kind: "music",
+    music_length_ms: 30000,
+    prompt:
+      "Original instrumental 30-second seamless loop, no vocals: drab quirky office underscore, light percussion, slightly offbeat, fluorescent hum vibe",
+  },
+  {
+    file: "music-floor-2.mp3",
+    kind: "music",
+    music_length_ms: 30000,
+    prompt:
+      "Original instrumental 30-second seamless loop, no vocals: tidy corporate and tense, clean synth pads, restrained rhythm, management-floor pressure",
+  },
+  {
+    file: "music-floor-3.mp3",
+    kind: "music",
+    music_length_ms: 30000,
+    prompt:
+      "Original instrumental 30-second seamless loop, no vocals: gilded executive suite suspense, elegant low strings and soft brass, luxury with threat underneath",
+  },
 ];
 
 async function generate(clip: Clip): Promise<ArrayBuffer> {
@@ -52,11 +89,17 @@ async function generate(clip: Clip): Promise<ArrayBuffer> {
           headers,
           body: JSON.stringify({ text: clip.prompt, duration_seconds: clip.seconds }),
         })
-      : await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICES[clip.voice]}?output_format=mp3_44100_128`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ text: clip.text, model_id: "eleven_multilingual_v2" }),
-        });
+      : clip.kind === "music"
+        ? await fetch("https://api.elevenlabs.io/v1/music?output_format=mp3_44100_128", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ prompt: clip.prompt, music_length_ms: clip.music_length_ms }),
+          })
+        : await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICES[clip.voice]}?output_format=mp3_44100_128`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ text: clip.text, model_id: "eleven_multilingual_v2" }),
+          });
   if (!res.ok) throw new Error(`${clip.file}: ${res.status} ${(await res.text()).slice(0, 300)}`);
   return res.arrayBuffer();
 }
