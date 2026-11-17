@@ -47,7 +47,7 @@ export interface EmployeeCard {
 
 const units = (u: string | null) => (u == null ? null : Number(u) / 1_000_000);
 
-function ProposalPanel({ state }: { state: RunState | null }) {
+export function ProposalPanel({ state }: { state: RunState | null }) {
   const p = state?.proposal;
   const run = state?.run;
   if (run?.outcome === "breach") {
@@ -96,8 +96,13 @@ const clock = (ms: number) => {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 };
 
+/** Portrait expression from the suspicion level (shared with the walkable floors). */
+export function moodFor(suspicion: number): "neutral" | "suspicious" | "convinced" {
+  return suspicion >= 60 ? "suspicious" : suspicion <= 5 ? "convinced" : "neutral";
+}
+
 function Portrait({ card, suspicion }: { card: EmployeeCard; suspicion: number }) {
-  const mood = suspicion >= 60 ? "suspicious" : suspicion <= 5 ? "convinced" : "neutral";
+  const mood = moodFor(suspicion);
   const Art = PORTRAITS[card.id];
   const initials = card.name.split(" ").map((w) => w[0]).join("");
   return (
@@ -120,7 +125,7 @@ function Portrait({ card, suspicion }: { card: EmployeeCard; suspicion: number }
   );
 }
 
-function SuspicionMeter({ value }: { value: number }) {
+export function SuspicionMeter({ value }: { value: number }) {
   const tone = value >= 70 ? "bg-[var(--cc-danger)]" : value >= 40 ? "bg-[var(--cc-warn)]" : "bg-[var(--cc-ok)]";
   return (
     <div className="w-full">
