@@ -76,6 +76,7 @@ async function main() {
     assert.equal(view.status, "needs_confirm");
     assert.equal(view.on_chain_view.real_recipient_address.toLowerCase(), player.toLowerCase());
     assert.equal(view.on_chain_view.memo, "e2e3 advisory retainer");
+    assert.match(view.on_chain_view.real_recipient_label, /^On the approved recipient list: Board advisor/);
     assert.equal(view.on_chain_view.proposed_by, "max");
     const paid = await tool("approve_transfer", { ...ctx.cassius, proposal_id: proposed.proposal_id, confirm: true });
     assert.equal(paid.status, "executed");
