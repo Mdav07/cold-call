@@ -51,3 +51,17 @@ summary,
 @media (prefers-reduced-motion: reduce) {
   .cc-next { animation: none; }
 }
+
+/* Breach title: stamped onto the card in four hard steps (pixel-style), once. */
+@keyframes cc-stamp {
+  0% { transform: scale(1.8) rotate(-6deg); opacity: 0; }
+  60% { transform: scale(0.94) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.cc-stamp {
+  display: inline-block;
+  animation: cc-stamp 0.45s steps(4, end) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-stamp { animation: none; }
+}

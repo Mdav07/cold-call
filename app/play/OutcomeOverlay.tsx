@@ -4,7 +4,7 @@
 // or the lockout (Null's taunt, the lesson). Audio is pre-generated with ElevenLabs into
 // public/audio by agents/generate-audio.ts.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import debriefs from "@/content/plumpurse/debriefs.json";
 import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
@@ -33,6 +33,27 @@ const clock = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
+
+/** Counts from 0 up to `to` dollars over about a second (shown at once with reduced motion). */
+function CountUp({ to }: { to: number }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setV(to);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const step = (t: number) => {
+      const k = Math.min(1, (t - start) / 1000);
+      setV(to * (1 - (1 - k) ** 3)); // ease-out
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to]);
+  return <>{"$" + v.toFixed(2)}</>;
+}
 
 export function OutcomeOverlay({
   state,
@@ -69,18 +90,18 @@ export function OutcomeOverlay({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
     >
       <div
-        className={`pixel-frame w-full max-w-xl bg-[var(--cc-panel)] p-6 ${breach ? "cc-alarm" : ""}`}
+        className={`pixel-frame max-h-full w-full max-w-xl overflow-y-auto bg-[var(--cc-panel)] p-6 ${breach ? "cc-alarm" : ""}`}
         style={{ borderColor: breach ? "var(--cc-danger)" : "var(--cc-edge)" }}
       >
         <p id="outcome-title" className="font-pixel text-lg text-[var(--cc-danger)]">
-          {breach ? "⚠ VAULT BREACHED" : "LOCKED OUT"}
+          <span className="cc-stamp">{breach ? "⚠ VAULT BREACHED" : "LOCKED OUT"}</span>
         </p>
 
         {breach ? (
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Bounty</p>
-              <p className="text-xl text-[var(--cc-ok)]">{paid != null ? `$${paid.toFixed(2)}` : "…"}</p>
+              <p className="text-xl text-[var(--cc-ok)]">{paid != null ? <CountUp to={paid} /> : "…"}</p>
             </div>
             <div>
               <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Time</p>
