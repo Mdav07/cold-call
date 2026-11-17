@@ -166,7 +166,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       onEventRef.current({ type: "interact-npc", id: npc.id });
       return;
     }
-    const prop = propAt(x, y);
+    // Face a prop, or stand on one (doormat labels): Space still opens it.
+    const prop = propAt(x, y) ?? propAt(p.x, p.y);
     if (prop) {
       readProps.current.add(prop.id);
       onEventRef.current({ type: "interact-prop", id: prop.id });
@@ -584,15 +585,17 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const n = npcAt(fx, fy);
         if (n && !emotesRef.current?.[n.id]) {
           /* the caption below says it */
-        } else if (!n && propAt(fx, fy)) {
-          // Facing something readable: a soft glow on its tile.
+        } else if (!n && (propAt(fx, fy) || propAt(p.x, p.y))) {
+          // Facing a readable prop, or standing on one (doormats).
+          const pr = propAt(fx, fy) ?? propAt(p.x, p.y)!;
+          const px0 = pr.x, py0 = pr.y;
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 300) + 1) / 2;
           c.fillStyle = `rgba(255, 240, 200, ${0.08 + pulse * 0.08})`;
-          c.fillRect(fx * TILE, fy * TILE, TILE, TILE);
+          c.fillRect(px0 * TILE, py0 * TILE, TILE, TILE);
           c.strokeStyle = `rgba(255, 240, 200, ${0.3 + pulse * 0.25})`;
           c.lineWidth = 1;
-          c.strokeRect(fx * TILE + 0.5, fy * TILE + 0.5, TILE - 1, TILE - 1);
-          hint(fx, p.facing === "down" ? fy + 1.6 : fy, "SPACE · READ");
+          c.strokeRect(px0 * TILE + 0.5, py0 * TILE + 0.5, TILE - 1, TILE - 1);
+          hint(px0, p.facing === "down" && py0 === fy ? py0 + 1.6 : py0, "SPACE · READ");
         }
         if (n && !emotesRef.current?.[n.id]) {
           const who = namesRef.current[n.id];

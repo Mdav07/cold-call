@@ -41,12 +41,12 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
       else ground[at(x, y)] = T.floor;
     }
 
-  // Back wall: three elevators; numbered doormat on the tile in front (y=3), doorway at y=2.
+  // Back wall: three elevators; numbered doormat on the doorway tile directly in front (y=2).
   const elevatorMats = { 1: T.mat1, 2: T.mat2, 3: T.mat3 } as const;
   for (const [n, x] of Object.entries(ELEVATORS)) {
     walls[at(x, 1)] = T.elevator;
     ground[at(x, 0)] = T.floor;
-    ground[at(x, 3)] = elevatorMats[Number(n) as 1 | 2 | 3];
+    ground[at(x, 2)] = elevatorMats[Number(n) as 1 | 2 | 3];
   }
   // Front wall: matching street / daily exits — opening in the wall (lobby carpet on the
   // threshold), one rectangular doormat on the tile in front (not doubled on the exit itself).
