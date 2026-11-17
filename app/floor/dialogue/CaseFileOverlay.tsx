@@ -58,15 +58,9 @@ export function CaseFileOverlay({ floor, onClose }: { floor: number; onClose: ()
         role="dialog"
         aria-modal="true"
         aria-label="Case file"
-        className="flex max-h-full w-full max-w-3xl flex-col gap-2 sm:max-h-[min(90dvh,52rem)]"
+        className="flex max-h-full w-full max-w-3xl flex-col sm:max-h-[min(90dvh,52rem)]"
       >
-        <div className="flex items-center justify-between gap-2">
-          <p className="font-pixel text-[10px] text-[#e2c27f]">Case file</p>
-          <button type="button" className="pixel-button" onClick={onClose}>
-            Close <span className="hidden sm:inline">(Esc)</span>
-          </button>
-        </div>
-        <CaseFile floor={floor} fill />
+        <CaseFile floor={floor} fill onClose={onClose} />
       </div>
     </div>
   );

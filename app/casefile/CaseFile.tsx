@@ -248,7 +248,7 @@ function Evidence({ floor }: { floor: number | "all" }) {
  * `floor` preselects that floor in the People, Calendar and Evidence filters.
  * `fill` makes the folder fill its parent and scroll inside the paper (for the overlay).
  */
-export function CaseFile({ floor, fill = false }: { floor?: number; fill?: boolean }) {
+export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fill?: boolean; onClose?: () => void }) {
   const [tab, setTab] = useState<TabId>("people");
   const [filter, setFilter] = useState<number | "all">(floor ?? "all");
   const id = useId();
@@ -268,7 +268,8 @@ export function CaseFile({ floor, fill = false }: { floor?: number; fill?: boole
 
   return (
     <div className={`flex flex-col ${fill ? "min-h-0 flex-1" : ""}`}>
-      <div role="tablist" aria-label="Case file" className="grid grid-cols-3 items-end gap-1 px-1 sm:flex sm:pl-3">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-end">
+      <div role="tablist" aria-label="Case file" className="grid flex-1 grid-cols-3 items-end gap-1 px-1 sm:flex sm:pl-3">
         {TABS.map((t, i) => {
           const on = tab === t.id;
           return (
@@ -285,7 +286,7 @@ export function CaseFile({ floor, fill = false }: { floor?: number; fill?: boole
               tabIndex={on ? 0 : -1}
               onClick={() => setTab(t.id)}
               onKeyDown={(e) => onTabKey(e, i)}
-              className={`shrink-0 rounded-t-md border-2 border-b-0 border-[#8a6a2f] px-2 font-pixel text-[9px] text-[#2b2420] sm:px-3 ${
+              className={`shrink-0 rounded-t-md border-2 border-b-0 border-[#8a6a2f] px-2 font-pixel text-[9px] text-[#2b2420] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a33a2a] sm:px-3 ${
                 on ? "relative top-[2px] z-10 bg-[#e2c27f] pb-2.5 pt-2" : "mt-1 bg-[#c9a560] pb-1.5 pt-1.5 hover:bg-[#d6b46e]"
               }`}
             >
@@ -293,6 +294,13 @@ export function CaseFile({ floor, fill = false }: { floor?: number; fill?: boole
             </button>
           );
         })}
+      </div>
+      {onClose && (
+        // The overlay's Close sits on the folder, at the end of the tab row.
+        <button type="button" onClick={onClose} className="pixel-button self-end !px-3 !py-1.5 sm:mb-1">
+          ✕ Close<span className="hidden sm:inline"> (Esc)</span>
+        </button>
+      )}
       </div>
       <div className={`border-2 border-[#8a6a2f] bg-[#e2c27f] p-2 shadow-[4px_4px_0_0_#15141a] sm:p-3 ${fill ? "flex min-h-0 flex-1 flex-col" : ""}`}>
         <div
