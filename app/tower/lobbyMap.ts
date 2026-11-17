@@ -11,7 +11,7 @@ const T = {
   floor: 12, wall: 13, window: 14, walltop: 15, elevator: 16,
   counter: 32, counterPapers: 33, counterFiles: 35, plant: 30, plantSmall: 31,
   painting: 49, bookshelf: 39, water: 40,
-  chairDown: 24, tableRound: 23,
+  chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
 } as const;
 
 const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
@@ -59,6 +59,15 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   put(16, 9, T.water);
   put(15, 2, T.bookshelf);
   put(3, 2, T.plantSmall);
+  // Portraits and candelabras on the back wall between the elevators (decor over the wall, not blocking).
+  for (const x of [7, 11]) put(x, 1, T.painting, false);
+  for (const x of [2, 16]) put(x, 1, T.candelabra, false);
+  // Benches for visitors along the side walls, and plants by the desk.
+  for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
+  put(6, 6, T.plantSmall);
+  put(12, 6, T.plantSmall);
+  put(13, 11, T.plant);
+  put(5, 11, T.plant);
 
   const byFloor = (n: number) => floors.find((f) => f.floor === n);
   const exits: NonNullable<FloorMap["exits"]> = [{ x: DOOR_X, y: H - 1, to: "/floor/0" }];
