@@ -56,7 +56,9 @@ function rng(seed: string): () => number {
 }
 
 type Cell = { x: number; y: number };
-type Kind = "counter" | "desk" | "other";
+// Clues go on boards, counters, desks and shelves only: never a plant, a table or the water cooler.
+type Kind = "counter" | "desk" | "shelf" | "other";
+const HOLDS_CLUES: Kind[] = ["counter", "desk", "shelf"];
 const DIRS: [number, number][] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
 
 /** One attempt at a room. Returns null if the layout breaks a rule (the caller reseeds). */
@@ -111,7 +113,6 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
   const raise = (x: number, tile: number) => {
     walls[idx(x, 1)] = tile;
     ground[idx(x, 1)] = skin.ground; // the door and boards are drawn over floor, as in the floors' maps
-    walls[idx(x, 0)] = skin.face; // and stand a tile taller than the wall
   };
   raise(doorX, T.elevator);
   const boards: Cell[] = [];
@@ -125,7 +126,9 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
   }
   for (const x of backXs) if (r() < 0.3) walls[idx(x, 1)] = skin.window;
 
-  const spawn = { x: doorX, y: 3, facing: "down" as Facing };
+  // The spawn is one tile beside the exit column: one step up from it must not ride you straight out.
+  const spawnX = doorX + 1 <= W - 2 && (doorX - 1 < 1 || r() < 0.5) ? doorX + 1 : doorX - 1;
+  const spawn = { x: spawnX, y: 3, facing: "down" as Facing };
   const exit = { x: doorX, y: 2 };
   // Kept clear: the exit, the spawn and the tile below it, the tile in front of each board.
   const reserved = new Set<number>([idx(exit.x, exit.y), idx(spawn.x, spawn.y), idx(spawn.x, spawn.y + 1), ...boards.map((b) => idx(b.x, 2))]);
@@ -223,16 +226,18 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
       kind = "counter";
     } else if (roll < 0.52) {
       // Shelves, cabinets and the copier stand against the back wall.
-      const tile = pick([T.bookshelf, T.cabinet, T.locker, T.copier]);
+      const tile = pick([T.bookshelf, T.bookshelf, T.cabinet, T.locker, T.copier]);
       cells = place(x, 2, Array.from({ length: tile === T.copier ? 1 : int(1, 3) }, () => tile));
-    } else if (roll < 0.62) {
-      cells = place(x, y, [T.cooler]);
+      if (tile !== T.copier) kind = "shelf";
     } else if (roll < 0.74) {
       cells = place(x, y, T.tableOval);
     } else if (roll < 0.84 && skin.ground === 12) {
       cells = place(x, 2, [pick([T.candelabra, ...T.paintings])]);
     } else {
-      cells = place(x, y, [pick([T.plant, T.plant, T.plantSmall])]);
+      // Plants and the water cooler stand against a wall, never out in the middle of the floor.
+      // (Each of these cells has a wall beside it: the back, front, left or right wall.)
+      const [px, py] = pick([[x, 2], [x, H - 2], [1, y], [W - 2, y]]);
+      cells = place(px, py, [r() < 0.3 ? T.cooler : pick([T.plant, T.plant, T.plantSmall])]);
     }
     if (cells) {
       surfaces.push({ cells, kind });
@@ -252,7 +257,7 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
   const seen = reach();
   const readable = (p: Cell) => DIRS.some(([dx, dy]) => seen.has(idx(p.x + dx, p.y + dy)));
   const spots: Cell[] = boards.filter(readable);
-  for (const s of shuffle([...surfaces])) {
+  for (const s of shuffle(surfaces.filter((s) => HOLDS_CLUES.includes(s.kind)))) {
     if (spots.length >= c.clues.length) break;
     // Not the tile right in front of the employee: their counter is theirs.
     const options = s.cells.filter((p) => readable(p) && !(p.x === talk.x && p.y === talk.y + 1));
