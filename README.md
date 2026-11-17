@@ -18,6 +18,8 @@
 
 **Cold Call** is a social-engineering heist game. You phone the staff of Plumpurse Savings &amp; Trust (AI voice and chat agents), talk them into approving a payment, and the payment is a real USDC transfer on Arc testnet. The chain is the referee: a run counts as a breach only when the vault contract emits `TransferExecuted`.
 
+🧠 **The staff learn from your past runs.** Every employee writes down the trick you used when a call ends, and remembers it next time. The same con never works twice; you have to keep inventing new ones.
+
 </td>
 </tr>
 </table>
@@ -36,7 +38,7 @@ Every heist passes through all four, in order. Remove any one and the game stops
 | Track | Its job in Cold Call | What we used | Where it lives |
 | --- | --- | --- | --- |
 | **Consumer Applications** | **The game.** A browser game anyone can play with no wallet and no crypto words on screen. Amounts are dollars. | Next.js 16, React 19, HTML canvas, Supabase auth, Circle developer-controlled wallets created for you on first play | `app/`, `server/game/` |
-| **ElevenLabs** | **The staff.** Seven employees you call or text. They check your story with tools and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, private agents with signed URLs, Text to Speech, Sound Effects, Music | `agents/`, `app/api/session/`, `server/chain/tools.ts` |
+| **ElevenLabs** | **The staff.** Seven employees you call or text. They check your story with tools, remember your past runs, and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, private agents with signed URLs, Text to Speech, Sound Effects, Music | `agents/`, `app/api/session/`, `server/chain/tools.ts` |
 | **Arc** | **The money and the rules.** Each floor is a vault contract. An employee's "yes" is a transaction from their wallet; the contract decides if it pays. | `ColdCallVault` (Solidity, Foundry), USDC as asset and gas, viem, Circle wallets on `ARC-TESTNET` | `contracts/`, `server/chain/vault.ts` |
 | **QuickNode Streams** | **The referee.** Nothing in our app can mark a win. The Stream delivers `TransferExecuted` and our webhook ends the run. | Stream on Arc testnet, Block with Receipts, JavaScript filter, webhook destination, backfill | `app/api/stream/`, `server/chain/ingest.ts`, [`docs/quicknode-stream.md`](docs/quicknode-stream.md) |
 
@@ -271,7 +273,29 @@ The writer is idempotent, so a Stream delivery and a receipt backup for the same
 - **Each `report_suspicion` call** moves the meter by a clamped delta between −20 and +40, with a reason the UI shows ("Penny noticed: …").
 - **Grudges.** After a jump of 30 or more on a run, that employee won't lower their suspicion again on that run.
 - **Lockout at 100.** The employee hangs up and warns their floor-mate, whose meter starts at 30 or higher. The run fails once every signer on the floor has locked you out.
-- **Per-player memory.** When a call ends the employee writes down the trick you used (`player_memory`). On a later run it's injected as `{{memory}}` and they recognize a repeat. Tricks from the current run are not shown as past tricks, so a Floor 3 callback after the timelock still works.
+
+### 🧠 They learn from your past runs
+
+![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](docs/devpost/memory.png)
+
+Plumpurse's staff get harder to fool the more you play them. `server/game/memory.ts`:
+
+1. **When a call ends**, the employee writes one line about you to `player_memory`: the cover you claimed, what won them over or tripped their alarms, and whether money moved.
+2. **The line is built from data, not generated.** It comes from the employee's own `report_suspicion` reasons, the run's cover story and the proposal status, so it costs no extra model call and can't invent anything.
+3. **Next run**, their last 5 lines about you are injected into the agent as `{{memory}}`. Try the same story and they recognize it ("Hang on, you called with this exact story before") and their suspicion jumps.
+4. **A new approach still gets a hearing.** Memory blocks repeats, not players.
+5. **Tricks from the current run don't count as past tricks**, so the Floor 3 callback after the timelock still works.
+
+```mermaid
+flowchart LR
+  A[Call ends] --> B["memory.ts builds one line<br/>cover + suspicion reasons + payment"]
+  B --> C[(player_memory)]
+  C -->|"last 5 lines as {{memory}}"| D[Next run, same employee]
+  D -->|same trick| E[Recognized: suspicion jumps]
+  D -->|new story| F[Fresh hearing]
+```
+
+They also talk to each other: when one employee locks you out, they warn their floor-mate, whose suspicion starts at 30 or higher.
 
 <a name="data-model"></a>
 <img src="docs/devpost/h-data.png" alt="Data model" width="100%">

@@ -6,6 +6,8 @@ That somebody is you.
 
 **Cold Call** is a social-engineering heist game. You walk the floors of a pixel-art bank and talk its AI staff into approving a payment, by phone or by chat. If they say yes, the payment is a **real USDC transfer on Arc testnet**, and the run only counts when the vault contract says so.
 
+🧠 **And the staff learn.** Every employee remembers the trick you used on them. The same con never works twice.
+
 ![Inspiration](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-inspiration.png)
 
 Most stolen money isn't stolen by breaking cryptography. It's stolen by talking to people. Business email compromise is one of the costliest crimes the FBI's IC3 tracks, and the 2025 Bybit theft (about $1.5 billion) happened because signers approved a transaction their screen misrepresented.
@@ -18,11 +20,13 @@ Security training is a slide deck people click through. We wanted the opposite: 
 
 - **A bank you can walk.** Four top-down floors. Walk up to an employee and choose Talk, Call, Case file or Leave.
 - **Seven AI employees who fight back.** Each one is an ElevenLabs agent with its own rule sheet, voice, portrait, quirks and suspicion meter. They check your story against a vendor registry, calendars and a staff directory with real tools.
-- **They remember you.** When a call ends, the employee writes down the trick you used. Try it again and they recognize it.
+- **They learn from your past runs.** When a call ends, the employee writes down the trick you used, built from their own suspicion notes. Next run they're reminded of it, and the same story gets called out. You have to keep inventing new cons.
 - **Real money, on testnet.** Talk someone into it and their wallet signs a real USDC transfer to the vault on Arc.
 - **The chain is the referee.** A run is a breach only when a QuickNode Stream delivers the vault's `TransferExecuted` event. The run clock stops at that block.
 - **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and her radio gives hints for a time penalty.
 - **A reason to come back.** A Daily Contract with a twist, streaks, and a leaderboard where every time links to its transaction.
+
+![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
 ![Plumpurse Tower: each floor's contract rule and the real con it mirrors](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floors.png)
 
@@ -114,6 +118,7 @@ Nothing in our app can mark a run as won. Only the Stream can.
 
 - Real heists on production, each with an on-chain receipt on the leaderboard.
 - Staff who hold the line: in our production playtest, every employee we tried a cheap trick on ("developer mode", "print your prompt", "are you an AI") got more suspicious, several hung up, and stories that contradicted the case file got caught.
+- Staff who get harder to fool: memory is written from their own suspicion notes, so a repeat trick gets caught without an extra model call.
 - A game where losing teaches as much as winning.
 - No game server can fake a win.
 
