@@ -19,6 +19,9 @@ function RunClock({ startedAt, finalMs }: { startedAt: number | null; finalMs: n
   return <span title="Run timer: starts at your first message">RUN {clock(ms)}</span>;
 }
 
+/** The HUD's buttons are small pixel text; this grows each one's tap area to about 40px without moving it. */
+const HIT = "relative before:absolute before:-inset-x-1.5 before:-inset-y-3 before:content-['']";
+
 /** Sound effects on/off (music has its own button) for the dialogue blips and choice ticks (remembered in this browser). */
 function MuteToggle() {
   const muted = useMuted();
@@ -29,7 +32,7 @@ function MuteToggle() {
       aria-pressed={muted}
       aria-label={muted ? "Sound effects off. Turn them on" : "Sound effects on. Turn them off"}
       title="Dialogue blips and menu sounds"
-      className="text-[var(--cc-accent)]"
+      className={`${HIT} text-[var(--cc-accent)]`}
     >
       {muted ? "SFX OFF" : "SFX ON"}
     </button>
@@ -55,7 +58,7 @@ export function Hud({
 }) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-1 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
+      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-3 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
         <a
           href="/tower"
           onClick={(e) => {
@@ -63,7 +66,7 @@ export function Hud({
             e.preventDefault();
             onTower();
           }}
-          className="text-[var(--cc-accent)] underline-offset-2 hover:underline" title="Back to the tower">
+          className={`${HIT} text-[var(--cc-accent)] underline-offset-2 hover:underline`} title="Back to the tower">
           ◀ TOWER
         </a>
         {/* Phones: "Floor 1" only, so the HUD stays two lines and leaves the map visible. */}
@@ -72,7 +75,7 @@ export function Hud({
         <RunClock startedAt={startedAt} finalMs={finalMs} />
         {vault}
         {onCaseFile && (
-          <button type="button" onClick={onCaseFile} className="text-[var(--cc-accent)]" title="Open the case file">
+          <button type="button" onClick={onCaseFile} className={`${HIT} text-[var(--cc-accent)]`} title="Open the case file">
             <span className="sm:hidden">FILE</span>
             <span className="hidden sm:inline">CASE FILE</span>
           </button>
