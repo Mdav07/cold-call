@@ -47,8 +47,9 @@ export interface FloorSceneProps {
   insetBottom?: number;
   /** Where the player should go next: a faint trail of dots leads there. Null hides it. */
   goal?: { x: number; y: number } | null;
-  /** Small text tags drawn on the map, e.g. "TUTORIAL" over a door. */
-  tags?: { x: number; y: number; text: string }[];
+  /** Small text tags drawn on the map, e.g. "TUTORIAL" over a door. Centred on tile x, or with
+   *  `endAt: "x"` the tag ends just left of tile x (a sign beside a door). */
+  tags?: { x: number; y: number; text: string; endAt?: "x" }[];
   /** Labels drawn above heads: NPC id -> name, plus "player" for the player's name. */
   names?: Partial<Record<string, string>>;
 }

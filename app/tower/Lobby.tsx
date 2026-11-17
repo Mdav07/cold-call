@@ -10,6 +10,7 @@ import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
+import { TUTORIAL_TAG } from "./lobbyMap";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
@@ -75,7 +76,7 @@ export function Lobby({
     const exit = map.exits?.find((e) => e.to === `/floor/${next}`);
     if (next == null || !exit) return { goal: null, tags: [] };
     return next === 0
-      ? { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y, text: "TUTORIAL" }] }
+      ? { goal: { x: exit.x, y: exit.y }, tags: [TUTORIAL_TAG] }
       : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }] };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
