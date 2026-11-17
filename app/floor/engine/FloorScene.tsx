@@ -11,6 +11,7 @@ const FRAME_W = 16;
 const FRAME_H = 32;
 const STEP_MS = 170; // time to walk one tile
 const VIEW_TILES = { w: 15, h: 10 }; // roughly how much of the floor fits on screen
+const MIN_SCALE = 2; // never draw the art smaller than 2x, even on a phone
 const ROW: Record<Facing, number> = { down: 0, left: 1, right: 2, up: 3 };
 const DELTA: Record<Facing, [number, number]> = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 const KEY_DIR: Record<string, Facing> = {
@@ -54,7 +55,7 @@ function isTyping(target: EventTarget | null) {
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
 }
 
-export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: FloorSceneProps) {
+export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBottom = 0 }: FloorSceneProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
@@ -66,6 +67,9 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
   });
   const npcFacing = useRef<Partial<Record<EmployeeId, Facing>>>({});
   const held = useRef<Facing[]>([]); // most recent last
+  const tapped = useRef<Facing | null>(null); // a key pressed and released before the next frame
+  const insetRef = useRef(insetBottom);
+  insetRef.current = insetBottom;
   const pausedRef = useRef(paused);
   const emotesRef = useRef(emotes);
   const onEventRef = useRef(onEvent);
@@ -83,7 +87,10 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
   }, [map]);
 
   useEffect(() => {
-    if (paused) held.current = [];
+    if (paused) {
+      held.current = [];
+      tapped.current = null;
+    }
   }, [paused]);
 
   // ---------- rules ----------
@@ -136,6 +143,7 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
       if (dir) {
         e.preventDefault();
         held.current = [...held.current.filter((d) => d !== dir), dir];
+        if (!e.repeat) tapped.current = dir;
       } else if (INTERACT_KEYS.has(e.code) && !e.repeat) {
         e.preventDefault();
         interact();
@@ -204,8 +212,10 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
           if (exit) onEventRef.current({ type: "exit", to: exit.to });
         }
       }
-      if (!p.moving && !pausedRef.current && held.current.length) {
-        const dir = held.current[held.current.length - 1];
+      const want = held.current[held.current.length - 1] ?? tapped.current;
+      if (!p.moving && !pausedRef.current && want) {
+        const dir = want;
+        tapped.current = null;
         p.facing = dir;
         const [dx, dy] = DELTA[dir];
         if (walkable(p.x + dx, p.y + dy)) {
@@ -232,7 +242,8 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
 
     const draw = (c: CanvasRenderingContext2D, w: number, h: number, now: number) => {
       const dpr = window.devicePixelRatio || 1;
-      const scale = Math.max(1, Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1);
+      const scale = Math.max(MIN_SCALE, Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1);
+      const inset = Math.min(insetRef.current, h * 0.6) / scale; // map pixels hidden under the dialogue box
       c.setTransform(1, 0, 0, 1, 0, 0);
       c.imageSmoothingEnabled = false;
       c.fillStyle = "#15141a";
@@ -246,7 +257,13 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes }: Floor
       const mapW = map.width * TILE;
       const mapH = map.height * TILE;
       const camX = mapW <= viewW ? (mapW - viewW) / 2 : Math.min(Math.max(px + TILE / 2 - viewW / 2, 0), mapW - viewW);
-      const camY = mapH <= viewH ? (mapH - viewH) / 2 : Math.min(Math.max(py + TILE / 2 - viewH / 2, 0), mapH - viewH);
+      // The visible area is the part above the inset; the camera may scroll past the map's bottom
+      // edge by the inset so the player is never hidden under the dialogue box.
+      const visH = viewH - inset;
+      const camY =
+        mapH <= visH
+          ? (mapH - visH) / 2
+          : Math.min(Math.max(py + TILE / 2 - visH / 2, 0), mapH - visH);
 
       // Whole pixels at the chosen scale keep the art crisp.
       c.setTransform(dpr * scale, 0, 0, dpr * scale, -Math.round(camX * scale) * dpr, -Math.round(camY * scale) * dpr);

@@ -43,4 +43,6 @@ export interface FloorSceneProps {
   onEvent: (e: SceneEvent) => void;
   /** NPC emotes drawn above heads, e.g. "!" when suspicious or a speech bubble while talking. */
   emotes?: Partial<Record<EmployeeId, "talking" | "suspicious" | "alarm" | null>>;
+  /** CSS pixels at the bottom covered by UI (the dialogue box). The camera keeps the player above it. */
+  insetBottom?: number;
 }

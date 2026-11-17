@@ -23,6 +23,7 @@ export default function EngineTest() {
           paused={!!talking}
           onEvent={onEvent}
           emotes={talking ? { [talking]: "talking" } : {}}
+          insetBottom={talking ? 190 : 0}
         />
         {talking && (
           <div className="pixel-frame absolute inset-x-4 bottom-4 bg-black p-4 font-pixel text-xs text-white">
