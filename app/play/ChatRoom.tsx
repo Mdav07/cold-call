@@ -10,6 +10,7 @@ import { KrystalMemo } from "./KrystalMemo";
 import { MusicToggle } from "./MusicToggle";
 import { EvidenceDrawer, type EvidenceItem } from "./EvidenceDrawer";
 import { PORTRAITS } from "./portraits";
+import { BackButton } from "@/app/ui/BackButton";
 import krystal from "@/content/plumpurse/krystal.json";
 
 export const TUTORIAL_STEPS = [
@@ -380,8 +381,11 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
         onClose={() => setEvidenceOpen(false)}
         onPresent={presentEvidence}
       />
-      <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] px-4 py-3">
-        <p className="font-pixel text-xs text-[var(--cc-ink)]">Plumpurse Tower · {card.floorName}</p>
+      <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] py-3 pl-3 pr-16 sm:px-4">
+        <div className="flex items-center gap-3">
+          <BackButton />
+          <p className="font-pixel text-xs text-[var(--cc-ink)]">Plumpurse Tower · {card.floorName}</p>
+        </div>
         <div className="flex gap-4 font-pixel text-xs text-[var(--cc-ink)]">
           <span title="Run timer: starts at your first message">RUN {clock(runMs)}</span>
           <span title="Talk time left with this employee">

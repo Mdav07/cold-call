@@ -1,6 +1,7 @@
 // Leaderboard (written by A for B, by agreement). Every row is a breach the chain confirmed:
 // the leaderboard view only includes runs whose TransferExecuted event the Stream stored.
 import Link from "next/link";
+import { BackButton } from "@/app/ui/BackButton";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import company from "@/content/plumpurse/company.json";
@@ -169,13 +170,9 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
 export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboard">) {
   return (
     <main className="cc-floor-1 mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 p-4">
-      <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] px-4 py-3">
+      <header className="pixel-frame flex items-center gap-3 bg-[var(--cc-panel)] px-3 py-2">
+        <BackButton />
         <h1 className="font-pixel text-xs text-[var(--cc-accent)]">Leaderboard</h1>
-        <nav className="flex gap-4 text-sm">
-          <Link className="underline" href="/tower">
-            Tower
-          </Link>
-        </nav>
       </header>
       <p className="text-xs text-[var(--cc-muted)]">
         Every time is from a real transfer on Arc testnet. The clock stops at the block that paid you.
