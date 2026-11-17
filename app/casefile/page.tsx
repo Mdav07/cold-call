@@ -1,9 +1,4 @@
 import Link from "next/link";
-import dossier from "@/content/plumpurse/dossier.json";
-import directory from "@/content/plumpurse/directory.json";
-import vendors from "@/content/plumpurse/vendors.json";
-import memos from "@/content/plumpurse/memos.json";
-import jargon from "@/content/plumpurse/jargon.json";
 import { CaseFile } from "./CaseFile";
 
 export default function CaseFilePage() {
@@ -15,13 +10,7 @@ export default function CaseFilePage() {
           Back to the tower
         </Link>
       </header>
-      <CaseFile
-        dossier={dossier}
-        employees={directory.employees}
-        vendors={vendors.vendors}
-        memos={memos.memos}
-        terms={jargon.terms}
-      />
+      <CaseFile />
     </main>
   );
 }
