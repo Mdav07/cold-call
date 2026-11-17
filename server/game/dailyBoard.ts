@@ -44,6 +44,47 @@ export async function dailyCleared(userId: string, date: string = todayUtc()): P
     .eq("user_id", userId)
     .eq("floor", DAILY_FLOOR)
     .eq("daily_date", date)
+    .eq("practice", false)
     .eq("outcome", "breach");
   return (count ?? 0) > 0;
+}
+
+export interface DailyStreak {
+  current: number; // days in a row up to today (or yesterday, if today isn't done yet)
+  best: number;
+}
+
+const prevDay = (d: string) => new Date(Date.parse(`${d}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
+
+/** Days in a row this player cleared the Daily Case on its own day (practice replays don't count). */
+export async function dailyStreak(userId: string, today: string = todayUtc()): Promise<DailyStreak> {
+  if (!hasDb()) return { current: 0, best: 0 };
+  const { data } = await db()
+    .from("runs")
+    .select("daily_date")
+    .eq("user_id", userId)
+    .eq("floor", DAILY_FLOOR)
+    .eq("practice", false)
+    .eq("outcome", "breach")
+    .not("daily_date", "is", null);
+  const days = new Set((data ?? []).map((r) => r.daily_date as string));
+  return streakOf(days, today);
+}
+
+/** Pure: the streak from a set of cleared days. */
+export function streakOf(days: Set<string>, today: string): DailyStreak {
+  let best = 0;
+  for (const d of days) {
+    if (days.has(prevDay(d))) continue; // not the start of a run of days
+    let n = 0;
+    for (let x = d; days.has(x); x = new Date(Date.parse(`${x}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10)) n++;
+    best = Math.max(best, n);
+  }
+  let current = 0;
+  let x = days.has(today) ? today : prevDay(today);
+  while (days.has(x)) {
+    current++;
+    x = prevDay(x);
+  }
+  return { current, best };
 }

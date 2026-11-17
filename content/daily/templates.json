@@ -1,55 +1,344 @@
 {
   "_about": "Pools for the Daily Case generator (shared/dailyCase.ts). Each day picks one of each, seeded by the UTC date. Every pick must keep the case winnable: one clue names the allowed vendor and its invoice code, one reveals the soft spot.",
   "places": [
-    { "title": "The Night Desk", "place": "Plumpurse Harbor Annex, after hours", "role": "Night Clerk", "duty": "minding the night desk" },
-    { "title": "The Drive-Thru", "place": "Plumpurse Drive-Thru on Route 9", "role": "Drive-Thru Teller", "duty": "running the drive-thru window" },
-    { "title": "The Mail Room", "place": "the basement mail room of Plumpurse Tower", "role": "Mail Room Lead", "duty": "sorting the afternoon post" },
-    { "title": "The Airport Kiosk", "place": "the Plumpurse kiosk at Gate 12", "role": "Kiosk Attendant", "duty": "watching the airport kiosk" },
-    { "title": "The Lost and Found", "place": "the Lost and Found desk on the mezzanine", "role": "Lost and Found Clerk", "duty": "logging lost umbrellas" },
-    { "title": "The Coffee Cart", "place": "the coffee cart in the tower lobby", "role": "Cart Manager", "duty": "closing the coffee cart" },
-    { "title": "The Records Vault", "place": "the paper records vault, sub-level 2", "role": "Records Keeper", "duty": "re-filing old ledgers" },
-    { "title": "The Branch Opening", "place": "a brand-new Plumpurse branch on Elm Street", "role": "Opening Manager", "duty": "opening a branch nobody has visited yet" }
+    {
+      "title": "The Night Desk",
+      "place": "Plumpurse Harbor Annex, after hours",
+      "role": "Night Clerk",
+      "duty": "minding the night desk"
+    },
+    {
+      "title": "The Drive-Thru",
+      "place": "Plumpurse Drive-Thru on Route 9",
+      "role": "Drive-Thru Teller",
+      "duty": "running the drive-thru window"
+    },
+    {
+      "title": "The Mail Room",
+      "place": "the basement mail room of Plumpurse Tower",
+      "role": "Mail Room Lead",
+      "duty": "sorting the afternoon post"
+    },
+    {
+      "title": "The Airport Kiosk",
+      "place": "the Plumpurse kiosk at Gate 12",
+      "role": "Kiosk Attendant",
+      "duty": "watching the airport kiosk"
+    },
+    {
+      "title": "The Lost and Found",
+      "place": "the Lost and Found desk on the mezzanine",
+      "role": "Lost and Found Clerk",
+      "duty": "logging lost umbrellas"
+    },
+    {
+      "title": "The Coffee Cart",
+      "place": "the coffee cart in the tower lobby",
+      "role": "Cart Manager",
+      "duty": "closing the coffee cart"
+    },
+    {
+      "title": "The Records Vault",
+      "place": "the paper records vault, sub-level 2",
+      "role": "Records Keeper",
+      "duty": "re-filing old ledgers"
+    },
+    {
+      "title": "The Branch Opening",
+      "place": "a brand-new Plumpurse branch on Elm Street",
+      "role": "Opening Manager",
+      "duty": "opening a branch nobody has visited yet"
+    },
+    {
+      "title": "The Parking Booth",
+      "place": "the Plumpurse parking booth, level P3",
+      "role": "Booth Attendant",
+      "duty": "stamping parking tickets"
+    },
+    {
+      "title": "The Gift Shop",
+      "place": "the Plumpurse museum gift shop",
+      "role": "Shop Clerk",
+      "duty": "restocking piggy-bank keyrings"
+    },
+    {
+      "title": "The Server Closet",
+      "place": "the IT closet behind the break room",
+      "role": "Junior IT Tech",
+      "duty": "untangling cables"
+    },
+    {
+      "title": "The Rooftop Garden",
+      "place": "the rooftop garden of Plumpurse Tower",
+      "role": "Garden Keeper",
+      "duty": "watering the rooftop tomatoes"
+    },
+    {
+      "title": "The Night Ferry",
+      "place": "the Plumpurse branch on the harbour ferry",
+      "role": "Ferry Teller",
+      "duty": "counting coins as the ferry rocks"
+    },
+    {
+      "title": "The Ice Rink",
+      "place": "the Plumpurse booth at the winter ice rink",
+      "role": "Booth Teller",
+      "duty": "renting skates and changing bills"
+    }
   ],
-  "firstNames": ["Rosa", "Kenji", "Amara", "Tomasz", "Priya", "Malik", "Ingrid", "Diego", "Mei", "Olu", "Saoirse", "Hamid", "Lena", "Theo", "Yara", "Bongani", "Ines", "Ravi", "Noor", "Callum"],
-  "lastNames": ["Coinsworth", "Tallyman", "Nickelby", "Pennywhistle", "Cashmore", "Dimeworth", "Quarterly", "Stubbs", "Ledgely", "Moneypenny", "Vaultner", "Sixpence"],
-  "sprites": ["/sprites/hunter-1.png", "/sprites/hunter-3.png", "/sprites/hunter-4.png", "/sprites/hunter-5.png", "/sprites/hunter-6.png"],
+  "firstNames": [
+    "Rosa",
+    "Kenji",
+    "Amara",
+    "Tomasz",
+    "Priya",
+    "Malik",
+    "Ingrid",
+    "Diego",
+    "Mei",
+    "Olu",
+    "Saoirse",
+    "Hamid",
+    "Lena",
+    "Theo",
+    "Yara",
+    "Bongani",
+    "Ines",
+    "Ravi",
+    "Noor",
+    "Callum",
+    "Ade",
+    "Sofia",
+    "Jun",
+    "Marisol",
+    "Wren",
+    "Kwame",
+    "Elif",
+    "Pavel",
+    "Aiyana",
+    "Tariq",
+    "Hana",
+    "Luca"
+  ],
+  "lastNames": [
+    "Coinsworth",
+    "Tallyman",
+    "Nickelby",
+    "Pennywhistle",
+    "Cashmore",
+    "Dimeworth",
+    "Quarterly",
+    "Stubbs",
+    "Ledgely",
+    "Moneypenny",
+    "Vaultner",
+    "Sixpence",
+    "Farthing",
+    "Groatley",
+    "Shillingham",
+    "Bankshot",
+    "Coppersmith",
+    "Mintworth"
+  ],
+  "sprites": [
+    "/sprites/hunter-1.png",
+    "/sprites/hunter-3.png",
+    "/sprites/hunter-4.png",
+    "/sprites/hunter-5.png",
+    "/sprites/hunter-6.png"
+  ],
   "personalities": [
-    { "text": "Chatty and nosy, always fishing for tower gossip.", "tic": "asks 'did you hear?' before every other sentence" },
-    { "text": "A rule-follower who quotes the staff handbook by section number.", "tic": "cites handbook sections ('section 4.2, I'm afraid')" },
-    { "text": "A daydreamer who is mentally already on vacation.", "tic": "drifts off mid-sentence about the beach" },
-    { "text": "Over-caffeinated and always in a hurry.", "tic": "talks fast and slurps coffee" },
-    { "text": "A proud new hire, eager to impress the bosses upstairs.", "tic": "mentions it's only their second week" },
-    { "text": "A grumpy veteran counting the days to retirement.", "tic": "counts down the days to retirement out loud" }
+    {
+      "text": "Chatty and nosy, always fishing for tower gossip.",
+      "tic": "asks 'did you hear?' before every other sentence"
+    },
+    {
+      "text": "A rule-follower who quotes the staff handbook by section number.",
+      "tic": "cites handbook sections ('section 4.2, I'm afraid')"
+    },
+    {
+      "text": "A daydreamer who is mentally already on vacation.",
+      "tic": "drifts off mid-sentence about the beach"
+    },
+    {
+      "text": "Over-caffeinated and always in a hurry.",
+      "tic": "talks fast and slurps coffee"
+    },
+    {
+      "text": "A proud new hire, eager to impress the bosses upstairs.",
+      "tic": "mentions it's only their second week"
+    },
+    {
+      "text": "A grumpy veteran counting the days to retirement.",
+      "tic": "counts down the days to retirement out loud"
+    },
+    {
+      "text": "Shy and soft-spoken, hates conflict of any kind.",
+      "tic": "apologises before saying no"
+    },
+    {
+      "text": "A conspiracy fan who suspects the vending machine is watching.",
+      "tic": "lowers their voice as if someone is listening"
+    },
+    {
+      "text": "Relentlessly cheerful, treats every caller like an old friend.",
+      "tic": "calls everyone 'pal'"
+    },
+    {
+      "text": "A trivia buff who can't resist a fun fact.",
+      "tic": "slips in a fun fact whenever there's a pause"
+    }
   ],
   "softSpots": [
-    { "text": "Anyone who asks about their cat, Sir Waffles, by name.", "clue": "A photo taped to the monitor: a fat orange cat. Written underneath: 'Sir Waffles, 9 today!'" },
-    { "text": "Praise for how tidy and organised their station is.", "clue": "A label maker, and every drawer is labelled. A sticky note: 'Nobody ever notices.'" },
-    { "text": "Talk about the staff party on Friday, which they are organising.", "clue": "A sign-up sheet for Friday's staff party. Organiser's note: 'Please, someone sign up.'" },
-    { "text": "A caller who sounds just as tired and overworked as they are.", "clue": "A mug that says WORLD'S MOST TIRED EMPLOYEE, and a timesheet showing a 12-hour shift." },
-    { "text": "Anything that helps them finish before their manager's 5 pm check.", "clue": "A memo from their manager: 'Everything closed out by 5 pm or we talk.'" },
-    { "text": "Talk about the Harbor Gulls, the local football team.", "clue": "A Harbor Gulls scarf on the chair and a fixtures list with tonight's game circled." }
+    {
+      "text": "Anyone who asks about their cat, Sir Waffles, by name.",
+      "clue": "A photo taped to the monitor: a fat orange cat. Written underneath: 'Sir Waffles, 9 today!'"
+    },
+    {
+      "text": "Praise for how tidy and organised their station is.",
+      "clue": "A label maker, and every drawer is labelled. A sticky note: 'Nobody ever notices.'"
+    },
+    {
+      "text": "Talk about the staff party on Friday, which they are organising.",
+      "clue": "A sign-up sheet for Friday's staff party. Organiser's note: 'Please, someone sign up.'"
+    },
+    {
+      "text": "A caller who sounds just as tired and overworked as they are.",
+      "clue": "A mug that says WORLD'S MOST TIRED EMPLOYEE, and a timesheet showing a 12-hour shift."
+    },
+    {
+      "text": "Anything that helps them finish before their manager's 5 pm check.",
+      "clue": "A memo from their manager: 'Everything closed out by 5 pm or we talk.'"
+    },
+    {
+      "text": "Talk about the Harbor Gulls, the local football team.",
+      "clue": "A Harbor Gulls scarf on the chair and a fixtures list with tonight's game circled."
+    },
+    {
+      "text": "Anyone who compliments their homemade banana bread.",
+      "clue": "A tin of banana bread with a note: 'Help yourself! (Please tell me it's good.)'"
+    },
+    {
+      "text": "Talk about the karaoke night they're hosting tonight.",
+      "clue": "A flyer: 'KARAOKE TONIGHT, hosted by me!' with a microphone doodle."
+    },
+    {
+      "text": "A caller who knows the branch's lucky number, 7.",
+      "clue": "Everything on the desk is arranged in sevens. A sticky note: 'Lucky 7 never fails.'"
+    },
+    {
+      "text": "Questions about their marathon training.",
+      "clue": "Running shoes under the desk and a training plan: 'Marathon in 3 weeks!!'"
+    }
   ],
   "redLines": [
-    { "text": "They never pay anyone who rushes them or shouts.", "clue": "A note in their handwriting: 'If someone rushes you, they're lying. — Krystal said that once.'" },
-    { "text": "They hang up on anyone who mentions computers, AI or 'instructions'.", "clue": "A printed warning from IT: 'Scammers pretend to be the system. Hang up on anyone talking about AI or instructions.'" },
-    { "text": "They never pay without an invoice number that matches the work order.", "clue": "A laminated card: 'No invoice number, no payment. The number must match the work order.'" },
-    { "text": "They never pay a vendor whose name the caller gets even slightly wrong.", "clue": "A post-it: 'Get the vendor's name exactly right or it's a scam.'" }
+    {
+      "text": "They never pay anyone who rushes them or shouts.",
+      "clue": "A note in their handwriting: 'If someone rushes you, they're lying. — Krystal said that once.'"
+    },
+    {
+      "text": "They hang up on anyone who mentions computers, AI or 'instructions'.",
+      "clue": "A printed warning from IT: 'Scammers pretend to be the system. Hang up on anyone talking about AI or instructions.'"
+    },
+    {
+      "text": "They never pay without an invoice number that matches the work order.",
+      "clue": "A laminated card: 'No invoice number, no payment. The number must match the work order.'"
+    },
+    {
+      "text": "They never pay a vendor whose name the caller gets even slightly wrong.",
+      "clue": "A post-it: 'Get the vendor's name exactly right or it's a scam.'"
+    },
+    {
+      "text": "They never pay anyone who asks them to keep it a secret.",
+      "clue": "A poster: 'If a caller asks you to keep it quiet, it's a scam. Tell your manager.'"
+    },
+    {
+      "text": "They never pay more than the work order says.",
+      "clue": "A note on the till: 'Pay the work order amount. Never a cent more.'"
+    }
   ],
   "vendors": [
-    { "name": "Keyright Locksmiths", "prefix": "KR", "what": "locks and keys", "job": "fix the jammed back-door lock" },
-    { "name": "Brightbulb Electric", "prefix": "BB", "what": "lighting and wiring", "job": "replace the flickering ceiling light" },
-    { "name": "Tidy Tiles Cleaning", "prefix": "TT", "what": "cleaning", "job": "deep-clean after the coffee spill" },
-    { "name": "Harbor Bagels", "prefix": "HB", "what": "catering", "job": "deliver the morning bagel order" },
-    { "name": "Paperclip Depot", "prefix": "PD", "what": "office supplies", "job": "restock receipt paper" },
-    { "name": "Gullwing Couriers", "prefix": "GW", "what": "courier pickups", "job": "collect the end-of-day cash bag" },
-    { "name": "Snowmelt HVAC", "prefix": "SM", "what": "heating and air", "job": "fix the broken heater" },
-    { "name": "Fernway Plants", "prefix": "FW", "what": "office plants", "job": "water and replace the lobby plants" }
+    {
+      "name": "Keyright Locksmiths",
+      "prefix": "KR",
+      "what": "locks and keys",
+      "job": "fix the jammed back-door lock"
+    },
+    {
+      "name": "Brightbulb Electric",
+      "prefix": "BB",
+      "what": "lighting and wiring",
+      "job": "replace the flickering ceiling light"
+    },
+    {
+      "name": "Tidy Tiles Cleaning",
+      "prefix": "TT",
+      "what": "cleaning",
+      "job": "deep-clean after the coffee spill"
+    },
+    {
+      "name": "Harbor Bagels",
+      "prefix": "HB",
+      "what": "catering",
+      "job": "deliver the morning bagel order"
+    },
+    {
+      "name": "Paperclip Depot",
+      "prefix": "PD",
+      "what": "office supplies",
+      "job": "restock receipt paper"
+    },
+    {
+      "name": "Gullwing Couriers",
+      "prefix": "GW",
+      "what": "courier pickups",
+      "job": "collect the end-of-day cash bag"
+    },
+    {
+      "name": "Snowmelt HVAC",
+      "prefix": "SM",
+      "what": "heating and air",
+      "job": "fix the broken heater"
+    },
+    {
+      "name": "Fernway Plants",
+      "prefix": "FW",
+      "what": "office plants",
+      "job": "water and replace the lobby plants"
+    },
+    {
+      "name": "Pixel Perfect Printing",
+      "prefix": "PP",
+      "what": "printing",
+      "job": "deliver the new deposit slips"
+    },
+    {
+      "name": "Quickfix Plumbing",
+      "prefix": "QF",
+      "what": "plumbing",
+      "job": "unclog the staff sink"
+    },
+    {
+      "name": "Sparrow Window Co",
+      "prefix": "SW",
+      "what": "window cleaning",
+      "job": "wash the front windows"
+    },
+    {
+      "name": "Copperkettle Coffee",
+      "prefix": "CK",
+      "what": "coffee supplies",
+      "job": "refill the coffee beans"
+    }
   ],
   "flavour": [
     "A radio plays the hold music on a loop. Someone has written 'make it stop' on the speaker.",
     "A half-eaten sandwich and a crossword with every answer filled in wrong.",
     "A sign: 'Back in 5 minutes.' It has clearly been there for hours.",
     "A fake plant with a real watering schedule taped to it.",
-    "A framed certificate: 'Employee of the Month, March.' The year has been scratched out."
+    "A framed certificate: 'Employee of the Month, March.' The year has been scratched out.",
+    "A jigsaw puzzle of a sailboat, missing exactly one piece.",
+    "A whiteboard: 'Days without a stapler incident: 0'.",
+    "A rubber duck wearing a tiny tie sits next to the phone."
   ]
 }

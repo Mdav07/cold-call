@@ -3,6 +3,7 @@
 // shared tileset so it follows the player's progress: a locked floor's elevator has no exit, only a sign.
 import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
+import { dailyCase, todayUtc } from "@/shared/dailyCase";
 
 const W = 19;
 const H = 13;
@@ -16,6 +17,7 @@ const T = {
 
 const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
 const DOOR_X = 9; // street door in the front wall
+export const DAILY_X = 15; // the Daily Case door, also in the front wall (open once the tutorial is cleared)
 
 const clock = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
@@ -45,6 +47,9 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   // Front wall: the street door (an opening in the wall).
   walls[at(DOOR_X, H - 1)] = -1;
   ground[at(DOOR_X, H - 1)] = T.floor;
+  // Front wall: the Daily Case door, a second opening right of the street door (wood mat: another room).
+  walls[at(DAILY_X, H - 1)] = -1;
+  ground[at(DAILY_X, H - 1)] = 0;
 
   const put = (x: number, y: number, tile: number, solid = true) => {
     decor[at(x, y)] = tile;
@@ -95,6 +100,17 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   }
 
   const p0 = byFloor(0);
+  // The Daily Case door opens once the tutorial is cleared (guests: Lobby.tsx checks this browser).
+  const today = dailyCase(todayUtc());
+  if (p0?.cleared) exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
+  else blocked.push(at(DAILY_X, H - 1));
+  props.push({
+    id: "daily-sign",
+    x: DAILY_X + 1,
+    y: H - 1,
+    label: `Daily Case · ${today.title}`,
+    text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+  });
   props.push({
     id: "street-sign",
     x: DOOR_X + 2,
@@ -146,15 +162,18 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
 /** The tutorial sign: on the front wall, ending just left of the street door (the note on the right is a prop). */
 export const TUTORIAL_TAG = { x: DOOR_X, y: H - 1, text: "TUTORIAL", endAt: "x" as const };
 
+/** The Daily Case door's sign, shown once the tutorial is cleared. */
+export const DAILY_TAG = { x: DAILY_X, y: H - 1, text: "DAILY CASE" };
+
 /** Where a player should head next from the lobby, and the tags that label it. */
 export function lobbyGuide(floors: TowerFloor[]): {
   goal: { x: number; y: number } | null;
-  tags: { x: number; y: number; text: string }[];
+  tags: { x: number; y: number; text: string; endAt?: "x" }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
   if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [TUTORIAL_TAG] };
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
-  if (!next) return { goal: null, tags: [] };
+  if (!next) return { goal: null, tags: [DAILY_TAG] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];
-  return { goal: { x, y: 2 }, tags: [{ x, y: 1, text: `FLOOR ${next.floor}` }] };
+  return { goal: { x, y: 2 }, tags: [{ x, y: 1, text: `FLOOR ${next.floor}` }, DAILY_TAG] };
 }

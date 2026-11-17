@@ -105,8 +105,14 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
   emotesRef.current = emotes;
   onEventRef.current = onEvent;
 
-  // Reset when the map changes.
+  // Reset when the map changes to another place. Not when the same place comes back: Next keeps a page
+  // you left mounted but hidden and re-runs its effects on return (lobby → case file → back), and a
+  // guest's lobby is rebuilt once their progress loads. Both used to throw the player back to spawn.
+  const placeRef = useRef<string | null>(null);
   useEffect(() => {
+    const place = `${map.floor}:${map.name}:${map.width}x${map.height}`;
+    if (placeRef.current === place) return;
+    placeRef.current = place;
     player.current = {
       x: map.spawn.x, y: map.spawn.y, tx: map.spawn.x, ty: map.spawn.y,
       facing: map.spawn.facing, t: 0, moving: false, frame: 0,
@@ -224,7 +230,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
     let last = performance.now();
     let nextIdleTurn = last + 2500;
     let raf = 0;
-    let exitsArmed = false;
+    // Armed unless the player starts on an exit (just arrived through it). A page coming back from
+    // hidden keeps the player where they stood, often beside a door, and that door must still work.
+    let exitsArmed = !map.exits?.some((e) => e.x === player.current.x && e.y === player.current.y);
     held.current = [];
     tapped.current = null;
 

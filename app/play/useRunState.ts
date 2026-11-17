@@ -21,7 +21,12 @@ export interface RunState {
     ended_at: string | null;
     duration_ms: number | null;
     payout_units: string | number | null;
+    /** The Daily Case: the case's date, and whether it's an earlier day's case (practice). */
+    daily_date?: string | null;
+    practice?: boolean;
   } | null;
+  /** The Daily Case only: the player's streak of days, counting this run if it cleared today's case. */
+  daily_streak?: { current: number; best: number } | null;
 }
 
 /** Polls /api/session/state while `active`. Replaced by Supabase Realtime once players sign in. */

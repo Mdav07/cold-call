@@ -38,6 +38,20 @@ export function todayUtc(ms: number = Date.now()): string {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
+/** How many days of cases the archive offers (today included). Earlier days are practice. */
+export const DAILY_ARCHIVE_DAYS = 7;
+
+/** Today first, then the days before it (UTC), `n` in all. */
+export function recentDailyDates(n: number = DAILY_ARCHIVE_DAYS, ms: number = Date.now()): string[] {
+  return Array.from({ length: n }, (_, i) => todayUtc(ms - i * 86_400_000));
+}
+
+/** A valid case date the archive offers (today or up to DAILY_ARCHIVE_DAYS - 1 days back), else null. */
+export function archiveDate(date: string | null | undefined, ms: number = Date.now()): string | null {
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  return recentDailyDates(DAILY_ARCHIVE_DAYS, ms).includes(date) ? date : null;
+}
+
 /** A small, fast, seeded PRNG (mulberry32) from a string. */
 function rng(seed: string): () => number {
   let h = 1779033703 ^ seed.length;

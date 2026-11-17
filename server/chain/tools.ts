@@ -108,6 +108,9 @@ interface Session {
   userId: string;
   playerWallet: Hex;
   dailyContract: boolean;
+  /** The Daily Case: the case this run plays, and whether it's an earlier day's (practice) case. */
+  dailyDate: string | null;
+  practice: boolean;
 }
 
 class Denied extends Error {}
@@ -127,7 +130,7 @@ async function loadSession(ctx: ToolContext): Promise<Session> {
 
   const { data: run } = await db()
     .from("runs")
-    .select("id, user_id, floor, ended_at, daily_contract_id")
+    .select("id, user_id, floor, ended_at, daily_contract_id, daily_date, practice")
     .eq("id", ctx.run_id)
     .maybeSingle();
   if (!run || run.ended_at) throw new Denied("run is not active");
@@ -148,6 +151,8 @@ async function loadSession(ctx: ToolContext): Promise<Session> {
     userId: run.user_id,
     playerWallet: user.wallet_address as Hex,
     dailyContract: Boolean(run.daily_contract_id),
+    dailyDate: run.daily_date ?? null,
+    practice: Boolean(run.practice),
   };
 }
 
@@ -233,13 +238,15 @@ async function allowedPayout(s: Session): Promise<bigint> {
   // Full pay only on the first clear of this floor, or on the day's first Daily Contract clear.
   // The Daily Case pays in full on the player's first clear of each day's case.
   let full = s.floor === DAILY_FLOOR ? false : s.dailyContract || (await isPaidDailyAttempt(s.userId, s.floor));
+  if (s.practice) return TOKEN_PAYOUT; // an earlier day's case: practice
   if (s.floor === DAILY_FLOOR) {
     const { count } = await db()
       .from("runs")
       .select("id", { count: "exact", head: true })
       .eq("user_id", s.userId)
       .eq("floor", DAILY_FLOOR)
-      .eq("daily_date", todayUtc())
+      .eq("daily_date", s.dailyDate ?? todayUtc())
+      .eq("practice", false)
       .eq("outcome", "breach");
     full = (count ?? 0) === 0;
   } else if (!full) {
@@ -488,20 +495,20 @@ type Handler = (input: never) => Promise<[unknown, AfterWork]>;
 
 /** B's functions (lookups, suspicion); the session is still checked first. */
 const lookup =
-  <I extends ToolContext, R>(fn: (input: I) => R | Promise<R>) =>
+  <I extends ToolContext, R>(fn: (input: I, s: Session) => R | Promise<R>) =>
   async (input: I): Promise<[unknown, AfterWork]> => {
     try {
-      await loadSession(input);
-      return [await fn(input), noAfter];
+      const s = await loadSession(input);
+      return [await fn(input, s), noAfter];
     } catch (err) {
       return [failure(err), noAfter];
     }
   };
 
 /** The Daily Case has its own vendor list each day (shared/dailyCase.ts); everyone else uses the registry. */
-function vendorCheck(input: CheckVendorListInput): CheckVendorListResult {
+function vendorCheck(input: CheckVendorListInput, s: Session): CheckVendorListResult {
   if (input.employee_id !== DAILY_EMPLOYEE) return checkVendorList(input);
-  const c = dailyCase(todayUtc());
+  const c = dailyCase(s.dailyDate ?? todayUtc());
   const q = normalizeName(String(input.vendor_name ?? ""));
   const v = q ? c.vendors.find((x) => {
     const name = normalizeName(x.name);

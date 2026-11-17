@@ -23,7 +23,7 @@ export interface FloorMap {
   npcs: { id: EmployeeId; x: number; y: number; facing: Facing; sprite: string }[];
   /** Things to read: a sign, a memo on a desk, the vendor registry. Opens the dialogue box with text only. */
   props?: { id: string; x: number; y: number; label: string; text: string }[];
-  exits?: { x: number; y: number; to: "/tower" | `/floor/${number}` }[];
+  exits?: { x: number; y: number; to: "/tower" | `/floor/${number}` | "/daily" }[];
 }
 
 /** Sprite sheet: 4 rows (down, left, right, up) x 4 walking frames, 16x32 px per frame. */

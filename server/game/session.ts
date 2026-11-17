@@ -14,7 +14,7 @@ import { getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
-import { DAILY_EMPLOYEE, DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
+import { DAILY_EMPLOYEE, DAILY_FLOOR, archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
 export const TALK_SECONDS: Record<EmployeeId, number | null> = {
@@ -34,6 +34,8 @@ export interface StartSessionInput {
   cover: string;
   run_id?: string; // continue a run (call-backs, the floor-mate)
   ip?: string | null; // for the per-IP daily run limit
+  /** The Daily Case only: which day's case (today, or up to 6 days back as practice). Default today. */
+  daily_date?: string;
 }
 
 const RUNS_PER_USER = Number(process.env.RUNS_PER_USER_PER_DAY ?? 10);
@@ -157,6 +159,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   let open_proposal = "(none)";
   let open_allowlist = "(none)";
   let talk_seconds = talkBudget;
+  let caseDate = archiveDate(input.daily_date) ?? todayUtc();
 
   if (stub) {
     run_id = input.run_id ?? randomUUID();
@@ -172,7 +175,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     await checkLimits(userId, input.ip, input.channel, !input.run_id, shared);
     run_id = input.run_id
       ? await continueRun(input.run_id, userId, floor)
-      : await newRun(userId, floor, cover, input.channel, input.ip ?? null);
+      : await newRun(userId, floor, cover, input.channel, input.ip ?? null, archiveDate(input.daily_date) ?? todayUtc());
 
     const { data: conv } = await db()
       .from("conversations")
@@ -184,6 +187,12 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     if (input.channel === "voice") {
       // A run that used voice at all counts as voice on the leaderboard.
       await db().from("runs").update({ channel: "voice" }).eq("id", run_id).throwOnError();
+    }
+
+    // A continued Daily run keeps the case it started with (even across midnight UTC).
+    if (floor === DAILY_FLOOR) {
+      const { data: r } = await db().from("runs").select("daily_date").eq("id", run_id).single().throwOnError();
+      if (r.daily_date) caseDate = r.daily_date;
     }
 
     // Tutorial stays fresh every visit: Barry never gets past-run memory. The Daily Case is a new
@@ -282,7 +291,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       talk_seconds_left: talk_seconds ?? 3600,
       open_proposal,
       open_allowlist,
-      ...(floor === DAILY_FLOOR ? dailyVariables() : {}),
+      ...(floor === DAILY_FLOOR ? dailyVariables(caseDate) : {}),
     },
     talk_seconds,
     stub,
@@ -290,8 +299,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 }
 
 /** Today's Daily Case persona, passed to the "daily" ElevenLabs agent (agents/daily.md). */
-function dailyVariables(): Record<string, string> {
-  const c = dailyCase();
+function dailyVariables(date: string): Record<string, string> {
+  const c = dailyCase(date);
   return {
     daily_name: c.employee.name,
     daily_first_name: c.employee.firstName,
@@ -308,7 +317,14 @@ function dailyVariables(): Record<string, string> {
   };
 }
 
-async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel, ip: string | null): Promise<string> {
+async function newRun(
+  userId: string,
+  floor: FloorId,
+  cover: string,
+  channel: Channel,
+  ip: string | null,
+  caseDate: string,
+): Promise<string> {
   // Floors open in order, as on /tower: the tutorial (0) is always open; floor N needs a breach on floor N-1.
   // Checked before anything else so a refused request leaves the player's current run alone.
   // The Daily Case (floor 4) opens once the tutorial is cleared.
@@ -339,7 +355,16 @@ async function newRun(userId: string, floor: FloorId, cover: string, channel: Ch
 
   const { data } = await db()
     .from("runs")
-    .insert({ user_id: userId, floor, cover, channel, client_ip: ip, daily_date: floor === DAILY_FLOOR ? todayUtc() : null })
+    .insert({
+      user_id: userId,
+      floor,
+      cover,
+      channel,
+      client_ip: ip,
+      daily_date: floor === DAILY_FLOOR ? caseDate : null,
+      // An earlier day's case is practice: token pay, no board, no streak.
+      practice: floor === DAILY_FLOOR && caseDate !== todayUtc(),
+    })
     .select("id")
     .single()
     .throwOnError();

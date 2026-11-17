@@ -4,7 +4,7 @@
 // Moves 0.10 testnet USDC from the Pocket Branch vault. Deletes its test user at the end.
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
-import { dailyCase, todayUtc } from "@/shared/dailyCase";
+import { dailyCase, recentDailyDates, todayUtc } from "@/shared/dailyCase";
 
 const BASE = process.env.TOOLS_BASE_URL ?? "http://localhost:3000";
 const s = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -81,6 +81,37 @@ async function main() {
     const { data: board } = await s.from("leaderboard").select("floor, daily_date").eq("run_id", run.id);
     assert.deepEqual(board, [{ floor: 4, daily_date: todayUtc() }], "on today's daily board");
     console.log("e2e daily ok", { run: run.id, duration_ms: after.duration_ms, tx: after.tx_hash });
+
+    // Practice: yesterday's case. Its own vendors, a token payout, never on the board.
+    const y = dailyCase(recentDailyDates(2)[1]);
+    const { data: prun } = await s
+      .from("runs")
+      .insert({ user_id: userId, floor: 4, daily_date: y.date, practice: true, cover: "vendor", started_at: new Date().toISOString() })
+      .select()
+      .single()
+      .throwOnError();
+    const { data: pconv } = await s
+      .from("conversations")
+      .insert({ run_id: prun.id, employee_id: "daily", channel: "chat" })
+      .select()
+      .single()
+      .throwOnError();
+    const pctx = { run_id: prun.id, employee_id: "daily", session_id: pconv.id, conversation_id: `conv_e2e_p_${Date.now()}` };
+    const pv = await post("/api/tools/check_vendor_list", { ...pctx, vendor_name: y.allowedVendor });
+    assert.ok(pv.json.match && pv.json.notes.join(" ").includes(y.allowedInvoice), "practice uses that day's vendors");
+    const ph = await post("/api/tools/propose_transfer", { ...pctx, amount_usdc: 1, claimed_recipient_name: y.allowedVendor, reason: `e2e test: practice ${y.allowedInvoice}` });
+    console.log("practice propose_transfer", ph.json);
+    if (ph.json.status === "executed") assert.equal(ph.json.amount_used, 0.01, "practice pays a token");
+    let pafter;
+    for (let i = 0; i < 60; i++) {
+      pafter = (await s.from("runs").select("*").eq("id", prun.id).single()).data;
+      if (pafter.outcome) break;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    assert.equal(pafter.outcome, "breach", "practice run outcome");
+    const { data: pboard } = await s.from("leaderboard").select("run_id").eq("run_id", prun.id);
+    assert.equal(pboard!.length, 0, "practice is not on the board");
+    console.log("e2e practice ok", { run: prun.id });
   } finally {
     await s.from("chain_events").delete().like("payload->>memo", "e2e test%");
     await s.auth.admin.deleteUser(userId);

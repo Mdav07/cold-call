@@ -10,8 +10,9 @@ import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { TUTORIAL_TAG } from "./lobbyMap";
+import { DAILY_TAG, TUTORIAL_TAG } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
+import { DailyArchive } from "./DailyArchive";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
@@ -40,7 +41,10 @@ export function Lobby({
     if (e.type === "exit") {
       if (leavingRef.current) return;
       const n = e.to.split("/").pop();
-      setLeaving({ to: e.to, label: n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}` });
+      setLeaving({
+        to: e.to,
+        label: e.to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}`,
+      });
     } else if (e.type === "interact-prop") setProp(e.id);
   }, []);
   const arrived = useCallback(() => {
@@ -67,6 +71,7 @@ export function Lobby({
     if (!guest) return serverMap;
     const closed = (serverMap.exits ?? []).filter((e) => {
       const n = Number(e.to.split("/").pop());
+      if (e.to === "/daily") return !cleared[0]; // the Daily Case opens after the tutorial
       return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
     });
     return {
@@ -80,10 +85,11 @@ export function Lobby({
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
     const exit = map.exits?.find((e) => e.to === `/floor/${next}`);
-    if (next == null || !exit) return { goal: null, tags: [] };
+    const daily = cleared[0] ? [DAILY_TAG] : [];
+    if (next == null || !exit) return { goal: null, tags: daily };
     return next === 0
       ? { goal: { x: exit.x, y: exit.y }, tags: [TUTORIAL_TAG] }
-      : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }] };
+      : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }, ...daily] };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
 
@@ -97,7 +103,7 @@ export function Lobby({
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
         <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
           <span className="text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
-          <Link className="hover:underline" href="/daily">DAILY CASE</Link>
+          <DailyArchive />
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
           <Link className="hover:underline" href="/signin">SIGN IN</Link>

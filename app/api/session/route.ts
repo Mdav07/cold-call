@@ -6,6 +6,8 @@ const Body = z.object({
   channel: z.enum(["chat", "voice"]).default("chat"),
   cover: z.string().max(200).default(""),
   run_id: z.uuid().optional(),
+  // The Daily Case: which day's case (today, or up to 6 days back as practice).
+  daily_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 /** POST /api/session: start a chat or call with one employee. */
