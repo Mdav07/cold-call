@@ -21,6 +21,8 @@ const KEY_DIR: Record<string, Facing> = {
 };
 const INTERACT_KEYS = new Set(["Space", "Enter", "KeyE"]);
 const OPPOSITE: Record<Facing, Facing> = { up: "down", down: "up", left: "right", right: "left" };
+/** board_* indexes in app/floor/maps/tiles.json — glints sit on the pinned notes, not tile-center. */
+const BOARD_TILES = new Set([54, 55, 56, 57]);
 
 interface Walker {
   x: number; // tile the walker is on (or leaving)
@@ -490,8 +492,11 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const near = Math.abs(pr.x - p.x) + Math.abs(pr.y - p.y) <= 2;
         const tw = reduceMotion ? 0.6 : (Math.sin(now / 520 + pr.x * 1.7 + pr.y) + 1) / 2;
         const a = near ? 0.55 + tw * 0.45 : 0.12 + tw * 0.3;
-        // Sit the sparkle on the cork face (board frame is flush with the tile top).
-        const gx = pr.x * TILE + 11, gy = pr.y * TILE + 4;
+        // Cork boards: sit on the pinned notes. Everything else (elevators, counters): tile center.
+        const wallTile = map.layers.walls[pr.y * map.width + pr.x];
+        const onBoard = BOARD_TILES.has(wallTile);
+        const gx = pr.x * TILE + (onBoard ? 11 : 8);
+        const gy = pr.y * TILE + (onBoard ? 4 : 6);
         c.fillStyle = `rgba(255, 246, 214, ${a})`;
         c.fillRect(gx, gy - 1, 1, 3);
         c.fillRect(gx - 1, gy, 3, 1);
@@ -504,29 +509,30 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Door signs: a small backlit office sign, like an elevator floor indicator. Dark housing with a
-      // lighter bevel, amber lettering with a faint glow, and the same hard drop shadow as the HUD panels.
-      for (const t of tagsRef.current ?? []) {
-        c.font = `${5 * u}px ${pixelFont}, monospace`;
-        c.textAlign = "center";
-        c.textBaseline = "alphabetic";
-        const tw = Math.round(c.measureText(t.text).width + 6 * u);
-        const th = Math.round(7 * u);
-        const x0 = Math.round(t.endAt === "x" ? t.x * TILE - 3 - tw : t.x * TILE + TILE / 2 - tw / 2);
-        const y0 = Math.round(t.y * TILE - 2 - th / 2);
-        const glow = reduceMotion ? 0.5 : (Math.sin(now / 900) + 1) / 2; // a slow, gentle hum
-        c.fillStyle = "rgba(10, 9, 14, 0.55)"; // drop shadow
-        c.fillRect(x0 + 1, y0 + 1, tw + 1, th + 1);
-        c.fillStyle = "#15141a"; // outline
-        c.fillRect(x0 - 1, y0 - 1, tw + 2, th + 2);
-        c.fillStyle = "#2a2833"; // housing
-        c.fillRect(x0, y0, tw, th);
-        c.fillStyle = "#3d3a4a"; // top bevel
-        c.fillRect(x0, y0, tw, 1);
-        c.fillStyle = `rgba(244, 201, 93, ${0.1 + glow * 0.06})`; // the backlight behind the lettering
-        c.fillRect(x0 + 1, y0 + 2, tw - 2, th - 3);
-        c.fillStyle = "#f4c95d";
-        c.fillText(t.text, x0 + tw / 2, y0 + th / 2 + 2.5 * u);
+      // Door labels: same quiet nameplate as NPC names, centred on the doormat.
+      // TUTORIAL + DAILY CASE stay visible from spawn; FLOOR N lights up when close.
+      if (!pausedRef.current) {
+        for (const t of tagsRef.current ?? []) {
+          const always = t.text === "TUTORIAL" || t.text === "DAILY CASE";
+          const dist = Math.abs(p.x - t.x) + Math.abs(p.y - t.y);
+          if (!always && dist > 3) continue;
+          const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
+          c.globalAlpha = a;
+          c.font = `${5 * u}px ${pixelFont}, monospace`;
+          c.textAlign = "center";
+          c.textBaseline = "middle";
+          const pad = 4 * u;
+          const wdt = Math.ceil(c.measureText(t.text).width + pad);
+          const h = Math.round(6 * u);
+          // endAt "x": plate sits just left of the tile; otherwise centred on the mat.
+          const cx = Math.round(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2);
+          const cy = Math.round(t.y * TILE + TILE / 2);
+          c.fillStyle = "rgba(21, 20, 26, 0.82)";
+          c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
+          c.fillStyle = "#f4c95d";
+          c.fillText(t.text, cx, cy + u);
+          c.globalAlpha = 1;
+        }
       }
 
       // Emotes and the "you can talk here" hint.

@@ -13,6 +13,7 @@ const T = {
   counter: 32, counterPapers: 33, counterFiles: 35, plant: 30, plantSmall: 31,
   painting: 49, bookshelf: 39, water: 40,
   chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
+  matTutorial: 61, matDaily: 62, // cute welcome mats (tools/art/door_mats.py)
 } as const;
 
 const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
@@ -44,12 +45,13 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
     walls[at(x, 1)] = T.elevator;
     ground[at(x, 0)] = T.floor;
   }
-  // Front wall: the street door (an opening in the wall).
-  walls[at(DOOR_X, H - 1)] = -1;
-  ground[at(DOOR_X, H - 1)] = T.floor;
-  // Front wall: the Daily Case door, a second opening right of the street door (wood mat: another room).
-  walls[at(DAILY_X, H - 1)] = -1;
-  ground[at(DAILY_X, H - 1)] = 0;
+  // Front wall: matching street / daily doors — same opening, cute doormats on the threshold
+  // and one step inside (Stardew-style welcome mats so both exits read the same).
+  for (const [x, mat] of [[DOOR_X, T.matTutorial], [DAILY_X, T.matDaily]] as const) {
+    walls[at(x, H - 1)] = -1;
+    ground[at(x, H - 1)] = mat;
+    ground[at(x, H - 2)] = mat;
+  }
 
   const put = (x: number, y: number, tile: number, solid = true) => {
     decor[at(x, y)] = tile;
@@ -85,10 +87,10 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
     const best = f?.bestMs != null ? ` Your best: ${clock(f.bestMs)}.` : "";
     const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
     const status = !f ? "" : f.cleared ? "CLEARED" : f.unlocked ? "OPEN" : "LOCKED";
-    // A sign on the wall beside each elevator: read it by facing the wall next to the doors.
+    // A sign on the elevator doors: face the doors (from the doorway tile) to read it.
     props.push({
       id: `sign-${n}`,
-      x: x + 1,
+      x,
       y: 1,
       label: `Floor ${n} · ${f?.name ?? ""} · ${status}`,
       text: f?.unlocked
@@ -104,16 +106,17 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   const today = dailyCase(todayUtc());
   if (p0?.cleared) exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
   else blocked.push(at(DAILY_X, H - 1));
+  // Signs live on the doorway mats — face the mat / walk onto it and press Space.
   props.push({
     id: "daily-sign",
-    x: DAILY_X + 1,
+    x: DAILY_X,
     y: H - 1,
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
   props.push({
     id: "street-sign",
-    x: DOOR_X + 2,
+    x: DOOR_X,
     y: H - 1,
     label: `Across the street · ${p0?.name ?? "Pocket Branch"}${p0?.cleared ? " · CLEARED" : ""}`,
     text: "The tutorial: Barry is closing up the Pocket Branch. Walk out through the door to try your first con.",
@@ -159,11 +162,9 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   };
 }
 
-/** The tutorial sign: on the front wall, ending just left of the street door (the note on the right is a prop). */
-export const TUTORIAL_TAG = { x: DOOR_X, y: H - 1, text: "TUTORIAL", endAt: "x" as const };
-
-/** The Daily Case door's sign, shown once the tutorial is cleared. */
-export const DAILY_TAG = { x: DAILY_X, y: H - 1, text: "DAILY CASE" };
+/** Labels centred on each doormat (always visible from spawn when shown). */
+export const TUTORIAL_TAG = { x: DOOR_X, y: H - 2, text: "TUTORIAL" };
+export const DAILY_TAG = { x: DAILY_X, y: H - 2, text: "DAILY CASE" };
 
 /** Where a player should head next from the lobby, and the tags that label it. */
 export function lobbyGuide(floors: TowerFloor[]): {

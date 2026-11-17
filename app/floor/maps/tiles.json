@@ -245,6 +245,14 @@
     "counter_sign": {
       "index": 60,
       "kind": "block"
+    },
+    "mat_tutorial": {
+      "index": 61,
+      "kind": "walk"
+    },
+    "mat_daily": {
+      "index": 62,
+      "kind": "walk"
     }
   }
 }

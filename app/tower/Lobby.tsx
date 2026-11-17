@@ -102,17 +102,18 @@ export function Lobby({
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-        <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
-          <span className="text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
+        <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-2 gap-y-2 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
+          <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
+          <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
           <span className="flex items-center gap-2">
             <DailyArchive />
             <StreakBadge />
           </span>
-          <Link className="hover:underline" href="/casefile">CASE FILE</Link>
-          <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
-          <Link className="hover:underline" href="/signin">SIGN IN</Link>
-          <Link className="hover:underline" href="/hunter">YOUR HUNTER</Link>
-          <Link className="hover:underline" href="/intro">REPLAY INTRO</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/signin">SIGN IN</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/hunter">YOUR HUNTER</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>
       <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] [@media(pointer:fine)]:block">

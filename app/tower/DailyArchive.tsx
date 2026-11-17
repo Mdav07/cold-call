@@ -43,7 +43,12 @@ export function DailyArchive() {
 
   return (
     <div ref={wrap} className="relative">
-      <button type="button" className="hover:underline" aria-expanded={open} onClick={toggle}>
+      <button
+        type="button"
+        className="border-2 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-2 py-1 text-[var(--cc-accent)] hover:bg-[var(--cc-accent)] hover:text-[var(--cc-edge)]"
+        aria-expanded={open}
+        onClick={toggle}
+      >
         DAILY CASE {open ? "▴" : "▾"}
       </button>
       {open && (
