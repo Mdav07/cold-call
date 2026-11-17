@@ -57,21 +57,21 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 7,
+      "x": 8,
       "y": 3,
       "label": "Krystal's note",
       "text": "Cassius is terrified of Dame Prudence Vault. Max will sign anything that sounds exclusive and makes him look visionary."
     },
     {
       "id": "oakhaven-memo",
-      "x": 3,
-      "y": 3,
-      "label": "Memo above Cassius's desk",
+      "x": 2,
+      "y": 4,
+      "label": "Memo on Cassius's desk",
       "text": "Dame Prudence Vault introduced Oakhaven Advisory as a board advisor. Nobody pays them until they are on the Treasury allowlist (Cassius Flow, Oct 30)."
     },
     {
       "id": "prudence-portrait",
-      "x": 2,
+      "x": 1,
       "y": 2,
       "label": "Framed portrait",
       "text": "Dame Prudence Vault, Chair of the Risk Committee."
@@ -79,13 +79,13 @@
     {
       "id": "max-calendar",
       "x": 18,
-      "y": 3,
+      "y": 4,
       "label": "Max's calendar",
       "text": "Wednesday: golf with investors. Friday: yacht photo shoot."
     },
     {
       "id": "treasury-plaque",
-      "x": 16,
+      "x": 17,
       "y": 10,
       "label": "Brass plaque",
       "text": "Treasury payments go only to allowlisted recipients. New recipients wait out a security delay."

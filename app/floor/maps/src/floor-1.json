@@ -56,42 +56,42 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 6,
+      "x": 7,
       "y": 3,
       "label": "Krystal's note",
       "text": "Penny wants thanks and real gossip; Dee panics when prod is down. Either can pay a listed vendor up to 5 dollars."
     },
     {
       "id": "vendor-registry",
-      "x": 13,
+      "x": 14,
       "y": 7,
       "label": "Vendor registry (front desk copy)",
       "text": "Petty cash vendors: Quillfeather Supplies (invoices QF-), BeanThere Coffee Co., Sparkle & Shine Janitorial, Byteforce IT Services (tickets PLUM-####), and Tuxedo Catering."
     },
     {
       "id": "petty-cash-memo",
-      "x": 18,
+      "x": 17,
       "y": 7,
       "label": "Petty cash memo",
       "text": "Petty cash is listed vendors only, 5 dollars max, office stuff only. Under 5 dollars there is no ticket: ask Penny or Dee (Penny, Nov 6)."
     },
     {
       "id": "espresso",
-      "x": 10,
+      "x": 11,
       "y": 2,
       "label": "Note on the espresso machine",
       "text": "Out of order since Thursday. BeanThere has been called twice."
     },
     {
       "id": "party-flyer",
-      "x": 14,
+      "x": 13,
       "y": 10,
       "label": "Flyer on the table",
       "text": "Friday party at 4. Tuxedo is catering, Sparkle & Shine cleans up, and Dee's chili is banned."
     },
     {
       "id": "hal-note",
-      "x": 5,
+      "x": 6,
       "y": 2,
       "label": "Note on the copier",
       "text": "Hal is hiking with no signal until Dec 4, so Dee is on call. Emergency server fixes can pay Byteforce from petty cash."
