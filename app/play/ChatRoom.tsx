@@ -6,6 +6,7 @@ import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
 import { KrystalMemo } from "./KrystalMemo";
+import { EvidenceDrawer, type EvidenceItem } from "./EvidenceDrawer";
 import { PORTRAITS } from "./portraits";
 import krystal from "@/content/plumpurse/krystal.json";
 
@@ -144,6 +145,8 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
   const chat = useEmployeeChat(card.id);
   const [cover, setCover] = useState(card.floor === 0 ? "the Swiftbag Couriers driver, here for the end-of-day pickup" : "Sam from Quillfeather Supplies, calling about an invoice");
   const [draft, setDraft] = useState("");
+  const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [evidenceHint, setEvidenceHint] = useState<string | null>(null);
   const live = chat.status === "live";
   const now = useNow(live);
   // Poll from the first session until the run ends, including between calls.
@@ -185,6 +188,20 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
     if (outOfTime) hangUp();
   }, [outOfTime, hangUp]);
 
+  const openEvidence = () => {
+    if (voice) {
+      setEvidenceHint("switch to chat to present evidence");
+      return;
+    }
+    setEvidenceHint(null);
+    setEvidenceOpen(true);
+  };
+
+  const presentEvidence = (text: string, item: EvidenceItem) => {
+    chat.send(`[EVIDENCE: ${item.label}: ${text}]`);
+    setEvidenceOpen(false);
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4">
       {showOutcome && state && (
@@ -198,6 +215,12 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
           onClose={() => setDismissedRun(chat.session?.run_id ?? null)}
         />
       )}
+      <EvidenceDrawer
+        floor={card.floor}
+        open={evidenceOpen}
+        onClose={() => setEvidenceOpen(false)}
+        onPresent={presentEvidence}
+      />
       <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] px-4 py-3">
         <p className="font-pixel text-xs text-[var(--cc-ink)]">Plumpurse Tower · {card.floorName}</p>
         <div className="flex gap-4 font-pixel text-xs text-[var(--cc-ink)]">
@@ -305,6 +328,11 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                 </div>
               )}
 
+              {evidenceHint && (
+                <p className="text-xs text-[var(--cc-warn)]" role="status">
+                  {evidenceHint}
+                </p>
+              )}
               {voice ? (
                 <div className="pixel-frame flex flex-wrap items-center justify-between gap-3 bg-[var(--cc-panel)] px-4 py-3">
                   <p className="font-pixel text-xs text-[var(--cc-ink)]" aria-live="polite">
@@ -317,6 +345,9 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                           : "☎ Your turn: speak"}
                   </p>
                   <div className="flex gap-2">
+                    <button type="button" className="pixel-button" onClick={openEvidence} disabled={!live}>
+                      Evidence
+                    </button>
                     <button type="button" className="pixel-button" onClick={chat.toggleMute} disabled={!live}>
                       {chat.muted ? "Unmute" : "Mute"}
                     </button>
@@ -342,7 +373,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                   aria-label="Message"
                   className="pixel-frame flex-1 bg-[var(--cc-panel-2)] px-3 py-2 text-[var(--cc-ink)] outline-none disabled:opacity-50"
                 />
-                <button type="button" className="pixel-button" disabled title="Evidence drawer comes later">
+                <button type="button" className="pixel-button" onClick={openEvidence} disabled={!live}>
                   Evidence
                 </button>
                 <button type="submit" className="pixel-button" disabled={!live || !draft.trim()}>
