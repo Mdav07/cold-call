@@ -52,8 +52,11 @@ def compile_map(src: dict, catalog: dict) -> dict:
     decor = [-1] * (w * h)
     blocked: list[int] = []
 
+    wall_chars = {ch for ch, name in legend.items() if name in tiles and tiles[name]["kind"] == "wall"}
+
     def is_wall(x: int, y: int) -> bool:
-        return 0 <= y < h and 0 <= x < w and grid[y][x] in "#W"
+        # Boards, the elevator and other wall-kind tiles are wall too, so the strip above them is a wall top.
+        return 0 <= y < h and 0 <= x < w and (grid[y][x] in "#W" or grid[y][x] in wall_chars)
 
     for y, row in enumerate(grid):
         for x, ch in enumerate(row):
