@@ -2,8 +2,8 @@
 //
 //   npx tsx --env-file=.env.local agents/sync.ts penny
 //
-// Env: ELEVENLABS_API_KEY (required). TOOLS_BASE_URL + TOOL_SHARED_SECRET attach the server
-// tools (skipped with a warning if unset, so a persona can be chat-tested before A's routes exist).
+// Env: ELEVENLABS_API_KEY (required). TOOL_SHARED_SECRET attaches the server tools at
+// TOOLS_BASE_URL (default: production). Without the secret, tools are skipped with a warning.
 // ELEVENLABS_LLM overrides the model. ELEVENLABS_VOICE_<EMPLOYEE> sets the voice.
 // Ids (not secrets) are saved to agents/elevenlabs-ids.json so re-runs update instead of create.
 
@@ -169,7 +169,8 @@ async function main() {
   if (!process.env.ELEVENLABS_API_KEY) throw new Error("ELEVENLABS_API_KEY is not set (put it in .env.local)");
 
   const ids: Ids = existsSync(IDS_FILE) ? JSON.parse(readFileSync(IDS_FILE, "utf8")) : { tools: {}, agents: {} };
-  const base = process.env.TOOLS_BASE_URL;
+  // Defaults to production so a re-sync can never silently strip an agent's tools.
+  const base = process.env.TOOLS_BASE_URL ?? "https://coldcall-olive.vercel.app";
   const secret = process.env.TOOL_SHARED_SECRET;
 
   const toolIds: string[] = [];
