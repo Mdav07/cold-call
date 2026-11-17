@@ -1,53 +1,47 @@
 {
+  "_comment": "One line per memo: only the facts a con uses.",
   "memos": [
     {
       "date": "2026-11-13",
       "from": "Annie Uity",
-      "to": "All staff",
-      "subject": "Operations payment checklist (please read!)",
-      "body": "Every Operations payment request must include: 1) the vendor exactly as listed in the registry, 2) the invoice number, 3) the amount, 4) a PLUM ticket, 5) who asked for it. Requests that follow the checklist get processed same day. Requests that don't, don't."
+      "subject": "Operations payment checklist",
+      "body": "Vendor as listed in the registry, invoice number, amount, PLUM ticket, who asked."
     },
     {
       "date": "2026-11-12",
       "from": "Penny Pincher",
-      "to": "Floor 1",
       "subject": "Friday office party",
-      "body": "Party is Friday at 4. Tuxedo is catering, Sparkle & Shine cleans up after. Bring a dish if you want, but NOT Dee's chili again."
+      "body": "Friday at 4. Tuxedo caters, Sparkle & Shine cleans up."
     },
     {
       "date": "2026-11-10",
       "from": "Annie Uity",
-      "to": "All staff",
       "subject": "Ledgerline Payroll bank migration",
-      "body": "Ledgerline Payroll is moving banks this month. Their client services team will phone in the new payment details. Update the vendor registry once confirmed. Checklist attached (of course)."
+      "body": "Ledgerline is moving banks; new payment details will come by phone."
     },
     {
       "date": "2026-11-09",
       "from": "Hal Byte",
-      "to": "Engineering",
       "subject": "Out of office until Dec 4",
-      "body": "I'm hiking with no signal. Dee is on call. For emergency server fixes, Byteforce can be paid from petty cash; get Penny or Dee to send it."
+      "body": "Dee is on call. Emergency Byteforce fixes can be paid from petty cash."
     },
     {
       "date": "2026-11-06",
       "from": "Penny Pincher",
-      "to": "Floor 1",
-      "subject": "Petty cash rules (again)",
-      "body": "Petty cash is for listed vendors only, 5 dollars max per payment, office stuff only. Under 5, no ticket needed, just ask me or Dee nicely. 'Nicely' is doing a lot of work in that sentence."
+      "subject": "Petty cash rules",
+      "body": "Listed vendors only, $5 max, no ticket needed under $5."
     },
     {
       "date": "2026-11-03",
       "from": "Bill Ledger",
-      "to": "All staff",
       "subject": "Year-end audit",
-      "body": "Brightline Audit Partners begin fieldwork this month. Any audit finding comes to me first. Do not discuss findings with anyone outside Compliance."
+      "body": "Brightline Audit Partners start fieldwork. Findings go to Bill first."
     },
     {
       "date": "2026-10-30",
       "from": "Cassius Flow",
-      "to": "Executive Suite",
       "subject": "New board advisor",
-      "body": "Dame Prudence Vault has introduced Oakhaven Advisory as a board advisor. Onboarding to follow. Nobody pays them until they are on the Treasury allowlist."
+      "body": "Oakhaven Advisory, via Dame Prudence. No payment until it's on the Treasury allowlist."
     }
   ]
 }

@@ -8,7 +8,6 @@ import dossier from "@/content/plumpurse/dossier.json";
 import directory from "@/content/plumpurse/directory.json";
 import vendorsJson from "@/content/plumpurse/vendors.json";
 import memosJson from "@/content/plumpurse/memos.json";
-import jargon from "@/content/plumpurse/jargon.json";
 import calendar from "@/content/plumpurse/calendar.json";
 import evidence from "@/content/plumpurse/evidence.json";
 import { MyNotes } from "./MyNotes";
@@ -28,7 +27,7 @@ const DAY_LABEL: Record<string, string> = { mon: "Mon", tue: "Tue", wed: "Wed", 
 
 const employees = directory.employees;
 const byId = Object.fromEntries(employees.map((e) => [e.id, e]));
-const margin = Object.fromEntries(dossier.notes.map((n) => [n.employee_id, n.margin]));
+const facts = Object.fromEntries(dossier.notes.map((n) => [n.employee_id, n.facts]));
 const memos = [...memosJson.memos].sort((a, b) => b.date.localeCompare(a.date));
 const floorName = (f: number) => (f === 0 ? "Pocket Branch" : `Floor ${f}`);
 
@@ -48,21 +47,12 @@ const PAPER = {
   "--cc-ok": "#2f6b3a",
 } as CSSProperties;
 
-function Card({ title, meta, children, more }: { title: string; meta?: ReactNode; children?: ReactNode; more?: ReactNode }) {
+function Card({ title, meta, children }: { title: string; meta?: ReactNode; children?: ReactNode }) {
   return (
     <li className="flex flex-col gap-1.5 border border-[#d8ccb0] bg-white/70 p-3 shadow-[2px_2px_0_0_#d8ccb0]">
       <p className="font-pixel text-[10px] leading-relaxed text-[var(--cc-ink)]">{title}</p>
       {meta && <div className="text-xs text-[var(--cc-muted)]">{meta}</div>}
       {children}
-      {more && (
-        <details className="group text-sm text-[var(--cc-muted)]">
-          <summary className="cursor-pointer list-none font-pixel text-[9px] text-[var(--cc-accent)] [&::-webkit-details-marker]:hidden">
-            <span className="group-open:hidden">▸ More</span>
-            <span className="hidden group-open:inline">▾ Less</span>
-          </summary>
-          <div className="mt-1.5 flex flex-col gap-1">{more}</div>
-        </details>
-      )}
     </li>
   );
 }
@@ -72,10 +62,10 @@ function Chip({ children, tone = "plain" }: { children: ReactNode; tone?: "plain
   return <span className={`inline-block border px-1.5 py-0.5 font-pixel text-[8px] leading-none ${c}`}>{children}</span>;
 }
 
-/** Krystal's handwriting in the margin. */
-function Margin({ lines }: { lines: string[] }) {
+/** Krystal's handwriting: one fact per line. */
+function Facts({ lines }: { lines: string[] }) {
   return (
-    <ul className="flex flex-col gap-0.5 border-l-2 border-[#2a4a8a] pl-2 text-sm italic text-[#2a4a8a]">
+    <ul className="flex flex-col gap-1 border-l-2 border-[#2a4a8a] pl-2 text-sm text-[#2a4a8a]">
       {lines.map((l) => (
         <li key={l}>{l}</li>
       ))}
@@ -105,7 +95,8 @@ function FloorFilter({ value, onChange }: { value: number | "all"; onChange: (v:
 const GRID = "grid items-start gap-3 sm:grid-cols-2";
 
 function People({ floor }: { floor: number | "all" }) {
-  const list = employees.filter((e) => floor === "all" || e.floor === floor);
+  // Only the people you can con; everyone else shows up in their facts.
+  const list = employees.filter((e) => facts[e.id] && (floor === "all" || e.floor === floor));
   return (
     <ul className={GRID}>
       {list.map((e) => (
@@ -115,23 +106,10 @@ function People({ floor }: { floor: number | "all" }) {
           meta={
             <span className="flex flex-wrap items-center gap-1">
               {e.title} <Chip>{floorName(e.floor)}</Chip>
-              {e.is_signer && <Chip tone="green">Can pay</Chip>}
             </span>
           }
-          more={
-            <>
-              <p>
-                {e.department}
-                {e.manager ? ` · reports to ${e.manager}` : ""}
-              </p>
-              {e.aliases.length > 0 && <p>Goes by: {e.aliases.join(", ")}</p>}
-              {e.notes.map((n) => (
-                <p key={n}>• {n}</p>
-              ))}
-            </>
-          }
         >
-          {margin[e.id] && <Margin lines={margin[e.id]} />}
+          <Facts lines={facts[e.id]} />
         </Card>
       ))}
     </ul>
@@ -142,24 +120,11 @@ function Vendors() {
   return (
     <ul className={GRID}>
       {vendorsJson.vendors.map((v) => (
-        <Card
-          key={v.name}
-          title={v.name}
-          meta={v.category}
-          more={
-            <>
-              <p>Contact: {v.contact}</p>
-              <p>Pay to: {v.payment_address_label}</p>
-              {v.aliases.length > 0 && <p>Also listed as: {v.aliases.join(", ")}</p>}
-              {v.notes.map((n) => (
-                <p key={n}>• {n}</p>
-              ))}
-            </>
-          }
-        >
+        <Card key={v.name} title={v.name}>
           <p className="text-sm text-[var(--cc-ink)]">
-            Usually <span className="font-semibold text-[var(--cc-ok)]">{dollars(v.typical_invoice_usdc)}</span> · paid from {v.paid_from}
+            <span className="font-semibold text-[var(--cc-ok)]">{dollars(v.typical_invoice_usdc)}</span> · {v.paid_from}
           </p>
+          <p className="text-sm text-[var(--cc-muted)]">{v.card}</p>
         </Card>
       ))}
     </ul>
@@ -203,30 +168,13 @@ function Calendar({ floor }: { floor: number | "all" }) {
 
 function Memos() {
   return (
-    <div className="flex flex-col gap-4">
-      <ul className="flex flex-col gap-3">
-        {memos.map((m) => {
-          const first = m.body.split(/(?<=[.!?])\s/)[0];
-          const rest = m.body.slice(first.length).trim();
-          return (
-            <Card key={`${m.date}-${m.subject}`} title={m.subject} meta={`${m.date} · ${m.from} → ${m.to}`} more={rest ? <p>{rest}</p> : undefined}>
-              <p className="text-sm text-[var(--cc-ink)]">{first}</p>
-            </Card>
-          );
-        })}
-      </ul>
-      <section aria-label="Office jargon" className="border border-dashed border-[#8a6a2f] p-3">
-        <p className="mb-2 font-pixel text-[10px] text-[var(--cc-accent)]">Office jargon</p>
-        <dl className="grid gap-x-3 gap-y-1.5 text-sm sm:grid-cols-[auto_1fr]">
-          {jargon.terms.map((t) => (
-            <div key={t.term} className="contents">
-              <dt className="font-semibold text-[var(--cc-ink)]">{t.term}</dt>
-              <dd className="text-[var(--cc-muted)]">{t.meaning}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-    </div>
+    <ul className="flex flex-col gap-3">
+      {memos.map((m) => (
+        <Card key={`${m.date}-${m.subject}`} title={m.subject} meta={`${m.date.slice(5)} · ${m.from}`}>
+          <p className="text-sm text-[var(--cc-ink)]">{m.body}</p>
+        </Card>
+      ))}
+    </ul>
   );
 }
 
@@ -329,16 +277,6 @@ export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fil
           {tab === "memos" && <Memos />}
           {tab === "evidence" && <Evidence floor={filter} />}
           {tab === "mine" && <MyNotes />}
-          {tab === "people" && dossier.gossip.length > 0 && (
-            <section aria-label="Overheard" className="border border-dashed border-[#8a6a2f] p-3">
-              <p className="mb-1 font-pixel text-[10px] text-[var(--cc-accent)]">Overheard</p>
-              <ul className="flex flex-col gap-1 text-sm text-[var(--cc-muted)]">
-                {dossier.gossip.map((g) => (
-                  <li key={g}>“{g}”</li>
-                ))}
-              </ul>
-            </section>
-          )}
         </div>
       </div>
     </div>
