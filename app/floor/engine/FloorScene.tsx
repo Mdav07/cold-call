@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EmployeeId } from "@/shared/interfaces";
 import type { Facing, FloorMap, FloorSceneProps } from "../types";
+import { getHunter, spriteUrl } from "@/app/play/hunters";
 
 const TILE = 16;
 const FRAME_W = 16;
@@ -55,25 +56,34 @@ function isTyping(target: EventTarget | null) {
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
 }
 
-/** The sprite the player picked in the intro (localStorage "cc-player-sprite"), if any. */
-function usePickedSprite(fallback: string) {
-  const [sprite, setSprite] = useState(fallback);
+/** The hunter the player picked: Audrey's hunter store ("coldcall-hunter") first, then the intro's
+ *  "cc-player-sprite". Read after mount (storage is client-only). */
+function usePickedHunter(fallback: string) {
+  const [h, setH] = useState<{ sprite: string; name: string | null }>({ sprite: fallback, name: null });
   useEffect(() => {
     try {
+      if (localStorage.getItem("coldcall-hunter")) {
+        const g = getHunter();
+        setH({ sprite: spriteUrl(g.sprite), name: g.name });
+        return;
+      }
       const v = localStorage.getItem("cc-player-sprite");
-      if (v && /^\/sprites\/[\w-]+\.png$/.test(v)) setSprite(v);
+      if (v && /^\/sprites\/[\w-]+\.png$/.test(v)) setH({ sprite: v, name: null });
     } catch {}
   }, []);
-  return sprite;
+  return h;
 }
 
-export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags }: FloorSceneProps) {
+export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names }: FloorSceneProps) {
   const goalRef = useRef(goal);
   goalRef.current = goal;
   const tagsRef = useRef(tags);
   tagsRef.current = tags;
   const readProps = useRef(new Set<string>()); // props the player has read: their marker goes away
-  const playerSprite = usePickedSprite(defaultSprite);
+  const hunter = usePickedHunter(defaultSprite);
+  const playerSprite = hunter.sprite;
+  const namesRef = useRef<Record<string, string | undefined>>({});
+  namesRef.current = { ...names, ...(hunter.name ? { player: hunter.name } : {}) };
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
@@ -407,6 +417,28 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
 
       drawLayer(map.layers.overhead);
 
+      // Names above heads: small pixel text on a dark plate.
+      const nameTag = (x: number, y: number, text: string) => {
+        c.font = `5px ${pixelFont}, monospace`;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        const wdt = Math.ceil(c.measureText(text).width) + 4;
+        const cx = Math.round(x + TILE / 2), cy = Math.round(y - (FRAME_H - TILE) + 1);
+        c.fillStyle = "rgba(21, 20, 26, 0.6)";
+        c.fillRect(cx - Math.round(wdt / 2), cy - 3, wdt, 6);
+        c.fillStyle = "#f2efe6";
+        c.fillText(text, cx, cy + 0.5);
+      };
+      const nm = namesRef.current;
+      // The person the player is facing gets one caption instead (below), so labels never stack.
+      const [fdx, fdy] = DELTA[p.facing];
+      const facingNpc = !p.moving ? npcAt(p.x + fdx, p.y + fdy) : undefined;
+      if (!pausedRef.current) {
+        for (const n of map.npcs)
+          if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
+        if (nm.player && !facingNpc) nameTag(px, py, nm.player);
+      }
+
       // Lighting: warm window light, then a soft shadow along the back wall (cozy, Stardew-like).
       c.save();
       c.globalCompositeOperation = "lighter";
@@ -502,7 +534,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const cx = Math.round(tx * TILE + TILE / 2), cy = Math.round(ty * TILE - 5);
         c.fillStyle = "rgba(21, 20, 26, 0.82)";
         c.fillRect(cx - Math.round(wdt / 2), cy - 4, wdt, 8);
-        c.fillStyle = "#f2efe6";
+        c.fillStyle = "#f4c95d";
         c.fillText(text, cx, cy + 0.5);
       };
       if (!pausedRef.current && !p.moving) {
@@ -510,8 +542,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const fx = p.x + dx;
         const fy = p.y + dy;
         const n = npcAt(fx, fy);
-        if (n && !emotesRef.current?.[n.id]) bubble(fx, fy, "!", "#f4c95d");
-        else if (!n && propAt(fx, fy)) {
+        if (n && !emotesRef.current?.[n.id]) {
+          /* the caption below says it */
+        } else if (!n && propAt(fx, fy)) {
           // Facing something readable: a soft glow on its tile.
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 300) + 1) / 2;
           c.fillStyle = `rgba(255, 240, 200, ${0.08 + pulse * 0.08})`;
@@ -519,9 +552,13 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           c.strokeStyle = `rgba(255, 240, 200, ${0.3 + pulse * 0.25})`;
           c.lineWidth = 1;
           c.strokeRect(fx * TILE + 0.5, fy * TILE + 0.5, TILE - 1, TILE - 1);
-          hint(fx, fy, "SPACE · READ");
+          hint(fx, p.facing === "down" ? fy + 1.6 : fy, "SPACE · READ");
         }
-        if (n && !emotesRef.current?.[n.id]) hint(fx, fy - 2.2, "SPACE · TALK");
+        if (n && !emotesRef.current?.[n.id]) {
+          const who = namesRef.current[n.id];
+          // Above their head, or under their feet when the player stands above them (so it never covers you).
+          hint(fx, p.facing === "down" ? fy + 1.6 : fy - 0.95, who ? `SPACE · TALK TO ${who.toUpperCase()}` : "SPACE · TALK");
+        }
       }
 
       // A soft vignette in screen space draws the eye to the middle of the room.

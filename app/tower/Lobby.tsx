@@ -56,6 +56,7 @@ export function Lobby({
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
           <Link className="hover:underline" href="/signin">SIGN IN</Link>
+          <Link className="hover:underline" href="/hunter">YOUR HUNTER</Link>
           <Link className="hover:underline" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>

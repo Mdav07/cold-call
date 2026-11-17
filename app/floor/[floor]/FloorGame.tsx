@@ -160,7 +160,7 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
       </div>
 
       <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} onCaseFile={openCaseFile} />
