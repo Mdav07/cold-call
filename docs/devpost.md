@@ -7,6 +7,10 @@ chain spec; anything marked **[check]** needs a human to confirm before submitti
 
 Cold Call
 
+## Team
+
+**[check]** Madhav Vinod, Audrey Bolyard (the guide requires all team members on Devpost).
+
 ## Tagline
 
 Humans fall for it. Contracts don't.
@@ -136,3 +140,14 @@ proposals and builds the leaderboard. A receipt backup only steps in if the Stre
 - Live: https://coldcall-olive.vercel.app
 - Code: https://github.com/Mdav07/ubc
 - Demo video: **[check: no demo video URL in the repo or README yet — add when recorded.]**
+
+## Before submitting (from the UBC guide)
+
+- [ ] Main track: **Consumer Applications** (exactly one). Chain award: **Best use of Arc** (not Solana too).
+- [ ] Opt in to the bounties on Devpost: **ElevenLabs** and **QuickNode Streams** (each needs an explicit opt-in).
+- [ ] Demo video 2–3 minutes on YouTube or Google Drive, viewable by anyone with the link, **with audio of a voice call**
+      (the ElevenLabs bounty requires it).
+- [ ] Written answers: what we built, the problem, how it works, what's unique, what's next (sections above).
+- [ ] Public GitHub link, live link, README with setup and architecture (done).
+- [ ] Submit before **Fri Nov 20, 12:00 PM CST** (our target: 11 AM).
+- [ ] Both of us in person at the closing ceremony on Sat Nov 21; no prize otherwise.
