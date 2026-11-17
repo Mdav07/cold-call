@@ -1,7 +1,7 @@
-# Pretext: chain-side spec (owner A) and B handoff
+# Cold Call: chain-side spec (owner A) and B handoff
 
 Date: 2026-11-17. Owner A: Madhav (this repo session). Owner B: Audrey.
-Base document: "Pretext — Hackathon Design & Execution Doc" (Nov 16). This spec records the
+Base document: "Cold Call — Hackathon Design & Execution Doc" (Nov 16). This spec records the
 decisions from the interview that add to or change that document. Where they differ, this spec wins.
 Deadline: submit Fri Nov 20, 11:00 AM CST target (hard limit 12:00 PM).
 
@@ -56,7 +56,7 @@ Rules that follow from this:
 | 18 | Stream filter | The Stream filter keeps logs from our four vault addresses whose `topic0` is one of our event signatures, and trims fields. The webhook decodes with viem and the contract ABI. The backup path uses the same decoder. |
 | 19 | Leaderboard | One board per floor. Each row has a `voice` or `chat` badge and can be filtered. A run that used both counts as voice. |
 
-## 4. Contract changes to `PretextVault`
+## 4. Contract changes to `ColdCallVault`
 
 Start from the base document's contract. Apply these changes:
 
@@ -89,7 +89,7 @@ Tool-specific behaviour:
 - `propose_transfer`: reject if the run already has 2 proposals or one open proposal. On Floor 3, first try the lazy finalize. Clamp the amount (decision 11). Recipient is the run's player wallet. If the contract reverts with `not_allowlisted`, return that reason so the employee can say it; this is the Floor 3 pitch beat.
 - `approve_transfer`: on floors 2 and 3, the first call returns the on-chain view (`claimed_name`, `claimed_amount`, `real_recipient_label`, `real_recipient_address`, `real_amount`) and does not sign. The second call with `confirm: true` signs.
 - `reject_transfer`, `propose_allowlist_add`, `approve_allowlist_add`: as in the base document. `propose_allowlist_add` returns `unlock_at`.
-- Lookups (`check_vendor_list`, `check_calendar`, `verify_employee`): A provides the route; the data comes from B's `content/hoardwell/*.json`.
+- Lookups (`check_vendor_list`, `check_calendar`, `verify_employee`): A provides the route; the data comes from B's `content/plumpurse/*.json`.
 - `report_suspicion`, `end_conversation`: B's handlers in `server/game`; A only adds the thin route.
 
 ## 6. Signer service (`server/chain`)
@@ -123,7 +123,7 @@ Tonight and Tuesday morning:
 
 1. Scaffold: Next.js app, `contracts/` Foundry project, `.env.example`, `CLAUDE.md` rules from the base document, `shared/interfaces.ts` v1, initial migration. Check: `npm run build` and `forge build` pass.
 2. Network proof: `cast` reads the house wallet's USDC balance and `decimals()` returns 6. Claim faucet USDC.
-3. `PretextVault` with all tests. Check: `forge test` is green.
+3. `ColdCallVault` with all tests. Check: `forge test` is green.
 4. Deploy the Floor 1 vault and fund it. Check: propose with `cast`, USDC moves, visible on the explorer.
 5. Circle proof (2-hour limit): create a developer-controlled wallet on `ARC-TESTNET` and call `proposeTransfer` through the API. Else use `ViemSigner`.
 6. Tool routes for propose, approve, reject and lookups, with the lease. Check: `curl` to `/api/tools/propose_transfer` returns a real tx hash.
@@ -140,7 +140,7 @@ B's work is the base document's B tasks, with these changes from this spec:
 1. **Do not scaffold.** A creates the Next.js app, `shared/interfaces.ts` v1 and the first migration. Pull before starting. B owns `app/` except `app/api/tools/*`, `app/api/stream`, `app/api/chain/*`.
 2. **Sign-in is Supabase Auth with an email magic link.** No Circle client SDK. After sign-in, call A's endpoint to create the player wallet (name in `shared/interfaces.ts`).
 3. **ElevenLabs tools:** configure `run_id`, `employee_id` and the conversation id as dynamic variables sent in the tool request. The LLM must not fill them. The backend creates the `conversations` row when the session starts, and stores the ElevenLabs conversation id.
-4. **Floor 2 rule sheets (Annie, Bill):** the on-chain view always shows an unknown external address. Write the rule sheets so a mismatch raises suspicion, and a dossier-consistent reason (for example a payment-address change that agrees with a memo in the case file) can pass. Add that supporting material to `content/hoardwell/`.
+4. **Floor 2 rule sheets (Annie, Bill):** the on-chain view always shows an unknown external address. Write the rule sheets so a mismatch raises suspicion, and a dossier-consistent reason (for example a payment-address change that agrees with a memo in the case file) can pass. Add that supporting material to `content/plumpurse/`.
 5. **Floor 3 rule sheets (Cassius, Max):** a direct `propose_transfer` returns `not_allowlisted`; the employee must say this in character. The winning path is `propose_allowlist_add`, both approvals, a 60 s wait, then `propose_transfer`. The wait uses talk time, so the player may need to end the call and call back; sessions must allow that.
 6. **Tool results:** handlers may return `status: "pending"` or a reason code. Each rule sheet needs a line for each code. An employee must never say an approval happened without `status: "executed"`.
 7. **Amount:** the response gives the clamped amount. The employee states that amount, not the one asked for.
@@ -148,7 +148,7 @@ B's work is the base document's B tasks, with these changes from this spec:
 9. **UI data:** the breach alarm and the proposal panel read from Realtime on `chain_events` and `proposals`. The run timer shown during play is a client estimate; the final time comes from the `runs` row.
 10. **Leaderboard:** show the `voice` or `chat` badge and a filter.
 11. **B enforces:** the per-user daily voice-minute cap and talk-time limits. B owns `report_suspicion` and `end_conversation` handlers in `server/game`; A adds the thin routes.
-12. **First B tasks:** Penny's rule sheet v1 and ElevenLabs agent in chat mode; `content/hoardwell/*.json` v1 (vendors, directory, calendar); bare chat UI that creates a run and a conversation row. Then the base document's Wednesday and Thursday B tasks.
+12. **First B tasks:** Penny's rule sheet v1 and ElevenLabs agent in chat mode; `content/plumpurse/*.json` v1 (vendors, directory, calendar); bare chat UI that creates a run and a conversation row. Then the base document's Wednesday and Thursday B tasks.
 
 ## 11. Open items
 
