@@ -13,13 +13,14 @@
     "p": "plant",
     "o": "table_oval_l",
     "O": "table_oval_r",
-    "w": "water_cooler"
+    "w": "water_cooler",
+    "n": "table_small"
   },
   "rows": [
     "####################",
     "#W##W###E####W##W###",
     "#..................#",
-    "#..................#",
+    "#......n...........#",
     "#.#####......#####.#",
     "#.#...#......#...#.#",
     "#.#LMR#......#LMR#.#",
@@ -51,6 +52,13 @@
   ],
   "props": [
     {
+      "id": "krystal-note",
+      "x": 7,
+      "y": 3,
+      "label": "Krystal's note",
+      "text": "Management. Annie and Bill both have to sign, and the second one sees where the money really goes. Your story has to explain an address they don't recognize, with something already in their files. Annie loves a checklist. Bill fears a regulator more than he fears you."
+    },
+    {
       "id": "annie-checklist",
       "x": 2,
       "y": 6,
@@ -66,7 +74,7 @@
     },
     {
       "id": "bill-audit-binder",
-      "x": 15,
+      "x": 14,
       "y": 6,
       "label": "Bill's audit prep binder",
       "text": "Brightline Audit Partners begin fieldwork this month. Any audit finding comes to me first. Do not discuss findings with anyone outside Compliance. — Bill Ledger, Nov 3"

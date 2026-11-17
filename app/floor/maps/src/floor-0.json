@@ -8,13 +8,14 @@
     "w": "water_cooler",
     "B": "bookshelf",
     "p": "plant",
-    "c": "office_chair"
+    "c": "office_chair",
+    "n": "table_small"
   },
   "rows": [
     "##############",
     "#W###E####W###",
     "#............#",
-    "#............#",
+    "#...n........#",
     "#p..........p#",
     "#...c........#",
     "#...KKKK.....#",
@@ -36,6 +37,13 @@
     }
   ],
   "props": [
+    {
+      "id": "krystal-note",
+      "x": 4,
+      "y": 3,
+      "label": "Krystal's note",
+      "text": "Barry runs the Pocket Branch alone and wants nothing more than to lock up at five. He can't leave until the courier's been. Be the courier. Short and friendly. Watch the meter under his face: that's how suspicious he is."
+    },
     {
       "id": "closing-sign",
       "x": 4,

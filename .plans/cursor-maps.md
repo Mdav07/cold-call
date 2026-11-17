@@ -9,7 +9,7 @@ maps. Floor 1 is done as the reference: copy its style.
 2. Call `coordigent.memory.overview`. If a tool result starts with "⚠ COORD:", read it before continuing.
 3. Only edit your own source map(s) in `app/floor/maps/src/` and the compiled file(s) with the same name in `app/floor/maps/`. Don't edit `tiles.json`, `tools/art/` or any other file.
 4. Tile names you can use in a `legend` are the keys of `app/floor/maps/tiles.json` (desks, chairs, plants, counters, cabinets, bookshelf, copier, water_cooler, rugs, paintings, candelabras, …). Built-ins: `#` wall, `W` window, `.` floor, `E` elevator, space = outside.
-5. Compile with `python3 -I tools/art/build_maps.py app/floor/maps/tiles.json app/floor/maps/src app/floor/maps`; it errors on unknown tiles, unknown characters, or an NPC on a blocked cell.
+5. Compile with `python3 -I tools/art/build_maps.py app/floor/maps/tiles.json app/floor/maps/src app/floor/maps`; it errors on unknown tiles, unknown characters, or an NPC on a blocked cell. Then run `python3 -I tools/art/check_maps.py app/floor/maps`: every NPC, prop and exit must be reachable from the spawn.
 6. Rules that keep the map playable:
    - Every row is the same width; the map is enclosed by walls.
    - The elevator `E` sits in the top wall. The cell directly below it is the exit (`"to": "/tower"`), and must be floor (`.`). Spawn one cell below the exit, facing down.

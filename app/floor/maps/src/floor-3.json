@@ -17,13 +17,14 @@
     "C": "candelabra_gold",
     "p": "plant",
     "b": "bookshelf",
-    "K": "counter_files"
+    "K": "counter_files",
+    "n": "table_small"
   },
   "rows": [
     "######################",
     "#W##W####E####W##W####",
     "#P.pC..........C.p..A#",
-    "#....................#",
+    "#.......n............#",
     "#.LMR............LMR.#",
     "#..c..............c..#",
     "#....................#",
@@ -54,6 +55,13 @@
     }
   ],
   "props": [
+    {
+      "id": "krystal-note",
+      "x": 8,
+      "y": 3,
+      "label": "Krystal's note",
+      "text": "The executive suite. This is where I got close. The Treasury won't pay anyone who isn't on its allowlist, and getting added takes both executives and a security wait. Cassius is terrified of Dame Prudence. Max will sign anything that sounds exclusive. You'll need to call them more than once."
+    },
     {
       "id": "oakhaven-memo",
       "x": 3,
