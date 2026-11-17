@@ -233,6 +233,18 @@
     "board_executive": {
       "index": 57,
       "kind": "wall"
+    },
+    "counter_card": {
+      "index": 58,
+      "kind": "block"
+    },
+    "counter_note": {
+      "index": 59,
+      "kind": "block"
+    },
+    "counter_sign": {
+      "index": 60,
+      "kind": "block"
     }
   }
 }

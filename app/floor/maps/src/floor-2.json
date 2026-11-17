@@ -15,7 +15,8 @@
     "O": "table_oval_r",
     "w": "water_cooler",
     "n": "table_small",
-    "Q": "board_management"
+    "Q": "board_management",
+    "Z": "counter_note"
   },
   "rows": [
     "####################",
@@ -29,7 +30,7 @@
     "#.#...#......#...#.#",
     "#.##.##......##.##.#",
     "#......oO.......w..#",
-    "#.FFf.........bbb.p#",
+    "#.FFZ.........bbb.p#",
     "####################"
   ],
   "spawn": {

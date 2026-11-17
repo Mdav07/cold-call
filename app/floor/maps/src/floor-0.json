@@ -3,14 +3,17 @@
   "name": "Floor 0 · The Pocket Branch",
   "theme": "branch",
   "legend": {
-    "K": "counter_papers",
     "t": "table_small",
     "w": "water_cooler",
     "B": "bookshelf",
     "p": "plant",
     "c": "office_chair",
     "n": "table_small",
-    "Q": "board_branch"
+    "Q": "board_branch",
+    "Y": "counter_card",
+    "k": "counter",
+    "Z": "counter_note",
+    "X": "counter_sign"
   },
   "rows": [
     "##############",
@@ -19,7 +22,7 @@
     "#............#",
     "#p..........p#",
     "#...c........#",
-    "#...KKKK.....#",
+    "#...YkZX.....#",
     "#............#",
     "#........w..B#",
     "##############"

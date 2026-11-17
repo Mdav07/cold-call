@@ -18,7 +18,8 @@
     "q": "rug_orange_r",
     "t": "table_small",
     "n": "table_small",
-    "Q": "board_bullpen"
+    "Q": "board_bullpen",
+    "Z": "counter_note"
   },
   "rows": [
     "####################",
@@ -28,7 +29,7 @@
     "#.LMR...LMR...LMR..#",
     "#..c.....c.....c...#",
     "#..................#",
-    "#.LMR...LMR...kkkK.#",
+    "#.LMR...LMR...ZkkZ.#",
     "#..c.....c.........#",
     "#..................#",
     "#lrrrrq..........p.#",
