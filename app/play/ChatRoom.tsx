@@ -129,18 +129,18 @@ function KrystalRadio({ floor, runId }: { floor: number; runId: string | null })
           📻 Krystal&apos;s radio
         </button>
       ) : (
-        <div className="pixel-frame flex flex-col gap-2 bg-[var(--cc-panel)] p-3">
+        <div className="pixel-frame flex flex-col gap-2 bg-[var(--cc-panel)] p-3 font-pixel">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="font-pixel text-[10px] text-[var(--cc-accent)]">📻 Krystal&apos;s radio</p>
-            <button type="button" className="text-xs underline text-[var(--cc-muted)]" onClick={close}>
+            <button type="button" className="text-[10px] underline text-[var(--cc-muted)]" onClick={close}>
               Close
             </button>
           </div>
-          <p className="text-xs text-[var(--cc-muted)]">
+          <p className="text-[9px] leading-relaxed text-[var(--cc-muted)]">
             Each hint adds +30 s to the run
             {hintsUsed > 0 ? ` · ${hintsUsed} used` : ""}.
           </p>
-          <div className="max-h-48 overflow-y-auto text-sm" aria-live="polite">
+          <div className="max-h-48 overflow-y-auto text-[11px] leading-loose" aria-live="polite">
             <ul className="flex flex-col gap-2">
               {lines.map((l) => (
                 <li
@@ -160,12 +160,12 @@ function KrystalRadio({ floor, runId }: { floor: number; runId: string | null })
                 </li>
               ))}
               {waiting && status === "live" && (
-                <li className="text-xs text-[var(--cc-muted)]">Krystal is on the line…</li>
+                <li className="text-[9px] text-[var(--cc-muted)]">Krystal is on the line…</li>
               )}
             </ul>
           </div>
-          {status === "connecting" && <p className="text-xs text-[var(--cc-muted)]">Tuning in…</p>}
-          {error && <p className="text-xs text-[var(--cc-danger)]">{error}</p>}
+          {status === "connecting" && <p className="text-[9px] text-[var(--cc-muted)]">Tuning in…</p>}
+          {error && <p className="text-[9px] leading-relaxed text-[var(--cc-danger)]">{error}</p>}
           {status === "live" && (
             <form
               className="flex gap-2"

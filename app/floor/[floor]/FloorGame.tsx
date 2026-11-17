@@ -181,7 +181,7 @@ export function FloorGame({
           onCaseFile={openCaseFile}
         />
       )}
-      {prop && <PropDialogue label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
+      {prop && <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
 
       {showOutcome && state && (
         <OutcomeOverlay

@@ -108,7 +108,7 @@ function Frame({
  * Typewriter text with a blip per couple of letters (muted by the HUD switch; with reduced motion
  * the text appears at once and makes no sound). A key press or a click while it types shows the rest.
  */
-function Say({ text, pitch, onDone }: { text: string; pitch?: number; onDone?: (done: boolean) => void }) {
+function Say({ text, pitch, pixel = false, onDone }: { text: string; pitch?: number; pixel?: boolean; onDone?: (done: boolean) => void }) {
   const { visible, done, skip } = useTypewriter(text);
   useEffect(() => onDone?.(done), [done, onDone]);
   const n = visible.length;
@@ -131,7 +131,11 @@ function Say({ text, pitch, onDone }: { text: string; pitch?: number; onDone?: (
     return () => window.removeEventListener("keydown", onKey, true);
   }, [done, skip]);
   return (
-    <p onClick={skip} className="min-h-[3.5rem] text-base leading-snug text-[var(--cc-ink)] sm:text-lg" aria-live="polite">
+    <p
+      onClick={skip}
+      className={`min-h-[3.5rem] text-[var(--cc-ink)] ${pixel ? "font-pixel text-[12px] leading-[1.9] sm:text-[13px]" : "text-base leading-snug sm:text-lg"}`}
+      aria-live="polite"
+    >
       {visible}
       {!done && <span aria-hidden className="opacity-0">{text.slice(visible.length)}</span>}
       {done && (
@@ -162,12 +166,21 @@ function useEscape(onEscape: () => void) {
 }
 
 /** A sign, memo or binder: text only, any confirm key closes it. */
-export function PropDialogue({ label, text, onClose }: { label: string; text: string; onClose: () => void }) {
+/** Krystal's notes left on each floor: her face, her colours and her (pixel) font. */
+const isKrystalNote = (id: string) => id.startsWith("krystal");
+
+export function PropDialogue({ id = "", label, text, onClose }: { id?: string; label: string; text: string; onClose: () => void }) {
   const [done, setDone] = useState(false);
   useEscape(onClose);
+  const krystal = isKrystalNote(id);
+  const Face = PORTRAITS.krystal;
   return (
-    <Frame name={label}>
-      <Say text={text} pitch={260} onDone={setDone} />
+    <Frame
+      name={label}
+      theme={krystal ? themeFor("krystal") : undefined}
+      portrait={krystal && Face ? <Face mood="neutral" /> : undefined}
+    >
+      <Say text={text} pitch={krystal ? voicePitch("krystal") : 260} pixel={krystal} onDone={setDone} />
       <Choices active={done} choices={[{ label: "Close", onSelect: onClose }]} />
     </Frame>
   );
