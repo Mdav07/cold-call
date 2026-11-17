@@ -1,13 +1,15 @@
 "use client";
 
-// Full-screen result after a run ends: the breach (alarm, PA announcer, bounty, debrief)
-// or the lockout (Null's taunt, the lesson). Audio is pre-generated with ElevenLabs into
+// Full-screen result after a run ends, in the look of Krystal's briefing: the breach (alarm, PA
+// announcer, bounty, time, streak on the Daily) or the lockout, one line from Krystal, details behind More. Audio is pre-generated with ElevenLabs into
 // public/audio by agents/generate-audio.ts.
 
 import { useEffect, useRef, useState } from "react";
 import debriefs from "@/content/plumpurse/debriefs.json";
 import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
+import { PORTRAITS } from "./portraits";
+import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 
 type Debrief = {
   title: string;
@@ -53,6 +55,19 @@ function CountUp({ to }: { to: number }) {
   return <>{"$" + v.toFixed(2)}</>;
 }
 
+/** Krystal's one line on the result: short, in her voice. The longer debrief is behind "More". */
+function krystalLine(state: RunState, employeeName: string, debrief: Debrief | undefined): string {
+  const run = state.run!;
+  const breach = run.outcome === "breach";
+  if (run.floor === DAILY_FLOOR) {
+    if (!breach) return `${employeeName} hung up on you. Read the notes again: one of them is the line you can't cross.`;
+    if (run.practice) return "Good practice. Today's case is the one that counts.";
+    return "Clean work. A new case opens at midnight UTC. Don't break the streak.";
+  }
+  if (breach) return debrief?.real_world ?? `${employeeName} paid. Nicely done.`;
+  return debrief?.lesson ?? `${employeeName} saw through you. Come back with a different story.`;
+}
+
 export function OutcomeOverlay({
   state,
   employeeName,
@@ -67,6 +82,8 @@ export function OutcomeOverlay({
   const run = state.run;
   const outcome = run?.outcome;
   const played = useRef(false);
+  const [more, setMore] = useState(false);
+  const primary = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (played.current || !outcome) return;
@@ -74,94 +91,161 @@ export function OutcomeOverlay({
     if (outcome === "breach") return playSequence(["breach-alarm.mp3", "breach-announcer.mp3"]);
     if (outcome === "lockout") return playSequence(["lockout-null.mp3"]);
   }, [outcome]);
+  useEffect(() => primary.current?.focus(), [outcome]);
 
   if (!run || (outcome !== "breach" && outcome !== "lockout")) return null;
   const debrief = (debriefs.floors as Record<string, Debrief>)[String(run.floor)];
+  const clue = (krystal.clues as Record<string, { title: string; text: string }>)[String(run.floor)];
   const breach = outcome === "breach";
+  const daily = run.floor === DAILY_FLOOR;
   const paid = run.payout_units != null ? Number(run.payout_units) / 1_000_000 : null;
+  const streak = state.daily_streak;
+  const Face = PORTRAITS.krystal;
+  // The Daily's debrief is the case itself: who it was, what got through to them, what they won't do.
+  // Not after a lockout on today's case: it would hand over the answers to a case you can still retry.
+  const caseNotes = daily && run.daily_date && (breach || run.practice) ? dailyCase(run.daily_date) : null;
+  const hasMore = !!caseNotes || !!debrief || (breach && !!clue) || (!breach && !!state.reason);
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="outcome-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-    >
-      <div
-        className={`pixel-frame max-h-full w-full max-w-xl overflow-y-auto bg-[var(--cc-panel)] p-6 ${breach ? "cc-alarm" : ""}`}
-        style={{ borderColor: breach ? "var(--cc-danger)" : "var(--cc-edge)" }}
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-3 sm:p-6">
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="outcome-title"
+        className={`pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-5 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-6 ${breach ? "cc-alarm" : ""}`}
       >
-        <p id="outcome-title" className="font-pixel text-lg text-[var(--cc-danger)]">
-          <span className="cc-stamp">{breach ? "⚠ VAULT BREACHED" : "LOCKED OUT"}</span>
-        </p>
-
-        {/* Tower floors remember tricks; the tutorial does not. */}
-        {run.floor > 0 && (
-          <p className="mt-3 border-l-4 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-3 py-2 text-sm text-[var(--cc-ink)]">
-            <span className="font-pixel text-[10px] text-[var(--cc-accent)]">THEY LEARN · </span>
-            {employeeName} will remember this next run. {breach ? "The same trick won't work twice." : "Come back with a different story."}
+        {/* The same chapter band as Krystal's briefing: gold for a breach, red for a lockout. */}
+        <header
+          className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-6 sm:-mt-6 sm:px-6"
+          style={{ background: breach ? "var(--cc-accent)" : "var(--cc-danger)" }}
+        >
+          <p className="font-pixel text-[9px] tracking-widest">
+            COLD CALL · {daily ? `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}` : run.floor === 0 ? "TUTORIAL" : `FLOOR ${run.floor}`}
           </p>
-        )}
+          <h2 id="outcome-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl">
+            <span className="cc-stamp">{breach ? "Vault breached" : "Locked out"}</span>
+          </h2>
+        </header>
 
-        {breach ? (
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Bounty</p>
-              <p className="text-xl text-[var(--cc-ok)]">{paid != null ? <CountUp to={paid} /> : "…"}</p>
-            </div>
-            <div>
-              <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Time</p>
-              <p className="text-xl">{run.duration_ms != null ? clock(run.duration_ms) : "…"}</p>
-            </div>
-          </div>
-        ) : (
-          <p className="mt-4 text-sm text-[var(--cc-ink)]">
-            {employeeName} hung up and warned the floor. Null and the Black Ledger got in first.
-            {state.reason && <span className="block mt-2 text-[var(--cc-muted)]">What gave you away: {state.reason.text}</span>}
-          </p>
-        )}
-
-        {breach && (krystal.clues as Record<string, { title: string; text: string }>)[String(run.floor)] && (
-          <div className="mt-5 border-t-2 border-[var(--cc-edge)] pt-4 text-sm">
-            <p className="font-pixel text-xs text-[var(--cc-accent)]">
-              New note on Krystal&apos;s trail: {(krystal.clues as Record<string, { title: string }>)[String(run.floor)].title}
-            </p>
-            {/* Krystal's words: the pixel font, like the rest of her UI. */}
-            <p className="mt-2 font-pixel text-[11px] leading-loose">{(krystal.clues as Record<string, { text: string }>)[String(run.floor)].text}</p>
-            {run.floor === 3 && <p className="mt-2 font-pixel text-[10px] text-[var(--cc-muted)]">Open the tower to read it.</p>}
-          </div>
-        )}
-
-        {debrief && (
-          <div className="mt-5 border-t-2 border-[var(--cc-edge)] pt-4 text-sm leading-relaxed">
-            <p className="font-pixel text-xs text-[var(--cc-accent)]">{breach ? `Debrief: ${debrief.title}` : "Lesson"}</p>
-            {breach ? (
-              <>
-                <p className="mt-2">{debrief.real_world}</p>
-                <p className="mt-2 text-[var(--cc-muted)]">Patch notes: {debrief.patch}</p>
-                {debrief.source && (
-                  <a className="mt-2 block text-xs underline text-[var(--cc-muted)]" href={debrief.source.url} target="_blank" rel="noreferrer">
-                    Source: {debrief.source.label}
-                  </a>
-                )}
-              </>
-            ) : (
-              <p className="mt-2">{debrief.lesson}</p>
+        {(breach || daily) && (
+          <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+            {breach && (
+              <div>
+                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">BOUNTY</p>
+                <p className="mt-1 font-pixel text-lg text-[var(--cc-ok)]">{paid != null ? <CountUp to={paid} /> : "…"}</p>
+              </div>
+            )}
+            {breach && (
+              <div>
+                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">TIME</p>
+                <p className="mt-1 font-pixel text-lg text-[var(--cc-ink)]">{run.duration_ms != null ? clock(run.duration_ms) : "…"}</p>
+              </div>
+            )}
+            {daily && streak && !run.practice && (
+              <div>
+                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">STREAK</p>
+                <p className="mt-1 font-pixel text-lg text-[var(--cc-accent)]">
+                  {streak.current} day{streak.current === 1 ? "" : "s"}
+                  <span className="ml-2 text-[9px] text-[var(--cc-muted)]">best {streak.best}</span>
+                </p>
+              </div>
+            )}
+            {daily && run.practice && (
+              <p className="pixel-frame bg-[var(--cc-panel-2)] px-2 py-1 font-pixel text-[9px] text-[var(--cc-muted)]">
+                PRACTICE · doesn&apos;t count
+              </p>
             )}
           </div>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-2">
-          {!breach && (
-            <button type="button" className="pixel-button" onClick={onRetry}>
-              Try again
+        <div className="flex items-start gap-3">
+          {Face && (
+            <div className="pixel-frame grid h-14 w-14 shrink-0 place-items-center overflow-hidden bg-[var(--cc-portrait)] [&>svg]:h-full [&>svg]:w-full">
+              <Face mood={breach ? "convinced" : "neutral"} />
+            </div>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <p className="font-pixel text-[10px] text-[var(--cc-muted)]">
+              Krystal says
+            </p>
+            <p className="font-pixel text-[12px] leading-[1.9] text-[var(--cc-ink)] sm:text-[13px]">
+              {krystalLine(state, employeeName, debrief)}
+            </p>
+          </div>
+        </div>
+
+        {more && (
+          <div className="flex flex-col gap-3 border-t-2 border-[var(--cc-edge)] pt-4 text-sm leading-relaxed">
+            {caseNotes && (
+              <div className="flex flex-col gap-2">
+                <p className="font-pixel text-[10px] text-[var(--cc-accent)]">
+                  The case · {caseNotes.title} · {caseNotes.employee.name}, {caseNotes.employee.title.toLowerCase()}
+                </p>
+                <p>
+                  <span className="text-[var(--cc-ok)]">Way in:</span> {caseNotes.employee.softSpot}
+                </p>
+                <p>
+                  <span className="text-[var(--cc-danger)]">Red line:</span> {caseNotes.employee.redLine}
+                </p>
+                <p className="text-[var(--cc-muted)]">
+                  Booked today: {caseNotes.allowedVendor}, invoice {caseNotes.allowedInvoice}.
+                </p>
+              </div>
+            )}
+            {!breach && state.reason && (
+              <p>
+                <span className="font-pixel text-[10px] text-[var(--cc-accent)]">What gave you away · </span>
+                {state.reason.text}
+              </p>
+            )}
+            {run.floor > 0 && !daily && (
+              <p>
+                <span className="font-pixel text-[10px] text-[var(--cc-accent)]">They learn · </span>
+                {employeeName} will remember this. {breach ? "The same trick won't work twice." : "Come back with a different story."}
+              </p>
+            )}
+            {breach && clue && (
+              <div>
+                <p className="font-pixel text-[10px] text-[var(--cc-accent)]">Krystal&apos;s trail · {clue.title}</p>
+                <p className="mt-1 font-pixel text-[11px] leading-loose">{clue.text}</p>
+              </div>
+            )}
+            {debrief && breach && (
+              <div>
+                <p className="font-pixel text-[10px] text-[var(--cc-accent)]">Debrief · {debrief.title}</p>
+                <p className="mt-1 text-[var(--cc-muted)]">Patch notes: {debrief.patch}</p>
+                {debrief.source && (
+                  <a className="mt-1 block text-xs text-[var(--cc-muted)] underline" href={debrief.source.url} target="_blank" rel="noreferrer">
+                    Source: {debrief.source.label}
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2">
+          {breach ? (
+            <button ref={primary} type="button" className="pixel-button" onClick={onClose}>
+              Collect bounty ▶
+            </button>
+          ) : (
+            <>
+              <button ref={primary} type="button" className="pixel-button" onClick={onRetry}>
+                Try again
+              </button>
+              <button type="button" className="pixel-button" onClick={onClose}>
+                Close
+              </button>
+            </>
+          )}
+          {hasMore && (
+            <button type="button" className="pixel-button !bg-[var(--cc-panel-2)] !text-[var(--cc-ink)]" aria-expanded={more} onClick={() => setMore((m) => !m)}>
+              {more ? "Less" : "More"}
             </button>
           )}
-          <button type="button" className="pixel-button" onClick={onClose}>
-            {breach ? "Collect bounty" : "Close"}
-          </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

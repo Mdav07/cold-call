@@ -38,7 +38,8 @@ function sfx(file: string, loop = false): HTMLAudioElement | null {
   }
 }
 
-export function useEmployeeChat(employeeId: EmployeeId) {
+/** `dailyDate`: the Daily Case's day (today, or an earlier day replayed as practice). */
+export function useEmployeeChat(employeeId: EmployeeId, dailyDate?: string) {
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [channel, setChannel] = useState<Channel>("chat");
   const [lines, setLines] = useState<ChatLine[]>([]);
@@ -89,7 +90,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
         const res = await fetch("/api/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ employee_id: employeeId, channel: ch, cover, run_id: runId }),
+          body: JSON.stringify({ employee_id: employeeId, channel: ch, cover, run_id: runId, daily_date: dailyDate }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? `session failed (${res.status})`);
@@ -142,7 +143,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
         setStatus("error");
       }
     },
-    [employeeId, push, markFirstMessage],
+    [employeeId, dailyDate, push, markFirstMessage],
   );
 
   const send = useCallback(

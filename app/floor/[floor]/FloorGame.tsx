@@ -86,7 +86,11 @@ export function FloorGame({
   useEffect(() => {
     if (outcome === "breach") markClearedHere(map.floor);
   }, [outcome, map.floor]);
-  const showOutcome = !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId;
+  // The result waits for the employee to finish their last reply (NpcDialogue calls onSettled);
+  // with no conversation open it shows at once.
+  const [settledRun, setSettledRun] = useState<string | null>(null);
+  const showOutcome =
+    !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId && (open?.kind !== "npc" || settledRun === runId);
 
   const onSession = useCallback((id: string, startedAt: number | null) => {
     setRunId(id);
@@ -196,6 +200,8 @@ export function FloorGame({
           onSession={onSession}
           onClose={() => setOpen(null)}
           onCaseFile={openCaseFile}
+          onSettled={() => setSettledRun(runId)}
+          dailyDate={daily?.date}
         />
       )}
       {prop && <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}

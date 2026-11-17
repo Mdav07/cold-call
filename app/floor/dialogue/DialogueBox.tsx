@@ -249,10 +249,19 @@ export function NpcDialogue({
   onSession,
   onClose,
   onCaseFile,
+  onSettled,
+  dailyDate,
 }: {
   npc: NpcInfo;
   /** The floor, for its evidence. */
   floor: number;
+  /**
+   * Called once the run is over (breach or lockout) and the employee has finished their last reply:
+   * the page shows the result only then, never mid-sentence.
+   */
+  onSettled?: () => void;
+  /** The Daily Case: which day's case this conversation is about (earlier days are practice). */
+  dailyDate?: string;
   runId: string | null;
   cover: string;
   onCover: (cover: string) => void;
@@ -265,7 +274,7 @@ export function NpcDialogue({
   /** Opens the case file overlay. */
   onCaseFile: () => void;
 }) {
-  const chat = useEmployeeChat(npc.id);
+  const chat = useEmployeeChat(npc.id, dailyDate);
   const [stage, setStage] = useState<Stage>("menu");
   const [channel, setChannel] = useState<"chat" | "voice">("chat");
   const [draft, setDraft] = useState("");
@@ -299,11 +308,43 @@ export function NpcDialogue({
     if (runFor) onSession(runFor, chat.startedAt);
   }, [runFor, chat.startedAt, onSession]);
 
-  // A lockout or a finished run ends the call from our side, as in the chat room.
+  // A lockout or a finished run ends the call from our side, but only once the employee has finished
+  // talking: their last reply typed out (chat) or spoken (call), then a moment of quiet. The payment
+  // usually lands while they are still confirming it. A hard cap keeps a silent agent from stalling.
   const { hangUp } = chat;
+  const runOver = !!(state?.locked_out || state?.run?.ended_at);
+  const [settled, setSettled] = useState(false);
+  const agentLines = chat.lines.filter((l) => l.role === "agent").length;
+  const snap = useRef({ agentLines, lastAgentAt: 0, busy: false, live });
+  const busy = chat.waiting || !typed || (chat.channel === "voice" && chat.mode === "speaking");
   useEffect(() => {
-    if (live && (state?.locked_out || state?.run?.ended_at)) hangUp();
-  }, [live, state?.locked_out, state?.run?.ended_at, hangUp]);
+    snap.current.lastAgentAt = Date.now();
+  }, [agentLines]);
+  useEffect(() => {
+    snap.current.agentLines = agentLines;
+    snap.current.busy = busy;
+    snap.current.live = live;
+  });
+  useEffect(() => {
+    if (!runOver) return;
+    const seenAt = Date.now();
+    const linesAtEnd = snap.current.agentLines;
+    const t = setInterval(() => {
+      const s = snap.current;
+      const now = Date.now();
+      // After a reply that came in since the run ended (or a closed line), a short pause is enough;
+      // otherwise give the employee a few seconds to start their confirmation.
+      const quietNeeded = s.agentLines > linesAtEnd || !s.live ? 1500 : 4000;
+      const quiet = now - Math.max(s.lastAgentAt, seenAt);
+      if ((!s.busy && quiet >= quietNeeded) || now - seenAt > 20_000) {
+        clearInterval(t);
+        hangUp();
+        setSettled(true);
+        onSettled?.();
+      }
+    }, 250);
+    return () => clearInterval(t);
+  }, [runOver, hangUp, onSettled]);
 
   const talkLeft =
     chat.session?.talk_seconds != null
@@ -363,7 +404,8 @@ export function NpcDialogue({
       )}
       <div>
         <span className="font-pixel block text-[10px]">Request</span>
-        <ProposalPanel state={state} />
+        {/* The payment shows with the result screen, after the employee has finished talking. */}
+        {runOver && !settled ? <p>Processing…</p> : <ProposalPanel state={state} />}
       </div>
       {stage === "talk" && talkLeft != null && <p className="font-pixel text-[10px]">TALK {clock(talkLeft)}</p>}
       {chat.session?.stub && <p className="text-[var(--cc-warn)]">Stub mode: nothing is saved.</p>}
