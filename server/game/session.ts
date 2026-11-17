@@ -282,9 +282,9 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 }
 
 async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel, ip: string | null): Promise<string> {
-  // Floors open in order, as on /tower: 0 and 1 are always open; floor N needs a breach on floor N-1.
+  // Floors open in order, as on /tower: the tutorial (0) is always open; floor N needs a breach on floor N-1.
   // Checked before anything else so a refused request leaves the player's current run alone.
-  if (floor >= 2) {
+  if (floor >= 1) {
     const { count } = await db()
       .from("runs")
       .select("id", { count: "exact", head: true })

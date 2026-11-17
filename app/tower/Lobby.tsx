@@ -1,7 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -37,6 +37,13 @@ export function Lobby({
     setLeaving(null);
   }, [leaving, router]);
 
+  // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("cc-intro-seen")) router.replace("/intro");
+    } catch {}
+  }, [router]);
+
   const open = map.props?.find((p) => p.id === prop);
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
@@ -49,6 +56,7 @@ export function Lobby({
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
           <Link className="hover:underline" href="/signin">SIGN IN</Link>
+          <Link className="hover:underline" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>
       <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] [@media(pointer:fine)]:block">
