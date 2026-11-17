@@ -38,9 +38,17 @@ export function Lobby({
 
   const leavingRef = useRef(leaving);
   leavingRef.current = leaving;
+  // The Daily door is always an exit; while the tutorial isn't cleared, walking in says so instead of
+  // silently doing nothing.
+  const [dailyLocked, setDailyLocked] = useState(false);
+  const tutorialDoneRef = useRef(false);
   const onEvent = useCallback((e: SceneEvent) => {
     if (e.type === "exit") {
       if (leavingRef.current) return;
+      if (e.to === "/daily" && !tutorialDoneRef.current) {
+        setDailyLocked(true);
+        return;
+      }
       const n = e.to.split("/").pop();
       setLeaving({
         to: e.to,
@@ -69,17 +77,17 @@ export function Lobby({
   const cleared = useClearedHere();
   const key = cleared.join("");
   const tutorialDone = !!tutorialCleared || !!cleared[0];
+  useEffect(() => {
+    tutorialDoneRef.current = tutorialDone;
+  }, [tutorialDone]);
   const map = useMemo(() => {
     const dailyCell = DAILY_X + (LOBBY_H - 1) * LOBBY_W;
     let exits = [...(serverMap.exits ?? [])];
     // Never leave the doorway tile in blocked — walking onto it must work; gating is exit-only.
     let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell);
 
-    if (tutorialDone) {
-      if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: LOBBY_H - 1, to: "/daily" });
-    } else {
-      exits = exits.filter((e) => e.to !== "/daily");
-    }
+    // Always an exit; onEvent shows the locked message until the tutorial is cleared.
+    if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: LOBBY_H - 1, to: "/daily" });
 
     if (guest) {
       const closed = exits.filter((e) => {
@@ -107,7 +115,7 @@ export function Lobby({
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
@@ -129,6 +137,13 @@ export function Lobby({
         Arrow keys to walk · Space to read · Elevators go up
       </p>
       {open && <PropDialogue label={open.label} text={open.text} onClose={() => setProp(null)} />}
+      {dailyLocked && (
+        <PropDialogue
+          label="Daily Case · locked"
+          text="The Daily Case opens once you've cleared the tutorial: the Pocket Branch, through the T door. After that, a new case waits behind this door every day."
+          onClose={() => setDailyLocked(false)}
+        />
+      )}
       <MusicToggle track="music-floor-1.mp3" />
       <Elevator label="Lobby · Plumpurse Tower" leaving={leaving} onClosed={arrived} />
     </main>
