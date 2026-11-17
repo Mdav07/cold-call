@@ -163,8 +163,7 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   };
 }
 
-/** Short labels on the doormats (letter is also painted on the tile). */
-export const TUTORIAL_TAG = { x: DOOR_X, y: H - 2, text: "T" };
+/** Short label on the daily doormat (letter is also painted on the tile). No floating TUTORIAL sign. */
 export const DAILY_TAG = { x: DAILY_X, y: H - 2, text: "D" };
 export { H as LOBBY_H, W as LOBBY_W };
 
@@ -174,7 +173,8 @@ export function lobbyGuide(floors: TowerFloor[]): {
   tags: { x: number; y: number; text: string; endAt?: "x" }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
-  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [TUTORIAL_TAG] };
+  // Tutorial: guide dots only — the mint T mat is the sign.
+  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [] };
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
   if (!next) return { goal: null, tags: [DAILY_TAG] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];

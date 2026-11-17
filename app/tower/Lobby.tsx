@@ -10,7 +10,7 @@ import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_TAG, DAILY_X, LOBBY_H, LOBBY_W, TUTORIAL_TAG } from "./lobbyMap";
+import { DAILY_TAG, DAILY_X, LOBBY_H, LOBBY_W } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
@@ -95,7 +95,7 @@ export function Lobby({
     const daily = cleared[0] ? [DAILY_TAG] : [];
     if (next == null || !exit) return { goal: null, tags: daily };
     return next === 0
-      ? { goal: { x: exit.x, y: exit.y }, tags: [TUTORIAL_TAG] }
+      ? { goal: { x: exit.x, y: exit.y }, tags: [] } // mint T mat is the sign; no floating label
       : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }, ...daily] };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
