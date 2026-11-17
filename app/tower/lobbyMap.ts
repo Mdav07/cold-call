@@ -105,11 +105,10 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   }
 
   const p0 = byFloor(0);
-  // Always place the Daily exit; lock with `blocked` until the tutorial is cleared.
-  // Guests who cleared Floor 0 in this browser get it unblocked in Lobby.tsx.
+  // Daily doorway is always physically open; Lobby.tsx adds/removes the /daily exit based on
+  // tutorial clear (account or this browser). Blocking the cell made it feel broken.
   const today = dailyCase(todayUtc());
   exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
-  if (!p0?.cleared) blocked.push(at(DAILY_X, H - 1));
   // Readable props sit on the doormats (same tile as the rug) so the SPACE highlight lines up
   // with the T / D — not on the wall tiles beside the doors (that looked like an offset hitbox).
   props.push({

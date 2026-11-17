@@ -65,29 +65,35 @@ export function Lobby({
   }, [router]);
 
   // Guests: lock each elevator whose floor below this browser hasn't cleared, and point at the next
-  // floor to play (the tutorial door first).
+  // floor to play (the tutorial door first). Daily opens after tutorial — account clear OR this browser.
   const cleared = useClearedHere();
   const key = cleared.join("");
+  const tutorialDone = !!tutorialCleared || !!cleared[0];
   const map = useMemo(() => {
-    if (!guest) return serverMap;
-    const closed = (serverMap.exits ?? []).filter((e) => {
-      const n = Number(e.to.split("/").pop());
-      if (e.to === "/daily") return !cleared[0]; // the Daily Case opens after the tutorial
-      return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
-    });
     const dailyCell = DAILY_X + (LOBBY_H - 1) * LOBBY_W;
-    // Server map may still block Daily when only this browser cleared Floor 0 — unblock it.
-    const blocked = [
-      ...(serverMap.blocked ?? []).filter((i) => !(cleared[0] && i === dailyCell)),
-      ...closed.map((e) => e.y * serverMap.width + e.x),
-    ];
-    return {
-      ...serverMap,
-      exits: serverMap.exits?.filter((e) => !closed.includes(e)),
-      blocked,
-    };
+    let exits = [...(serverMap.exits ?? [])];
+    // Never leave the doorway tile in blocked — walking onto it must work; gating is exit-only.
+    let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell);
+
+    if (tutorialDone) {
+      if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: LOBBY_H - 1, to: "/daily" });
+    } else {
+      exits = exits.filter((e) => e.to !== "/daily");
+    }
+
+    if (guest) {
+      const closed = exits.filter((e) => {
+        if (e.to === "/daily") return false; // already handled above
+        const n = Number(e.to.split("/").pop());
+        return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
+      });
+      exits = exits.filter((e) => !closed.includes(e));
+      blocked = [...blocked, ...closed.map((e) => e.y * serverMap.width + e.x)];
+    }
+
+    return { ...serverMap, exits, blocked };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverMap, guest, key]);
+  }, [serverMap, guest, key, tutorialDone]);
   const shown = useMemo(() => {
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
