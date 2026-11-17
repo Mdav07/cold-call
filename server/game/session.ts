@@ -14,6 +14,7 @@ import { getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
+import { DAILY_EMPLOYEE, DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
 export const TALK_SECONDS: Record<EmployeeId, number | null> = {
@@ -24,6 +25,7 @@ export const TALK_SECONDS: Record<EmployeeId, number | null> = {
   bill: 300,
   cassius: 180,
   max: 120,
+  daily: null,
 };
 
 export interface StartSessionInput {
@@ -107,6 +109,7 @@ export function isStubMode(): boolean {
 }
 
 export function employeeFloor(id: EmployeeId): FloorId {
+  if (id === DAILY_EMPLOYEE) return DAILY_FLOOR;
   const e = directory.employees.find((x) => x.id === id);
   if (!e || !e.is_signer) throw new SessionError(`unknown employee ${id}`, 404);
   return e.floor as FloorId;
@@ -186,7 +189,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     // Only tricks from earlier runs: a callback on this run (Floor 3's allowlist, wait, call back)
     // is the designed path, not a repeated trick.
     const { data: thisRun } = await db().from("runs").select("created_at").eq("id", run_id).single().throwOnError();
-    const { data: mem } = await db()
+    // The Daily Case is a new person every day: nothing to remember.
+    const { data: mem } = floor === DAILY_FLOOR ? { data: [] as { trick_summary: string }[] } : await db()
       .from("player_memory")
       .select("trick_summary")
       .eq("user_id", userId)
@@ -275,24 +279,49 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       talk_seconds_left: talk_seconds ?? 3600,
       open_proposal,
       open_allowlist,
+      ...(floor === DAILY_FLOOR ? dailyVariables() : {}),
     },
     talk_seconds,
     stub,
   };
 }
 
+/** Today's Daily Case persona, passed to the "daily" ElevenLabs agent (agents/daily.md). */
+function dailyVariables(): Record<string, string> {
+  const c = dailyCase();
+  return {
+    daily_name: c.employee.name,
+    daily_first_name: c.employee.firstName,
+    daily_title: c.employee.title,
+    daily_place: c.place,
+    daily_personality: c.employee.personality,
+    daily_tic: c.employee.tic,
+    daily_soft_spot: c.employee.softSpot,
+    daily_red_line: c.employee.redLine,
+    daily_vendors: c.vendors.map((v) => `${v.name} (${v.what}, invoices ${v.code.split("-")[0]}-)`).join("; "),
+    daily_allowed_vendor: c.allowedVendor,
+    daily_allowed_job: c.allowedJob,
+    daily_allowed_invoice: c.allowedInvoice,
+  };
+}
+
 async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel, ip: string | null): Promise<string> {
   // Floors open in order, as on /tower: the tutorial (0) is always open; floor N needs a breach on floor N-1.
   // Checked before anything else so a refused request leaves the player's current run alone.
+  // The Daily Case (floor 4) opens once the tutorial is cleared.
+  const needs = floor === DAILY_FLOOR ? 0 : floor - 1;
   if (floor >= 1) {
     const { count } = await db()
       .from("runs")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
-      .eq("floor", floor - 1)
+      .eq("floor", needs)
       .eq("outcome", "breach")
       .throwOnError();
-    if (!count) throw new SessionError(`Floor ${floor} is locked. Clear Floor ${floor - 1} first.`, 403);
+    if (!count) {
+      const what = floor === DAILY_FLOOR ? "The Daily Case" : `Floor ${floor}`;
+      throw new SessionError(`${what} is locked. Clear ${needs === 0 ? "the Pocket Branch" : `Floor ${needs}`} first.`, 403);
+    }
   }
 
   // A new run closes the player's unfinished ones as "quit" (and clears any Floor 3 allowlist spot).
@@ -307,7 +336,7 @@ async function newRun(userId: string, floor: FloorId, cover: string, channel: Ch
 
   const { data } = await db()
     .from("runs")
-    .insert({ user_id: userId, floor, cover, channel, client_ip: ip })
+    .insert({ user_id: userId, floor, cover, channel, client_ip: ip, daily_date: floor === DAILY_FLOOR ? todayUtc() : null })
     .select("id")
     .single()
     .throwOnError();

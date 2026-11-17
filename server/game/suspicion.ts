@@ -20,6 +20,7 @@ export const STARTING_SUSPICION: Record<EmployeeId, number> = {
   annie: 20,
   bill: 30,
   cassius: 40,
+  daily: 10,
   max: 20,
 };
 
