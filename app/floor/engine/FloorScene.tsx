@@ -423,7 +423,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.textAlign = "center";
         c.textBaseline = "middle";
         const wdt = Math.ceil(c.measureText(text).width) + 4;
-        const cx = Math.round(x + TILE / 2), cy = Math.round(y - (FRAME_H - TILE) + 1);
+        const cx = Math.round(x + TILE / 2), cy = Math.round(y - (FRAME_H - TILE) - 2);
         c.fillStyle = "rgba(21, 20, 26, 0.6)";
         c.fillRect(cx - Math.round(wdt / 2), cy - 3, wdt, 6);
         c.fillStyle = "#f2efe6";
