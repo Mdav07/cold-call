@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import { SaveProgress } from "@/app/play/SaveProgress";
-import { cleanName, getHunter, HUNTERS, MAX_NAME, saveHunter, spriteUrl, type HunterChoice } from "@/app/play/hunters";
+import { STREAK_REWARDS, useBestStreak } from "@/app/play/streak";
+import { StreakBadge } from "@/app/play/StreakBadge";
+import { cleanName, DEFAULT_HUNTER, getHunter, HUNTERS, MAX_NAME, saveHunter, spriteUrl, type HunterChoice } from "@/app/play/hunters";
 
 /** One hunter's sprite: the idle front frame of the 16x32 sheet, scaled up crisply. */
 function SpriteFace({ sprite, size = 4 }: { sprite: string; size?: number }) {
@@ -35,9 +37,10 @@ export function HunterPicker() {
 
 function PickerForm({ initial }: { initial: HunterChoice | null }) {
   const router = useRouter();
-  const [sprite, setSprite] = useState(initial?.sprite ?? "hunter-1");
+  const [sprite, setSprite] = useState(initial?.sprite ?? DEFAULT_HUNTER.sprite);
   const [name, setName] = useState(initial && initial.name !== "Hunter" ? initial.name : "");
   const [saved, setSaved] = useState(false);
+  const best = useBestStreak();
 
   const save = async () => {
     const clean = cleanName(name) || "Hunter";
@@ -89,8 +92,41 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
               <span className="text-center text-[11px] leading-tight text-[var(--cc-muted)]">{h.label}</span>
             </label>
           ))}
+          {STREAK_REWARDS.map((r) => {
+            const open = best >= r.days;
+            return (
+              <label
+                key={r.sprite}
+                title={open ? `Earned with a ${r.days}-day streak` : `Unlocks with a ${r.days}-day Daily Case streak`}
+                className={`pixel-frame flex flex-col items-center gap-1 bg-[var(--cc-panel-2)] p-2 ${
+                  open ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+                } ${sprite === r.sprite ? "outline outline-2 outline-[var(--cc-accent)]" : ""}`}
+              >
+                <input
+                  type="radio"
+                  name="look"
+                  value={r.sprite}
+                  checked={sprite === r.sprite}
+                  disabled={!open}
+                  onChange={() => setSprite(r.sprite)}
+                  className="sr-only"
+                />
+                <span className={open ? "" : "grayscale"}>
+                  <SpriteFace sprite={r.sprite} size={2} />
+                </span>
+                <span className="text-center text-[11px] leading-tight text-[var(--cc-muted)]">
+                  {open ? r.label : `🔒 ${r.days}-day streak`}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </fieldset>
+
+      {/* How to earn the locked looks: the Daily Case streak. */}
+      <div className="border-t-2 border-dashed border-[var(--cc-edge)] pt-4">
+        <StreakBadge variant="full" />
+      </div>
 
       <div className="flex items-end gap-4">
         <div className="flex flex-1 flex-col gap-2">
