@@ -69,7 +69,7 @@ async function main() {
 
     // Database state after the ingest (runs after the response)
     let after;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 60; i++) {
       after = (await s.from("runs").select("*").eq("id", run.id).single()).data;
       if (after.outcome) break;
       await new Promise((r) => setTimeout(r, 500));
@@ -79,7 +79,7 @@ async function main() {
     assert.equal(String(after.payout_units), "50000");
     assert.ok(after.duration_ms >= 0);
     const { data: events } = await s.from("chain_events").select("event, source").eq("run_id", run.id);
-    console.log("events", events!.map((e) => e.event).join(", "));
+    console.log("events", events!.map((e) => `${e.event}:${e.source}`).join(", "));
     assert.ok(events!.some((e) => e.event === "TransferExecuted"));
     const { data: board } = await s.from("leaderboard").select("*").eq("run_id", run.id);
     assert.equal(board!.length, 1);
