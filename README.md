@@ -8,6 +8,17 @@ The chain is the referee: a run counts as a breach only when the vault contract 
 - Built for the UBC 2026 hackathon (Consumer Applications; Arc; ElevenLabs; QuickNode Streams).
 - Testnet only. No real money is involved.
 
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Walking Floor 1 and talking to Dee](docs/screenshots/floor-1-dialogue.png) | ![Plumpurse Tower: floors, live vault balances, Daily Contract](docs/screenshots/tower.png) |
+| Walk up to an employee and press Space to talk or call | The tower: floors unlock in order; vault balances are read live from Arc |
+| ![Floor 3, the executive suite](docs/screenshots/floor-3.png) | ![Leaderboard with proof-of-heist links](docs/screenshots/leaderboard.png) |
+| Floor 3: the executive suite | Leaderboard: every time links to its transaction |
+| ![Case file](docs/screenshots/casefile.png) | ![Title screen](docs/screenshots/title.png) |
+| Krystal's case file: staff, vendors, memos, gossip | Title screen |
+
 ## How to play
 
 You're a rookie crypto treasure hunter finishing your vanished mentor's last job: get into Plumpurse's
