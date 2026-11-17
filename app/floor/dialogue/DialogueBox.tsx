@@ -21,6 +21,17 @@ export interface NpcInfo {
   id: EmployeeId;
   name: string;
   title: string;
+  /** Sprite sheet, for people without a drawn portrait (the Daily Case): the box shows its face. */
+  sprite?: string;
+}
+
+/** A face cropped from a walking sprite (frame 0, head and shoulders), crisp at any size. */
+function SpriteFace({ sprite }: { sprite: string }) {
+  return (
+    <svg viewBox="2 12 12 12" aria-hidden style={{ imageRendering: "pixelated" }}>
+      <image href={sprite} width={64} height={128} style={{ imageRendering: "pixelated" }} />
+    </svg>
+  );
 }
 
 /**
@@ -364,7 +375,15 @@ export function NpcDialogue({
       <Frame
         name={npc.name}
         theme={themeFor(npc.id)}
-        portrait={Art ? <Art mood={moodFor(suspicion)} /> : <span className="font-pixel text-xl">{first[0]}</span>}
+        portrait={
+          Art ? (
+            <Art mood={moodFor(suspicion)} />
+          ) : npc.sprite ? (
+            <SpriteFace sprite={npc.sprite} />
+          ) : (
+            <span className="font-pixel text-xl">{first[0]}</span>
+          )
+        }
         side={side}
         above={
           showLog && chat.lines.length > 0 ? (

@@ -25,6 +25,8 @@ const THEMES: Record<string, BoxTheme> = {
   max: { border: "#a08060", tag: "#fff4b0", accent: "#f4c95d", panel: "#2a2418" },
   barry: { border: "#8a9a78", tag: "#c8d4b8", accent: "#c8d4b8", panel: "#22281e" },
   krystal: { border: "#7ec8e8", tag: "#b8e8f8", accent: "#7ec8e8", panel: "#1a2a33" },
+  // The Daily Case: a different stranger every day, so a neutral slate (AA checked like the rest).
+  daily: { border: "#8a94a6", tag: "#c9d1dc", accent: "#e2c27f", panel: "#1e2229" },
 };
 
 export const themeFor = (id: string): BoxTheme => THEMES[id] ?? DEFAULT_THEME;

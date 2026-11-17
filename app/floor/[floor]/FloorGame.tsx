@@ -18,6 +18,7 @@ import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
+import type { DailyCase } from "@/shared/dailyCase";
 
 type Open = { kind: "npc"; id: EmployeeId } | { kind: "prop"; id: string } | null;
 
@@ -29,6 +30,7 @@ export function FloorGame({
   vault,
   gate,
   unlockedFloors,
+  daily,
 }: {
   map: FloorMap;
   npcs: NpcInfo[];
@@ -39,7 +41,13 @@ export function FloorGame({
   gate: ReactNode;
   /** Floors the player has open — drives the case-file filter chips. */
   unlockedFloors: number[];
+  /**
+   * Today's Daily Case (/daily): the briefing comes from the case and is remembered per day, and the
+   * case file is the case's own small file. Everything else (talk, outcome, elevator) is the same.
+   */
+  daily?: DailyCase;
 }) {
+  const dailyBriefKey = daily ? `cc-briefed-daily-${daily.date}` : null;
   const router = useRouter();
   const [open, setOpen] = useState<Open>(null);
   const [caseFile, setCaseFile] = useState(false);
@@ -117,8 +125,8 @@ export function FloorGame({
   // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
   const [briefing, setBriefing] = useState<boolean | null>(null);
   useEffect(() => {
-    setBriefing(!!briefingFor(map.floor) && !wasBriefed(map.floor));
-  }, [map.floor]);
+    setBriefing(dailyBriefKey ? !wasBriefed(dailyBriefKey) : !!briefingFor(map.floor) && !wasBriefed(map.floor));
+  }, [map.floor, dailyBriefKey]);
 
   const onEvent = useCallback(
     (e: SceneEvent) => {
@@ -204,10 +212,17 @@ export function FloorGame({
         />
       )}
 
-      <MusicToggle track={`music-floor-${map.floor}.mp3`} />
+      <MusicToggle track={`music-floor-${daily ? 0 : map.floor}.mp3`} />
       {/* Hidden, not closed, while the case file is open: its buttons showed through the overlay. */}
-      {briefing && <div className={caseFile ? "hidden" : undefined}><Briefing floor={map.floor} floorName={map.name} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} /></div>}
-      {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} onClose={() => setCaseFile(false)} />}
+      {briefing && <div className={caseFile ? "hidden" : undefined}><Briefing
+            floor={map.floor}
+            floorName={map.name}
+            onStart={() => setBriefing(false)}
+            onCaseFile={openCaseFile}
+            pages={daily?.brief}
+            storageKey={dailyBriefKey ?? undefined}
+          /></div>}
+      {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
       {gate}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
     </main>

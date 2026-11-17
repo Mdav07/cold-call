@@ -5,16 +5,20 @@
 
 import { useEffect, useRef } from "react";
 import { CaseFile } from "@/app/casefile/CaseFile";
+import type { DailyCase } from "@/shared/dailyCase";
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
 
 export function CaseFileOverlay({
   floor,
   unlockedFloors,
+  daily,
   onClose,
 }: {
   floor: number;
   unlockedFloors: number[];
+  /** Today's Daily Case, which has its own small file. */
+  daily?: DailyCase;
   onClose: () => void;
 }) {
   const panel = useRef<HTMLDivElement>(null);
@@ -68,7 +72,7 @@ export function CaseFileOverlay({
         aria-label="Case file"
         className="flex max-h-full w-full max-w-3xl flex-col sm:max-h-[min(90dvh,52rem)]"
       >
-        <CaseFile floor={floor} unlockedFloors={unlockedFloors} fill onClose={onClose} />
+        <CaseFile floor={floor} unlockedFloors={unlockedFloors} daily={daily} fill onClose={onClose} />
       </div>
     </div>
   );

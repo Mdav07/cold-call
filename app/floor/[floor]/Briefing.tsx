@@ -16,10 +16,13 @@ export function briefingFor(floor: number): BriefingText | null {
   return (krystal.briefings as Record<string, BriefingText>)[String(floor)] ?? null;
 }
 
-const key = (floor: number) => `cc-briefed-floor-${floor}`;
+const key = (floor: number | string) => (typeof floor === "string" ? floor : `cc-briefed-floor-${floor}`);
 
-/** True if this browser has already seen the floor's briefing. Storage errors count as not seen. */
-export function wasBriefed(floor: number): boolean {
+/**
+ * True if this browser has already seen the floor's briefing. Storage errors count as not seen.
+ * A string is a storage key of its own (the Daily Case uses one per day).
+ */
+export function wasBriefed(floor: number | string): boolean {
   try {
     return localStorage.getItem(key(floor)) === "1";
   } catch {
@@ -27,7 +30,7 @@ export function wasBriefed(floor: number): boolean {
   }
 }
 
-function markBriefed(floor: number) {
+function markBriefed(floor: number | string) {
   try {
     localStorage.setItem(key(floor), "1");
   } catch {
@@ -56,12 +59,18 @@ export function Briefing({
   floorName,
   onStart,
   onCaseFile,
+  pages,
+  storageKey,
 }: {
   floor: number;
   /** The map's name, e.g. "Floor 1 · The Bullpen", shown as a chapter title. */
   floorName: string;
   onStart: () => void;
   onCaseFile: () => void;
+  /** The two screens' text, when it isn't Krystal's recorded memo for the floor (the Daily Case). */
+  pages?: [string, string];
+  /** Where "seen" is remembered, when it isn't the floor (the Daily Case: one key per day). */
+  storageKey?: string;
 }) {
   const [kicker, title] = floorName.includes(" · ") ? floorName.split(" · ") : [`Floor ${floor}`, floorName];
   const [page, setPage] = useState<0 | 1>(0);
@@ -71,14 +80,14 @@ export function Briefing({
   const flippedRef = useRef(false);
   // Focus follows the page, so Enter walks through: Next, then Start.
   useEffect(() => (page === 0 ? nextRef : startRef).current?.focus(), [page]);
-  const b = briefingFor(floor);
-  const [one, two] = halves(b?.text ?? "");
+  const b = pages ? { audio: "", text: pages.join(" ") } : briefingFor(floor);
+  const [one, two] = pages ?? halves(b?.text ?? "");
   // Flip when the spoken progress crosses the first screen's share of the memo.
   const flipAt = one.length / Math.max(1, one.length + two.length);
   const Face = PORTRAITS.krystal;
   const start = () => {
     confirm();
-    markBriefed(floor);
+    markBriefed(storageKey ?? floor);
     onStart();
   };
   const go = (p: 0 | 1) => {
@@ -141,7 +150,7 @@ export function Briefing({
             <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Krystal says</p>
             <p className="font-pixel text-xs text-[var(--cc-accent)]">{krystal.name ?? "Krystal"}</p>
           </div>
-          <MemoPlayButton title={`Krystal's briefing for ${title}`} audio={b.audio} onTime={onAudioTime} />
+          {b.audio && <MemoPlayButton title={`Krystal's briefing for ${title}`} audio={b.audio} onTime={onAudioTime} />}
         </div>
 
         <div aria-live="polite" className="flex min-h-[7.5rem] flex-col gap-4">

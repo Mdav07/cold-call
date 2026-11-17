@@ -13,6 +13,8 @@ import evidence from "@/content/plumpurse/evidence.json";
 import pocket from "@/content/pocket-branch/casefile.json";
 import { MyNotes } from "./MyNotes";
 import { useCollectedEvidence, useReadProps } from "@/app/play/evidence";
+import type { DailyCase } from "@/shared/dailyCase";
+import { dailyPropId } from "@/app/daily/room";
 
 const TABS = [
   { id: "people", label: "People" },
@@ -23,6 +25,14 @@ const TABS = [
   { id: "mine", label: "My notes" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"] | "notices";
+
+/** The Daily Case is its own little file too: today's one person, today's vendors, the clues found. */
+const DAILY_TABS: { id: TabId; label: string }[] = [
+  { id: "people", label: "People" },
+  { id: "vendors", label: "Vendors" },
+  { id: "notices", label: "Clues" },
+  { id: "mine", label: "My notes" },
+];
 
 /** The Pocket Branch is its own little file: nothing from the tower in it. */
 const POCKET_TABS: { id: TabId; label: string }[] = [
@@ -344,6 +354,52 @@ function PocketNotices() {
   );
 }
 
+function DailyPeople({ c }: { c: DailyCase }) {
+  return (
+    <ul className={GRID}>
+      <Card
+        title={c.employee.name}
+        meta={
+          <span className="flex flex-wrap items-center gap-1">
+            {c.employee.title} <Chip tone="green">Can pay</Chip>
+          </span>
+        }
+      >
+        <Facts lines={[c.employee.personality, "Pays one listed vendor a day, up to $" + c.capUsdc.toFixed(2) + "."]} />
+      </Card>
+    </ul>
+  );
+}
+
+function DailyVendors({ c }: { c: DailyCase }) {
+  return (
+    <ul className={GRID}>
+      {c.vendors.map((v) => (
+        <Card key={v.name} title={v.name} meta={"Invoices " + v.code.split("-")[0] + "-…"}>
+          <p className="text-sm text-[var(--cc-ink)]">{v.what[0].toUpperCase() + v.what.slice(1)}</p>
+        </Card>
+      ))}
+    </ul>
+  );
+}
+
+function DailyClues({ c }: { c: DailyCase }) {
+  const read = useReadProps();
+  return (
+    <ul className={GRID}>
+      {c.clues.map((clue) =>
+        read.has(dailyPropId(c.date, clue.id)) ? (
+          <Card key={clue.id} title={clue.label}>
+            <p className="text-sm text-[var(--cc-ink)]">{clue.text}</p>
+          </Card>
+        ) : (
+          <Locked key={clue.id} where="the room" />
+        ),
+      )}
+    </ul>
+  );
+}
+
 function PocketEvidence() {
   const found = useCollectedEvidence();
   const items = evidence.items.filter((e) => e.floor === 0);
@@ -373,7 +429,10 @@ export function CaseFile({
   unlockedFloors = [],
   fill = false,
   onClose,
+  daily,
 }: {
+  /** Today's Daily Case: shows its own small file instead of the tower's. */
+  daily?: DailyCase;
   floor?: number;
   unlockedFloors?: number[];
   fill?: boolean;
@@ -385,8 +444,9 @@ export function CaseFile({
   const [filter, setFilter] = useState<number | "all">(initial);
   const id = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const isPocket = floor === 0;
-  const tabs: readonly { id: TabId; label: string }[] = isPocket ? POCKET_TABS : TABS;
+  const isDaily = !!daily;
+  const isPocket = floor === 0 && !isDaily;
+  const tabs: readonly { id: TabId; label: string }[] = isDaily ? DAILY_TABS : isPocket ? POCKET_TABS : TABS;
 
   // If unlocks change (or we opened on a locked chip), show a visible floor instead.
   const active: number | "all" = filter !== "all" && !allowed.includes(filter) ? (allowed.length === 1 ? allowed[0]! : "all") : filter;
@@ -401,7 +461,7 @@ export function CaseFile({
     tabRefs.current[n]?.focus();
   };
 
-  const filtered = !isPocket && (tab === "people" || tab === "calendar" || tab === "evidence");
+  const filtered = !isPocket && !isDaily && (tab === "people" || tab === "calendar" || tab === "evidence");
 
   return (
     <div className={`flex flex-col ${fill ? "min-h-0 flex-1" : ""}`}>
@@ -449,7 +509,11 @@ export function CaseFile({
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-pixel text-[9px] text-[var(--cc-muted)]">
-              {isPocket ? `${pocket.title} · practice file kept by ${pocket.author}` : `Plumpurse S&T · file kept by ${dossier.author}`}
+              {daily
+                ? `Daily Case · ${daily.title} · ${daily.date}`
+                : isPocket
+                  ? `${pocket.title} · practice file kept by ${pocket.author}`
+                  : `Plumpurse S&T · file kept by ${dossier.author}`}
             </p>
             <p aria-hidden className="-rotate-6 border-2 border-[#a33a2a] px-2 py-0.5 font-pixel text-[9px] text-[#a33a2a]">
               CONFIDENTIAL
@@ -458,11 +522,21 @@ export function CaseFile({
           {tab === "people" && (
             <p className="border border-[#e8d99a] bg-[#fff4b0] p-2 text-sm text-[var(--cc-ink)] shadow-[2px_2px_0_0_#d8ccb0]">
               <span className="font-pixel text-[9px] text-[var(--cc-accent)]">Krystal: </span>
-              {isPocket ? pocket.intro : dossier.intro}
+              {daily
+                ? `${daily.place}. One person, one small payment. Read the notes in the room: they tell you who to be and what not to say.`
+                : isPocket
+                  ? pocket.intro
+                  : dossier.intro}
             </p>
           )}
           {filtered && <FloorFilter value={active} onChange={setFilter} floors={allowed} />}
-          {isPocket ? (
+          {daily ? (
+            <>
+              {tab === "people" && <DailyPeople c={daily} />}
+              {tab === "vendors" && <DailyVendors c={daily} />}
+              {tab === "notices" && <DailyClues c={daily} />}
+            </>
+          ) : isPocket ? (
             <>
               {tab === "people" && <PocketPeople />}
               {tab === "vendors" && <PocketVendors />}
