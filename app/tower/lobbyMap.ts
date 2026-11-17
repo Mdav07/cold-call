@@ -142,3 +142,16 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
     exits,
   };
 }
+
+/** Where a player should head next from the lobby, and the tags that label it. */
+export function lobbyGuide(floors: TowerFloor[]): {
+  goal: { x: number; y: number } | null;
+  tags: { x: number; y: number; text: string }[];
+} {
+  const f0 = floors.find((f) => f.floor === 0);
+  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [{ x: DOOR_X, y: H - 1, text: "TUTORIAL" }] };
+  const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
+  if (!next) return { goal: null, tags: [] };
+  const x = ELEVATORS[next.floor as 1 | 2 | 3];
+  return { goal: { x, y: 2 }, tags: [{ x, y: 1, text: `FLOOR ${next.floor}` }] };
+}

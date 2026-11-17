@@ -12,7 +12,13 @@ import { Elevator } from "@/app/floor/[floor]/Elevator";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
-export function Lobby({ map }: { map: FloorMap }) {
+export function Lobby({
+  map,
+  guide,
+}: {
+  map: FloorMap;
+  guide: { goal: { x: number; y: number } | null; tags: { x: number; y: number; text: string }[] };
+}) {
   const router = useRouter();
   const [prop, setProp] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
@@ -24,14 +30,18 @@ export function Lobby({ map }: { map: FloorMap }) {
     } else if (e.type === "interact-prop") setProp(e.id);
   }, []);
   const arrived = useCallback(() => {
-    if (leaving) router.push(leaving.to);
+    if (!leaving) return;
+    router.push(leaving.to);
+    // Next keeps this page's state for when you come back; a ride still set then would close the
+    // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
+    setLeaving(null);
   }, [leaving, router]);
 
   const open = map.props?.find((p) => p.id === prop);
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} goal={guide.goal} tags={guide.tags} />
       </div>
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
         <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">

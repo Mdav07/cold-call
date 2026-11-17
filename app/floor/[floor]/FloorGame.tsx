@@ -48,6 +48,9 @@ export function FloorGame({
   const [lockedOut, setLockedOut] = useState<Set<EmployeeId>>(new Set());
   const [levels, setLevels] = useState<Partial<Record<EmployeeId, number>>>({});
   const [dismissedRun, setDismissedRun] = useState<string | null>(null);
+  // Guide state: has the player talked to anyone yet, and has this floor been breached this visit.
+  const [talked, setTalked] = useState(false);
+  const [cleared, setCleared] = useState(false);
 
   const polled = useRunState(runId, focus, !!runId);
 
@@ -95,7 +98,11 @@ export function FloorGame({
     [router],
   );
   const arrived = useCallback(() => {
-    if (leaving) router.push(leaving.to);
+    if (!leaving) return;
+    router.push(leaving.to);
+    // Next keeps this page's state for when you come back; a ride still set then would close the
+    // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
+    setLeaving(null);
   }, [leaving, router]);
 
   // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
@@ -109,6 +116,7 @@ export function FloorGame({
       if (e.type === "exit") return leave(e.to);
       if (e.type === "interact-npc") {
         setFocus(e.id);
+        setTalked(true);
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
@@ -138,6 +146,13 @@ export function FloorGame({
     return () => ro.disconnect();
   }, [boxOpen, open]);
 
+  // The guide's dots: to the first person until you've spoken to someone, to the elevator after a breach.
+  const exit = map.exits?.[0];
+  const dist = (n: { x: number; y: number }) => Math.abs(n.x - map.spawn.x) + Math.abs(n.y - map.spawn.y);
+  const firstNpc = [...map.npcs].sort((a, b) => dist(a) - dist(b))[0];
+  const goal = cleared && exit ? { x: exit.x, y: exit.y } : !talked && firstNpc ? { x: firstNpc.x, y: firstNpc.y } : null;
+  const tags = cleared && exit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
+
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   const finished = !!state?.run?.ended_at;
@@ -145,7 +160,7 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} />
       </div>
 
       <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} onCaseFile={openCaseFile} />
@@ -173,7 +188,10 @@ export function FloorGame({
           state={state}
           employeeName={npcs.find((n) => n.id === focus)?.name.split(" ")[0] ?? "They"}
           onRetry={() => resetRun(true)}
-          onClose={() => resetRun(outcome === "breach")}
+          onClose={() => {
+            if (outcome === "breach") setCleared(true);
+            resetRun(outcome === "breach");
+          }}
         />
       )}
 

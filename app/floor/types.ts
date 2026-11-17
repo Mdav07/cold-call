@@ -45,4 +45,8 @@ export interface FloorSceneProps {
   emotes?: Partial<Record<EmployeeId, "talking" | "suspicious" | "alarm" | null>>;
   /** CSS pixels at the bottom covered by UI (the dialogue box). The camera keeps the player above it. */
   insetBottom?: number;
+  /** Where the player should go next: a faint trail of dots leads there. Null hides it. */
+  goal?: { x: number; y: number } | null;
+  /** Small text tags drawn on the map, e.g. "TUTORIAL" over a door. */
+  tags?: { x: number; y: number; text: string }[];
 }

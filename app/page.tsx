@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// The game opens straight into the tutorial: the Pocket Branch, with Krystal's briefing.
+// The game opens in the tower lobby; the street door to the tutorial is the one open door.
 export default function Home() {
-  redirect("/floor/0");
+  redirect("/tower");
 }

@@ -4,7 +4,7 @@ import { getDemoUserId } from "@/server/game/players";
 import { getTower } from "@/server/game/tower";
 import { getDaily } from "@/server/game/daily";
 import { Lobby } from "./Lobby";
-import { buildLobby } from "./lobbyMap";
+import { buildLobby, lobbyGuide } from "./lobbyMap";
 
 async function Floors() {
   const userId = (await signedInUserId()) ?? (process.env.SUPABASE_SERVICE_ROLE_KEY ? await getDemoUserId() : null);
@@ -13,7 +13,7 @@ async function Floors() {
   const dailyText = c
     ? `Today: Floor ${c.floor}. ${c.modifier} ${daily.clearedToday ? "Cleared today; come back tomorrow." : "Clear it for the full bounty."} Streak: ${daily.streak.current} days (best ${daily.streak.longest}).`
     : null;
-  return <Lobby map={buildLobby(floors, dailyText)} />;
+  return <Lobby map={buildLobby(floors, dailyText)} guide={lobbyGuide(floors)} />;
 }
 
 // The lobby is a walkable floor; the old card list is in git history (before the night UI pass).

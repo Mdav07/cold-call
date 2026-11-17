@@ -9,7 +9,7 @@ import type { Facing, FloorMap, FloorSceneProps } from "../types";
 const TILE = 16;
 const FRAME_W = 16;
 const FRAME_H = 32;
-const STEP_MS = 170; // time to walk one tile
+const STEP_MS = 215; // time to walk one tile
 const VIEW_TILES = { w: 15, h: 10 }; // roughly how much of the floor fits on screen
 const MIN_SCALE = 2; // never draw the art smaller than 2x, even on a phone
 const ROW: Record<Facing, number> = { down: 0, left: 1, right: 2, up: 3 };
@@ -55,7 +55,12 @@ function isTyping(target: EventTarget | null) {
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
 }
 
-export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBottom = 0 }: FloorSceneProps) {
+export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags }: FloorSceneProps) {
+  const goalRef = useRef(goal);
+  goalRef.current = goal;
+  const tagsRef = useRef(tags);
+  tagsRef.current = tags;
+  const readProps = useRef(new Set<string>()); // props the player has read: their marker goes away
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
@@ -131,7 +136,10 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
       return;
     }
     const prop = propAt(x, y);
-    if (prop) onEventRef.current({ type: "interact-prop", id: prop.id });
+    if (prop) {
+      readProps.current.add(prop.id);
+      onEventRef.current({ type: "interact-prop", id: prop.id });
+    }
   }, [npcAt, propAt]);
 
   // ---------- input ----------
@@ -215,6 +223,40 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
     map.layers.walls.forEach((t, i) => {
       if (WINDOW_TILES.has(t)) windows.push({ x: i % map.width, y: Math.floor(i / map.width) });
     });
+
+    const pixelFont = getComputedStyle(document.body).getPropertyValue("--font-pixel").trim() || "monospace";
+
+    // Shortest walk from the player to the goal (or to a tile next to it, for a person or a prop).
+    let pathKey = "";
+    let path: { x: number; y: number }[] = [];
+    const findPath = (sx: number, sy: number, g: { x: number; y: number }) => {
+      const key = `${sx},${sy},${g.x},${g.y}`;
+      if (key === pathKey) return path;
+      pathKey = key;
+      const W = map.width;
+      // A walkable goal or a door is stepped onto; a person or a prop is walked up to.
+      const onto = walkable(g.x, g.y) || !!map.exits?.some((e) => e.x === g.x && e.y === g.y);
+      const isEnd = (x: number, y: number) =>
+        onto ? x === g.x && y === g.y : Math.abs(x - g.x) + Math.abs(y - g.y) === 1;
+      const prev = new Map<number, number>([[sy * W + sx, -1]]);
+      const queue = [sy * W + sx];
+      let end = -1;
+      while (queue.length) {
+        const i = queue.shift()!;
+        const x = i % W, y = Math.floor(i / W);
+        if (isEnd(x, y)) { end = i; break; }
+        for (const [dx, dy] of Object.values(DELTA)) {
+          const nx = x + dx, ny = y + dy, j = ny * W + nx;
+          if (prev.has(j)) continue;
+          if (!walkable(nx, ny) && !(onto && nx === g.x && ny === g.y)) continue;
+          prev.set(j, i);
+          queue.push(j);
+        }
+      }
+      path = [];
+      for (let i = end; i >= 0 && prev.get(i) !== -1; i = prev.get(i)!) path.unshift({ x: i % W, y: Math.floor(i / W) });
+      return path;
+    };
 
     const step = (now: number) => {
       const dt = Math.min(50, now - last);
@@ -365,6 +407,48 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
         c.fillRect(cx - TILE * 3, cy - TILE * 3, TILE * 6, TILE * 6);
       }
       c.restore();
+
+      // Guide: a faint trail of dots toward the next goal, a few tiles at a time, pulsing outward.
+      const g = goalRef.current;
+      if (g && !pausedRef.current) {
+        const trail = findPath(p.tx, p.ty, g);
+        const show = trail.slice(0, 7);
+        show.forEach((d, i) => {
+          const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
+          c.fillStyle = `rgba(255, 228, 140, ${(0.35 + pulse * 0.55) * (1 - i / 10)})`;
+          c.fillRect(d.x * TILE + 6.5, d.y * TILE + 6.5, 3, 3);
+        });
+      }
+
+      // Every unread prop gets a small bobbing marker so it's clear what can be read.
+      for (const pr of map.props ?? []) {
+        if (readProps.current.has(pr.id)) continue;
+        const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 300 + pr.x) * 1.5);
+        const mx = pr.x * TILE + 6, my = pr.y * TILE - 5 + bob;
+        c.fillStyle = "#15141a";
+        c.fillRect(mx - 1, my - 1, 6, 6);
+        c.fillStyle = "#f4c95d";
+        c.fillRect(mx, my, 4, 4);
+        c.fillStyle = "#fff6cf";
+        c.fillRect(mx, my, 2, 2);
+      }
+
+      // Tags over doors and the like.
+      for (const t of tagsRef.current ?? []) {
+        c.font = `6px ${pixelFont}, monospace`;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        const tw = Math.ceil(c.measureText(t.text).width) + 6;
+        const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 400));
+        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 6 + bob;
+        c.fillStyle = "#15141a";
+        c.fillRect(Math.round(cx - tw / 2) - 1, cy - 6, tw + 2, 12);
+        c.fillStyle = "#f4c95d";
+        c.fillRect(Math.round(cx - tw / 2), cy - 5, tw, 10);
+        c.fillStyle = "#15141a";
+        c.fillText(t.text, cx, cy + 0.5);
+        c.fillRect(cx - 1, cy + 6, 2, 2);
+      }
 
       // Emotes and the "you can talk here" hint.
       const bubble = (tileX: number, tileY: number, text: string, color: string) => {
