@@ -1,0 +1,114 @@
+{
+  "employees": [
+    {
+      "id": "barry",
+      "name": "Barry Biscuit",
+      "aliases": ["Barry"],
+      "title": "Teller",
+      "department": "Pocket Branch",
+      "floor": 0,
+      "manager": "Penny Pincher",
+      "is_signer": true,
+      "notes": ["Works the Pocket Branch alone.", "Leaves at 5:00 PM sharp, every day."]
+    },
+    {
+      "id": "penny",
+      "name": "Penny Pincher",
+      "aliases": ["Penny", "Ms. Pincher"],
+      "title": "Receptionist and Office Manager",
+      "department": "Front Office",
+      "floor": 1,
+      "manager": "Annie Uity",
+      "is_signer": true,
+      "notes": ["Manages the Floor 1 petty cash.", "Runs the Friday office party."]
+    },
+    {
+      "id": "dee",
+      "name": "Dee Bugg",
+      "aliases": ["Dee"],
+      "title": "Junior Developer",
+      "department": "Engineering",
+      "floor": 1,
+      "manager": "Hal Byte",
+      "is_signer": true,
+      "notes": ["On call this week.", "Tickets use the format PLUM-1234."]
+    },
+    {
+      "id": "annie",
+      "name": "Annie Uity",
+      "aliases": ["Annie"],
+      "title": "Operations Lead",
+      "department": "Operations",
+      "floor": 2,
+      "manager": "Cassius Flow",
+      "is_signer": true,
+      "notes": ["Owns the vendor registry.", "Every request needs a form and a ticket."]
+    },
+    {
+      "id": "bill",
+      "name": "Bill Ledger",
+      "aliases": ["Bill"],
+      "title": "Compliance Controller",
+      "department": "Compliance",
+      "floor": 2,
+      "manager": "Cassius Flow",
+      "is_signer": true,
+      "notes": ["Receives all Code Plum reports.", "Preparing for the year-end audit."]
+    },
+    {
+      "id": "cassius",
+      "name": "Cassius Flow",
+      "aliases": ["Cassius", "the CFO"],
+      "title": "Chief Financial Officer",
+      "department": "Executive",
+      "floor": 3,
+      "manager": "Max Yield",
+      "is_signer": true,
+      "notes": ["Reports to the board, especially Dame Prudence Vault."]
+    },
+    {
+      "id": "max",
+      "name": "Max Yield",
+      "aliases": ["Max", "the CEO"],
+      "title": "Chief Executive Officer",
+      "department": "Executive",
+      "floor": 3,
+      "manager": "Board of Directors",
+      "is_signer": true,
+      "notes": ["Usually on another call."]
+    },
+    {
+      "id": "hal",
+      "name": "Hal Byte",
+      "aliases": ["Hal"],
+      "title": "Head of IT",
+      "department": "Engineering",
+      "floor": 1,
+      "manager": "Cassius Flow",
+      "is_signer": false,
+      "notes": ["On PTO, hiking with no signal."]
+    },
+    {
+      "id": "prudence",
+      "name": "Dame Prudence Vault",
+      "aliases": ["Prudence", "Dame Prudence"],
+      "title": "Board Member, Chair of the Risk Committee",
+      "department": "Board of Directors",
+      "floor": 3,
+      "manager": null,
+      "is_signer": false,
+      "notes": ["Cassius is terrified of her."]
+    },
+    {
+      "id": "gus",
+      "name": "Gus Mopsworth",
+      "aliases": ["Gus"],
+      "title": "Facilities Coordinator",
+      "department": "Front Office",
+      "floor": 1,
+      "manager": "Penny Pincher",
+      "is_signer": false,
+      "notes": ["Books the cleaners and the coffee service."]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "terms": [
+    { "term": "PC run", "meaning": "A petty cash payment from Floor 1." },
+    { "term": "The Purse", "meaning": "What staff call the Treasury vault on Floor 3." },
+    { "term": "Code Plum", "meaning": "A suspected security incident. Goes to Bill Ledger." },
+    { "term": "Gold-star ticket", "meaning": "A top-priority engineering ticket (PLUM-####). Dee drops everything for these." },
+    { "term": "The registry", "meaning": "Annie's vendor registry, the official approved vendor list." },
+    { "term": "Floor-mate", "meaning": "The other signer on your floor." },
+    { "term": "Prudence check", "meaning": "Cassius's habit of asking 'would Dame Prudence sign off on this?'" }
+  ]
+}

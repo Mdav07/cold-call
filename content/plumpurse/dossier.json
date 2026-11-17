@@ -1,0 +1,68 @@
+{
+  "_comment": "Krystal's case file: margin notes the player reads. Each employee's notes hint at their intended crack without stating it. The player sees this; the agents do not.",
+  "author": "Krystal Klear",
+  "intro": "Kid, if you're reading this, I didn't make it out. Plumpurse thinks it's unhackable. The vaults might be. The people aren't. Start on Floor 1. Read everything.",
+  "notes": [
+    {
+      "employee_id": "barry",
+      "margin": [
+        "Watches the clock like it owes him money.",
+        "Will agree to almost anything that gets him out the door by five."
+      ]
+    },
+    {
+      "employee_id": "penny",
+      "margin": [
+        "Knows everyone's business and loves being the one who knows it.",
+        "Eleven years at the front desk and nobody's ever thanked her. Her cat is Sir Reginald Fluffington III. She'll show you photos.",
+        "Gossip trades like currency here: Dee's chili incident, Annie laminating her grocery list, Max's yacht photo shoot. Bring her something juicy.",
+        "Always checks the vendor list. Use a real vendor. Don't ask for more than 5."
+      ]
+    },
+    {
+      "employee_id": "dee",
+      "margin": [
+        "On call and running on cold brew. Hal's away, so Dee's alone with prod.",
+        "Asks for a ticket number. Format: PLUM-1234.",
+        "Panics when servers are down. Panicked people skip steps."
+      ]
+    },
+    {
+      "employee_id": "annie",
+      "margin": [
+        "Loves a form. Loves a checklist more.",
+        "Request in the right format and she'll process it before she reads it."
+      ]
+    },
+    {
+      "employee_id": "bill",
+      "margin": [
+        "Reads the fine print, then the fine print's fine print.",
+        "The one thing he fears more than a scammer is a regulator.",
+        "Ledgerline's bank migration memo, Nov 10. Remember it."
+      ]
+    },
+    {
+      "employee_id": "cassius",
+      "margin": [
+        "Trusts nobody. Whispers on the phone.",
+        "Terrified of Dame Prudence Vault from the board. Oakhaven Advisory came in through her."
+      ]
+    },
+    {
+      "employee_id": "max",
+      "margin": [
+        "Two minutes, tops, before he hangs up.",
+        "Will sign anything that sounds exclusive and makes him look visionary."
+      ]
+    }
+  ],
+  "gossip": [
+    "Dee brought a five-alarm chili to the last party and the sprinkler test 'coincidentally' went off.",
+    "Annie laminates her grocery list.",
+    "Max is doing a yacht photo shoot on Friday for the annual report cover.",
+    "Bill has rehearsed his regulator testimony in the bathroom mirror. Twice.",
+    "The Floor 1 espresso machine has been broken since last Thursday and Penny is at war with BeanThere about it.",
+    "Gus is on jury duty all week, so nobody's minding the coffee or cleaner bookings."
+  ]
+}

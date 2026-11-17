@@ -1,0 +1,48 @@
+{
+  "id": "plumpurse",
+  "name": "Plumpurse Savings & Trust",
+  "short_name": "Plumpurse",
+  "slogan": "Unhackable since last Tuesday.",
+  "what_it_does": "A self-important digital-asset custody bank. It holds crypto for rich clients and brags that it cannot be hacked.",
+  "building": "Plumpurse Tower",
+  "floors": [
+    {
+      "floor": 0,
+      "name": "Pocket Branch",
+      "description": "A one-room satellite branch across the street. Barry runs it alone.",
+      "vault": "Piggy Bank",
+      "employees": ["barry"]
+    },
+    {
+      "floor": 1,
+      "name": "The Bullpen",
+      "description": "Open-plan office, beige carpet, one working printer. Petty cash lives here.",
+      "vault": "Petty Cash",
+      "employees": ["penny", "dee"],
+      "vault_rule": "Either Penny or Dee can pay a listed vendor up to 5 USDC for office expenses. No ticket needed under 5 USDC."
+    },
+    {
+      "floor": 2,
+      "name": "Management Offices",
+      "description": "Glass walls, standing desks, a laminated process chart on every door.",
+      "vault": "Operations",
+      "employees": ["annie", "bill"],
+      "vault_rule": "Both Annie and Bill must approve. The approver sees the real recipient on chain."
+    },
+    {
+      "floor": 3,
+      "name": "Executive Suite",
+      "description": "Gold trim, a koi pond, and a painting of the CEO painting a painting of himself.",
+      "vault": "Treasury",
+      "employees": ["cassius", "max"],
+      "vault_rule": "Both executives must approve, and the recipient must be on the allowlist. Adding a recipient takes both approvals plus a waiting period."
+    }
+  ],
+  "policies": [
+    "Petty cash (Floor 1) covers office supplies, snacks, coffee service and small repairs, up to 5 USDC per payment, to vendors on the approved vendor list.",
+    "Operations payments (Floor 2) need a matching vendor record and both Annie's and Bill's approval.",
+    "Treasury payments (Floor 3) go only to allowlisted recipients. New recipients wait out a security delay.",
+    "Payment address changes must be announced by memo before they are used.",
+    "Code Plum: any suspected security incident. Report it to Bill Ledger, Compliance."
+  ]
+}
