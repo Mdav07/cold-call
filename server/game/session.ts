@@ -31,6 +31,59 @@ export interface StartSessionInput {
   channel: Channel;
   cover: string;
   run_id?: string; // continue a run (call-backs, the floor-mate)
+  ip?: string | null; // for the per-IP daily run limit
+}
+
+const RUNS_PER_USER = Number(process.env.RUNS_PER_USER_PER_DAY ?? 10);
+const RUNS_PER_IP = Number(process.env.RUNS_PER_IP_PER_DAY ?? 30);
+const VOICE_SECONDS_PER_DAY = Number(process.env.VOICE_MINUTES_PER_USER_PER_DAY ?? 15) * 60;
+
+/** Abuse limits (spec decision 14): runs per player and per IP per day, voice minutes per player per day. */
+async function checkLimits(userId: string, ip: string | null | undefined, channel: Channel, newRun: boolean, shared: boolean) {
+  const since = new Date();
+  since.setUTCHours(0, 0, 0, 0);
+  const day = since.toISOString();
+
+  // The shared demo player stands for every anonymous visitor: limit it by IP, not as one person.
+  if (newRun && !shared) {
+    const { count: mine } = await db()
+      .from("runs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", day)
+      .throwOnError();
+    if ((mine ?? 0) >= RUNS_PER_USER) {
+      throw new SessionError(`That's ${RUNS_PER_USER} runs today. Krystal says rest up and come back tomorrow.`, 429);
+    }
+  }
+  if (newRun) {
+    if (ip) {
+      const { count: fromIp } = await db()
+        .from("runs")
+        .select("id", { count: "exact", head: true })
+        .eq("client_ip", ip)
+        .gte("created_at", day)
+        .throwOnError();
+      if ((fromIp ?? 0) >= RUNS_PER_IP) throw new SessionError("Too many runs from this network today.", 429);
+    }
+  }
+
+  if (channel === "voice" && !shared) {
+    const { data: runs } = await db().from("runs").select("id").eq("user_id", userId).gte("created_at", day).throwOnError();
+    const ids = (runs ?? []).map((r) => r.id);
+    if (ids.length) {
+      const { data: calls } = await db()
+        .from("conversations")
+        .select("seconds_used")
+        .in("run_id", ids)
+        .eq("channel", "voice")
+        .throwOnError();
+      const used = (calls ?? []).reduce((s, c) => s + (c.seconds_used ?? 0), 0);
+      if (used >= VOICE_SECONDS_PER_DAY) {
+        throw new SessionError("You've used today's call minutes. You can still message the staff in chat.", 429);
+      }
+    }
+  }
 }
 
 export interface StartSessionResult {
@@ -99,11 +152,15 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   } else {
     // Signed-in player; the shared demo player only when nobody is signed in (and allowed).
     let userId = await signedInUserId();
+    const shared = !userId;
     if (!userId) {
       if (process.env.ALLOW_DEMO_PLAYER === "false") throw new SessionError("Sign in to play", 401);
       userId = await getDemoUserId();
     }
-    run_id = input.run_id ? await continueRun(input.run_id, userId, floor) : await newRun(userId, floor, cover, input.channel);
+    await checkLimits(userId, input.ip, input.channel, !input.run_id, shared);
+    run_id = input.run_id
+      ? await continueRun(input.run_id, userId, floor)
+      : await newRun(userId, floor, cover, input.channel, input.ip ?? null);
 
     const { data: conv } = await db()
       .from("conversations")
@@ -211,7 +268,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   };
 }
 
-async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel): Promise<string> {
+async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel, ip: string | null): Promise<string> {
   // A new run closes the player's unfinished ones as "quit" (and clears any Floor 3 allowlist spot).
   const { data: stale } = await db()
     .from("runs")
@@ -224,7 +281,7 @@ async function newRun(userId: string, floor: FloorId, cover: string, channel: Ch
 
   const { data } = await db()
     .from("runs")
-    .insert({ user_id: userId, floor, cover, channel })
+    .insert({ user_id: userId, floor, cover, channel, client_ip: ip })
     .select("id")
     .single()
     .throwOnError();

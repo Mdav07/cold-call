@@ -15,7 +15,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "bad request", issues: parsed.error.issues }, { status: 400 });
   }
   try {
-    return Response.json(await startSession(parsed.data));
+    // First hop of x-forwarded-for is the client on Vercel; only a well-formed IP is stored.
+    const fwd = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+    const ip = fwd && /^[0-9a-fA-F:.]{3,45}$/.test(fwd) ? fwd : null;
+    return Response.json(await startSession({ ...parsed.data, ip }));
   } catch (e) {
     if (e instanceof SessionError) return Response.json({ error: e.message }, { status: e.status });
     throw e;
