@@ -56,8 +56,10 @@ export function DailyPopup({ tutorialCleared, clearedToday = false }: { tutorial
       later();
     };
     // Capture: the lobby's own keys (walking, Space) wait until the card is closed.
+    // Enter is stopped too (not cancelled): the lobby's scene treats Enter as "interact" and calls
+    // preventDefault, which would cancel the focused button's own activation.
     const swallow = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "Tab" || e.key === "Enter") return;
+      if (e.key === "Escape" || e.key === "Tab") return;
       e.stopImmediatePropagation();
     };
     window.addEventListener("keydown", onKey, true);
@@ -112,7 +114,8 @@ export function DailyPopup({ tutorialCleared, clearedToday = false }: { tutorial
             className="pixel-button"
             onClick={() => {
               confirm();
-              markSeen(c.date);
+              // Close it too: the lobby stays mounted (hidden) while you're away and would reopen with it.
+              later();
             }}
           >
             Play today&apos;s case ▶

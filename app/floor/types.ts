@@ -6,7 +6,7 @@ export type Facing = "up" | "down" | "left" | "right";
 
 /** One floor. Tile size is 16 px, drawn at a shared integer scale from the viewport (not fit-to-map). */
 export interface FloorMap {
-  floor: 0 | 1 | 2 | 3;
+  floor: 0 | 1 | 2 | 3 | 4; // 4 = the Daily Case (/daily)
   name: string;                 // shown in the HUD
   width: number;                // in tiles
   height: number;

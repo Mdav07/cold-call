@@ -55,7 +55,7 @@ export function buildDailyRoom(c: DailyCase): FloorMap {
 
   return {
     ...base,
-    floor: DAILY_FLOOR as FloorMap["floor"],
+    floor: DAILY_FLOOR,
     name: `Daily Case · ${c.title}`,
     layers: {
       ...base.layers,
