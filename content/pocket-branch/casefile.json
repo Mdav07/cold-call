@@ -1,0 +1,45 @@
+{
+  "_comment": "The Pocket Branch (tutorial) case file. Kept apart from content/plumpurse on purpose: nothing about the tower goes in here. Evidence for this floor comes from content/plumpurse/evidence.json items with floor 0.",
+  "title": "Pocket Branch",
+  "author": "Krystal Klear",
+  "intro": "Small branch across the street, one teller, one cash bag. Practice here. Read the cards, then go be the courier.",
+  "people": [
+    {
+      "id": "barry",
+      "name": "Barry Biscuit",
+      "title": "Teller",
+      "can_pay": true,
+      "facts": [
+        "Wants out by 5:00. Help him leave.",
+        "Can't lock up until the Swiftbag courier has been."
+      ]
+    }
+  ],
+  "vendors": [
+    {
+      "name": "Swiftbag Couriers",
+      "typical": "$0.50–$1.00",
+      "paid_from": "Piggy Bank",
+      "card": "Armored courier. Picks up the cash bag at closing; fee paid on the spot."
+    }
+  ],
+  "schedule": [
+    {
+      "who": "Barry Biscuit",
+      "days": "Mon–Fri",
+      "items": [
+        "17:00 Lock up (after the Swiftbag pickup)"
+      ]
+    }
+  ],
+  "notices": [
+    {
+      "title": "Closing time",
+      "body": "The branch closes at five. The courier collects the cash bag before Barry locks up."
+    },
+    {
+      "title": "Swiftbag pickup card",
+      "body": "End-of-day cash pickup. Fee 0.50 to 1 dollar, paid on the spot from the Piggy Bank."
+    }
+  ]
+}

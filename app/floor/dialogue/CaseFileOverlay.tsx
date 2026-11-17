@@ -8,7 +8,15 @@ import { CaseFile } from "@/app/casefile/CaseFile";
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
 
-export function CaseFileOverlay({ floor, onClose }: { floor: number; onClose: () => void }) {
+export function CaseFileOverlay({
+  floor,
+  unlockedFloors,
+  onClose,
+}: {
+  floor: number;
+  unlockedFloors: number[];
+  onClose: () => void;
+}) {
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
   useEffect(() => {
@@ -60,7 +68,7 @@ export function CaseFileOverlay({ floor, onClose }: { floor: number; onClose: ()
         aria-label="Case file"
         className="flex max-h-full w-full max-w-3xl flex-col sm:max-h-[min(90dvh,52rem)]"
       >
-        <CaseFile floor={floor} fill onClose={onClose} />
+        <CaseFile floor={floor} unlockedFloors={unlockedFloors} fill onClose={onClose} />
       </div>
     </div>
   );

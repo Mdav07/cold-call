@@ -67,11 +67,15 @@ export function Briefing({
   const [page, setPage] = useState<0 | 1>(0);
   const nextRef = useRef<HTMLButtonElement>(null);
   const startRef = useRef<HTMLButtonElement>(null);
+  // Once Play has flipped to page 2 for this listen, don't yank the page back.
+  const flippedRef = useRef(false);
   // Focus follows the page, so Enter walks through: Next, then Start.
   useEffect(() => (page === 0 ? nextRef : startRef).current?.focus(), [page]);
   const b = briefingFor(floor);
   if (!b) return null;
   const [one, two] = halves(b.text);
+  // Flip when the spoken progress crosses the first screen's share of the memo.
+  const flipAt = one.length / Math.max(1, one.length + two.length);
   const Face = PORTRAITS.krystal;
   const start = () => {
     confirm();
@@ -81,6 +85,18 @@ export function Briefing({
   const go = (p: 0 | 1) => {
     tick();
     setPage(p);
+  };
+  const onAudioTime = (current: number, duration: number) => {
+    if (current < 0.05) {
+      flippedRef.current = false;
+      setPage(0);
+      return;
+    }
+    if (flippedRef.current || duration <= 0) return;
+    if (current / duration >= flipAt) {
+      flippedRef.current = true;
+      setPage(1);
+    }
   };
 
   return (
@@ -109,7 +125,7 @@ export function Briefing({
             <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Krystal says</p>
             <p className="font-pixel text-xs text-[var(--cc-accent)]">{krystal.name ?? "Krystal"}</p>
           </div>
-          <MemoPlayButton title={`Krystal's briefing for ${title}`} audio={b.audio} />
+          <MemoPlayButton title={`Krystal's briefing for ${title}`} audio={b.audio} onTime={onAudioTime} />
         </div>
 
         <div aria-live="polite" className="flex min-h-[7.5rem] flex-col gap-4">

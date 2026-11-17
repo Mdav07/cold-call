@@ -3,13 +3,14 @@
 // The case file as a manila folder: tabs along the top, a sheet of paper inside, short cards.
 // Used by /casefile and by the in-game overlay on the floors (which passes the current floor).
 
-import { useId, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import dossier from "@/content/plumpurse/dossier.json";
 import directory from "@/content/plumpurse/directory.json";
 import vendorsJson from "@/content/plumpurse/vendors.json";
 import memosJson from "@/content/plumpurse/memos.json";
 import calendar from "@/content/plumpurse/calendar.json";
 import evidence from "@/content/plumpurse/evidence.json";
+import pocket from "@/content/pocket-branch/casefile.json";
 import { MyNotes } from "./MyNotes";
 
 const TABS = [
@@ -20,7 +21,17 @@ const TABS = [
   { id: "evidence", label: "Evidence" },
   { id: "mine", label: "My notes" },
 ] as const;
-type TabId = (typeof TABS)[number]["id"];
+type TabId = (typeof TABS)[number]["id"] | "notices";
+
+/** The Pocket Branch is its own little file: nothing from the tower in it. */
+const POCKET_TABS: { id: TabId; label: string }[] = [
+  { id: "people", label: "People" },
+  { id: "vendors", label: "Vendors" },
+  { id: "calendar", label: "Calendar" },
+  { id: "notices", label: "Notices" },
+  { id: "evidence", label: "Evidence" },
+  { id: "mine", label: "My notes" },
+];
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const DAY_LABEL: Record<string, string> = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
@@ -73,8 +84,18 @@ function Facts({ lines }: { lines: string[] }) {
   );
 }
 
-function FloorFilter({ value, onChange }: { value: number | "all"; onChange: (v: number | "all") => void }) {
-  const opts: (number | "all")[] = ["all", 0, 1, 2, 3];
+function FloorFilter({
+  value,
+  onChange,
+  floors,
+}: {
+  value: number | "all";
+  onChange: (v: number | "all") => void;
+  /** Floors the player may filter to (unlocked, and Pocket Branch only in the tutorial file). */
+  floors: number[];
+}) {
+  const opts: (number | "all")[] = floors.length > 1 ? ["all", ...floors] : [...floors];
+  if (opts.length === 0) return null;
   return (
     <div role="group" aria-label="Filter by floor" className="flex flex-wrap gap-1">
       {opts.map((o) => (
@@ -92,11 +113,45 @@ function FloorFilter({ value, onChange }: { value: number | "all"; onChange: (v:
   );
 }
 
+/** Local weekday + clock so the Calendar tab lines up with "now". */
+function NowChip() {
+  const [label, setLabel] = useState(() => formatNow());
+  useEffect(() => {
+    const tick = () => setLabel(formatNow());
+    tick();
+    const t = setInterval(tick, 30_000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <p className="font-pixel text-[9px] text-[var(--cc-accent)]" title="Your local time — match it to the schedules below">
+      Now · {label}
+    </p>
+  );
+}
+
+function formatNow() {
+  const d = new Date();
+  const day = DAY_LABEL[["sun", "mon", "tue", "wed", "thu", "fri", "sat"][d.getDay()]];
+  const time = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return `${day} ${time}`;
+}
+
+/** Floors shown in the filter: tutorial file is Pocket Branch only; main file never includes 0. */
+function visibleFloors(unlocked: number[], atFloor: number | undefined): number[] {
+  const tutorial = atFloor === 0;
+  const base = unlocked.length > 0 ? unlocked : tutorial ? [0] : [1];
+  return base.filter((f) => (tutorial ? f === 0 : f > 0)).sort((a, b) => a - b);
+}
+
 const GRID = "grid items-start gap-3 sm:grid-cols-2";
 
-function People({ floor }: { floor: number | "all" }) {
+function onFloor(floor: number, filter: number | "all", allowed: number[]) {
+  return filter === "all" ? allowed.includes(floor) : floor === filter;
+}
+
+function People({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
   // Only the people you can con; everyone else shows up in their facts.
-  const list = employees.filter((e) => facts[e.id] && (floor === "all" || e.floor === floor));
+  const list = employees.filter((e) => facts[e.id] && onFloor(e.floor, floor, allowed));
   return (
     <ul className={GRID}>
       {list.map((e) => (
@@ -119,7 +174,7 @@ function People({ floor }: { floor: number | "all" }) {
 function Vendors() {
   return (
     <ul className={GRID}>
-      {vendorsJson.vendors.map((v) => (
+      {vendorsJson.vendors.filter((v) => !v.paid_from.includes("Pocket Branch")).map((v) => (
         <Card key={v.name} title={v.name}>
           <p className="text-sm text-[var(--cc-ink)]">
             <span className="font-semibold text-[var(--cc-ok)]">{dollars(v.typical_invoice_usdc)}</span> · {v.paid_from}
@@ -131,38 +186,44 @@ function Vendors() {
   );
 }
 
-function Calendar({ floor }: { floor: number | "all" }) {
-  const people = calendar.people.filter((p) => floor === "all" || byId[p.id]?.floor === floor);
+function Calendar({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
+  const people = calendar.people.filter((p) => {
+    const f = byId[p.id]?.floor;
+    return f != null && onFloor(f, floor, allowed);
+  });
   return (
-    <ul className={GRID}>
-      {people.map((p) => {
-        const weekly = p.weekly as Record<string, string[] | undefined>;
-        const days = DAYS.filter((d) => weekly[d]?.length);
-        const pto = p.pto as { start: string; end: string; label?: string }[];
-        const who = byId[p.id];
-        return (
-          <Card key={p.id} title={who?.name ?? p.id} meta={who ? floorName(who.floor) : undefined}>
-            {days.length === 0 && pto.length === 0 && <p className="text-sm text-[var(--cc-muted)]">Nothing booked.</p>}
-            {days.length > 0 && (
-              <dl className="grid grid-cols-[2.5rem_1fr] gap-x-2 gap-y-1 text-sm">
-                {days.map((d) => (
-                  <div key={d} className="contents">
-                    <dt className="font-pixel text-[9px] leading-5 text-[var(--cc-accent)]">{DAY_LABEL[d]}</dt>
-                    <dd className="text-[var(--cc-ink)]">{weekly[d]!.join(" · ")}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-            {pto.map((t) => (
-              <p key={`${t.start}-${t.end}`} className="text-sm font-semibold text-[var(--cc-accent)]">
-                Away {t.start === t.end ? t.start : `${t.start} to ${t.end}`}
-                {t.label ? ` · ${t.label}` : ""}
-              </p>
-            ))}
-          </Card>
-        );
-      })}
-    </ul>
+    <div className="flex flex-col gap-3">
+      <NowChip />
+      <ul className={GRID}>
+        {people.map((p) => {
+          const weekly = p.weekly as Record<string, string[] | undefined>;
+          const days = DAYS.filter((d) => weekly[d]?.length);
+          const pto = p.pto as { start: string; end: string; label?: string }[];
+          const who = byId[p.id];
+          return (
+            <Card key={p.id} title={who?.name ?? p.id} meta={who ? floorName(who.floor) : undefined}>
+              {days.length === 0 && pto.length === 0 && <p className="text-sm text-[var(--cc-muted)]">Nothing booked.</p>}
+              {days.length > 0 && (
+                <dl className="grid grid-cols-[2.5rem_1fr] gap-x-2 gap-y-1 text-sm">
+                  {days.map((d) => (
+                    <div key={d} className="contents">
+                      <dt className="font-pixel text-[9px] leading-5 text-[var(--cc-accent)]">{DAY_LABEL[d]}</dt>
+                      <dd className="text-[var(--cc-ink)]">{weekly[d]!.join(" · ")}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {pto.map((t) => (
+                <p key={`${t.start}-${t.end}`} className="text-sm font-semibold text-[var(--cc-accent)]">
+                  Away {t.start === t.end ? t.start : `${t.start} to ${t.end}`}
+                  {t.label ? ` · ${t.label}` : ""}
+                </p>
+              ))}
+            </Card>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -178,8 +239,8 @@ function Memos() {
   );
 }
 
-function Evidence({ floor }: { floor: number | "all" }) {
-  const items = evidence.items.filter((e) => floor === "all" || e.floor === floor);
+function Evidence({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
+  const items = evidence.items.filter((e) => onFloor(e.floor, floor, allowed));
   if (items.length === 0) return <p className="text-sm text-[var(--cc-muted)]">Nothing filed for this floor.</p>;
   return (
     <ul className={GRID}>
@@ -192,33 +253,129 @@ function Evidence({ floor }: { floor: number | "all" }) {
   );
 }
 
+function PocketPeople() {
+  return (
+    <ul className={GRID}>
+      {pocket.people.map((e) => (
+        <Card
+          key={e.id}
+          title={e.name}
+          meta={
+            <span className="flex flex-wrap items-center gap-1">
+              {e.title} {e.can_pay && <Chip tone="green">Can pay</Chip>}
+            </span>
+          }
+        >
+          <Facts lines={e.facts} />
+        </Card>
+      ))}
+    </ul>
+  );
+}
+
+function PocketVendors() {
+  return (
+    <ul className={GRID}>
+      {pocket.vendors.map((v) => (
+        <Card key={v.name} title={v.name}>
+          <p className="text-sm text-[var(--cc-ink)]">
+            <span className="font-semibold text-[var(--cc-ok)]">{v.typical}</span> · {v.paid_from}
+          </p>
+          <p className="text-sm text-[var(--cc-muted)]">{v.card}</p>
+        </Card>
+      ))}
+    </ul>
+  );
+}
+
+function PocketCalendar() {
+  return (
+    <div className="flex flex-col gap-3">
+      <NowChip />
+      <ul className={GRID}>
+        {pocket.schedule.map((s) => (
+          <Card key={s.who} title={s.who} meta={s.days}>
+            {s.items.map((i) => (
+              <p key={i} className="text-sm text-[var(--cc-ink)]">{i}</p>
+            ))}
+          </Card>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function PocketNotices() {
+  return (
+    <ul className="flex flex-col gap-3">
+      {pocket.notices.map((n) => (
+        <Card key={n.title} title={n.title}>
+          <p className="text-sm text-[var(--cc-ink)]">{n.body}</p>
+        </Card>
+      ))}
+    </ul>
+  );
+}
+
+function PocketEvidence() {
+  const items = evidence.items.filter((e) => e.floor === 0);
+  return (
+    <ul className={GRID}>
+      {items.map((e) => (
+        <Card key={e.id} title={e.label}>
+          <p className="text-sm text-[var(--cc-ink)]">{e.text}</p>
+        </Card>
+      ))}
+    </ul>
+  );
+}
+
 /**
  * `floor` preselects that floor in the People, Calendar and Evidence filters.
+ * `unlockedFloors` limits the filter chips (and "All") to floors the player has open.
+ * Floor 0 opens the separate Pocket Branch file (content/pocket-branch); the main file never lists it.
  * `fill` makes the folder fill its parent and scroll inside the paper (for the overlay).
  */
-export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fill?: boolean; onClose?: () => void }) {
+export function CaseFile({
+  floor,
+  unlockedFloors = [],
+  fill = false,
+  onClose,
+}: {
+  floor?: number;
+  unlockedFloors?: number[];
+  fill?: boolean;
+  onClose?: () => void;
+}) {
+  const allowed = useMemo(() => visibleFloors(unlockedFloors, floor), [unlockedFloors, floor]);
+  const initial: number | "all" = floor != null && allowed.includes(floor) ? floor : allowed.length === 1 ? allowed[0] : "all";
   const [tab, setTab] = useState<TabId>("people");
-  const [filter, setFilter] = useState<number | "all">(floor ?? "all");
+  const [filter, setFilter] = useState<number | "all">(initial);
   const id = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isPocket = floor === 0;
+  const tabs: readonly { id: TabId; label: string }[] = isPocket ? POCKET_TABS : TABS;
+
+  // If unlocks change (or we opened on a locked chip), show a visible floor instead.
+  const active: number | "all" = filter !== "all" && !allowed.includes(filter) ? (allowed.length === 1 ? allowed[0]! : "all") : filter;
 
   // Arrow keys move between tabs (WAI-ARIA tabs pattern).
   const onTabKey = (e: KeyboardEvent, i: number) => {
     const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
     if (!d) return;
     e.preventDefault();
-    const n = (i + d + TABS.length) % TABS.length;
-    setTab(TABS[n].id);
+    const n = (i + d + tabs.length) % tabs.length;
+    setTab(tabs[n].id);
     tabRefs.current[n]?.focus();
   };
 
-  const filtered = tab === "people" || tab === "calendar" || tab === "evidence";
+  const filtered = !isPocket && (tab === "people" || tab === "calendar" || tab === "evidence");
 
   return (
     <div className={`flex flex-col ${fill ? "min-h-0 flex-1" : ""}`}>
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-end">
       <div role="tablist" aria-label="Case file" className="grid flex-1 grid-cols-3 items-end gap-1 px-1 sm:flex sm:pl-3">
-        {TABS.map((t, i) => {
+        {tabs.map((t, i) => {
           const on = tab === t.id;
           return (
             <button
@@ -234,7 +391,7 @@ export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fil
               tabIndex={on ? 0 : -1}
               onClick={() => setTab(t.id)}
               onKeyDown={(e) => onTabKey(e, i)}
-              className={`shrink-0 rounded-t-md border-2 border-b-0 border-[#8a6a2f] px-2 font-pixel text-[9px] text-[#2b2420] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a33a2a] sm:px-3 ${
+              className={`shrink-0 rounded-t-md border-2 border-b-0 border-[#8a6a2f] px-2 font-pixel text-[9px] text-[#2b2420] outline-none focus-visible:underline focus-visible:underline-offset-2 sm:px-3 ${
                 on ? "relative top-[2px] z-10 bg-[#e2c27f] pb-2.5 pt-2" : "mt-1 bg-[#c9a560] pb-1.5 pt-1.5 hover:bg-[#d6b46e]"
               }`}
             >
@@ -259,7 +416,9 @@ export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fil
           className={`flex flex-col gap-3 border border-[#d8ccb0] bg-[#fbf6e9] p-3 text-[var(--cc-ink)] sm:p-4 ${fill ? "min-h-0 flex-1 overflow-y-auto" : ""}`}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="font-pixel text-[9px] text-[var(--cc-muted)]">Plumpurse S&amp;T · file kept by {dossier.author}</p>
+            <p className="font-pixel text-[9px] text-[var(--cc-muted)]">
+              {isPocket ? `${pocket.title} · practice file kept by ${pocket.author}` : `Plumpurse S&T · file kept by ${dossier.author}`}
+            </p>
             <p aria-hidden className="-rotate-6 border-2 border-[#a33a2a] px-2 py-0.5 font-pixel text-[9px] text-[#a33a2a]">
               CONFIDENTIAL
             </p>
@@ -267,15 +426,27 @@ export function CaseFile({ floor, fill = false, onClose }: { floor?: number; fil
           {tab === "people" && (
             <p className="border border-[#e8d99a] bg-[#fff4b0] p-2 text-sm text-[var(--cc-ink)] shadow-[2px_2px_0_0_#d8ccb0]">
               <span className="font-pixel text-[9px] text-[var(--cc-accent)]">Krystal: </span>
-              {dossier.intro}
+              {isPocket ? pocket.intro : dossier.intro}
             </p>
           )}
-          {filtered && <FloorFilter value={filter} onChange={setFilter} />}
-          {tab === "people" && <People floor={filter} />}
-          {tab === "vendors" && <Vendors />}
-          {tab === "calendar" && <Calendar floor={filter} />}
-          {tab === "memos" && <Memos />}
-          {tab === "evidence" && <Evidence floor={filter} />}
+          {filtered && <FloorFilter value={active} onChange={setFilter} floors={allowed} />}
+          {isPocket ? (
+            <>
+              {tab === "people" && <PocketPeople />}
+              {tab === "vendors" && <PocketVendors />}
+              {tab === "calendar" && <PocketCalendar />}
+              {tab === "notices" && <PocketNotices />}
+              {tab === "evidence" && <PocketEvidence />}
+            </>
+          ) : (
+            <>
+              {tab === "people" && <People floor={active} allowed={allowed} />}
+              {tab === "vendors" && <Vendors />}
+              {tab === "calendar" && <Calendar floor={active} allowed={allowed} />}
+              {tab === "memos" && <Memos />}
+              {tab === "evidence" && <Evidence floor={active} allowed={allowed} />}
+            </>
+          )}
           {tab === "mine" && <MyNotes />}
         </div>
       </div>
