@@ -253,6 +253,18 @@
     "mat_daily": {
       "index": 62,
       "kind": "walk"
+    },
+    "mat_1": {
+      "index": 63,
+      "kind": "walk"
+    },
+    "mat_2": {
+      "index": 64,
+      "kind": "walk"
+    },
+    "mat_3": {
+      "index": 65,
+      "kind": "walk"
     }
   }
 }

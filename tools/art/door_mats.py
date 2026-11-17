@@ -1,4 +1,4 @@
-"""Cute rectangular doormats with a single letter (T / D) for the lobby street and daily doors.
+"""Cute rectangular doormats for lobby exits: T (tutorial), D (daily), 1–3 (elevators).
 Also rebuilds the elevator so its frame matches the brown wall.
 
     python3 -I tools/art/door_mats.py public/tiles/plumpurse.png app/floor/maps/tiles.json
@@ -14,7 +14,7 @@ from PIL import Image
 
 T = 16
 
-# 3×5 pixel capital letters, drawn into the mat.
+# 3×5 pixel glyphs, drawn into the mat.
 GLYPHS: dict[str, list[str]] = {
     "T": [
         "###",
@@ -29,6 +29,27 @@ GLYPHS: dict[str, list[str]] = {
         "#.#",
         "#.#",
         "##.",
+    ],
+    "1": [
+        ".#.",
+        "##.",
+        ".#.",
+        ".#.",
+        "###",
+    ],
+    "2": [
+        "###",
+        "..#",
+        "###",
+        "#..",
+        "###",
+    ],
+    "3": [
+        "###",
+        "..#",
+        "###",
+        "..#",
+        "###",
     ],
 }
 
@@ -130,6 +151,10 @@ def main() -> None:
 
     sheet = append_or_replace(sheet, catalog, "mat_tutorial", mat((126, 196, 168, 255), (36, 92, 74, 255), "T"), "walk")
     sheet = append_or_replace(sheet, catalog, "mat_daily", mat((196, 158, 220, 255), (92, 52, 130, 255), "D"), "walk")
+    # Elevator mats: warm amber so they read with the gold call lights.
+    sheet = append_or_replace(sheet, catalog, "mat_1", mat((232, 186, 96, 255), (120, 72, 24, 255), "1"), "walk")
+    sheet = append_or_replace(sheet, catalog, "mat_2", mat((220, 168, 88, 255), (110, 64, 20, 255), "2"), "walk")
+    sheet = append_or_replace(sheet, catalog, "mat_3", mat((208, 150, 78, 255), (100, 56, 18, 255), "3"), "walk")
 
     sheet.save(sheet_path)
     catalog_path.write_text(json.dumps(catalog, indent=2) + "\n")

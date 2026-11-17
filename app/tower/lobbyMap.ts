@@ -14,6 +14,7 @@ const T = {
   painting: 49, bookshelf: 39, water: 40,
   chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
   matTutorial: 61, matDaily: 62, // cute welcome mats (tools/art/door_mats.py)
+  mat1: 63, mat2: 64, mat3: 65,
 } as const;
 
 const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
@@ -40,10 +41,12 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
       else ground[at(x, y)] = T.floor;
     }
 
-  // Back wall: three elevators, each with the floor-plate floor tile in front.
-  for (const x of Object.values(ELEVATORS)) {
+  // Back wall: three elevators; numbered doormat on the tile in front (y=3), doorway at y=2.
+  const elevatorMats = { 1: T.mat1, 2: T.mat2, 3: T.mat3 } as const;
+  for (const [n, x] of Object.entries(ELEVATORS)) {
     walls[at(x, 1)] = T.elevator;
     ground[at(x, 0)] = T.floor;
+    ground[at(x, 3)] = elevatorMats[Number(n) as 1 | 2 | 3];
   }
   // Front wall: matching street / daily exits — opening in the wall (lobby carpet on the
   // threshold), one rectangular doormat on the tile in front (not doubled on the exit itself).
@@ -178,5 +181,6 @@ export function lobbyGuide(floors: TowerFloor[]): {
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
   if (!next) return { goal: null, tags: [DAILY_TAG] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];
-  return { goal: { x, y: 2 }, tags: [{ x, y: 1, text: `FLOOR ${next.floor}` }, DAILY_TAG] };
+  // Numbered mats mark the elevators — no floating FLOOR N signs.
+  return { goal: { x, y: 2 }, tags: [DAILY_TAG] };
 }

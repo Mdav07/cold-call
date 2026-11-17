@@ -96,7 +96,7 @@ export function Lobby({
     if (next == null || !exit) return { goal: null, tags: daily };
     return next === 0
       ? { goal: { x: exit.x, y: exit.y }, tags: [] } // mint T mat is the sign; no floating label
-      : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }, ...daily] };
+      : { goal: { x: exit.x, y: exit.y }, tags: daily }; // elevator mats 1–3 are the signs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
 
