@@ -217,6 +217,22 @@
     "table_note": {
       "index": 53,
       "kind": "block"
+    },
+    "board_branch": {
+      "index": 54,
+      "kind": "wall"
+    },
+    "board_bullpen": {
+      "index": 55,
+      "kind": "wall"
+    },
+    "board_management": {
+      "index": 56,
+      "kind": "wall"
+    },
+    "board_executive": {
+      "index": 57,
+      "kind": "wall"
     }
   }
 }

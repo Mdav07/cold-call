@@ -19,13 +19,13 @@
     "b": "bookshelf",
     "K": "counter_files",
     "n": "table_small",
-    "N": "table_note"
+    "Q": "board_executive"
   },
   "rows": [
     "######################",
-    "#W##W####E####W##W####",
+    "#W##W###QE####W##W####",
     "#P.pC..........C.p..A#",
-    "#.......N............#",
+    "#....................#",
     "#.LMR............LMR.#",
     "#..c..............c..#",
     "#....................#",
@@ -59,7 +59,7 @@
     {
       "id": "krystal-note",
       "x": 8,
-      "y": 3,
+      "y": 1,
       "label": "Krystal's note",
       "text": "Cassius is terrified of Dame Prudence Vault. Max will sign anything that sounds exclusive and makes him look visionary."
     },

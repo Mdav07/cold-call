@@ -15,13 +15,13 @@
     "O": "table_oval_r",
     "w": "water_cooler",
     "n": "table_small",
-    "N": "table_note"
+    "Q": "board_management"
   },
   "rows": [
     "####################",
-    "#W##W###E####W##W###",
+    "#W##W##QE####W##W###",
     "#..................#",
-    "#......N...........#",
+    "#..................#",
     "#.#####......#####.#",
     "#.#...#......#...#.#",
     "#.#LMR#......#LMR#.#",
@@ -55,7 +55,7 @@
     {
       "id": "krystal-note",
       "x": 7,
-      "y": 3,
+      "y": 1,
       "label": "Krystal's note",
       "text": "Annie and Bill both have to sign, and the second signer sees where the money really goes. Annie wants a complete checklist; Bill fears a regulator more than a liar."
     },

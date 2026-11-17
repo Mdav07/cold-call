@@ -10,18 +10,18 @@
     "p": "plant",
     "c": "office_chair",
     "n": "table_small",
-    "N": "table_note"
+    "Q": "board_branch"
   },
   "rows": [
     "##############",
-    "#W###E####W###",
+    "#WQ#QE####W###",
     "#............#",
-    "#...N........#",
+    "#............#",
     "#p..........p#",
     "#...c........#",
     "#...KKKK.....#",
     "#............#",
-    "#.N......w..B#",
+    "#........w..B#",
     "##############"
   ],
   "spawn": {
@@ -41,14 +41,14 @@
     {
       "id": "how-to-look",
       "x": 4,
-      "y": 3,
+      "y": 1,
       "label": "Posted notice",
       "text": "Walk up and press Space to read this. Space is also how you talk to people."
     },
     {
       "id": "case-file-note",
       "x": 2,
-      "y": 8,
+      "y": 1,
       "label": "Sticky note",
       "text": "Check the case file before you lie. Barry will agree to almost anything that gets him out by five."
     },
