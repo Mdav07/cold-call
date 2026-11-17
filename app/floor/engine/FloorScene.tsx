@@ -491,17 +491,25 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Tags over doors and the like: the same quiet plate as the name tags, in the warm accent colour.
+      // Tags over doors are little wooden signs (a plank = a place; a dark plate = a person).
       for (const t of tagsRef.current ?? []) {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "alphabetic";
-        const tw = c.measureText(t.text).width + 4 * u;
-        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 2;
-        c.fillStyle = "rgba(21, 20, 26, 0.6)";
-        c.fillRect(Math.round(cx - tw / 2), Math.round(cy - 3 * u), Math.round(tw), Math.round(6 * u));
-        c.fillStyle = "#f4c95d";
-        c.fillText(t.text, cx, cy + 2.5 * u);
+        const tw = Math.round(c.measureText(t.text).width + 6 * u);
+        const th = Math.round(7 * u);
+        const x0 = Math.round(t.x * TILE + TILE / 2 - tw / 2), y0 = Math.round(t.y * TILE - 2 - th / 2);
+        c.fillStyle = "#4a2e18"; // outline
+        c.fillRect(x0 - 1, y0 - 1, tw + 2, th + 2);
+        c.fillStyle = "#7a4e2a"; // plank
+        c.fillRect(x0, y0, tw, th);
+        c.fillStyle = "#9a6a3e"; // lit top edge
+        c.fillRect(x0, y0, tw, 1);
+        c.fillStyle = "#3a2412"; // two nails
+        c.fillRect(x0 + 1, y0 + 2, 1, 1);
+        c.fillRect(x0 + tw - 2, y0 + 2, 1, 1);
+        c.fillStyle = "#f2efe6";
+        c.fillText(t.text, x0 + tw / 2, y0 + th / 2 + 2.5 * u);
       }
 
       // Emotes and the "you can talk here" hint.
