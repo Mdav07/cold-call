@@ -63,6 +63,7 @@ so a player can switch channels mid-heist and the employee's memory and suspicio
 | **Private agents + signed URLs** | Agents require auth; our `/api/session` creates the run and hands the browser a signed URL |
 | **Text to Speech** | The Plumpurse PA announcer (breach alarm) and Null's taunt, pre-generated (`agents/generate-audio.ts`) |
 | **Sound Effects** | The breach alarm, phone ring and hang-up click, pre-generated |
+| **Music** | Title and per-floor instrumental loops, pre-generated via ElevenLabs Music (`agents/generate-audio.ts`) |
 
 Agents are created and updated from the rule sheets in `agents/*.md` by `agents/sync.ts`; `agents/chat-cli.ts`
 chats with any employee from the terminal through the same session path as the app.

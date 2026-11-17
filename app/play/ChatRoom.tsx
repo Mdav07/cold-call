@@ -6,6 +6,7 @@ import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
 import { KrystalMemo } from "./KrystalMemo";
+import { MusicToggle } from "./MusicToggle";
 import { PORTRAITS } from "./portraits";
 import krystal from "@/content/plumpurse/krystal.json";
 
@@ -187,6 +188,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4">
+      <MusicToggle track={`music-floor-${card.floor}.mp3`} />
       {showOutcome && state && (
         <OutcomeOverlay
           state={state}
