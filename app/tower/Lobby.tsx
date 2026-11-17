@@ -86,8 +86,21 @@ export function Lobby({
     // Never leave the doorway tile in blocked — walking onto it must work; gating is exit-only.
     let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell);
 
-    // Always an exit; onEvent shows the locked message until the tutorial is cleared.
+    // Locked like the elevators until the tutorial is cleared: the doorway is blocked and the sign on the
+    // D mat says LOCKED. (onEvent still answers a locked exit with a message, as a fallback.)
     if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: LOBBY_H - 1, to: "/daily" });
+    if (!tutorialDone) blocked = [...blocked, dailyCell];
+    const props = (serverMap.props ?? []).map((pr) =>
+      pr.id !== "daily-sign"
+        ? pr
+        : {
+            ...pr,
+            label: `${pr.label.replace(/ · (LOCKED|OPEN)$/, "")} · ${tutorialDone ? "OPEN" : "LOCKED"}`,
+            text: tutorialDone
+              ? pr.text.replace("Opens once you clear the tutorial.", "Walk through the door to play.")
+              : "Locked. Clear the tutorial first: the Pocket Branch, through the T door. Then a new case opens behind this door every day.",
+          },
+    );
 
     if (guest) {
       const closed = exits.filter((e) => {
@@ -99,7 +112,7 @@ export function Lobby({
       blocked = [...blocked, ...closed.map((e) => e.y * serverMap.width + e.x)];
     }
 
-    return { ...serverMap, exits, blocked };
+    return { ...serverMap, exits, blocked, props };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverMap, guest, key, tutorialDone]);
   const shown = useMemo(() => {
