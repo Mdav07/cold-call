@@ -14,14 +14,13 @@ import { blip, confirm, tick, voicePitch } from "@/app/floor/hud/sound";
 import krystal from "@/content/plumpurse/krystal.json";
 import { DRAFT_INTRO, type IntroScript } from "./script";
 import { HUNTERS, MAX_NAME, cleanName, saveHunter, spriteUrl } from "@/app/play/hunters";
+import { SaveProgress } from "@/app/play/SaveProgress";
 
 // Audrey's script lives in krystal.json under "cutscene"; the draft covers builds before it lands.
 const SCRIPT: IntroScript = (krystal as { cutscene?: IntroScript }).cutscene ?? DRAFT_INTRO;
 
-/** Four looks that differ in skin tone, hair and style (long hair, afro, bun, blond spikes). */
-const PICKS = ["hunter-2", "hunter-3", "hunter-4", "hunter-5"]
-  .map((id) => HUNTERS.find((h) => h.id === id))
-  .filter((h): h is (typeof HUNTERS)[number] => !!h);
+/** The same four looks as /hunter (app/play/hunters.ts). */
+const PICKS = HUNTERS;
 
 function save(sprite: string, name: string) {
   const clean = cleanName(name) || "Hunter";
@@ -99,7 +98,7 @@ export function Intro() {
   const beats = SCRIPT.scenes;
   const screens = beats.length + 1; // the scenes, then the job
   const [i, setI] = useState(0);
-  const [stage, setStage] = useState<"story" | "pick">("story");
+  const [stage, setStage] = useState<"story" | "pick" | "save">("story");
   const typed = useRef<{ skip: () => void; done: boolean }>({ skip: () => {}, done: true });
   const onTyped = useCallback((skip: () => void, done: boolean) => {
     typed.current = { skip, done };
@@ -139,12 +138,17 @@ export function Intro() {
     confirm();
     setLeaving(true);
     save(picked, name);
-    router.push("/tower");
+    setStage("save"); // offer sign-in to keep progress, then the lobby
   };
+  const toTower = useCallback(() => router.push("/tower"), [router]);
 
   return (
     <main className="cc-floor-1 relative flex min-h-dvh flex-1 flex-col bg-[#15141a]">
-      {stage === "story" ? (
+      {stage === "save" ? (
+        <section className="flex flex-1 items-center justify-center p-4">
+          <SaveProgress handle={cleanName(name) || "Hunter"} onContinue={toTower} />
+        </section>
+      ) : stage === "story" ? (
         <>
           <div className="flex items-center justify-between p-3 sm:p-4">
             <p className="font-pixel text-[9px] tracking-widest text-[var(--cc-muted)]">COLD CALL</p>

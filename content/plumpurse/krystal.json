@@ -11,7 +11,8 @@
       { "speaker": null, "text": "Krystal Klear was the greatest crypto hunter alive. She cracked vaults before the thieves could, then showed the owners how." },
       { "speaker": null, "text": "Last month she walked into Plumpurse Savings & Trust. She never walked out, and nobody knows why." },
       { "speaker": "Krystal", "text": "If you're hearing this, kid, it's your turn. I left notes on every floor." },
-      { "speaker": null, "text": "This is Cold Call. You don't hack anything: you talk Plumpurse's employees into moving the money." }
+      { "speaker": null, "text": "This is Cold Call. You don't hack anything: you talk Plumpurse's employees into moving the money." },
+      { "speaker": "Krystal", "text": "And kid: they learn. Every employee remembers how you played them last time. The same con never works twice." }
     ],
     "goal": "Breach every floor's vault before the Black Ledger does, from the bottom of the tower to the top.",
     "next": "Pick your character, then head across the street to the tutorial."
