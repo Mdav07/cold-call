@@ -491,20 +491,16 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Tags over doors and the like.
+      // Tags over doors and the like: the same quiet plate as the name tags, in the warm accent colour.
       for (const t of tagsRef.current ?? []) {
-        c.font = `${6 * u}px ${pixelFont}, monospace`;
+        c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
-        c.textBaseline = "middle";
-        const tw = c.measureText(t.text).width + 6 * u;
-        const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 400));
-        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 6 * u + bob;
-        c.fillStyle = "#15141a";
-        c.fillRect(Math.round(cx - tw / 2 - u), Math.round(cy - 6 * u), Math.round(tw + 2 * u), Math.round(12 * u));
-        c.fillStyle = "#f4c95d";
-        c.fillRect(Math.round(cx - tw / 2), Math.round(cy - 5 * u), Math.round(tw), Math.round(10 * u));
-        c.fillStyle = "#15141a";
         c.textBaseline = "alphabetic";
+        const tw = c.measureText(t.text).width + 4 * u;
+        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 2;
+        c.fillStyle = "rgba(21, 20, 26, 0.6)";
+        c.fillRect(Math.round(cx - tw / 2), Math.round(cy - 3 * u), Math.round(tw), Math.round(6 * u));
+        c.fillStyle = "#f4c95d";
         c.fillText(t.text, cx, cy + 2.5 * u);
       }
 
