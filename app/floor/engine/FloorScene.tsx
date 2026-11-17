@@ -274,7 +274,7 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
         Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1,
         // On phones the map scrolls instead: covering a tall screen would zoom far too close.
         w >= 700 ? Math.ceil(w / ((bx1 - bx0) * TILE)) : 0,
-        w >= 700 ? Math.ceil(h / ((by1 - by0) * TILE)) : 0,
+        w >= 700 ? Math.ceil(h / ((by1 - by0) * TILE)) : Math.floor((h * 0.75) / ((by1 - by0) * TILE)),
       );
       const inset = Math.min(insetRef.current, h * 0.6) / scale; // map pixels hidden under the dialogue box
       c.setTransform(1, 0, 0, 1, 0, 0);
