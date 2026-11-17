@@ -15,8 +15,9 @@ Two independent jobs. One agent per job, each on its own branch off `origin/main
 
 ## Job C: Clues on the floor maps (branch `b/map-clues`)
 
-Files: `app/floor/maps/src/*.json` and the compiled `app/floor/maps/floor-*.json` (use the same build step that made
-them), plus `content/plumpurse/*.json` only to read facts.
+Files: the map sources in `app/floor/maps/src/` and the compiled `app/floor/maps/floor-*.json`. Rebuild with
+`app/floor/maps/src/build_maps.py` and run `app/floor/maps/src/check_maps.py` before committing. Read
+`content/plumpurse/*.json` for facts only.
 
 The floors are walkable now (`https://coldcall-olive.vercel.app/floor/1`). Props are things the player can walk up to
 and read (`props: { id, x, y, label, text }` in each map; the contract is in `app/floor/types.ts`, do not change it).
