@@ -52,6 +52,8 @@ const FLOOR_CAP_UNITS: Record<FloorId, bigint> = { 0: 1_000_000n, 1: 5_000_000n,
 
 const TOKEN_PAYOUT = BigInt(process.env.TOKEN_PAYOUT_UNITS ?? 10_000);
 const BUDGET_MULTIPLE = BigInt(process.env.DAILY_BUDGET_CAP_MULTIPLE ?? 20);
+/** Optional hard ceiling on any payout while testnet funds are thin. Unset or 0 = no ceiling. */
+const PAYOUT_CEILING = BigInt(process.env.PAYOUT_CEILING_UNITS ?? 0);
 const MAX_PROPOSALS_PER_RUN = 2;
 const MEMO_MAX = 140;
 export const UNKNOWN_RECIPIENT_LABEL = "Unknown external address, not in vendor registry";
@@ -248,6 +250,7 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
       args: [s.vault],
     });
     let amount = asked < allowed ? asked : allowed;
+    if (PAYOUT_CEILING && amount > PAYOUT_CEILING) amount = PAYOUT_CEILING;
     if (amount > balance) amount = balance;
     if (amount === 0n) return [result("paused"), afterOf(events)];
 
