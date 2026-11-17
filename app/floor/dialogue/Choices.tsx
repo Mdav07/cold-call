@@ -62,33 +62,46 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
     return () => window.removeEventListener("keydown", onKey);
   }, [active]);
 
+  // Omori-style cells: each choice sits in a small frame; the selected one fills with the
+  // speaker's accent (dark ink on it, AA) and the pointer sits outside its left edge.
   return (
-    <ul className="flex flex-wrap gap-x-5 gap-y-2" role="menu">
-      {choices.map((c, i) => (
-        <li key={c.label} role="none">
-          <button
-            type="button"
-            role="menuitem"
-            disabled={c.disabled}
-            onMouseEnter={() => {
-              if (c.disabled || i === at) return;
-              tick();
-              setCursor(i);
-            }}
-            onClick={() => {
-              confirm();
-              c.onSelect();
-            }}
-            className="font-pixel text-xs text-[var(--cc-ink)] disabled:opacity-40"
-            aria-current={i === at ? "true" : undefined}
-          >
-            <span className="inline-block w-4 text-[var(--cc-accent)]" aria-hidden>
-              {i === at ? "▶" : ""}
+    <ul className="grid grid-cols-2 gap-x-4 gap-y-2 pl-4 sm:flex sm:flex-wrap sm:gap-x-4" role="menu">
+      {choices.map((c, i) => {
+        const on = i === at;
+        return (
+          <li key={c.label} role="none" className="relative">
+            <span
+              aria-hidden
+              className={`cc-next absolute -left-4 top-1/2 -mt-2 text-xs text-[var(--cc-accent)] ${on ? "" : "invisible"}`}
+              style={{ animationDuration: "0.4s" }}
+            >
+              ▶
             </span>
-            {c.label}
-          </button>
-        </li>
-      ))}
+            <button
+              type="button"
+              role="menuitem"
+              disabled={c.disabled}
+              onMouseEnter={() => {
+                if (c.disabled || on) return;
+                tick();
+                setCursor(i);
+              }}
+              onClick={() => {
+                confirm();
+                c.onSelect();
+              }}
+              aria-current={on ? "true" : undefined}
+              className={`w-full border-2 px-3 py-1.5 text-left font-pixel text-[10px] transition-colors duration-75 disabled:opacity-40 sm:w-auto ${
+                on
+                  ? "border-[var(--cc-accent)] bg-[var(--cc-accent)] text-[var(--cc-edge)]"
+                  : "border-[var(--cc-border)] bg-transparent text-[var(--cc-ink)]"
+              }`}
+            >
+              {c.label}
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }
