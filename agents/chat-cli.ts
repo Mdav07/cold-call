@@ -23,8 +23,41 @@ async function signedUrl(): Promise<string> {
   return (await res.json()).signed_url;
 }
 
+// SESSION_URL=http://localhost:3000 uses the app's real /api/session (real run + conversation
+// rows, so the server tools pass their checks). Without it, ids are fake (persona tests only).
+const SESSION_URL = process.env.SESSION_URL;
+let dynamicVariables: Record<string, string | number> = {
+  run_id: "00000000-0000-0000-0000-000000000000",
+  employee_id: employee,
+  session_id: "00000000-0000-0000-0000-000000000000",
+  player_cover: "a vendor calling about an invoice",
+  memory: "(none)",
+  daily_modifier: "(none)",
+  talk_seconds_left: 600,
+};
+
+async function realSession(): Promise<string> {
+  const res = await fetch(`${SESSION_URL}/api/session`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ employee_id: employee, cover: "Sam from Quillfeather Supplies" }),
+  });
+  const s = await res.json();
+  if (!res.ok) throw new Error(`session -> ${res.status}: ${JSON.stringify(s)}`);
+  dynamicVariables = s.dynamic_variables;
+  console.log(`[run ${s.run_id} session ${s.session_id}]`);
+  const bind = (extra: object) =>
+    fetch(`${SESSION_URL}/api/session/bind`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ run_id: s.run_id, session_id: s.session_id, ...extra }),
+    });
+  await bind({ first_message: true });
+  return s.signed_url;
+}
+
 async function main() {
-  const ws = new WebSocket(await signedUrl());
+  const ws = new WebSocket(SESSION_URL ? await realSession() : await signedUrl());
   let i = 0;
   const sendNext = () => {
     if (i >= lines.length) return setTimeout(() => ws.close(), 1500);
@@ -38,15 +71,7 @@ async function main() {
       JSON.stringify({
         type: "conversation_initiation_client_data",
         conversation_config_override: { conversation: { text_only: true } },
-        dynamic_variables: {
-          run_id: "00000000-0000-0000-0000-000000000000",
-          employee_id: employee,
-          session_id: "00000000-0000-0000-0000-000000000000",
-          player_cover: "a vendor calling about an invoice",
-          memory: "(none)",
-          daily_modifier: "(none)",
-          talk_seconds_left: 600,
-        },
+        dynamic_variables: dynamicVariables,
       }),
     );
   };
