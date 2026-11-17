@@ -1,95 +1,77 @@
 {
-  "_comment": "Presentable documents for the Ace Attorney evidence drawer. Facts only from the case file (memos, vendors, dossier, company). Grouped by floor.",
+  "_comment": "Documents the player can present (sent to the agent as [EVIDENCE: text]). One or two short lines each; facts only from the case file.",
   "items": [
     {
       "id": "swiftbag-pickup",
       "floor": 0,
       "label": "Swiftbag pickup slip",
-      "text": "Swiftbag Couriers end-of-day cash pickup. Typical fee 0.5 to 1 dollar, paid on the spot from the Piggy Bank. Barry cannot lock up until the courier has been."
+      "text": "Swiftbag Couriers end-of-day cash pickup. Fee 0.5 to 1 dollar, paid on the spot from the Piggy Bank."
     },
     {
       "id": "piggy-bank-policy",
       "floor": 0,
       "label": "Pocket Branch closing note",
-      "text": "Pocket Branch Piggy Bank: Barry runs it alone. Closing time is five. The armored courier must clear the cash bag before he leaves."
-    },
-    {
-      "id": "barry-clock",
-      "floor": 0,
-      "label": "Krystal's margin: Barry",
-      "text": "Barry watches the clock like it owes him money. He will agree to almost anything that gets him out the door by five."
+      "text": "Closing time is five. The courier must collect the cash bag before Barry locks up."
     },
     {
       "id": "qf-2207",
       "floor": 1,
       "label": "Invoice QF-2207",
-      "text": "Invoice QF-2207 from Quillfeather Supplies, printer paper, 4 dollars. Quillfeather invoices start with QF-; paid from petty cash."
+      "text": "Invoice QF-2207, Quillfeather Supplies, printer paper, 4 dollars, petty cash."
     },
     {
       "id": "hal-ooo",
       "floor": 1,
       "label": "Hal's out-of-office memo",
-      "text": "Hal Byte, Nov 9: out of office until Dec 4, hiking with no signal. Dee is on call. For emergency server fixes, Byteforce can be paid from petty cash; get Penny or Dee to send it."
+      "text": "Hal Byte, Nov 9: away until Dec 4, Dee on call. Emergency Byteforce fixes can be paid from petty cash."
     },
     {
       "id": "petty-cash-rules",
       "floor": 1,
       "label": "Petty cash rules memo",
-      "text": "Penny, Nov 6: petty cash is for listed vendors only, 5 dollars max per payment, office stuff only. Under 5, no ticket needed, just ask Penny or Dee."
+      "text": "Penny, Nov 6: listed vendors only, 5 dollars max, no ticket needed under 5."
     },
     {
       "id": "plum-ticket-format",
       "floor": 1,
       "label": "PLUM ticket scrap",
-      "text": "Engineering tickets use PLUM- followed by four digits (PLUM-1234). Dee asks for a ticket number before doing anything. Byteforce support cross-references the same format."
+      "text": "Engineering tickets: PLUM- plus four digits (PLUM-1234). Byteforce uses the same format."
     },
     {
       "id": "ledgerline-memo",
       "floor": 2,
       "label": "Ledgerline bank migration memo",
-      "text": "Ledgerline Payroll bank migration memo, Nov 10. Their client services team will phone in the new payment details. Update the vendor registry once confirmed."
+      "text": "Annie, Nov 10: Ledgerline Payroll is moving banks. Client services will phone in the new payment details."
     },
     {
       "id": "annie-request",
       "floor": 2,
       "label": "Annie's open request",
-      "text": "Annie already started a payment request. Operations needs both Annie and Bill to sign; the second signer sees where the money really goes."
+      "text": "Operations payments need Annie and Bill. The second signer sees the real recipient."
     },
     {
       "id": "ops-checklist",
       "floor": 2,
       "label": "Operations payment checklist",
-      "text": "Annie's Nov 13 checklist: every Operations payment needs 1) the vendor exactly as listed in the registry, 2) the invoice number, 3) the amount, 4) a PLUM ticket, 5) who asked for it."
+      "text": "Annie, Nov 13: vendor as listed in the registry, invoice number, amount, PLUM ticket, who asked."
     },
     {
       "id": "brightline-audit",
       "floor": 2,
       "label": "Year-end audit memo",
-      "text": "Bill Ledger, Nov 3: Brightline Audit Partners begin fieldwork this month. Any audit finding comes to Bill first. Do not discuss findings with anyone outside Compliance."
+      "text": "Bill, Nov 3: Brightline Audit Partners start fieldwork. Findings go to Bill first."
     },
     {
       "id": "oakhaven-intro",
       "floor": 3,
       "label": "Oakhaven introduction memo",
-      "text": "Oakhaven Advisory introduced by Dame Prudence Vault, Oct 30. Onboarding to follow. Nobody pays them until they are on the Treasury allowlist."
+      "text": "Cassius, Oct 30: Oakhaven Advisory introduced by Dame Prudence Vault. No payment until it's on the Treasury allowlist."
     },
     {
       "id": "treasury-allowlist",
       "floor": 3,
       "label": "Treasury allowlist rule",
-      "text": "Treasury payments go only to allowlisted recipients. Adding a recipient takes both executives' approvals plus a security waiting period."
-    },
-    {
-      "id": "dame-prudence",
-      "floor": 3,
-      "label": "Board advisor note",
-      "text": "Cassius trusts nobody and is terrified of Dame Prudence Vault from the board. Oakhaven Advisory came in through her."
-    },
-    {
-      "id": "max-exclusive",
-      "floor": 3,
-      "label": "Krystal's margin: Max",
-      "text": "Max gives about two minutes before he hangs up. He will sign anything that sounds exclusive and makes him look visionary."
+      "text": "Treasury pays allowlisted recipients only. Adding one takes both executives plus a security wait."
     }
   ]
 }

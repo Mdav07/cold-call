@@ -1,4 +1,5 @@
 {
+  "_comment": "Vendor registry. The lookups read every field except 'card', which is the one-line case file text.",
   "vendors": [
     {
       "name": "Swiftbag Couriers",
@@ -17,7 +18,8 @@
       "notes": [
         "Picks up the Pocket Branch cash bag at closing. Pickup fee paid on the spot.",
         "Barry can't lock up until the courier has been."
-      ]
+      ],
+      "card": "Barry's closing pickup. Fee paid on the spot."
     },
     {
       "name": "Quillfeather Supplies",
@@ -35,7 +37,8 @@
       "paid_from": "Petty Cash",
       "notes": [
         "Monthly stationery order, invoices start with QF-."
-      ]
+      ],
+      "card": "Invoices start QF-."
     },
     {
       "name": "BeanThere Coffee Co.",
@@ -55,7 +58,8 @@
       "notes": [
         "Refills the Floor 1 espresso machine every Monday.",
         "Machine has been broken since last Thursday."
-      ]
+      ],
+      "card": "Floor 1 espresso machine, broken since Thursday."
     },
     {
       "name": "Sparkle & Shine Janitorial",
@@ -73,7 +77,8 @@
       "paid_from": "Petty Cash",
       "notes": [
         "Extra clean booked for after the Friday office party."
-      ]
+      ],
+      "card": "Cleaning after the Friday party."
     },
     {
       "name": "Byteforce IT Services",
@@ -91,7 +96,8 @@
       "paid_from": "Petty Cash or Operations",
       "notes": [
         "Emergency server fixes can be paid from petty cash when Hal is away."
-      ]
+      ],
+      "card": "Emergency server fixes while Hal is away."
     },
     {
       "name": "Tuxedo Catering",
@@ -108,7 +114,8 @@
       "paid_from": "Petty Cash",
       "notes": [
         "Caters the Friday office party. Penny placed the order."
-      ]
+      ],
+      "card": "Catering the Friday party."
     },
     {
       "name": "Ledgerline Payroll",
@@ -127,7 +134,8 @@
       "notes": [
         "Payment address change notice on file, Nov 10 (bank migration). New details to arrive by phone from client services.",
         "Invoices start with LL-. Monthly payroll processing fee."
-      ]
+      ],
+      "card": "Changing bank details by phone (Nov 10). Invoices LL-."
     },
     {
       "name": "Brightline Audit Partners",
@@ -146,7 +154,8 @@
       "notes": [
         "Year-end audit fieldwork starts this month. Bill Ledger is the contact.",
         "Invoices start with BAP-."
-      ]
+      ],
+      "card": "Year-end audit, Bill's contact. Invoices BAP-."
     },
     {
       "name": "Oakhaven Advisory",
@@ -163,7 +172,8 @@
       "paid_from": "Treasury",
       "notes": [
         "New board advisor, onboarding pending. Not yet on the Treasury allowlist."
-      ]
+      ],
+      "card": "Prudence's advisor. Not on the Treasury allowlist yet."
     }
   ]
 }
