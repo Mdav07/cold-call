@@ -31,6 +31,11 @@ async function main() {
     assert.equal(wallet.http, 200);
     const again = await post("/api/chain/player-wallet", { user_id: userId });
     assert.equal(again.json.wallet_address, wallet.json.wallet_address, "wallet endpoint is idempotent");
+    if (process.env.E2E_EXPECT_CIRCLE === "1") {
+      const { data: u } = await s.from("users").select("circle_wallet_id").eq("id", userId).single();
+      assert.ok(u!.circle_wallet_id, "player wallet is a Circle wallet");
+      console.log("circle wallet", u!.circle_wallet_id, wallet.json.wallet_address);
+    }
 
     const { data: run } = await s
       .from("runs")

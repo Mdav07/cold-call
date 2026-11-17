@@ -60,8 +60,10 @@ Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx
 Floor 2 [`0x415dc925…d089`](https://explorer.testnet.arc.io/tx/0x415dc925ae26763ff39363b6500c76beae0aa033fd74025bcc829e28deced089),
 Floor 3 [`0x6e02f93c…771c`](https://explorer.testnet.arc.io/tx/0x6e02f93c37f398a4080543bfde6ff293754733823aa7f5ab83eab67bc337771c).
 
-Current limits: the employee and house wallets are plain testnet keys held in server environment
-variables, and a player's wallet is a receive-only address created at sign-up.
+- **Player wallets are Circle developer-controlled wallets** on Arc testnet (`ARC-TESTNET`), created on
+  first play (`server/chain/players.ts`). The player's winnings land there.
+
+Current limit: the employee and house wallets are plain testnet keys held in server environment variables.
 
 ## QuickNode Streams
 
