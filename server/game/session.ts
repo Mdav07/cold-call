@@ -87,6 +87,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   let session_id: string;
   let memory = "(none)";
   let daily_modifier = "(none)";
+  let open_proposal = "(none)";
   let talk_seconds = talkBudget;
 
   if (stub) {
@@ -131,6 +132,22 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       .throwOnError();
     if (daily && daily.floor === floor) daily_modifier = daily.modifier;
 
+    // The second signer on a 2-of-2 floor needs the request number to review it.
+    const { data: open } = await db()
+      .from("proposals")
+      .select("onchain_id, amount_units, claimed_name")
+      .eq("run_id", run_id)
+      .eq("kind", "transfer")
+      .eq("status", "open")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .throwOnError();
+    if (open) {
+      const dollars = open.amount_units != null ? Number(open.amount_units) / 1_000_000 : null;
+      open_proposal = `Request #${open.onchain_id}: ${dollars ?? "?"} dollars to ${open.claimed_name ?? "an unnamed vendor"}, waiting for a second signature.`;
+    }
+
     if (talkBudget != null) {
       const { data: used } = await db()
         .from("conversations")
@@ -157,6 +174,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       memory,
       daily_modifier,
       talk_seconds_left: talk_seconds ?? 3600,
+      open_proposal,
     },
     talk_seconds,
     stub,

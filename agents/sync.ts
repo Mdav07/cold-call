@@ -21,6 +21,9 @@ type Ids = { tools: Record<string, string>; agents: Record<string, string> };
 const EMPLOYEE_TOOLS: Record<string, string[]> = {
   penny: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
   dee: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
+  // Floor 2 is 2-of-2: either signer can propose or approve (approve shows the on-chain view first).
+  annie: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
+  bill: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
 };
 
 // Filled by ElevenLabs from dynamic variables on every call; the LLM never sees or sets them.
@@ -58,6 +61,23 @@ const TOOLS: Record<string, { description: string; props: Record<string, object>
       reason: s("Short plain reason, for example 'Quillfeather invoice QF-2207, printer paper'"),
     },
     required: ["amount_usdc", "claimed_recipient_name", "reason"],
+  },
+  approve_transfer: {
+    description:
+      "Review and approve a pending payment request from your floor's vault. Call first WITHOUT confirm to see the real on-chain details (recipient, amount, memo); call again with confirm true only after you have checked them.",
+    props: {
+      proposal_id: n("The request number, from the open request on this run or what the caller tells you"),
+      confirm: { type: "boolean", description: "true only after you have reviewed the on-chain details and decided to sign" },
+    },
+    required: ["proposal_id"],
+  },
+  reject_transfer: {
+    description: "Reject a pending payment request, with a precise reason.",
+    props: {
+      proposal_id: n("The request number"),
+      reason: s("Why you are rejecting it"),
+    },
+    required: ["proposal_id", "reason"],
   },
   report_suspicion: {
     description: "Report a change in how suspicious you are of the caller, with the reason.",
@@ -156,6 +176,7 @@ async function main() {
           memory: "(none)",
           daily_modifier: "(none)",
           talk_seconds_left: 600,
+          open_proposal: "(none)",
         },
       },
     },

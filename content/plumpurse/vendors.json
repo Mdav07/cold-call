@@ -58,7 +58,10 @@
       "payment_address_label": "Ledgerline Payroll settlement account",
       "typical_invoice_usdc": [5, 10],
       "paid_from": "Operations",
-      "notes": ["Payment address change notice on file, Nov 10 (bank migration). New details to arrive by phone from client services."]
+      "notes": [
+        "Payment address change notice on file, Nov 10 (bank migration). New details to arrive by phone from client services.",
+        "Invoices start with LL-. Monthly payroll processing fee."
+      ]
     },
     {
       "name": "Brightline Audit Partners",
@@ -68,7 +71,7 @@
       "payment_address_label": "Brightline Audit Partners fee account",
       "typical_invoice_usdc": [5, 10],
       "paid_from": "Operations",
-      "notes": ["Year-end audit fieldwork starts this month. Bill Ledger is the contact."]
+      "notes": ["Year-end audit fieldwork starts this month. Bill Ledger is the contact.", "Invoices start with BAP-."]
     },
     {
       "name": "Oakhaven Advisory",

@@ -34,6 +34,7 @@ let dynamicVariables: Record<string, string | number> = {
   memory: "(none)",
   daily_modifier: "(none)",
   talk_seconds_left: 600,
+  open_proposal: "(none)",
 };
 
 async function realSession(): Promise<string> {
