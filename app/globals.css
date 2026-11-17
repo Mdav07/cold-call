@@ -38,3 +38,16 @@ summary,
 [role="tab"] {
   font-family: var(--font-pixel), monospace;
 }
+
+/* Dialogue "more" arrow: a two-step bob, like a handheld RPG text box waiting for a key. */
+@keyframes cc-next-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(3px); }
+}
+.cc-next {
+  display: inline-block;
+  animation: cc-next-bob 0.5s steps(1, end) infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-next { animation: none; }
+}

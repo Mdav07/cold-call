@@ -132,6 +132,11 @@ function Say({ text, pitch, onDone }: { text: string; pitch?: number; onDone?: (
     <p onClick={skip} className="min-h-[3.5rem] text-base leading-snug text-[var(--cc-ink)] sm:text-lg" aria-live="polite">
       {visible}
       {!done && <span aria-hidden className="opacity-0">{text.slice(visible.length)}</span>}
+      {done && (
+        <span aria-hidden className="cc-next ml-2 align-middle text-xs text-[var(--cc-accent)]">
+          ▼
+        </span>
+      )}
     </p>
   );
 }

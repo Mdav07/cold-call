@@ -27,7 +27,7 @@ export function KrystalMemo({ title, audio, text }: { title: string; audio: stri
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-3">
-        <button type="button" onClick={toggle} className="pixel-button" aria-label={playing ? `Pause ${title}` : `Play ${title}`}>
+        <button type="button" onClick={toggle} className="pixel-button shrink-0 whitespace-nowrap" aria-label={playing ? `Pause ${title}` : `Play ${title}`}>
           {playing ? "❚❚ Pause" : "▶ Play"}
         </button>
         <p className="font-pixel text-[10px] text-[var(--cc-accent)]">{title}</p>
