@@ -96,6 +96,11 @@ export function FloorGame({
   const [settledRun, setSettledRun] = useState<string | null>(null);
   const showOutcome =
     !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId && (open?.kind !== "npc" || settledRun === runId);
+  // The HUD's VAULT is a server read: refresh it once the payment has landed and the result is up.
+  const paidShown = showOutcome && outcome === "breach";
+  useEffect(() => {
+    if (paidShown) router.refresh();
+  }, [paidShown, router]);
 
   const onSession = useCallback((id: string, startedAt: number | null) => {
     setRunId(id);

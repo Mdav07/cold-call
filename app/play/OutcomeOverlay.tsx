@@ -104,6 +104,9 @@ export function OutcomeOverlay({
   // The Daily's debrief is the case itself: who it was, what got through to them, what they won't do.
   // Not after a lockout on today's case: it would hand over the answers to a case you can still retry.
   const caseNotes = daily && run.daily_date && (breach || run.practice) ? dailyCase(run.daily_date) : null;
+  // Today's case pays its full bounty once per account; a second clear (or a guest on the shared demo
+  // account after someone else) gets the token. Say so, or $0.01 reads like a bug.
+  const tokenOnly = daily && breach && !run.practice && paid != null && paid > 0 && paid <= 0.01;
   const hasMore = !!caseNotes || !!debrief || (breach && !!clue) || (!breach && !!state.reason);
 
   return (
@@ -120,7 +123,8 @@ export function OutcomeOverlay({
           style={{ background: breach ? "var(--cc-accent)" : "var(--cc-danger)" }}
         >
           <p className="font-pixel text-[9px] tracking-widest">
-            COLD CALL · {daily ? `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}` : run.floor === 0 ? "TUTORIAL" : `FLOOR ${run.floor}`}
+            <span className="max-sm:hidden">COLD CALL · </span>
+            {daily ? `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}` : run.floor === 0 ? "TUTORIAL" : `FLOOR ${run.floor}`}
           </p>
           <h2 id="outcome-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl">
             <span className="cc-stamp">{breach ? "Vault breached" : "Locked out"}</span>
@@ -218,7 +222,14 @@ export function OutcomeOverlay({
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-2">
+        {tokenOnly && (
+          <p className="-mt-2 text-xs text-[var(--cc-muted)]">
+            Token pay: today&apos;s full bounty was already collected on this account.
+          </p>
+        )}
+
+        {/* Stays in view when a short (sideways phone) screen makes the panel scroll. */}
+        <div className="sticky -bottom-4 -mx-4 -mb-4 flex flex-wrap items-center gap-2 border-t-2 border-[var(--cc-edge)] bg-[var(--cc-panel)] px-4 py-3 sm:static sm:m-0 sm:border-0 sm:p-0">
           {breach ? (
             <button ref={primary} type="button" className="pixel-button" onClick={onClose}>
               Collect bounty ▶

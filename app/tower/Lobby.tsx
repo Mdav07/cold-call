@@ -136,14 +136,14 @@ export function Lobby({
           <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
           <span className="flex items-center gap-2">
-            <DailyArchive tutorialCleared={tutorialDone} />
+            <DailyArchive tutorialCleared={tutorialDone} clearedToday={dailyClearedToday} />
             <StreakBadge />
           </span>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/signin">SIGN IN</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/hunter">YOUR HUNTER</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/signin">SIGN IN</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/hunter">YOUR HUNTER</Link>
+          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>
       <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] [@media(pointer:fine)]:block">
