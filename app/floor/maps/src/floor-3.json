@@ -1,0 +1,93 @@
+{
+  "floor": 3,
+  "name": "Floor 3 · Executive Suite",
+  "theme": "executive",
+  "legend": {
+    "L": "desk_l",
+    "M": "desk_m",
+    "R": "desk_r",
+    "c": "office_chair",
+    "O": "table_oval_l",
+    "o": "table_oval_r",
+    "l": "rug_green_l",
+    "g": "rug_green_m",
+    "q": "rug_green_r",
+    "P": "painting_gold",
+    "A": "painting_landscape",
+    "C": "candelabra_gold",
+    "p": "plant",
+    "b": "bookshelf",
+    "K": "counter_files"
+  },
+  "rows": [
+    "######################",
+    "#W##W####E####W##W####",
+    "#P.pC..........C.p..A#",
+    "#....................#",
+    "#.LMR............LMR.#",
+    "#..c..............c..#",
+    "#....................#",
+    "#....lgggggggggggq...#",
+    "#......c.Oo.c........#",
+    "#....................#",
+    "#.b..............K...#",
+    "#p..................p#",
+    "######################"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 3,
+    "facing": "down"
+  },
+  "npcs": [
+    {
+      "id": "cassius",
+      "x": 3,
+      "y": 5,
+      "facing": "down"
+    },
+    {
+      "id": "max",
+      "x": 18,
+      "y": 5,
+      "facing": "down"
+    }
+  ],
+  "props": [
+    {
+      "id": "oakhaven-memo",
+      "x": 3,
+      "y": 4,
+      "label": "Memo on Cassius's desk (Oct 30)",
+      "text": "From Cassius Flow to the Executive Suite: Dame Prudence Vault has introduced Oakhaven Advisory as a board advisor. Onboarding to follow. Nobody pays them until they are on the Treasury allowlist."
+    },
+    {
+      "id": "prudence-portrait",
+      "x": 1,
+      "y": 2,
+      "label": "Framed portrait",
+      "text": "Dame Prudence Vault, Chair of the Risk Committee. The frame is heavier than it looks."
+    },
+    {
+      "id": "max-calendar",
+      "x": 18,
+      "y": 4,
+      "label": "Max's calendar",
+      "text": "Wednesday: Golf with investors. Friday: Yacht photo shoot."
+    },
+    {
+      "id": "treasury-plaque",
+      "x": 17,
+      "y": 10,
+      "label": "Brass plaque",
+      "text": "Treasury payments go only to allowlisted recipients. New recipients wait out a security delay."
+    }
+  ],
+  "exits": [
+    {
+      "x": 9,
+      "y": 2,
+      "to": "/tower"
+    }
+  ]
+}
