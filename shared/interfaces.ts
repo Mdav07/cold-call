@@ -1,4 +1,4 @@
-// shared/interfaces.ts — v1.1
+// shared/interfaces.ts — v1.2
 // The contract between owner A (chain) and owner B (game).
 // Change by agreement only: propose through Coordigent, then update both sides in one commit.
 // All USDC amounts are 6-decimal integer units carried as decimal strings ("1000000" = 1 USDC),
@@ -91,6 +91,8 @@ export interface OnChainView {
   real_recipient_label: string; // always "Unknown external address, not in vendor registry" for a player wallet
   real_recipient_address: Hex;
   real_amount: number;
+  memo: string; // the proposer's on-chain reason
+  proposed_by?: EmployeeId; // the employee whose wallet proposed it
 }
 export interface ApproveTransferResult extends ToolResultBase {
   on_chain_view?: OnChainView;

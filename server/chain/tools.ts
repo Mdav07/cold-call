@@ -66,6 +66,16 @@ function vaultFor(floor: FloorId): Hex {
 
 const toUsdc = (units: bigint) => Number(units) / 1e6;
 
+function employeeByAddress(address: Hex): EmployeeId | undefined {
+  return (Object.keys(EMPLOYEE_FLOOR) as EmployeeId[]).find((e) => {
+    try {
+      return addressOf(e).toLowerCase() === address.toLowerCase();
+    } catch {
+      return false; // no key configured for this employee
+    }
+  });
+}
+
 // ---------- Auth ----------
 
 export function secretOk(header: string | null): boolean {
@@ -308,6 +318,8 @@ export async function approveTransfer(input: ApproveTransferInput): Promise<[App
             real_recipient_label: UNKNOWN_RECIPIENT_LABEL,
             real_recipient_address: onChain.to,
             real_amount: toUsdc(onChain.amount),
+            memo: onChain.memo,
+            proposed_by: employeeByAddress(onChain.proposer),
           },
         }),
         noAfter,
