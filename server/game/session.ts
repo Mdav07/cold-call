@@ -7,6 +7,8 @@
 import { randomUUID } from "node:crypto";
 import agentIds from "@/agents/elevenlabs-ids.json";
 import directory from "@/content/plumpurse/directory.json";
+import { db } from "@/server/chain/db";
+import { getDemoUserId } from "@/server/game/players";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
@@ -73,28 +75,134 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   const agentId = agentIdFor(input.employee_id);
   if (!agentId) throw new SessionError(`${input.employee_id} has no ElevenLabs agent yet`, 404);
 
+  // Signed URL first, so a missing key or an ElevenLabs outage leaves no orphan rows behind.
+  const signed_url = await signedUrl(agentId);
   const stub = isStubMode();
-  // TODO(supabase): insert runs + conversations rows (service role) and read talk time used,
-  // player memory and today's daily contract. Stub mode fakes all of it.
-  const run_id = input.run_id ?? randomUUID();
-  const session_id = randomUUID();
-  const talk_seconds = TALK_SECONDS[input.employee_id];
+  const cover = input.cover.slice(0, 200) || "(no cover given)";
+  const talkBudget = TALK_SECONDS[input.employee_id];
+
+  let run_id: string;
+  let session_id: string;
+  let memory = "(none)";
+  let daily_modifier = "(none)";
+  let talk_seconds = talkBudget;
+
+  if (stub) {
+    run_id = input.run_id ?? randomUUID();
+    session_id = randomUUID();
+  } else {
+    // TODO(auth): use the signed-in player once magic-link sign-in exists.
+    const userId = await getDemoUserId();
+    run_id = input.run_id ? await continueRun(input.run_id, userId, floor) : await newRun(userId, floor, cover, input.channel);
+
+    const { data: conv } = await db()
+      .from("conversations")
+      .insert({ run_id, employee_id: input.employee_id, channel: input.channel })
+      .select("id")
+      .single()
+      .throwOnError();
+    session_id = conv.id;
+    if (input.channel === "voice") {
+      // A run that used voice at all counts as voice on the leaderboard.
+      await db().from("runs").update({ channel: "voice" }).eq("id", run_id).throwOnError();
+    }
+
+    const { data: mem } = await db()
+      .from("player_memory")
+      .select("trick_summary")
+      .eq("user_id", userId)
+      .eq("employee_id", input.employee_id)
+      .order("created_at", { ascending: true })
+      .throwOnError();
+    if (mem?.length) memory = mem.map((m) => `- ${m.trick_summary}`).join("\n");
+
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: daily } = await db()
+      .from("daily_contracts")
+      .select("floor, modifier")
+      .eq("date", today)
+      .maybeSingle()
+      .throwOnError();
+    if (daily && daily.floor === floor) daily_modifier = daily.modifier;
+
+    if (talkBudget != null) {
+      const { data: used } = await db()
+        .from("conversations")
+        .select("seconds_used")
+        .eq("run_id", run_id)
+        .eq("employee_id", input.employee_id)
+        .throwOnError();
+      const spent = (used ?? []).reduce((sum, r) => sum + (r.seconds_used ?? 0), 0);
+      talk_seconds = Math.max(0, talkBudget - spent);
+      if (talk_seconds === 0) throw new SessionError("No talk time left with this employee on this run", 409);
+    }
+  }
 
   return {
     run_id,
     session_id,
     floor,
-    signed_url: await signedUrl(agentId),
+    signed_url,
     dynamic_variables: {
       run_id,
       employee_id: input.employee_id,
       session_id,
-      player_cover: input.cover.slice(0, 200) || "(no cover given)",
-      memory: "(none)",
-      daily_modifier: "(none)",
+      player_cover: cover,
+      memory,
+      daily_modifier,
       talk_seconds_left: talk_seconds ?? 3600,
     },
     talk_seconds,
     stub,
   };
+}
+
+async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel): Promise<string> {
+  const { data } = await db()
+    .from("runs")
+    .insert({ user_id: userId, floor, cover, channel })
+    .select("id")
+    .single()
+    .throwOnError();
+  return data.id;
+}
+
+async function continueRun(runId: string, userId: string, floor: FloorId): Promise<string> {
+  const { data } = await db()
+    .from("runs")
+    .select("id, user_id, floor, ended_at")
+    .eq("id", runId)
+    .maybeSingle()
+    .throwOnError();
+  if (!data || data.user_id !== userId) throw new SessionError("run not found", 404);
+  if (data.ended_at) throw new SessionError("that run is over", 409);
+  if (data.floor !== floor) throw new SessionError("that employee is on another floor", 400);
+  return data.id;
+}
+
+/** Called on the player's first message: starts the run clock and binds the ElevenLabs id. */
+export async function bindSession(input: {
+  run_id: string;
+  session_id: string;
+  conversation_id?: string;
+  first_message?: boolean;
+}): Promise<void> {
+  if (isStubMode()) return;
+  if (input.conversation_id) {
+    await db()
+      .from("conversations")
+      .update({ elevenlabs_conversation_id: input.conversation_id })
+      .eq("id", input.session_id)
+      .eq("run_id", input.run_id)
+      .throwOnError();
+  }
+  if (input.first_message) {
+    // Only the first message of the run sets it (call-backs keep the original start).
+    await db()
+      .from("runs")
+      .update({ started_at: new Date().toISOString() })
+      .eq("id", input.run_id)
+      .is("started_at", null)
+      .throwOnError();
+  }
 }
