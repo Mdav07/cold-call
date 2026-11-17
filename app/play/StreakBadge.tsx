@@ -43,6 +43,7 @@ export function StreakBadge({ variant = "compact" }: { variant?: "compact" | "fu
   const days = `${s.current}-day streak`;
 
   if (variant === "compact") {
+    if (s.current === 0) return null; // nothing to show until there's a streak going
     return (
       <span
         className={`inline-flex items-center gap-1.5 font-pixel text-[9px] ${lit ? "text-[#f6b23c]" : "text-[var(--cc-muted)]"}`}

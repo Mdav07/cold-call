@@ -103,7 +103,7 @@ export function Intro() {
   const onTyped = useCallback((skip: () => void, done: boolean) => {
     typed.current = { skip, done };
   }, []);
-  const [picked, setPicked] = useState<string | null>(null);
+  const [picked, setPicked] = useState<string | null>(PICKS[0]?.id ?? null);
   const [name, setName] = useState("");
   const [leaving, setLeaving] = useState(false);
   const firstCard = useRef<HTMLButtonElement>(null);
