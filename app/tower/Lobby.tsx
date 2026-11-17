@@ -1,7 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -37,11 +37,30 @@ export function Lobby({
     setLeaving(null);
   }, [leaving, router]);
 
+  // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("cc-intro-seen")) router.replace("/intro");
+    } catch {}
+  }, [router]);
+
+  // A browser that has never been to the tutorial is pointed at it, even when the shared demo player
+  // (everyone not signed in) has already cleared it.
+  const [newHere, setNewHere] = useState(false);
+  useEffect(() => {
+    try {
+      setNewHere(!localStorage.getItem("cc-briefed-floor-0"));
+    } catch {}
+  }, []);
+  const door = map.exits?.find((e) => e.to === "/floor/0");
+  const shown =
+    newHere && door ? { goal: { x: door.x, y: door.y }, tags: [{ x: door.x, y: door.y, text: "TUTORIAL" }] } : guide;
+
   const open = map.props?.find((p) => p.id === prop);
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} goal={guide.goal} tags={guide.tags} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
       </div>
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
         <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">
@@ -49,6 +68,8 @@ export function Lobby({
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
           <Link className="hover:underline" href="/signin">SIGN IN</Link>
+          <Link className="hover:underline" href="/hunter">YOUR HUNTER</Link>
+          <Link className="hover:underline" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>
       <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] [@media(pointer:fine)]:block">

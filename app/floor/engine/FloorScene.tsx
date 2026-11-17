@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EmployeeId } from "@/shared/interfaces";
 import type { Facing, FloorMap, FloorSceneProps } from "../types";
+import { getHunter, spriteUrl } from "@/app/play/hunters";
 
 const TILE = 16;
 const FRAME_W = 16;
@@ -55,12 +56,34 @@ function isTyping(target: EventTarget | null) {
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
 }
 
-export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags }: FloorSceneProps) {
+/** The hunter the player picked: Audrey's hunter store ("coldcall-hunter") first, then the intro's
+ *  "cc-player-sprite". Read after mount (storage is client-only). */
+function usePickedHunter(fallback: string) {
+  const [h, setH] = useState<{ sprite: string; name: string | null }>({ sprite: fallback, name: null });
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("coldcall-hunter")) {
+        const g = getHunter();
+        setH({ sprite: spriteUrl(g.sprite), name: g.name });
+        return;
+      }
+      const v = localStorage.getItem("cc-player-sprite");
+      if (v && /^\/sprites\/[\w-]+\.png$/.test(v)) setH({ sprite: v, name: null });
+    } catch {}
+  }, []);
+  return h;
+}
+
+export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names }: FloorSceneProps) {
   const goalRef = useRef(goal);
   goalRef.current = goal;
   const tagsRef = useRef(tags);
   tagsRef.current = tags;
   const readProps = useRef(new Set<string>()); // props the player has read: their marker goes away
+  const hunter = usePickedHunter(defaultSprite);
+  const playerSprite = hunter.sprite;
+  const namesRef = useRef<Record<string, string | undefined>>({});
+  namesRef.current = { ...names, ...(hunter.name ? { player: hunter.name } : {}) };
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
@@ -394,6 +417,28 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
 
       drawLayer(map.layers.overhead);
 
+      // Names above heads: small pixel text on a dark plate.
+      const nameTag = (x: number, y: number, text: string) => {
+        c.font = `5px ${pixelFont}, monospace`;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        const wdt = Math.ceil(c.measureText(text).width) + 4;
+        const cx = Math.round(x + TILE / 2), cy = Math.round(y - (FRAME_H - TILE) - 2);
+        c.fillStyle = "rgba(21, 20, 26, 0.6)";
+        c.fillRect(cx - Math.round(wdt / 2), cy - 3, wdt, 6);
+        c.fillStyle = "#f2efe6";
+        c.fillText(text, cx, cy + 0.5);
+      };
+      const nm = namesRef.current;
+      // The person the player is facing gets one caption instead (below), so labels never stack.
+      const [fdx, fdy] = DELTA[p.facing];
+      const facingNpc = !p.moving ? npcAt(p.x + fdx, p.y + fdy) : undefined;
+      if (!pausedRef.current) {
+        for (const n of map.npcs)
+          if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
+        if (nm.player && !facingNpc) nameTag(px, py, nm.player);
+      }
+
       // Lighting: warm window light, then a soft shadow along the back wall (cozy, Stardew-like).
       c.save();
       c.globalCompositeOperation = "lighter";
@@ -420,17 +465,24 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
         });
       }
 
-      // Every unread prop gets a small bobbing marker so it's clear what can be read.
+      // Unread props get a faint twinkle: a tiny four-point glint that fades in and out, brighter when
+      // the player is close. Read props go quiet.
       for (const pr of map.props ?? []) {
         if (readProps.current.has(pr.id)) continue;
-        const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 300 + pr.x) * 1.5);
-        const mx = pr.x * TILE + 6, my = pr.y * TILE - 5 + bob;
-        c.fillStyle = "#15141a";
-        c.fillRect(mx - 1, my - 1, 6, 6);
-        c.fillStyle = "#f4c95d";
-        c.fillRect(mx, my, 4, 4);
-        c.fillStyle = "#fff6cf";
-        c.fillRect(mx, my, 2, 2);
+        const near = Math.abs(pr.x - p.x) + Math.abs(pr.y - p.y) <= 2;
+        const tw = reduceMotion ? 0.6 : (Math.sin(now / 520 + pr.x * 1.7 + pr.y) + 1) / 2;
+        const a = near ? 0.55 + tw * 0.45 : 0.12 + tw * 0.3;
+        const gx = pr.x * TILE + 11, gy = pr.y * TILE + 3;
+        c.fillStyle = `rgba(255, 246, 214, ${a})`;
+        c.fillRect(gx, gy - 1, 1, 3);
+        c.fillRect(gx - 1, gy, 3, 1);
+        if (near) {
+          c.fillStyle = `rgba(255, 246, 214, ${a * 0.35})`;
+          c.fillRect(gx, gy - 2, 1, 1);
+          c.fillRect(gx, gy + 2, 1, 1);
+          c.fillRect(gx - 2, gy, 1, 1);
+          c.fillRect(gx + 2, gy, 1, 1);
+        }
       }
 
       // Tags over doors and the like.
@@ -473,16 +525,39 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
         else if (e === "suspicious") bubble(n.x, n.y, "?", "#e8a33d");
         else if (e === "alarm") bubble(n.x, n.y, "!", "#e05d5d");
       }
+      // A small dark caption above what you're facing, saying which key does what.
+      const hint = (tx: number, ty: number, text: string) => {
+        c.font = `5px ${pixelFont}, monospace`;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        const wdt = Math.ceil(c.measureText(text).width) + 6;
+        const cx = Math.round(tx * TILE + TILE / 2), cy = Math.round(ty * TILE - 5);
+        c.fillStyle = "rgba(21, 20, 26, 0.82)";
+        c.fillRect(cx - Math.round(wdt / 2), cy - 4, wdt, 8);
+        c.fillStyle = "#f4c95d";
+        c.fillText(text, cx, cy + 0.5);
+      };
       if (!pausedRef.current && !p.moving) {
         const [dx, dy] = DELTA[p.facing];
         const fx = p.x + dx;
         const fy = p.y + dy;
         const n = npcAt(fx, fy);
-        if (n && !emotesRef.current?.[n.id]) bubble(fx, fy, "!", "#f4c95d");
-        else if (!n && propAt(fx, fy)) {
-          c.fillStyle = "#f4c95d";
-          const bob = Math.round(Math.sin(now / 250));
-          c.fillRect(fx * TILE + 6, fy * TILE - 6 + bob, 4, 4);
+        if (n && !emotesRef.current?.[n.id]) {
+          /* the caption below says it */
+        } else if (!n && propAt(fx, fy)) {
+          // Facing something readable: a soft glow on its tile.
+          const pulse = reduceMotion ? 0.5 : (Math.sin(now / 300) + 1) / 2;
+          c.fillStyle = `rgba(255, 240, 200, ${0.08 + pulse * 0.08})`;
+          c.fillRect(fx * TILE, fy * TILE, TILE, TILE);
+          c.strokeStyle = `rgba(255, 240, 200, ${0.3 + pulse * 0.25})`;
+          c.lineWidth = 1;
+          c.strokeRect(fx * TILE + 0.5, fy * TILE + 0.5, TILE - 1, TILE - 1);
+          hint(fx, p.facing === "down" ? fy + 1.6 : fy, "SPACE · READ");
+        }
+        if (n && !emotesRef.current?.[n.id]) {
+          const who = namesRef.current[n.id];
+          // Above their head, or under their feet when the player stands above them (so it never covers you).
+          hint(fx, p.facing === "down" ? fy + 1.6 : fy - 0.95, who ? `SPACE · TALK TO ${who.toUpperCase()}` : "SPACE · TALK");
         }
       }
 

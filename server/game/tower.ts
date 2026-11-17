@@ -94,9 +94,10 @@ export async function getTower(userId: string | null): Promise<TowerFloor[]> {
     };
   });
 
-  // Floors unlock in order: Floor 1 is always open, each next floor opens once the one below is cleared.
+  // Floors unlock in order: the tutorial (Floor 0) is always open, each next floor opens once the one
+  // below is cleared.
   for (const f of floors) {
-    if (f.floor <= 1) continue;
+    if (f.floor <= 0) continue;
     f.unlocked = floors.some((g) => g.floor === f.floor - 1 && g.cleared);
   }
   return floors;

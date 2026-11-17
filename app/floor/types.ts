@@ -49,4 +49,6 @@ export interface FloorSceneProps {
   goal?: { x: number; y: number } | null;
   /** Small text tags drawn on the map, e.g. "TUTORIAL" over a door. */
   tags?: { x: number; y: number; text: string }[];
+  /** Labels drawn above heads: NPC id -> name, plus "player" for the player's name. */
+  names?: Partial<Record<string, string>>;
 }
