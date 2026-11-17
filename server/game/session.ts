@@ -12,6 +12,7 @@ import { onRunEnded } from "@/server/chain/ingest";
 import { signedInUserId } from "@/server/game/auth";
 import { getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
+import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
@@ -121,9 +122,10 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       .select("trick_summary")
       .eq("user_id", userId)
       .eq("employee_id", input.employee_id)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(MEMORY_LINES)
       .throwOnError();
-    if (mem?.length) memory = mem.map((m) => `- ${m.trick_summary}`).join("\n");
+    if (mem?.length) memory = [...mem].reverse().map((m) => `- ${m.trick_summary}`).join("\n");
 
     const today = new Date().toISOString().slice(0, 10);
     const { data: daily } = await db()
@@ -251,7 +253,10 @@ export async function bindSession(input: {
   ended?: boolean;
 }): Promise<void> {
   if (isStubMode()) return;
-  if (input.ended) await recordTalkTime(input.session_id);
+  if (input.ended) {
+    await recordTalkTime(input.session_id);
+    await writeConversationMemory(input.session_id);
+  }
   if (input.conversation_id) {
     await db()
       .from("conversations")
