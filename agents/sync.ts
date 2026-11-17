@@ -25,6 +25,23 @@ const VOICES: Record<string, string> = {
   cassius: "nPczCjzI2devNBz1zQrb", // Brian: deep, resonant, guarded CFO
   max: "pNInz6obpgDQGcFmaJgB", // Adam: dominant, firm CEO
   krystal: "EXAVITQu4vr4xnSDxMaL", // Sarah: mature, reassuring mentor on the radio
+  daily: "XrExE9yKIg1WjnnlVkGX", // Matilda: friendly, neutral; the Daily Case's persona changes every day
+};
+
+// The Daily Case persona, filled per session by server/game/session.ts (dailyVariables).
+const DAILY_PLACEHOLDERS = {
+  daily_name: "Sam Example",
+  daily_first_name: "Sam",
+  daily_title: "Night Clerk",
+  daily_place: "a small Plumpurse office",
+  daily_personality: "Friendly and a little tired.",
+  daily_tic: "sighs before answering",
+  daily_soft_spot: "A caller who is polite and patient.",
+  daily_red_line: "They never pay anyone who rushes them.",
+  daily_vendors: "Example Vendor (supplies, invoices EX-)",
+  daily_allowed_vendor: "Example Vendor",
+  daily_allowed_job: "restock supplies",
+  daily_allowed_invoice: "EX-1234",
 };
 
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
@@ -47,6 +64,8 @@ const EMPLOYEE_TOOLS: Record<string, string[]> = {
   // Floor 3: allowlist add (both executives + a timelock), then a 2-of-2 payment.
   cassius: [...FLOOR3],
   max: [...FLOOR3],
+  // The Daily Case: one person a day, single signer on the Pocket Branch vault (shared/dailyCase.ts).
+  daily: ["check_vendor_list", "propose_transfer", "report_suspicion", "end_conversation"],
   // Radio hint line: not an employee; text-only tips, no payment tools.
   krystal: ["end_conversation"],
 };
@@ -239,6 +258,7 @@ async function main() {
           open_proposal: "(none)",
           open_allowlist: "(none)",
           floor: "1",
+          ...(employee === "daily" ? DAILY_PLACEHOLDERS : {}),
         },
       },
     },

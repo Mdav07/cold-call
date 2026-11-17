@@ -27,6 +27,8 @@ const transport = () => http(process.env.ARC_TESTNET_RPC_URL ?? arcTestnet.rpcUr
 export const publicClient = createPublicClient({ chain: arcTestnet, transport: transport() });
 
 function accountFor(name: SignerName) {
+  // The Daily Case pays from the Pocket Branch vault, so its one employee signs with Barry's key.
+  if (name === "daily") name = "barry";
   const key = process.env[`${name.toUpperCase()}_PRIVATE_KEY`];
   if (!key) throw new Error(`missing ${name.toUpperCase()}_PRIVATE_KEY`);
   return privateKeyToAccount(key as Hex);

@@ -35,6 +35,7 @@ const VAULTS: Record<FloorId, Hex | null> = {
   1: deployment.floor1,
   2: deployment.floor2,
   3: deployment.floor3,
+  4: deployment.tutorial, // the Daily Case pays from the Pocket Branch vault
 };
 
 const client = createPublicClient({ chain: arcTestnet, transport: http() });

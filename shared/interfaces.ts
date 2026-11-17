@@ -13,9 +13,10 @@ export type EmployeeId =
   | "annie"
   | "bill"
   | "cassius"
-  | "max";
+  | "max"
+  | "daily"; // the Daily Case: one employee whose persona changes every day (shared/dailyCase.ts)
 
-export type FloorId = 0 | 1 | 2 | 3; // 0 = tutorial
+export type FloorId = 0 | 1 | 2 | 3 | 4; // 0 = tutorial, 4 = the Daily Case
 export type Channel = "chat" | "voice";
 export type Hex = `0x${string}`;
 

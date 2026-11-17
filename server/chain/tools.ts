@@ -2,7 +2,8 @@
 // every limit is checked in this file or by the vault contract.
 import { timingSafeEqual } from "node:crypto";
 import { erc20Abi, type Hex } from "viem";
-import { checkCalendar, checkVendorList, verifyEmployee } from "@/server/game/lookups";
+import { checkCalendar, checkVendorList, normalizeName, verifyEmployee } from "@/server/game/lookups";
+import { DAILY_EMPLOYEE, DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
 import { endConversation, reportSuspicion } from "@/server/game/suspicion";
 import { isPaidDailyAttempt } from "@/server/game/daily";
 import type {
@@ -10,6 +11,8 @@ import type {
   ApproveAllowlistAddResult,
   ApproveTransferInput,
   ApproveTransferResult,
+  CheckVendorListInput,
+  CheckVendorListResult,
   EmployeeId,
   FloorId,
   ProposeAllowlistAddInput,
@@ -47,9 +50,16 @@ const EMPLOYEE_FLOOR: Record<EmployeeId, FloorId> = {
   bill: 2,
   cassius: 3,
   max: 3,
+  daily: 4, // the Daily Case (shared/dailyCase.ts)
 };
 
-const FLOOR_CAP_UNITS: Record<FloorId, bigint> = { 0: 1_000_000n, 1: 5_000_000n, 2: 10_000_000n, 3: 25_000_000n };
+const FLOOR_CAP_UNITS: Record<FloorId, bigint> = {
+  0: 1_000_000n,
+  1: 5_000_000n,
+  2: 10_000_000n,
+  3: 25_000_000n,
+  4: 100_000n, // the Daily Case: 10 cents from the Pocket Branch vault
+};
 
 const TOKEN_PAYOUT = BigInt(process.env.TOKEN_PAYOUT_UNITS ?? 10_000);
 const BUDGET_MULTIPLE = BigInt(process.env.DAILY_BUDGET_CAP_MULTIPLE ?? 20);
@@ -62,7 +72,8 @@ const MEMO_MAX = 140;
 export const UNKNOWN_RECIPIENT_LABEL = "Unknown external address, not in vendor registry";
 
 function vaultFor(floor: FloorId): Hex {
-  const a = [deployment.tutorial, deployment.floor1, deployment.floor2, deployment.floor3][floor];
+  // The Daily Case (floor 4) reuses the Pocket Branch (tutorial) vault.
+  const a = [deployment.tutorial, deployment.floor1, deployment.floor2, deployment.floor3, deployment.tutorial][floor];
   if (!a) throw new Error(`floor ${floor} vault is not deployed`);
   return a.toLowerCase() as Hex;
 }
@@ -220,8 +231,18 @@ async function allowedPayout(s: Session): Promise<bigint> {
   const cap = FLOOR_CAP_UNITS[s.floor];
 
   // Full pay only on the first clear of this floor, or on the day's first Daily Contract clear.
-  let full = s.dailyContract || (await isPaidDailyAttempt(s.userId, s.floor));
-  if (!full) {
+  // The Daily Case pays in full on the player's first clear of each day's case.
+  let full = s.floor === DAILY_FLOOR ? false : s.dailyContract || (await isPaidDailyAttempt(s.userId, s.floor));
+  if (s.floor === DAILY_FLOOR) {
+    const { count } = await db()
+      .from("runs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", s.userId)
+      .eq("floor", DAILY_FLOOR)
+      .eq("daily_date", todayUtc())
+      .eq("outcome", "breach");
+    full = (count ?? 0) === 0;
+  } else if (!full) {
     const { count } = await db()
       .from("runs")
       .select("id", { count: "exact", head: true })
@@ -477,6 +498,30 @@ const lookup =
     }
   };
 
+/** The Daily Case has its own vendor list each day (shared/dailyCase.ts); everyone else uses the registry. */
+function vendorCheck(input: CheckVendorListInput): CheckVendorListResult {
+  if (input.employee_id !== DAILY_EMPLOYEE) return checkVendorList(input);
+  const c = dailyCase(todayUtc());
+  const q = normalizeName(String(input.vendor_name ?? ""));
+  const v = q ? c.vendors.find((x) => {
+    const name = normalizeName(x.name);
+    return q === name || ` ${q} `.includes(` ${name} `);
+  }) : undefined;
+  if (!v) return { match: false };
+  const today = v.name === c.allowedVendor;
+  return {
+    match: true,
+    vendor_name: v.name,
+    payment_address_label: `${v.name} (branch float)`,
+    notes: [
+      `${v.what}. Invoices start ${v.code.split("-")[0]}-.`,
+      today
+        ? `Booked today to ${c.allowedJob}. Work order invoice ${c.allowedInvoice}. Payable up to 10 cents.`
+        : "No work booked with them today. Nothing is payable to them today.",
+    ],
+  };
+}
+
 export const TOOL_HANDLERS: Record<string, Handler> = {
   propose_transfer: proposeTransfer as Handler,
   approve_transfer: approveTransfer as Handler,
@@ -484,7 +529,7 @@ export const TOOL_HANDLERS: Record<string, Handler> = {
   propose_allowlist_add: proposeAllowlistAdd as Handler,
   approve_allowlist_add: approveAllowlistAdd as Handler,
   reject_allowlist_add: rejectAllowlistAdd as Handler,
-  check_vendor_list: lookup(checkVendorList) as Handler,
+  check_vendor_list: lookup(vendorCheck) as Handler,
   check_calendar: lookup(checkCalendar) as Handler,
   verify_employee: lookup(verifyEmployee) as Handler,
   // B's tools: logic in server/game/suspicion.ts
