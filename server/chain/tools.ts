@@ -303,7 +303,9 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
         run_id: s.runId,
         amount_units: amount.toString(),
         claimed_name: String(input.claimed_recipient_name ?? "").slice(0, 200),
-        claimed_amount_units: asked.toString(),
+        // The amount the proposer actually put up (after the cap), which is what they tell the caller.
+        // Storing the raw ask made every capped payment look like a mismatch to the second signer.
+        claimed_amount_units: amount.toString(),
       },
       { onConflict: "vault,kind,onchain_id" },
     );
