@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { confirm, tick } from "@/app/floor/hud/sound";
 
 export interface Choice {
   label: string;
@@ -34,6 +35,7 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
       const list = ref.current;
       const move = (d: number) => {
         e.preventDefault();
+        tick();
         setCursor((c) => {
           let n = Math.min(c, list.length - 1);
           for (let i = 0; i < list.length; i++) {
@@ -48,7 +50,10 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
       else if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         const pick = list[atRef.current];
-        if (pick && !pick.disabled) pick.onSelect();
+        if (pick && !pick.disabled) {
+          confirm();
+          pick.onSelect();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
@@ -63,8 +68,15 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
             type="button"
             role="menuitem"
             disabled={c.disabled}
-            onMouseEnter={() => !c.disabled && setCursor(i)}
-            onClick={c.onSelect}
+            onMouseEnter={() => {
+              if (c.disabled || i === at) return;
+              tick();
+              setCursor(i);
+            }}
+            onClick={() => {
+              confirm();
+              c.onSelect();
+            }}
             className="font-pixel text-xs text-[var(--cc-ink)] disabled:opacity-40"
             aria-current={i === at ? "true" : undefined}
           >

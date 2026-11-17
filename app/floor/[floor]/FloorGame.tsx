@@ -11,8 +11,11 @@ import { FloorScene } from "@/app/floor/engine/FloorScene";
 import type { FloorMap, FloorSceneProps, SceneEvent } from "@/app/floor/types";
 import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
+import { MusicToggle } from "@/app/play/MusicToggle";
 import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { Hud } from "@/app/floor/hud/Hud";
+import { Elevator } from "./Elevator";
+import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 
 type Open = { kind: "npc"; id: EmployeeId } | { kind: "prop"; id: string } | null;
 
@@ -22,12 +25,15 @@ export function FloorGame({
   playerSprite,
   defaultCover,
   vault,
+  gate,
 }: {
   map: FloorMap;
   npcs: NpcInfo[];
   playerSprite: string;
   defaultCover: string;
   vault: ReactNode;
+  /** Server-rendered lock screen (null when the floor is open). */
+  gate: ReactNode;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState<Open>(null);
@@ -75,15 +81,35 @@ export function FloorGame({
     if (clearLocks) setLockedOut(new Set());
   };
 
+  // Leaving: the elevator doors close, then the page changes.
+  const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
+  const leave = useCallback(
+    (to: string) => {
+      router.prefetch(to);
+      setOpen(null);
+      setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
+    },
+    [router],
+  );
+  const arrived = useCallback(() => {
+    if (leaving) router.push(leaving.to);
+  }, [leaving, router]);
+
+  // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
+  const [briefing, setBriefing] = useState<boolean | null>(null);
+  useEffect(() => {
+    setBriefing(!!briefingFor(map.floor) && !wasBriefed(map.floor));
+  }, [map.floor]);
+
   const onEvent = useCallback(
     (e: SceneEvent) => {
-      if (e.type === "exit") return router.push(e.to);
+      if (e.type === "exit") return leave(e.to);
       if (e.type === "interact-npc") {
         setFocus(e.id);
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [router],
+    [leave],
   );
 
   const emotes: FloorSceneProps["emotes"] = {};
@@ -116,10 +142,10 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} />
+      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} />
 
       {npc && !showOutcome && (
         <NpcDialogue
@@ -145,6 +171,11 @@ export function FloorGame({
           onClose={() => resetRun(outcome === "breach")}
         />
       )}
+
+      <MusicToggle track={`music-floor-${map.floor}.mp3`} />
+      {briefing && <Briefing floor={map.floor} onStart={() => setBriefing(false)} />}
+      {gate}
+      <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
     </main>
   );
 }
