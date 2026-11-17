@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { EmployeeId } from "@/shared/interfaces";
 import { useEmployeeChat } from "./useEmployeeChat";
+import { useRunState, type RunState } from "./useRunState";
 
 export interface EmployeeCard {
   id: EmployeeId;
@@ -11,8 +12,38 @@ export interface EmployeeCard {
   floorName: string;
 }
 
-// TODO(supabase): drive this from Realtime on suspicion_events for the run.
-const STUB_SUSPICION = 10;
+const units = (u: string | null) => (u == null ? null : Number(u) / 1_000_000);
+
+function ProposalPanel({ state }: { state: RunState | null }) {
+  const p = state?.proposal;
+  const run = state?.run;
+  if (run?.outcome === "breach") {
+    return (
+      <p className="text-[var(--cc-ok)]">
+        Breach! Paid {units(p?.amount_units ?? null) ?? "?"} dollars.
+        {run.tx_hash && (
+          <a
+            className="mt-1 block underline"
+            href={`https://explorer.testnet.arc.io/tx/${run.tx_hash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Proof of heist
+          </a>
+        )}
+      </p>
+    );
+  }
+  if (!p) return <p>None yet.</p>;
+  const amount = units(p.amount_units);
+  return (
+    <p>
+      {p.kind === "allowlist" ? "Allowlist add" : `${amount ?? "?"} dollars`}
+      {p.claimed_name ? ` to ${p.claimed_name}` : ""}: <span className="text-[var(--cc-accent)]">{p.status}</span>
+      {p.unlock_at && p.status === "queued" ? ` (unlocks ${new Date(p.unlock_at).toLocaleTimeString()})` : ""}
+    </p>
+  );
+}
 
 function useNow(active: boolean) {
   // 0 on the server: Date.now() is not allowed during prerender; the interval sets it on the client.
@@ -58,7 +89,7 @@ function SuspicionMeter({ value }: { value: number }) {
     <div className="w-full">
       <div className="mb-1 flex justify-between text-xs text-[var(--cc-muted)]">
         <span className="font-pixel">Suspicion</span>
-        <span>{value} / 100 · stub</span>
+        <span>{value} / 100</span>
       </div>
       <div className="pixel-frame h-4 w-full bg-[var(--cc-panel-2)]">
         <div className={`h-full ${tone} transition-all`} style={{ width: `${value}%` }} />
@@ -73,6 +104,14 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
   const [draft, setDraft] = useState("");
   const live = chat.status === "live";
   const now = useNow(live);
+  const state = useRunState(chat.session?.run_id ?? null, card.id, live);
+  const suspicion = state?.level ?? 10;
+
+  // A lockout or a finished run ends the call from our side.
+  const { hangUp } = chat;
+  useEffect(() => {
+    if (live && (state?.locked_out || state?.run?.ended_at)) hangUp();
+  }, [live, state?.locked_out, state?.run?.ended_at, hangUp]);
   const logEnd = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -102,11 +141,22 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
 
       <div className="grid flex-1 gap-4 md:grid-cols-[220px_1fr]">
         <aside className="pixel-frame flex flex-col items-center gap-5 bg-[var(--cc-panel)] p-4">
-          <Portrait card={card} suspicion={STUB_SUSPICION} />
-          <SuspicionMeter value={STUB_SUSPICION} />
+          <Portrait card={card} suspicion={suspicion} />
+          <SuspicionMeter value={suspicion} />
+          {state?.reason && (
+            <p
+              key={`${state.reason.text}-${suspicion}`}
+              className={`w-full text-xs ${state.reason.delta > 0 ? "text-[var(--cc-danger)]" : "text-[var(--cc-ok)]"}`}
+            >
+              {state.reason.delta > 0 ? "▲" : "▼"} {card.name.split(" ")[0]} noticed: {state.reason.text}
+            </p>
+          )}
+          {state?.locked_out && (
+            <p className="w-full font-pixel text-xs text-[var(--cc-danger)]">Locked out</p>
+          )}
           <div className="w-full text-xs text-[var(--cc-muted)]">
             <p className="font-pixel mb-1">Proposal</p>
-            <p>None yet. (Live status arrives with the chain events.)</p>
+            <ProposalPanel state={state} />
           </div>
           {chat.session?.stub && (
             <p className="w-full text-xs text-[var(--cc-warn)]">Stub mode: nothing is saved yet.</p>

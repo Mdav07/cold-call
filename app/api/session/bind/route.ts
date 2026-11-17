@@ -6,6 +6,7 @@ const Body = z.object({
   session_id: z.uuid(),
   conversation_id: z.string().max(100).optional(),
   first_message: z.boolean().optional(),
+  ended: z.boolean().optional(),
 });
 
 /** POST /api/session/bind: store the ElevenLabs conversation id and start the run clock. */

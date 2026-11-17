@@ -12,7 +12,10 @@ import type { StartSessionResult } from "@/server/game/session";
 export type ChatLine = { id: number; role: "agent" | "player" | "system"; text: string };
 export type ChatStatus = "idle" | "connecting" | "live" | "ended" | "error";
 
-function bind(s: StartSessionResult, extra: { conversation_id?: string; first_message?: boolean }) {
+function bind(
+  s: StartSessionResult,
+  extra: { conversation_id?: string; first_message?: boolean; ended?: boolean },
+) {
   fetch("/api/session/bind", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -80,6 +83,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
           }
         };
         socket.onclose = () => {
+          bind(s, { ended: true }); // records talk time used
           setWaiting(false);
           setStatus((st) => (st === "error" ? st : "ended"));
           push("system", "The line went quiet.");

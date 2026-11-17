@@ -9,6 +9,7 @@ import agentIds from "@/agents/elevenlabs-ids.json";
 import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
 import { getDemoUserId } from "@/server/game/players";
+import { recordTalkTime } from "@/server/game/suspicion";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
@@ -186,8 +187,10 @@ export async function bindSession(input: {
   session_id: string;
   conversation_id?: string;
   first_message?: boolean;
+  ended?: boolean;
 }): Promise<void> {
   if (isStubMode()) return;
+  if (input.ended) await recordTalkTime(input.session_id);
   if (input.conversation_id) {
     await db()
       .from("conversations")
