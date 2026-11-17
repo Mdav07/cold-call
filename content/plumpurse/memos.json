@@ -1,47 +1,76 @@
 {
-  "_comment": "One line per memo: only the facts a con uses.",
+  "_comment": "One line per memo: only the facts a con uses. Each memo shows in the case file once the player reads one of its `props` on that `floor`.",
   "memos": [
     {
       "date": "2026-11-13",
       "from": "Annie Uity",
       "subject": "Operations payment checklist",
-      "body": "Vendor as listed in the registry, invoice number, amount, PLUM ticket, who asked."
+      "body": "Vendor as listed in the registry, invoice number, amount, PLUM ticket, who asked.",
+      "props": [
+        "annie-checklist"
+      ],
+      "floor": 2
     },
     {
       "date": "2026-11-12",
       "from": "Penny Pincher",
       "subject": "Friday office party",
-      "body": "Friday at 4. Tuxedo caters, Sparkle & Shine cleans up."
+      "body": "Friday at 4. Tuxedo caters, Sparkle & Shine cleans up.",
+      "props": [
+        "party-flyer"
+      ],
+      "floor": 1
     },
     {
       "date": "2026-11-10",
       "from": "Annie Uity",
       "subject": "Ledgerline Payroll bank migration",
-      "body": "Ledgerline is moving banks; new payment details will come by phone."
+      "body": "Ledgerline is moving banks; new payment details will come by phone.",
+      "props": [
+        "ledgerline-memo"
+      ],
+      "floor": 2
     },
     {
       "date": "2026-11-09",
       "from": "Hal Byte",
       "subject": "Out of office until Dec 4",
-      "body": "Dee is on call. Emergency Byteforce fixes can be paid from petty cash."
+      "body": "Dee is on call. Emergency Byteforce fixes can be paid from petty cash.",
+      "props": [
+        "hal-note"
+      ],
+      "floor": 1
     },
     {
       "date": "2026-11-06",
       "from": "Penny Pincher",
       "subject": "Petty cash rules",
-      "body": "Listed vendors only, $5 max, no ticket needed under $5."
+      "body": "Listed vendors only, $5 max, no ticket needed under $5.",
+      "props": [
+        "petty-cash-memo"
+      ],
+      "floor": 1
     },
     {
       "date": "2026-11-03",
       "from": "Bill Ledger",
       "subject": "Year-end audit",
-      "body": "Brightline Audit Partners start fieldwork. Findings go to Bill first."
+      "body": "Brightline Audit Partners start fieldwork. Findings go to Bill first.",
+      "props": [
+        "bill-audit-binder"
+      ],
+      "floor": 2
     },
     {
       "date": "2026-10-30",
       "from": "Cassius Flow",
       "subject": "New board advisor",
-      "body": "Oakhaven Advisory, via Dame Prudence. No payment until it's on the Treasury allowlist."
+      "body": "Oakhaven Advisory, via Dame Prudence. No payment until it's on the Treasury allowlist.",
+      "props": [
+        "oakhaven-memo",
+        "prudence-portrait"
+      ],
+      "floor": 3
     }
   ]
 }

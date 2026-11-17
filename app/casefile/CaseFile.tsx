@@ -12,6 +12,7 @@ import calendar from "@/content/plumpurse/calendar.json";
 import evidence from "@/content/plumpurse/evidence.json";
 import pocket from "@/content/pocket-branch/casefile.json";
 import { MyNotes } from "./MyNotes";
+import { useCollectedEvidence, useReadProps } from "@/app/play/evidence";
 
 const TABS = [
   { id: "people", label: "People" },
@@ -64,6 +65,16 @@ function Card({ title, meta, children }: { title: string; meta?: ReactNode; chil
       <p className="font-pixel text-[10px] leading-relaxed text-[var(--cc-ink)]">{title}</p>
       {meta && <div className="text-xs text-[var(--cc-muted)]">{meta}</div>}
       {children}
+    </li>
+  );
+}
+
+/** A document the player hasn't found yet: a blank slot pointing them back to the floor. */
+function Locked({ where }: { where: string }) {
+  return (
+    <li className="flex flex-col gap-1 border border-dashed border-[#c9b98f] p-3 text-[var(--cc-muted)]">
+      <p className="font-pixel text-[10px]">???</p>
+      <p className="text-sm">Not found yet. Look around {where}.</p>
     </li>
   );
 }
@@ -227,28 +238,39 @@ function Calendar({ floor, allowed }: { floor: number | "all"; allowed: number[]
   );
 }
 
-function Memos() {
+function Memos({ allowed }: { allowed: number[] }) {
+  const read = useReadProps();
+  const list = memos.filter((m) => allowed.includes(m.floor));
   return (
     <ul className="flex flex-col gap-3">
-      {memos.map((m) => (
+      {list.map((m) =>
+        !m.props.some((id) => read.has(id)) ? (
+          <Locked key={`${m.date}-${m.subject}`} where={floorName(m.floor)} />
+        ) : (
         <Card key={`${m.date}-${m.subject}`} title={m.subject} meta={`${m.date.slice(5)} · ${m.from}`}>
           <p className="text-sm text-[var(--cc-ink)]">{m.body}</p>
         </Card>
-      ))}
+        ),
+      )}
     </ul>
   );
 }
 
 function Evidence({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
+  const found = useCollectedEvidence();
   const items = evidence.items.filter((e) => onFloor(e.floor, floor, allowed));
   if (items.length === 0) return <p className="text-sm text-[var(--cc-muted)]">Nothing filed for this floor.</p>;
   return (
     <ul className={GRID}>
-      {items.map((e) => (
-        <Card key={e.id} title={e.label} meta={floorName(e.floor)}>
-          <p className="text-sm text-[var(--cc-ink)]">{e.text}</p>
-        </Card>
-      ))}
+      {items.map((e) =>
+        found.has(e.id) ? (
+          <Card key={e.id} title={e.label} meta={floorName(e.floor)}>
+            <p className="text-sm text-[var(--cc-ink)]">{e.text}</p>
+          </Card>
+        ) : (
+          <Locked key={e.id} where={floorName(e.floor)} />
+        ),
+      )}
     </ul>
   );
 }
@@ -306,26 +328,36 @@ function PocketCalendar() {
 }
 
 function PocketNotices() {
+  const read = useReadProps();
   return (
     <ul className="flex flex-col gap-3">
-      {pocket.notices.map((n) => (
-        <Card key={n.title} title={n.title}>
-          <p className="text-sm text-[var(--cc-ink)]">{n.body}</p>
-        </Card>
-      ))}
+      {pocket.notices.map((n) =>
+        n.props.some((id) => read.has(id)) ? (
+          <Card key={n.title} title={n.title}>
+            <p className="text-sm text-[var(--cc-ink)]">{n.body}</p>
+          </Card>
+        ) : (
+          <Locked key={n.title} where="the branch" />
+        ),
+      )}
     </ul>
   );
 }
 
 function PocketEvidence() {
+  const found = useCollectedEvidence();
   const items = evidence.items.filter((e) => e.floor === 0);
   return (
     <ul className={GRID}>
-      {items.map((e) => (
-        <Card key={e.id} title={e.label}>
-          <p className="text-sm text-[var(--cc-ink)]">{e.text}</p>
-        </Card>
-      ))}
+      {items.map((e) =>
+        found.has(e.id) ? (
+          <Card key={e.id} title={e.label}>
+            <p className="text-sm text-[var(--cc-ink)]">{e.text}</p>
+          </Card>
+        ) : (
+          <Locked key={e.id} where="the branch" />
+        ),
+      )}
     </ul>
   );
 }
@@ -443,7 +475,7 @@ export function CaseFile({
               {tab === "people" && <People floor={active} allowed={allowed} />}
               {tab === "vendors" && <Vendors />}
               {tab === "calendar" && <Calendar floor={active} allowed={allowed} />}
-              {tab === "memos" && <Memos />}
+              {tab === "memos" && <Memos allowed={allowed} />}
               {tab === "evidence" && <Evidence floor={active} allowed={allowed} />}
             </>
           )}

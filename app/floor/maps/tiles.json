@@ -213,6 +213,10 @@
     "candelabra_gold": {
       "index": 52,
       "kind": "block"
+    },
+    "table_note": {
+      "index": 53,
+      "kind": "block"
     }
   }
 }

@@ -35,11 +35,17 @@
   "notices": [
     {
       "title": "Closing time",
-      "body": "The branch closes at five. The courier collects the cash bag before Barry locks up."
+      "body": "The branch closes at five. The courier collects the cash bag before Barry locks up.",
+      "props": [
+        "closing-sign"
+      ]
     },
     {
       "title": "Swiftbag pickup card",
-      "body": "End-of-day cash pickup. Fee 0.50 to 1 dollar, paid on the spot from the Piggy Bank."
+      "body": "End-of-day cash pickup. Fee 0.50 to 1 dollar, paid on the spot from the Piggy Bank.",
+      "props": [
+        "swiftbag-schedule"
+      ]
     }
   ]
 }
