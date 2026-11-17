@@ -9,7 +9,7 @@ import { KrystalMemo } from "./KrystalMemo";
 import { PORTRAITS } from "./portraits";
 import krystal from "@/content/plumpurse/krystal.json";
 
-const TUTORIAL_STEPS = [
+export const TUTORIAL_STEPS = [
   "Read the case file: Krystal's note says Barry will agree to anything that gets him out the door by five.",
   "Pick a cover from the vendor list. Swiftbag Couriers does the end-of-day cash pickup.",
   "Keep it short and friendly, and make it about him going home.",
