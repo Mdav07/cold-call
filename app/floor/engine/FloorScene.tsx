@@ -462,7 +462,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       if (g && !pausedRef.current) {
         const trail = findPath(p.tx, p.ty, g);
         // When the goal has a tag, the tag marks the last stretch: no dots under or around it.
-        const tagged = tagsRef.current?.some((t) => t.x === g.x && Math.abs(t.y - g.y) <= 1);
+        const tagged = tagsRef.current?.some((t) => !t.endAt && t.x === g.x && Math.abs(t.y - g.y) <= 1);
         const show = trail.filter((d) => !tagged || Math.abs(d.x - g.x) + Math.abs(d.y - g.y) > 1).slice(0, 7);
         show.forEach((d, i) => {
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
@@ -499,7 +499,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.textBaseline = "alphabetic";
         const tw = Math.round(c.measureText(t.text).width + 6 * u);
         const th = Math.round(7 * u);
-        const x0 = Math.round(t.x * TILE + TILE / 2 - tw / 2), y0 = Math.round(t.y * TILE - 2 - th / 2);
+        const x0 = Math.round(t.endAt === "x" ? t.x * TILE - 3 - tw : t.x * TILE + TILE / 2 - tw / 2);
+        const y0 = Math.round(t.y * TILE - 2 - th / 2);
         const glow = reduceMotion ? 0.5 : (Math.sin(now / 900) + 1) / 2; // a slow, gentle hum
         c.fillStyle = "rgba(10, 9, 14, 0.55)"; // drop shadow
         c.fillRect(x0 + 1, y0 + 1, tw + 1, th + 1);
