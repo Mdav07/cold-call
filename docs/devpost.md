@@ -72,27 +72,34 @@ second signer who sees the real recipient, an allowlist, a timelock) stops the s
 - Employee wallets signing through Circle developer-controlled wallets (player wallets already do).
 - New "seasons": more banks with new controls (hardware-wallet confirmations, spending limits, delays).
 - A training mode for companies: their own vendor list and staff profiles, with a report of which tricks
-  their team would fall for. **[check: do we want to pitch this?]**
+  their team would fall for. **[check: product/pitch choice — not in the guide or code; humans decide whether to keep this bullet.]**
 - Multiplayer: two players on the same floor, one attacking and one defending as the employee.
 
 ## Built with
 
-TypeScript, Next.js 16, React 19, HTML canvas, Tailwind CSS, Solidity, Foundry, viem, Arc testnet, USDC,
-Circle developer-controlled wallets, QuickNode Streams, ElevenLabs Agents (voice and chat), ElevenLabs Text
-to Speech and Sound Effects, Supabase (Postgres, auth, Realtime), Vercel. **[check versions in package.json]**
+TypeScript, Next.js 16.4.6, React 19.3.0, HTML canvas, Tailwind CSS 4.3.3, Solidity, Foundry, viem ^2.58.0,
+Arc testnet, USDC, Circle developer-controlled wallets, QuickNode Streams, ElevenLabs Agents (voice and chat;
+`@elevenlabs/client` 1.33.0), ElevenLabs Text to Speech and Sound Effects, Supabase (Postgres, auth, Realtime;
+`@supabase/supabase-js` ^2.119.0), Vercel.
 
 ## Tracks and bounties
 
 ### Consumer Applications
 
-Key requirement: a product real people would use. **[check the exact wording in the hackathon guide]**
+Key requirement (guide, Main Track: Consumer Applications — Technical Requirements): "Projects must:
+Interact with the blockchain in some way" and "Provide a working, user-facing frontend (web or mobile)".
+Guide overview: "consumer apps (payments, social, gaming, creator tools, loyalty, and more) where the crypto
+is invisible and the experience is as smooth as any mainstream app."
 Cold Call is a game anyone can play in a browser or on a phone with no wallet and no crypto knowledge. The
 UI never shows "USDC" or "wallet"; amounts are dollars. The loop is built for return visits: a Daily Contract
 with a twist each day, streaks, a public leaderboard, and staff who remember you.
 
 ### Best use of Arc
 
-Key requirement: meaningful use of Arc. **[check wording]**
+Key requirement (guide, Award: Best use of Arc — Technical Requirements): "Projects must: Build your core
+onchain functionality on Arc (testnet is fine); deploying new contracts is optional, and using existing ones
+counts" and "Include the contract address(es) your project deploys or uses and explain in your README how
+your project uses Arc" and "Must also be submitted to a main track and meet its requirements".
 - Every heist ends in a real USDC transfer on Arc testnet, made by a vault contract we wrote and deployed
   (four vaults, addresses in the README).
 - The game mechanics are the contract's rules: caps, multi-approval, an allowlist and a timelock.
@@ -102,7 +109,11 @@ Key requirement: meaningful use of Arc. **[check wording]**
 
 ### ElevenLabs
 
-Key requirement: use of ElevenLabs products. **[check wording]**
+Key requirement (guide, Bounty: Best Project built with ElevenLabs — Technical Requirements): "Projects must:
+Use the ElevenLabs API or SDK (text-to-speech, speech-to-text, Agents, etc.) as a core feature, not an
+add-on"; "Your demo video must show the ElevenLabs integration in action, with audio"; "Describe in your
+README which ElevenLabs products you used and how"; "Must also be submitted to a main track and meet its
+requirements".
 Every employee is an ElevenLabs Agent used for both voice calls and text chat, with server tools (webhooks)
 that read and write game state and send real transactions, dynamic variables for per-run context, private
 agents with signed URLs, and pre-generated Text to Speech and Sound Effects for the PA announcer, the
@@ -110,7 +121,10 @@ villain's taunt, the breach alarm and the phone ring. See the README's ElevenLab
 
 ### QuickNode Streams
 
-Key requirement: use of QuickNode Streams. **[check wording]**
+Key requirement (guide, Bounty: Best Use of QuickNode Streams — Technical Requirements): "Projects must:
+Use QuickNode Streams as a core data source in your project"; "Configure at least one Stream with a filter
+and a destination (e.g., webhook or database)"; "Explain in your README how your Stream is configured
+(network, dataset, filter logic, and destination) and why".
 The Stream is the game's referee. It watches the four vault addresses on Arc testnet (dataset Block with
 Receipts, JavaScript filter on address and 12 event topics), backfilled from the deploy block, and posts to
 `/api/stream`. That webhook is the normal writer of all chain events, so it ends runs, records times, updates
@@ -121,4 +135,4 @@ proposals and builds the leaderboard. A receipt backup only steps in if the Stre
 
 - Live: https://coldcall-olive.vercel.app
 - Code: https://github.com/Mdav07/ubc
-- Demo video: **[add]**
+- Demo video: **[check: no demo video URL in the repo or README yet — add when recorded.]**
