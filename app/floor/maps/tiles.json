@@ -1,0 +1,218 @@
+{
+  "tileset": "/tiles/plumpurse.png",
+  "columns": 16,
+  "tiles": {
+    "floor_branch": {
+      "index": 0,
+      "kind": "ground"
+    },
+    "wall_branch": {
+      "index": 1,
+      "kind": "wall"
+    },
+    "window_branch": {
+      "index": 2,
+      "kind": "wall"
+    },
+    "walltop_branch": {
+      "index": 3,
+      "kind": "wall"
+    },
+    "floor_bullpen": {
+      "index": 4,
+      "kind": "ground"
+    },
+    "wall_bullpen": {
+      "index": 5,
+      "kind": "wall"
+    },
+    "window_bullpen": {
+      "index": 6,
+      "kind": "wall"
+    },
+    "walltop_bullpen": {
+      "index": 7,
+      "kind": "wall"
+    },
+    "floor_management": {
+      "index": 8,
+      "kind": "ground"
+    },
+    "wall_management": {
+      "index": 9,
+      "kind": "wall"
+    },
+    "window_management": {
+      "index": 10,
+      "kind": "wall"
+    },
+    "walltop_management": {
+      "index": 11,
+      "kind": "wall"
+    },
+    "floor_executive": {
+      "index": 12,
+      "kind": "ground"
+    },
+    "wall_executive": {
+      "index": 13,
+      "kind": "wall"
+    },
+    "window_executive": {
+      "index": 14,
+      "kind": "wall"
+    },
+    "walltop_executive": {
+      "index": 15,
+      "kind": "wall"
+    },
+    "elevator": {
+      "index": 16,
+      "kind": "wall"
+    },
+    "desk_l": {
+      "index": 17,
+      "kind": "block"
+    },
+    "desk_m": {
+      "index": 18,
+      "kind": "block"
+    },
+    "desk_r": {
+      "index": 19,
+      "kind": "block"
+    },
+    "table_oval_l": {
+      "index": 20,
+      "kind": "block"
+    },
+    "table_oval_r": {
+      "index": 21,
+      "kind": "block"
+    },
+    "table_small": {
+      "index": 22,
+      "kind": "block"
+    },
+    "table_round": {
+      "index": 23,
+      "kind": "block"
+    },
+    "chair_down": {
+      "index": 24,
+      "kind": "walk"
+    },
+    "chair_up": {
+      "index": 25,
+      "kind": "walk"
+    },
+    "chair_left": {
+      "index": 26,
+      "kind": "walk"
+    },
+    "chair_right": {
+      "index": 27,
+      "kind": "walk"
+    },
+    "office_chair": {
+      "index": 28,
+      "kind": "walk"
+    },
+    "office_chair_back": {
+      "index": 29,
+      "kind": "walk"
+    },
+    "plant": {
+      "index": 30,
+      "kind": "block"
+    },
+    "plant_small": {
+      "index": 31,
+      "kind": "block"
+    },
+    "counter": {
+      "index": 32,
+      "kind": "block"
+    },
+    "counter_papers": {
+      "index": 33,
+      "kind": "block"
+    },
+    "counter_books": {
+      "index": 34,
+      "kind": "block"
+    },
+    "counter_files": {
+      "index": 35,
+      "kind": "block"
+    },
+    "cabinet_dark": {
+      "index": 36,
+      "kind": "block"
+    },
+    "locker": {
+      "index": 37,
+      "kind": "block"
+    },
+    "copier": {
+      "index": 38,
+      "kind": "block"
+    },
+    "bookshelf": {
+      "index": 39,
+      "kind": "block"
+    },
+    "water_cooler": {
+      "index": 40,
+      "kind": "block"
+    },
+    "mirror": {
+      "index": 41,
+      "kind": "block"
+    },
+    "rug_orange_l": {
+      "index": 42,
+      "kind": "walk"
+    },
+    "rug_orange_m": {
+      "index": 43,
+      "kind": "walk"
+    },
+    "rug_orange_r": {
+      "index": 44,
+      "kind": "walk"
+    },
+    "rug_green_l": {
+      "index": 45,
+      "kind": "walk"
+    },
+    "rug_green_m": {
+      "index": 46,
+      "kind": "walk"
+    },
+    "rug_green_r": {
+      "index": 47,
+      "kind": "walk"
+    },
+    "painting_small": {
+      "index": 48,
+      "kind": "block"
+    },
+    "painting_gold": {
+      "index": 49,
+      "kind": "block"
+    },
+    "painting_landscape": {
+      "index": 50,
+      "kind": "block"
+    },
+    "candelabra": {
+      "index": 51,
+      "kind": "block"
+    },
+    "candelabra_gold": {
+      "index": 52,
+      "kind": "block"
+    }
+  }
+}

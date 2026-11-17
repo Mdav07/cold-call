@@ -1,0 +1,99 @@
+{
+  "floor": 1,
+  "name": "Floor 1 · The Bullpen",
+  "theme": "bullpen",
+  "legend": {
+    "L": "desk_l",
+    "M": "desk_m",
+    "R": "desk_r",
+    "c": "office_chair",
+    "k": "counter_papers",
+    "K": "counter_files",
+    "b": "bookshelf",
+    "p": "plant",
+    "w": "water_cooler",
+    "x": "copier",
+    "l": "rug_orange_l",
+    "r": "rug_orange_m",
+    "q": "rug_orange_r",
+    "t": "table_small"
+  },
+  "rows": [
+    "####################",
+    "#W##W###E####W##W###",
+    "#p....x....w...bbbp#",
+    "#..................#",
+    "#.LMR...LMR...LMR..#",
+    "#..c.....c.....c...#",
+    "#..................#",
+    "#.LMR...LMR...kkkK.#",
+    "#..c.....c.........#",
+    "#..................#",
+    "#lrrrrq......t...p.#",
+    "#p.................#",
+    "####################"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 3,
+    "facing": "down"
+  },
+  "npcs": [
+    {
+      "id": "penny",
+      "x": 16,
+      "y": 8,
+      "facing": "down"
+    },
+    {
+      "id": "dee",
+      "x": 9,
+      "y": 5,
+      "facing": "down"
+    }
+  ],
+  "props": [
+    {
+      "id": "vendor-registry",
+      "x": 14,
+      "y": 7,
+      "label": "Vendor registry (front desk copy)",
+      "text": "Approved vendors for petty cash: Quillfeather Supplies (office supplies, invoices QF-…), BeanThere Coffee Co. (coffee service), Sparkle & Shine Janitorial (cleaning), Byteforce IT Services (IT support, tickets PLUM-####), Tuxedo Catering (catering)."
+    },
+    {
+      "id": "petty-cash-memo",
+      "x": 16,
+      "y": 2,
+      "label": "Memo pinned to the bookshelf",
+      "text": "Petty cash is for listed vendors only, 5 dollars max per payment, office stuff only. Under 5, no ticket needed, just ask me or Dee nicely. — Penny"
+    },
+    {
+      "id": "espresso",
+      "x": 11,
+      "y": 2,
+      "label": "Espresso machine",
+      "text": "A sign taped to it: OUT OF ORDER SINCE THURSDAY. DO NOT TOUCH. BEANTHERE HAS BEEN CALLED. TWICE. — P."
+    },
+    {
+      "id": "party-flyer",
+      "x": 13,
+      "y": 10,
+      "label": "Flyer on the table",
+      "text": "FRIDAY OFFICE PARTY at 4! Tuxedo is catering, Sparkle & Shine cleans up after. Bring a dish. Not chili, Dee."
+    },
+    {
+      "id": "hal-note",
+      "x": 6,
+      "y": 2,
+      "label": "Note on the copier",
+      "text": "Out of office until Dec 4, hiking, no signal. Dee is on call. Emergency server fixes: Byteforce can be paid from petty cash. — Hal"
+    }
+  ],
+  "exits": [
+    {
+      "x": 8,
+      "y": 2,
+      "to": "/tower"
+    }
+  ]
+}
