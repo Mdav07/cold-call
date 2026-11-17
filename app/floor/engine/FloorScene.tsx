@@ -193,6 +193,21 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
     let last = performance.now();
     let nextIdleTurn = last + 2500;
     let raf = 0;
+    let exitsArmed = false;
+    held.current = [];
+    tapped.current = null;
+
+    // The part of the map that has art: the camera never shows the void past it.
+    let bx0 = map.width, by0 = map.height, bx1 = 0, by1 = 0;
+    for (const layer of [map.layers.ground, map.layers.walls]) {
+      if (!layer) continue;
+      for (let i = 0; i < layer.length; i++) {
+        if (layer[i] == null || layer[i] < 0) continue;
+        const x = i % map.width, y = Math.floor(i / map.width);
+        bx0 = Math.min(bx0, x); by0 = Math.min(by0, y); bx1 = Math.max(bx1, x + 1); by1 = Math.max(by1, y + 1);
+      }
+    }
+    if (bx1 <= bx0) { bx0 = 0; by0 = 0; bx1 = map.width; by1 = map.height; }
 
     const step = (now: number) => {
       const dt = Math.min(50, now - last);
@@ -210,7 +225,10 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
           p.moving = false;
           p.frame = 0;
           const exit = map.exits?.find((e) => e.x === p.x && e.y === p.y);
-          if (exit) onEventRef.current({ type: "exit", to: exit.to });
+          // Exits arm only after the player has walked onto a tile that isn't an exit, so arriving
+          // next to the door (or with a key still held from the previous page) can't bounce you out.
+          if (exit && exitsArmed) onEventRef.current({ type: "exit", to: exit.to });
+          else if (!exit) exitsArmed = true;
         }
       }
       const want = held.current[held.current.length - 1] ?? tapped.current;
@@ -243,7 +261,14 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
 
     const draw = (c: CanvasRenderingContext2D, w: number, h: number, now: number) => {
       const dpr = window.devicePixelRatio || 1;
-      const scale = Math.max(MIN_SCALE, Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1);
+      // Zoom in far enough that the painted map always covers the screen: no empty void at the edges.
+      const scale = Math.max(
+        MIN_SCALE,
+        Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1,
+        // On phones the map scrolls instead: covering a tall screen would zoom far too close.
+        w >= 700 ? Math.ceil(w / ((bx1 - bx0) * TILE)) : 0,
+        w >= 700 ? Math.ceil(h / ((by1 - by0) * TILE)) : 0,
+      );
       const inset = Math.min(insetRef.current, h * 0.6) / scale; // map pixels hidden under the dialogue box
       c.setTransform(1, 0, 0, 1, 0, 0);
       c.imageSmoothingEnabled = false;
@@ -255,16 +280,17 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
       const py = (p.y + (p.ty - p.y) * p.t) * TILE;
       const viewW = w / scale;
       const viewH = h / scale;
-      const mapW = map.width * TILE;
-      const mapH = map.height * TILE;
-      const camX = mapW <= viewW ? (mapW - viewW) / 2 : Math.min(Math.max(px + TILE / 2 - viewW / 2, 0), mapW - viewW);
+      const left = bx0 * TILE, top = by0 * TILE;
+      const mapW = (bx1 - bx0) * TILE;
+      const mapH = (by1 - by0) * TILE;
+      const camX =
+        left + (mapW <= viewW ? (mapW - viewW) / 2 : Math.min(Math.max(px - left + TILE / 2 - viewW / 2, 0), mapW - viewW));
       // The visible area is the part above the inset; the camera may scroll past the map's bottom
       // edge by the inset so the player is never hidden under the dialogue box.
       const visH = viewH - inset;
       const camY =
-        mapH <= visH
-          ? (mapH - visH) / 2
-          : Math.min(Math.max(py + TILE / 2 - visH / 2, 0), mapH - visH);
+        top +
+        (mapH <= visH ? (mapH - visH) / 2 : Math.min(Math.max(py - top + TILE / 2 - visH / 2, 0), mapH - visH));
 
       // Whole pixels at the chosen scale keep the art crisp.
       c.setTransform(dpr * scale, 0, 0, dpr * scale, -Math.round(camX * scale) * dpr, -Math.round(camY * scale) * dpr);
