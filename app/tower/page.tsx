@@ -159,6 +159,9 @@ export default function TowerPage() {
           <Link className="underline" href="/casefile">
             Case file
           </Link>
+          <Link className="underline" href="/leaderboard">
+            Leaderboard
+          </Link>
           <Link className="underline" href="/signin">
             Sign in
           </Link>
