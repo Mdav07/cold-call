@@ -13,7 +13,8 @@ messages; check it against the code. Deadline: submit Fri Nov 20, 11:00 AM CST t
 ## 2. What exists and works
 
 Live site: **https://coldcall-olive.vercel.app** (Vercel project `coldcall`, Madhav's account).
-Production runs `chain/scaffold` at `d3d688e`. Open PR: #1, `chain/scaffold` -> `main` (`main` has only the initial commit).
+**Branch: everything is on `main`** (PR #1 merged on Nov 17, including B's `b/chat-ui` up to `37c1286`, voice calls). Both sides branch from `main` and merge back to it; the older branches (`chain/scaffold`, `b/chat-ui`, `b/penny`, `b/vault-v1`, `spec/pretext-chain`) are stale.
+Production still runs the older build `d3d688e`: **voice calls are on `main` but not deployed.**
 
 | Piece | State | Proof |
 | --- | --- | --- |
@@ -67,7 +68,7 @@ npx vercel deploy --prod --yes                   # deploys are manual, from Madh
 
 ## 4. Things that will trip you up
 
-1. **Deploys are manual.** The Vercel project is not connected to GitHub. After B pushes, A merges `origin/b/chat-ui` into `chain/scaffold`, builds, pushes, and runs `vercel deploy --prod`.
+1. **Deploys are manual.** The Vercel project is not connected to GitHub. After B's work is on `main`, A pulls `main`, builds, and runs `vercel deploy --prod`.
 2. **Vercel blocks a deploy if it does not accept the commit author** (`TEAM_ACCESS_REQUIRED`). In this repo git uses Madhav's GitHub no-reply email (repo-level config); keep it. Check `npx vercel ls coldcall`: a blocked deploy shows `Blocked` and production silently stays on the old build. Always probe the live site after a deploy.
 3. **GitHub rejects pushes authored with Madhav's private email** (email privacy). Same fix: the no-reply email.
 4. **forge cannot simulate Arc's native USDC precompile.** A script that transfers USDC reverts in simulation. Deploy with `FUND_PER_VAULT=0` and fund with `cast send`. A fork test that moves USDC will fail for the same reason.
@@ -80,14 +81,14 @@ npx vercel deploy --prod --yes                   # deploys are manual, from Madh
 
 ## 5. Open work for A (Madhav's agent), in order
 
-1. **Merge and deploy B's latest.** `origin/b/chat-ui` is at `37c1286` (voice calls with live transcript), one commit ahead of `chain/scaffold`. Merge, build, push, deploy, probe.
+1. **Deploy `main`.** It contains B's voice calls (`37c1286`), which have never run in production. Build, deploy, check the deploy is Ready, probe the pages and tools, and ask B's agent to test a voice call.
 2. **Circle developer-controlled wallets** (2-hour limit; this is the main gap for Best use of Arc). Needs `CIRCLE_API_KEY` and `CIRCLE_ENTITY_SECRET` from a Circle developer account — Madhav has not provided them yet. Minimum: player wallets through Circle in `ensurePlayerWallet`. Better: a `CircleSigner` beside the viem signer in `vault.ts`, selected by `SIGNER_MODE`. If the API does not work on `ARC-TESTNET` in 2 hours, keep viem and say so in the README.
 3. **Test the payout ceiling** with a large ask (expect `amount_used` 0.5).
 4. **Run limits** from the spec are not implemented: 10 runs per user per day, 30 per IP per day (`runs.client_ip` exists). Decide with B who enforces them; `/api/session` (B) creates runs.
 5. **Scripts:** `scripts/topup.ts` (refill vaults and employee gas, print balances), `scripts/pause.ts` (`setPaused` on all vaults), demo-account reset.
 6. **Leaderboard:** the `leaderboard` view exists and returns rows; B builds the screen. Confirm the channel badge and explorer link (`explorerTxUrl` in `server/chain/config.ts`).
 7. **README sections** (Friday): Arc usage with all vault and employee addresses and explorer links; QuickNode Stream config (network, dataset, filter logic, destination, backfill, why). Ask B for the exact filter JS Audrey used.
-8. **Merge PR #1** once Madhav approves, then work from `main`.
+8. PR #1 is merged. Use short-lived branches off `main` and pull requests, or push small commits to `main` directly if Madhav says so.
 9. Claim faucet USDC daily (`https://faucet.circle.com`, Arc Testnet, house address) and top up vaults.
 
 ## 6. State and open work for B (Audrey's agent)
@@ -95,7 +96,7 @@ npx vercel deploy --prod --yes                   # deploys are manual, from Madh
 Done, as reported: Plumpurse content JSON and lookups; rule sheets and ElevenLabs agents for Penny, Dee,
 Annie, Bill (ids in `agents/elevenlabs-ids.json`, tools attached to the live URL); `/api/session`,
 `/api/session/bind`, `/api/session/state`; chat UI; suspicion meter (`server/game/suspicion.ts`);
-magic-link sign-in; voice calls with transcript (pushed, not deployed yet).
+magic-link sign-in; voice calls with transcript (on `main`, not deployed yet).
 
 Open, in the order B's agent proposed:
 
@@ -121,7 +122,7 @@ row id is the `session_id`. B sets `outcome` and `ended_at` for lockout, timeout
 
 ## 7. Needed from the humans
 
-- **Madhav:** Circle API key and entity secret; review and merge PR #1; faucet claims; stay the one who deploys (or connect the repo to Vercel).
+- **Madhav:** Circle API key and entity secret; faucet claims; stay the one who deploys (or connect the repo to Vercel).
 - **Audrey:** confirm the QuickNode Stream stays active; faucet claims to the house address from her browser.
 - **Both:** the repo is public (required). Be at UT Austin on Sat Nov 21. Feature freeze Thu 11 PM, demo video Thu night.
 
