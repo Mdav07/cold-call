@@ -29,15 +29,18 @@ the humans didn't.
 
 - **A walkable pixel-art bank.** Four floors you explore top-down; walk up to an employee and a dialogue box
   opens with Talk, Call, Case file and Leave.
-- **Seven AI employees,** each an ElevenLabs agent with their own rule sheet, voice, quirks, suspicion meter
-  and memory of your past tricks.
+- **Seven AI employees,** each an ElevenLabs agent with their own rule sheet, voice, pixel portrait, quirks,
+  suspicion meter and memory of your past tricks. Present evidence from the case file mid-conversation
+  (an invoice, a memo) and they check it against their tools.
 - **Four on-chain vaults** (`ColdCallVault`, Solidity, 33 Foundry tests), one per floor, each a multi-approval
   vault with stricter rules: a per-transfer cap, two signers from different people, then an allowlist with a
   60-second timelock.
 - **A chain referee.** A QuickNode Stream delivers every vault event to our backend; a run is a breach only
   when the Stream delivers `TransferExecuted`. The run clock stops at that block's timestamp.
+- **A story to follow:** your vanished mentor Krystal Klear briefs each floor in her own voice, every clear
+  uncovers one of her hidden notes, and her radio gives in-character hints for a time penalty.
 - **A daily game loop:** a Daily Contract with a twist each day, streaks, a leaderboard where every time links
-  to its transaction, a case file, and a storyline across the floors.
+  to its transaction, and Krystal's case file.
 
 ## The problem it solves
 
@@ -83,7 +86,7 @@ second signer who sees the real recipient, an allowlist, a timelock) stops the s
 
 TypeScript, Next.js 16.4.6, React 19.3.0, HTML canvas, Tailwind CSS 4.3.3, Solidity, Foundry, viem ^2.58.0,
 Arc testnet, USDC, Circle developer-controlled wallets, QuickNode Streams, ElevenLabs Agents (voice and chat;
-`@elevenlabs/client` 1.33.0), ElevenLabs Text to Speech and Sound Effects, Supabase (Postgres, auth, Realtime;
+`@elevenlabs/client` 1.33.0), ElevenLabs Text to Speech, Sound Effects and Music, Kenney CC0 pixel art, Supabase (Postgres, auth, Realtime;
 `@supabase/supabase-js` ^2.119.0), Vercel.
 
 ## Tracks and bounties
@@ -120,8 +123,9 @@ README which ElevenLabs products you used and how"; "Must also be submitted to a
 requirements".
 Every employee is an ElevenLabs Agent used for both voice calls and text chat, with server tools (webhooks)
 that read and write game state and send real transactions, dynamic variables for per-run context, private
-agents with signed URLs, and pre-generated Text to Speech and Sound Effects for the PA announcer, the
-villain's taunt, the breach alarm and the phone ring. See the README's ElevenLabs table.
+agents with signed URLs, and pre-generated Text to Speech, Sound Effects and Music: Krystal's voice memos,
+the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop per floor. Krystal's
+radio is a separate hint agent. See the README's ElevenLabs table.
 
 ### QuickNode Streams
 
