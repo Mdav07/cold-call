@@ -71,6 +71,46 @@ function rng(seed: string): () => number {
 
 const VALID_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+// ---------- No-repeat rotation (a4c9's design) ----------
+const EPOCH = Date.UTC(2026, 10, 18); // 2026-11-18, day 0 of the first cycle
+const dayIndex = (day: string) => Math.floor((Date.parse(`${day}T00:00:00Z`) - EPOCH) / 86_400_000);
+
+/** A seeded shuffle of 0..n-1. */
+function order(n: number, seed: string): number[] {
+  const r = rng(seed);
+  const a = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * The order for cycle c: a fresh shuffle whose first week avoids the previous cycle's last week, so
+ * nothing comes back within about a week across the seam. Depends only on the shuffles of c and c-1.
+ */
+function cycleOrder(n: number, salt: string, c: number): number[] {
+  const cur = order(n, `${salt}:${c}`);
+  const w = Math.min(7, Math.floor(n / 2));
+  if (w === 0) return cur;
+  const tail = new Set(order(n, `${salt}:${c - 1}`).slice(n - w));
+  for (let i = 0; i < w; i++) {
+    if (!tail.has(cur[i])) continue;
+    const j = cur.findIndex((x, idx) => idx >= w && !tail.has(x));
+    if (j >= 0) [cur[i], cur[j]] = [cur[j], cur[i]];
+  }
+  return cur;
+}
+
+/** Every index once per cycle of n days, in a fresh order each cycle, never repeating within a week. */
+export function cycled(day: string, n: number, salt: string): number {
+  const i = dayIndex(day);
+  const c = Math.floor(i / n);
+  const k = ((i % n) + n) % n;
+  return cycleOrder(n, salt, c)[k];
+}
+
 export function dailyCase(date: string = todayUtc()): DailyCase {
   const day = VALID_DATE.test(date) ? date : todayUtc();
   const r = rng(`coldcall-daily:${day}`);
@@ -84,7 +124,8 @@ export function dailyCase(date: string = todayUtc()): DailyCase {
     return a;
   };
 
-  const place = pick(templates.places);
+  // The place (title) rotates: every place once per cycle, never the same two days running.
+  const place = templates.places[cycled(day, templates.places.length, "place")];
   const firstName = pick(templates.firstNames);
   const name = `${firstName} ${pick(templates.lastNames)}`;
   const sprite = pick(templates.sprites);
