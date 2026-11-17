@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
+import { SaveProgress } from "@/app/play/SaveProgress";
 import { cleanName, getHunter, HUNTERS, MAX_NAME, saveHunter, spriteUrl, type HunterChoice } from "@/app/play/hunters";
 
 /** One hunter's sprite: the idle front frame of the 16x32 sheet, scaled up crisply. */
@@ -48,8 +49,10 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
       body: JSON.stringify({ name: clean }),
     }).catch(() => {});
     setSaved(true);
-    router.push("/tower");
   };
+  const toTower = useCallback(() => router.push("/tower"), [router]);
+
+  if (saved) return <SaveProgress handle={cleanName(name) || "Hunter"} onContinue={toTower} />;
 
   return (
     <form

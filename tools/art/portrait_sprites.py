@@ -210,7 +210,7 @@ def main() -> None:
         built[hid] = sheet(drawn_head(p), p["skin"] + (255,), p["hair_c"] + (255,), p["outfit"] + (255,))
     for name, im in built.items():
         im.save(out_dir / f"{name}.png")
-    built["hunter-1"].save(out_dir / "hunter.png")
+    built["hunter-2"].save(out_dir / "hunter.png")  # the default look (app/play/hunters.ts)
     print(f"wrote {len(built) + 1} sheets to {out_dir}")
 
     if len(sys.argv) > 3:

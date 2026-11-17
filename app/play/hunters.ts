@@ -1,5 +1,5 @@
 // The player's hunter: which sprite they picked and the name shown above their head.
-// Sprites are drawn by tools/art/draw_sprites.py (hunter-1 … hunter-6). Saved in localStorage per
+// Four looks, the same on /intro and /hunter. Sprites come from tools/art/portrait_sprites.py. Saved in localStorage per
 // browser; the name is also stored as users.display_name for signed-in players (POST /api/hunter).
 
 export interface HunterOption {
@@ -8,12 +8,10 @@ export interface HunterOption {
 }
 
 export const HUNTERS: HunterOption[] = [
-  { id: "hunter-1", label: "Teal jacket" },
   { id: "hunter-2", label: "Red coat" },
   { id: "hunter-3", label: "Gold sweater" },
   { id: "hunter-4", label: "Violet jacket" },
-  { id: "hunter-5", label: "Field green" },
-  { id: "hunter-6", label: "Night black" },
+  { id: "hunter-6", label: "Pink hair" },
 ];
 
 export interface HunterChoice {
@@ -22,7 +20,7 @@ export interface HunterChoice {
 }
 
 const KEY = "coldcall-hunter";
-export const DEFAULT_HUNTER: HunterChoice = { sprite: "hunter-1", name: "Hunter" };
+export const DEFAULT_HUNTER: HunterChoice = { sprite: "hunter-2", name: "Hunter" };
 export const MAX_NAME = 14;
 
 export function cleanName(name: string): string {
