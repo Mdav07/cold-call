@@ -136,7 +136,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       if (x < 0 || y < 0 || x >= map.width || y >= map.height) return false;
       const i = y * map.width + x;
       if (map.layers.walls[i] >= 0 || blockedSet.current.has(i)) return false;
-      if (npcAt(x, y) || propAt(x, y)) return false;
+      if (npcAt(x, y)) return false; // props are notes on walls/desks: furniture blocks, the note itself doesn't
       return true;
     },
     [map, npcAt, propAt],
@@ -417,15 +417,18 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
 
       drawLayer(map.layers.overhead);
 
+      // On-map text keeps the same size on screen whatever the zoom: sizes below are map pixels at 2x zoom.
+      const u = 2 / scale;
+
       // Names above heads: small pixel text on a dark plate.
       const nameTag = (x: number, y: number, text: string) => {
-        c.font = `5px ${pixelFont}, monospace`;
+        c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "middle";
-        const wdt = Math.ceil(c.measureText(text).width) + 4;
-        const cx = Math.round(x + TILE / 2), cy = Math.round(y - (FRAME_H - TILE) - 2);
+        const wdt = c.measureText(text).width + 4 * u;
+        const cx = x + TILE / 2, cy = y - (FRAME_H - TILE) + 6; // heads start about 10 px into the frame
         c.fillStyle = "rgba(21, 20, 26, 0.6)";
-        c.fillRect(cx - Math.round(wdt / 2), cy - 3, wdt, 6);
+        c.fillRect(cx - wdt / 2, cy - 3 * u, wdt, 6 * u);
         c.fillStyle = "#f2efe6";
         c.fillText(text, cx, cy + 0.5);
       };
@@ -487,19 +490,19 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
 
       // Tags over doors and the like.
       for (const t of tagsRef.current ?? []) {
-        c.font = `6px ${pixelFont}, monospace`;
+        c.font = `${6 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "middle";
-        const tw = Math.ceil(c.measureText(t.text).width) + 6;
+        const tw = c.measureText(t.text).width + 6 * u;
         const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 400));
-        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 6 + bob;
+        const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 6 * u + bob;
         c.fillStyle = "#15141a";
-        c.fillRect(Math.round(cx - tw / 2) - 1, cy - 6, tw + 2, 12);
+        c.fillRect(cx - tw / 2 - u, cy - 6 * u, tw + 2 * u, 12 * u);
         c.fillStyle = "#f4c95d";
-        c.fillRect(Math.round(cx - tw / 2), cy - 5, tw, 10);
+        c.fillRect(cx - tw / 2, cy - 5 * u, tw, 10 * u);
         c.fillStyle = "#15141a";
-        c.fillText(t.text, cx, cy + 0.5);
-        c.fillRect(cx - 1, cy + 6, 2, 2);
+        c.fillText(t.text, cx, cy + 0.5 * u);
+        c.fillRect(cx - u, cy + 6 * u, 2 * u, 2 * u);
       }
 
       // Emotes and the "you can talk here" hint.
@@ -527,13 +530,13 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       }
       // A small dark caption above what you're facing, saying which key does what.
       const hint = (tx: number, ty: number, text: string) => {
-        c.font = `5px ${pixelFont}, monospace`;
+        c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
         c.textBaseline = "middle";
-        const wdt = Math.ceil(c.measureText(text).width) + 6;
-        const cx = Math.round(tx * TILE + TILE / 2), cy = Math.round(ty * TILE - 5);
+        const wdt = c.measureText(text).width + 6 * u;
+        const cx = tx * TILE + TILE / 2, cy = ty * TILE - 5;
         c.fillStyle = "rgba(21, 20, 26, 0.82)";
-        c.fillRect(cx - Math.round(wdt / 2), cy - 4, wdt, 8);
+        c.fillRect(cx - wdt / 2, cy - 4 * u, wdt, 8 * u);
         c.fillStyle = "#f4c95d";
         c.fillText(text, cx, cy + 0.5);
       };
@@ -557,7 +560,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         if (n && !emotesRef.current?.[n.id]) {
           const who = namesRef.current[n.id];
           // Above their head, or under their feet when the player stands above them (so it never covers you).
-          hint(fx, p.facing === "down" ? fy + 1.6 : fy - 0.95, who ? `SPACE · TALK TO ${who.toUpperCase()}` : "SPACE · TALK");
+          hint(fx, p.facing === "down" ? fy + 1.3 : fy - 0.5, who ? `SPACE · TALK TO ${who.toUpperCase()}` : "SPACE · TALK");
         }
       }
 
