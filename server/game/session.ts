@@ -88,6 +88,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   let memory = "(none)";
   let daily_modifier = "(none)";
   let open_proposal = "(none)";
+  let open_allowlist = "(none)";
   let talk_seconds = talkBudget;
 
   if (stub) {
@@ -148,6 +149,31 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       open_proposal = `Request #${open.onchain_id}: ${dollars ?? "?"} dollars to ${open.claimed_name ?? "an unnamed vendor"}, waiting for a second signature.`;
     }
 
+    // Floor 3: the allowlist add the other executive started, and when its security wait ends.
+    if (floor === 3) {
+      const { data: al } = await db()
+        .from("proposals")
+        .select("onchain_id, status, claimed_name, unlock_at")
+        .eq("run_id", run_id)
+        .eq("kind", "allowlist")
+        .in("status", ["open", "queued", "added"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+        .throwOnError();
+      if (al) {
+        const who = al.claimed_name ?? "the caller";
+        if (al.status === "open") {
+          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: waiting for the second executive's approval.`;
+        } else if (al.status === "queued" && al.unlock_at && Date.parse(al.unlock_at) > Date.now()) {
+          const secs = Math.ceil((Date.parse(al.unlock_at) - Date.now()) / 1000);
+          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: approved by both executives, in the security wait for about ${secs} more seconds. A payment can't be proposed until it ends.`;
+        } else {
+          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: the security wait is over. A payment to ${who} can be proposed now.`;
+        }
+      }
+    }
+
     if (talkBudget != null) {
       const { data: used } = await db()
         .from("conversations")
@@ -175,6 +201,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       daily_modifier,
       talk_seconds_left: talk_seconds ?? 3600,
       open_proposal,
+      open_allowlist,
     },
     talk_seconds,
     stub,

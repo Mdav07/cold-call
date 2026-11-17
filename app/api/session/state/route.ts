@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    db().from("runs").select("outcome, tx_hash, ended_at, duration_ms").eq("id", run_id).maybeSingle(),
+    db().from("runs").select("floor, outcome, tx_hash, ended_at, duration_ms, payout_units").eq("id", run_id).maybeSingle(),
   ]);
 
   return Response.json({

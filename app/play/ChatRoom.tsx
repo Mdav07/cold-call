@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { EmployeeId } from "@/shared/interfaces";
 import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
+import { OutcomeOverlay } from "./OutcomeOverlay";
 
 export interface EmployeeCard {
   id: EmployeeId;
@@ -104,8 +105,13 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
   const [draft, setDraft] = useState("");
   const live = chat.status === "live";
   const now = useNow(live);
-  const state = useRunState(chat.session?.run_id ?? null, card.id, live);
+  // Poll from the first session until the run ends, including between calls.
+  const state = useRunState(chat.session?.run_id ?? null, card.id, chat.status !== "idle");
   const suspicion = state?.level ?? 10;
+  const [dismissedRun, setDismissedRun] = useState<string | null>(null);
+  const showOutcome =
+    !!state?.run?.outcome && (state.run.outcome === "breach" || state.run.outcome === "lockout") &&
+    dismissedRun !== chat.session?.run_id;
 
   // A lockout or a finished run ends the call from our side.
   const { hangUp } = chat;
@@ -121,10 +127,13 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
   }, [chat.lines, chat.waiting]);
 
   const runMs = chat.startedAt ? now - chat.startedAt : 0;
+  // Talk time counts only this call (the session's remaining budget, from when it connected).
   const talkLeft =
-    chat.session?.talk_seconds != null && chat.startedAt
-      ? chat.session.talk_seconds * 1000 - runMs
-      : null;
+    chat.session?.talk_seconds != null && chat.connectedAt
+      ? chat.session.talk_seconds * 1000 - (now - chat.connectedAt)
+      : chat.session?.talk_seconds != null
+        ? chat.session.talk_seconds * 1000
+        : null;
   const lastAgent = [...chat.lines].reverse().find((l) => l.role === "agent");
   const first = card.name.split(" ")[0];
   const voice = chat.channel === "voice";
@@ -137,6 +146,17 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4">
+      {showOutcome && state && (
+        <OutcomeOverlay
+          state={state}
+          employeeName={first}
+          onRetry={() => {
+            setDismissedRun(chat.session?.run_id ?? null);
+            chat.start(cover, chat.channel);
+          }}
+          onClose={() => setDismissedRun(chat.session?.run_id ?? null)}
+        />
+      )}
       <header className="pixel-frame flex flex-wrap items-center justify-between gap-2 bg-[var(--cc-panel)] px-4 py-3">
         <p className="font-pixel text-xs text-[var(--cc-ink)]">Plumpurse Tower · {card.floorName}</p>
         <div className="flex gap-4 font-pixel text-xs text-[var(--cc-ink)]">
