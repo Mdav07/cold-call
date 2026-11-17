@@ -178,7 +178,7 @@ export function FloorGame({
       )}
 
       <MusicToggle track={`music-floor-${map.floor}.mp3`} />
-      {briefing && <Briefing floor={map.floor} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} />}
+      {briefing && <Briefing floor={map.floor} floorName={map.name} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} />}
       {caseFile && <CaseFileOverlay floor={map.floor} onClose={() => setCaseFile(false)} />}
       {gate}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />

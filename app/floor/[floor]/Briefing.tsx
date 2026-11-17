@@ -35,7 +35,19 @@ function markBriefed(floor: number) {
   }
 }
 
-export function Briefing({ floor, onStart, onCaseFile }: { floor: number; onStart: () => void; onCaseFile: () => void }) {
+export function Briefing({
+  floor,
+  floorName,
+  onStart,
+  onCaseFile,
+}: {
+  floor: number;
+  /** The map's name, e.g. "Floor 1 · The Bullpen", shown as a chapter title. */
+  floorName: string;
+  onStart: () => void;
+  onCaseFile: () => void;
+}) {
+  const [kicker, title] = floorName.includes(" · ") ? floorName.split(" · ") : [`Floor ${floor}`, floorName];
   const startRef = useRef<HTMLButtonElement>(null);
   useEffect(() => startRef.current?.focus(), []);
   const b = briefingFor(floor);
@@ -54,6 +66,13 @@ export function Briefing({ floor, onStart, onCaseFile }: { floor: number; onStar
         aria-labelledby="briefing-title"
         className="pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-4 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-5"
       >
+        {/* Chapter card: a band across the top, like a level title in a handheld RPG. */}
+        <header className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-5 sm:-mt-5 sm:px-5">
+          <p className="font-pixel text-[9px] tracking-widest">COLD CALL · {kicker.toUpperCase()}</p>
+          <h2 id="briefing-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl">
+            {title}
+          </h2>
+        </header>
         <div className="flex items-center gap-3">
           {Face && (
             <div className="pixel-frame grid h-16 w-16 shrink-0 place-items-center overflow-hidden bg-[var(--cc-portrait)] [&>svg]:h-full [&>svg]:w-full">
@@ -62,9 +81,9 @@ export function Briefing({ floor, onStart, onCaseFile }: { floor: number; onStar
           )}
           <div>
             <p className="font-pixel text-[10px] text-[var(--cc-muted)]">Voice memo from</p>
-            <h2 id="briefing-title" className="font-pixel text-xs text-[var(--cc-accent)]">
+            <p className="font-pixel text-xs text-[var(--cc-accent)]">
               {krystal.name ?? "Krystal"}
-            </h2>
+            </p>
           </div>
         </div>
         <KrystalMemo
