@@ -35,7 +35,11 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
         }
       }}
     >
-      <h1 className="font-pixel text-sm text-[var(--cc-accent)]">Cold Call</h1>
+      {/* Title band, the same as the floor briefings. */}
+      <header className="-mx-6 -mt-6 mb-1 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-6 pb-3 pt-4 text-[var(--cc-edge)]">
+        <h1 className="font-pixel text-xl">COLD CALL</h1>
+        <p className="mt-2 font-pixel text-[9px] leading-relaxed">Sign in to keep your clears, streak and leaderboard times.</p>
+      </header>
       {state === "sent" ? (
         <p className="text-[var(--cc-ink)]">
           Check your email. Krystal&apos;s case file is waiting behind that link.
