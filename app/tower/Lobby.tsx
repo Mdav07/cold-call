@@ -1,7 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -9,14 +9,18 @@ import type { FloorMap, SceneEvent } from "@/app/floor/types";
 import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
+import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
 export function Lobby({
-  map,
+  map: serverMap,
   guide,
+  guest,
 }: {
   map: FloorMap;
+  /** Not signed in: floors open from this browser's own clears, not the shared demo player's. */
+  guest: boolean;
   guide: { goal: { x: number; y: number } | null; tags: { x: number; y: number; text: string }[] };
 }) {
   const router = useRouter();
@@ -44,17 +48,33 @@ export function Lobby({
     } catch {}
   }, [router]);
 
-  // A browser that has never been to the tutorial is pointed at it, even when the shared demo player
-  // (everyone not signed in) has already cleared it.
-  const [newHere, setNewHere] = useState(false);
-  useEffect(() => {
-    try {
-      setNewHere(!localStorage.getItem("cc-briefed-floor-0"));
-    } catch {}
-  }, []);
-  const door = map.exits?.find((e) => e.to === "/floor/0");
-  const shown =
-    newHere && door ? { goal: { x: door.x, y: door.y }, tags: [{ x: door.x, y: door.y, text: "TUTORIAL" }] } : guide;
+  // Guests: lock each elevator whose floor below this browser hasn't cleared, and point at the next
+  // floor to play (the tutorial door first).
+  const cleared = useClearedHere();
+  const key = cleared.join("");
+  const map = useMemo(() => {
+    if (!guest) return serverMap;
+    const closed = (serverMap.exits ?? []).filter((e) => {
+      const n = Number(e.to.split("/").pop());
+      return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
+    });
+    return {
+      ...serverMap,
+      exits: serverMap.exits?.filter((e) => !closed.includes(e)),
+      blocked: [...(serverMap.blocked ?? []), ...closed.map((e) => e.y * serverMap.width + e.x)],
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverMap, guest, key]);
+  const shown = useMemo(() => {
+    if (!guest) return guide;
+    const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
+    const exit = map.exits?.find((e) => e.to === `/floor/${next}`);
+    if (next == null || !exit) return { goal: null, tags: [] };
+    return next === 0
+      ? { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y, text: "TUTORIAL" }] }
+      : { goal: { x: exit.x, y: exit.y }, tags: [{ x: exit.x, y: exit.y - 1, text: `FLOOR ${next}` }] };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest, guide, key, map]);
 
   const open = map.props?.find((p) => p.id === prop);
   return (

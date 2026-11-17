@@ -7,13 +7,14 @@ import { Lobby } from "./Lobby";
 import { buildLobby, lobbyGuide } from "./lobbyMap";
 
 async function Floors() {
-  const userId = (await signedInUserId()) ?? (process.env.SUPABASE_SERVICE_ROLE_KEY ? await getDemoUserId() : null);
+  const signedIn = await signedInUserId();
+  const userId = signedIn ?? (process.env.SUPABASE_SERVICE_ROLE_KEY ? await getDemoUserId() : null);
   const [floors, daily] = await Promise.all([getTower(userId), getDaily(userId)]);
   const c = daily.contract;
   const dailyText = c
     ? `Today: Floor ${c.floor}. ${c.modifier} ${daily.clearedToday ? "Cleared today; come back tomorrow." : "Clear it for the full bounty."} Streak: ${daily.streak.current} days (best ${daily.streak.longest}).`
     : null;
-  return <Lobby map={buildLobby(floors, dailyText)} guide={lobbyGuide(floors)} />;
+  return <Lobby map={buildLobby(floors, dailyText)} guide={lobbyGuide(floors)} guest={!signedIn} />;
 }
 
 // The lobby is a walkable floor; the old card list is in git history (before the night UI pass).
