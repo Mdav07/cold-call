@@ -278,6 +278,19 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 }
 
 async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel, ip: string | null): Promise<string> {
+  // Floors open in order, as on /tower: 0 and 1 are always open; floor N needs a breach on floor N-1.
+  // Checked before anything else so a refused request leaves the player's current run alone.
+  if (floor >= 2) {
+    const { count } = await db()
+      .from("runs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("floor", floor - 1)
+      .eq("outcome", "breach")
+      .throwOnError();
+    if (!count) throw new SessionError(`Floor ${floor} is locked. Clear Floor ${floor - 1} first.`, 403);
+  }
+
   // A new run closes the player's unfinished ones as "quit" (and clears any Floor 3 allowlist spot).
   const { data: stale } = await db()
     .from("runs")
