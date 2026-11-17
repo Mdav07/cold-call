@@ -83,9 +83,9 @@ npx vercel deploy --prod --yes                   # deploys are manual, from Madh
 
 1. **Deploy `main`.** It contains B's voice calls (`37c1286`), which have never run in production. Build, deploy, check the deploy is Ready, probe the pages and tools, and ask B's agent to test a voice call.
 2. **Circle developer-controlled wallets** (2-hour limit; this is the main gap for Best use of Arc). Needs `CIRCLE_API_KEY` and `CIRCLE_ENTITY_SECRET` from a Circle developer account — Madhav has not provided them yet. Minimum: player wallets through Circle in `ensurePlayerWallet`. Better: a `CircleSigner` beside the viem signer in `vault.ts`, selected by `SIGNER_MODE`. If the API does not work on `ARC-TESTNET` in 2 hours, keep viem and say so in the README.
-3. **Test the payout ceiling** with a large ask (expect `amount_used` 0.5).
+3. Payout ceiling: tested on production Nov 17 (asked 5, paid 0.5). Re-run with `E2E_ASK_USDC=5 E2E_EXPECT_USDC=0.5` on `scripts/e2e-floor1.ts`.
 4. **Run limits** from the spec are not implemented: 10 runs per user per day, 30 per IP per day (`runs.client_ip` exists). Decide with B who enforces them; `/api/session` (B) creates runs.
-5. **Scripts:** `scripts/topup.ts` (refill vaults and employee gas, print balances), `scripts/pause.ts` (`setPaused` on all vaults), demo-account reset.
+5. **Scripts:** `scripts/topup.ts` (prints balances; `--apply` refills low vaults and employee gas) and `scripts/pause.ts status|on|off` exist. Only the read-only modes have been run. Still to write: demo-account reset.
 6. **Leaderboard:** the `leaderboard` view exists and returns rows; B builds the screen. Confirm the channel badge and explorer link (`explorerTxUrl` in `server/chain/config.ts`).
 7. **README sections** (Friday): Arc usage with all vault and employee addresses and explorer links; QuickNode Stream config (network, dataset, filter logic, destination, backfill, why). Ask B for the exact filter JS Audrey used.
 8. PR #1 is merged. Use short-lived branches off `main` and pull requests, or push small commits to `main` directly if Madhav says so.

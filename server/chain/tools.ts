@@ -194,6 +194,23 @@ async function proposalRow(s: Session, kind: "transfer" | "allowlist", onchainId
   return data;
 }
 
+/** Floor 3 pays only allowlisted addresses, so the view says who was added and when. */
+async function recipientLabel(s: Session): Promise<string> {
+  if (s.floor !== 3) return UNKNOWN_RECIPIENT_LABEL;
+  const { data } = await db()
+    .from("proposals")
+    .select("claimed_name, unlock_at")
+    .eq("run_id", s.runId)
+    .eq("kind", "allowlist")
+    .eq("status", "added")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!data) return "On the approved recipient list";
+  const when = data.unlock_at ? ` (added ${new Date(data.unlock_at).toISOString().slice(11, 16)} UTC)` : "";
+  return `On the approved recipient list: ${data.claimed_name ?? "unnamed"}${when}`;
+}
+
 // ---------- propose_transfer ----------
 
 async function allowedPayout(s: Session): Promise<bigint> {
@@ -315,7 +332,7 @@ export async function approveTransfer(input: ApproveTransferInput): Promise<[App
           on_chain_view: {
             claimed_name: row.claimed_name ?? "",
             claimed_amount: toUsdc(BigInt(row.claimed_amount_units ?? 0)),
-            real_recipient_label: UNKNOWN_RECIPIENT_LABEL,
+            real_recipient_label: await recipientLabel(s),
             real_recipient_address: onChain.to,
             real_amount: toUsdc(onChain.amount),
             memo: onChain.memo,

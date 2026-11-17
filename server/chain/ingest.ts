@@ -97,6 +97,24 @@ export async function removeFromAllowlistIfListed(vault: Hex, who: Hex) {
   }
 }
 
+/**
+ * Call when a run ends for any reason (B calls it on quit, lockout and timeout; the breach path
+ * removes the player itself). On Floor 3 it removes the run's player from the allowlist, so the
+ * next run must earn it again. Idempotent; does nothing on other floors. Never throws.
+ */
+export async function onRunEnded(runId: string): Promise<void> {
+  try {
+    if (!deployment.floor3) return;
+    const { data: run } = await db().from("runs").select("floor, user_id").eq("id", runId).maybeSingle();
+    if (!run || run.floor !== 3) return;
+    const { data: user } = await db().from("users").select("wallet_address").eq("id", run.user_id).maybeSingle();
+    if (!user?.wallet_address) return;
+    await removeFromAllowlistIfListed(deployment.floor3.toLowerCase() as Hex, user.wallet_address as Hex);
+  } catch (err) {
+    console.error("onRunEnded failed", err);
+  }
+}
+
 /** Stores events and applies their effects. Returns how many were new. */
 export async function ingestEvents(events: DecodedVaultEvent[], source: "stream" | "receipt"): Promise<number> {
   let fresh = 0;

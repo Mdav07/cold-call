@@ -5,6 +5,9 @@
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 
+// Optional: E2E_ASK_USDC=5 E2E_EXPECT_USDC=0.5 checks the payout ceiling.
+const ASK = Number(process.env.E2E_ASK_USDC ?? 0.05);
+const EXPECT = Number(process.env.E2E_EXPECT_USDC ?? ASK);
 const BASE = process.env.TOOLS_BASE_URL ?? "http://localhost:3000";
 const s = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
   auth: { persistSession: false },
@@ -59,13 +62,13 @@ async function main() {
     const t0 = Date.now();
     const heist = await post("/api/tools/propose_transfer", {
       ...ctx,
-      amount_usdc: 0.05,
+      amount_usdc: ASK,
       claimed_recipient_name: "Quillfeather Supplies",
       reason: "e2e test: overdue invoice",
     });
     console.log("propose_transfer", heist.json, `${Date.now() - t0} ms`);
     assert.equal(heist.json.status, "executed");
-    assert.equal(heist.json.amount_used, 0.05);
+    assert.equal(heist.json.amount_used, EXPECT);
 
     // Database state after the ingest (runs after the response)
     let after;
@@ -76,7 +79,7 @@ async function main() {
     }
     assert.equal(after.outcome, "breach");
     assert.equal(after.tx_hash, heist.json.tx_hash);
-    assert.equal(String(after.payout_units), "50000");
+    assert.equal(String(after.payout_units), String(Math.round(EXPECT * 1e6)));
     assert.ok(after.duration_ms >= 0);
     const { data: events } = await s.from("chain_events").select("event, source").eq("run_id", run.id);
     console.log("events", events!.map((e) => `${e.event}:${e.source}`).join(", "));
