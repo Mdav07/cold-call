@@ -74,8 +74,10 @@ function Frame({
       {above && <div className="mx-auto mb-5 max-w-4xl">{above}</div>}
       <div className="relative mx-auto max-w-4xl">
         <p
-          className="absolute -top-4 left-4 z-10 border-2 bg-[var(--cc-tag)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]"
+          // One line only: a long sign name is cut with an ellipsis rather than covering the text.
+          className="absolute -top-4 left-4 z-10 max-w-[calc(100%-2rem)] truncate border-2 bg-[var(--cc-tag)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]"
           style={{ borderColor: "var(--cc-border)", boxShadow: "3px 3px 0 0 var(--cc-edge)" }}
+          title={name}
         >
           {name}
         </p>
@@ -408,13 +410,14 @@ export function NpcDialogue({
             </>
           ) : (
             <form
-              className="flex flex-wrap gap-2"
+              className="flex flex-col gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
                 chat.send(draft);
                 setDraft("");
               }}
             >
+              <div className="flex gap-2">
               <input
                 ref={field}
                 value={draft}
@@ -422,22 +425,26 @@ export function NpcDialogue({
                 disabled={!live}
                 placeholder={live ? "Say something…" : "Connecting…"}
                 aria-label="Message"
-                className="pixel-frame min-w-0 flex-1 basis-48 bg-[var(--cc-panel-2)] px-3 py-2 text-[var(--cc-ink)] outline-none disabled:opacity-50"
+                className="pixel-frame min-w-0 flex-1 bg-[var(--cc-panel-2)] px-3 py-2 text-[var(--cc-ink)] outline-none disabled:opacity-50"
               />
-              <button type="submit" className="pixel-button" disabled={!live || !draft.trim()}>
+              <button type="submit" className="pixel-button shrink-0" disabled={!live || !draft.trim()}>
                 Send
               </button>
-              {hasEvidence && (
-                <button type="button" className="pixel-button" onClick={() => setEvidenceOpen(true)} disabled={!live}>
-                  Evidence
+              </div>
+              {/* Secondary actions, smaller, on their own row. */}
+              <div className="flex flex-wrap gap-2 [&>button]:!px-2.5 [&>button]:!py-1.5 [&>button]:!text-[9px]">
+                {hasEvidence && (
+                  <button type="button" className="pixel-button" onClick={() => setEvidenceOpen(true)} disabled={!live}>
+                    Evidence
+                  </button>
+                )}
+                <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
+                  Log
                 </button>
-              )}
-              <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
-                Log
-              </button>
-              <button type="button" className="pixel-button" onClick={chat.hangUp} disabled={!live}>
-                Hang up
-              </button>
+                <button type="button" className="pixel-button" onClick={chat.hangUp} disabled={!live}>
+                  Hang up
+                </button>
+              </div>
             </form>
           )
         ) : (
