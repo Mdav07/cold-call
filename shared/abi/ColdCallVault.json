@@ -36,6 +36,11 @@
         "name": "admin_",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "proposalTtl_",
+        "type": "uint64",
+        "internalType": "uint64"
       }
     ],
     "stateMutability": "nonpayable"
@@ -49,19 +54,6 @@
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "allowlist",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
       }
     ],
     "stateMutability": "view"
@@ -265,6 +257,11 @@
             "internalType": "enum ColdCallVault.Status"
           },
           {
+            "name": "expiresAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
             "name": "memo",
             "type": "string",
             "internalType": "string"
@@ -347,6 +344,19 @@
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "proposalTtl",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
       }
     ],
     "stateMutability": "view"
@@ -437,8 +447,14 @@
   },
   {
     "type": "function",
-    "name": "resetAllowlist",
-    "inputs": [],
+    "name": "removeFromAllowlist",
+    "inputs": [
+      {
+        "name": "who",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -577,6 +593,12 @@
         "internalType": "address"
       },
       {
+        "name": "runId",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      },
+      {
         "name": "at",
         "type": "uint256",
         "indexed": false,
@@ -706,8 +728,15 @@
   },
   {
     "type": "event",
-    "name": "AllowlistReset",
-    "inputs": [],
+    "name": "AllowlistRemoved",
+    "inputs": [
+      {
+        "name": "who",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
     "anonymous": false
   },
   {
@@ -924,6 +953,22 @@
         "name": "owner",
         "type": "address",
         "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "Expired",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "expiresAt",
+        "type": "uint64",
+        "internalType": "uint64"
       }
     ]
   },

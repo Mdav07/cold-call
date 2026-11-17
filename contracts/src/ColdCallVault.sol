@@ -34,6 +34,7 @@ contract ColdCallVault {
         uint8 approvals;
         uint8 rejections;
         Status status;
+        uint64 expiresAt; // approvals revert after this time
         string memo;
     }
 
@@ -67,6 +68,7 @@ contract ColdCallVault {
     error TimelockActive(uint64 readyAt);
     error ThresholdNotReached(uint256 id);
     error TransferFailed();
+    error Expired(uint256 id, uint64 expiresAt);
 
     // ---------------------------------------------------------------------
     // Events (QuickNode Streams filters on these)
@@ -85,8 +87,8 @@ contract ColdCallVault {
     event AllowlistRejected(uint256 indexed id, address indexed owner, uint8 rejections);
     event AllowlistCancelled(uint256 indexed id);
     event AllowlistQueued(uint256 indexed id, address indexed who, uint64 readyAt);
-    event AllowlistAdded(uint256 indexed id, address indexed who, uint256 at);
-    event AllowlistReset();
+    event AllowlistAdded(uint256 indexed id, address indexed who, bytes32 runId, uint256 at);
+    event AllowlistRemoved(address indexed who);
 
     event Paused(bool paused);
     event Swept(address indexed to, uint256 amount);
@@ -101,6 +103,7 @@ contract ColdCallVault {
     uint256 public immutable perTransferCap;
     bool public immutable allowlistEnabled;
     uint64 public immutable allowlistDelay;
+    uint64 public immutable proposalTtl; // seconds a transfer proposal stays approvable
 
     address[] private _owners;
     mapping(address => bool) public isOwner;
@@ -118,7 +121,6 @@ contract ColdCallVault {
     mapping(uint256 => mapping(address => bool)) public votedOnAllowlist;
 
     mapping(address => bool) public isAllowlisted;
-    address[] private _allowlist;
 
     // ---------------------------------------------------------------------
     // Modifiers
@@ -150,12 +152,14 @@ contract ColdCallVault {
         uint256 perTransferCap_,
         bool allowlistEnabled_,
         uint64 allowlistDelay_,
-        address admin_
+        address admin_,
+        uint64 proposalTtl_
     ) {
         if (usdc_ == address(0) || admin_ == address(0)) revert ZeroAddress();
         if (owners_.length == 0 || owners_.length > type(uint8).max) revert InvalidConfig();
         if (threshold_ == 0 || threshold_ > owners_.length) revert InvalidConfig();
         if (perTransferCap_ == 0) revert InvalidConfig();
+        if (proposalTtl_ == 0) revert InvalidConfig();
         if (!allowlistEnabled_ && allowlistDelay_ != 0) revert InvalidConfig();
 
         for (uint256 i = 0; i < owners_.length; i++) {
@@ -172,6 +176,7 @@ contract ColdCallVault {
         allowlistEnabled = allowlistEnabled_;
         allowlistDelay = allowlistDelay_;
         admin = admin_;
+        proposalTtl = proposalTtl_;
     }
 
     // ---------------------------------------------------------------------
@@ -201,6 +206,7 @@ contract ColdCallVault {
                 approvals: 0,
                 rejections: 0,
                 status: Status.Pending,
+                expiresAt: uint64(block.timestamp) + proposalTtl,
                 memo: memo
             })
         );
@@ -230,13 +236,14 @@ contract ColdCallVault {
 
     function _approveTransfer(uint256 id) internal {
         TransferProposal storage p = _pendingTransfer(id);
+        if (block.timestamp > p.expiresAt) revert Expired(id, p.expiresAt);
         if (votedOnTransfer[id][msg.sender]) revert AlreadyVoted(id, msg.sender);
         votedOnTransfer[id][msg.sender] = true;
         p.approvals += 1;
         emit TransferApproved(id, msg.sender, p.approvals);
 
         if (p.approvals >= threshold) {
-            // Re-check the allowlist at execution time in case it was reset mid-proposal.
+            // Re-check the allowlist at execution time in case the recipient was removed mid-proposal.
             if (allowlistEnabled && !isAllowlisted[p.to]) revert NotAllowlisted(p.to);
             p.status = Status.Executed;
             if (!usdc.transfer(p.to, p.amount)) revert TransferFailed();
@@ -254,12 +261,7 @@ contract ColdCallVault {
     // Allowlist (top floor): add a recipient = threshold approvals + timelock
     // ---------------------------------------------------------------------
 
-    function proposeAllowlistAdd(address who, bytes32 runId)
-        external
-        onlyOwner
-        whenNotPaused
-        returns (uint256 id)
-    {
+    function proposeAllowlistAdd(address who, bytes32 runId) external onlyOwner whenNotPaused returns (uint256 id) {
         if (!allowlistEnabled) revert AllowlistDisabled();
         if (who == address(0)) revert ZeroAddress();
         if (isAllowlisted[who]) revert AlreadyAllowlisted(who);
@@ -328,11 +330,8 @@ contract ColdCallVault {
 
     function _addToAllowlist(uint256 id, AllowlistProposal storage a) internal {
         a.status = Status.Executed;
-        if (!isAllowlisted[a.who]) {
-            isAllowlisted[a.who] = true;
-            _allowlist.push(a.who);
-        }
-        emit AllowlistAdded(id, a.who, block.timestamp);
+        isAllowlisted[a.who] = true;
+        emit AllowlistAdded(id, a.who, a.runId, block.timestamp);
     }
 
     function _pendingAllowlist(uint256 id) internal view returns (AllowlistProposal storage a) {
@@ -356,13 +355,12 @@ contract ColdCallVault {
         emit Paused(paused_);
     }
 
-    /// @notice Clears every allowlisted recipient (used to reset the demo account's Floor 3).
-    function resetAllowlist() external onlyAdmin {
-        for (uint256 i = 0; i < _allowlist.length; i++) {
-            isAllowlisted[_allowlist[i]] = false;
-        }
-        delete _allowlist;
-        emit AllowlistReset();
+    /// @notice Removes one recipient (the backend calls this when a Floor 3 run ends, so every
+    ///         run must earn the allowlist again). The address can be proposed again later.
+    function removeFromAllowlist(address who) external onlyAdmin {
+        if (!isAllowlisted[who]) revert NotAllowlisted(who);
+        isAllowlisted[who] = false;
+        emit AllowlistRemoved(who);
     }
 
     // ---------------------------------------------------------------------
@@ -389,10 +387,6 @@ contract ColdCallVault {
 
     function owners() external view returns (address[] memory) {
         return _owners;
-    }
-
-    function allowlist() external view returns (address[] memory) {
-        return _allowlist;
     }
 
     function balance() external view returns (uint256) {

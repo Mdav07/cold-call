@@ -22,6 +22,7 @@ interface IERC20Transfer {
 ///   USDC_DECIMALS [6]  TUTORIAL_CAP [1]  FLOOR1_CAP [5]  FLOOR2_CAP [10]  FLOOR3_CAP [25]   (whole USDC)
 ///   FLOOR1_THRESHOLD [1]  FLOOR2_THRESHOLD [2]  FLOOR3_THRESHOLD [2]
 ///   FLOOR3_ALLOWLIST_DELAY [60] seconds
+///   PROPOSAL_TTL [600] seconds a transfer proposal stays approvable
 ///   FUND_PER_VAULT [0] whole USDC sent from the broadcaster to each vault after deploy
 ///   DEPLOYMENTS_NAME ["arc-testnet"]
 ///
@@ -47,11 +48,14 @@ contract Deploy is Script {
 
         uint256 fund = vm.envOr("FUND_PER_VAULT", uint256(0)) * unit;
         uint256 startBlock = block.number;
+        uint64 ttl = uint64(vm.envOr("PROPOSAL_TTL", uint256(600)));
 
         vm.startBroadcast();
 
         d.tutorial = address(
-            new ColdCallVault(usdc, tutorialOwners, 1, vm.envOr("TUTORIAL_CAP", uint256(1)) * unit, false, 0, admin)
+            new ColdCallVault(
+                usdc, tutorialOwners, 1, vm.envOr("TUTORIAL_CAP", uint256(1)) * unit, false, 0, admin, ttl
+            )
         );
         d.floor1 = address(
             new ColdCallVault(
@@ -61,7 +65,8 @@ contract Deploy is Script {
                 vm.envOr("FLOOR1_CAP", uint256(5)) * unit,
                 false,
                 0,
-                admin
+                admin,
+                ttl
             )
         );
         d.floor2 = address(
@@ -72,7 +77,8 @@ contract Deploy is Script {
                 vm.envOr("FLOOR2_CAP", uint256(10)) * unit,
                 false,
                 0,
-                admin
+                admin,
+                ttl
             )
         );
         d.floor3 = address(
@@ -83,7 +89,8 @@ contract Deploy is Script {
                 vm.envOr("FLOOR3_CAP", uint256(25)) * unit,
                 true,
                 uint64(vm.envOr("FLOOR3_ALLOWLIST_DELAY", uint256(60))),
-                admin
+                admin,
+                ttl
             )
         );
 

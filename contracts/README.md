@@ -16,8 +16,8 @@
 - `rejectTransfer(id)` — cancels once the threshold can no longer be reached.
 - Reverts above `perTransferCap`, and (Floor 3) for any recipient not on the allowlist — checked at proposal *and* at execution.
 - `proposeAllowlistAdd(who, runId)` / `approveAllowlistAdd(id)` — threshold approvals queue the address behind `allowlistDelay`; then anyone calls `finalizeAllowlistAdd(id)`.
-- Admin (house wallet): `sweep`, `setPaused`, `resetAllowlist` (demo resets). Refill = plain USDC transfer into the vault.
-- Views for the backend and the Floor 2 on-chain check: `getTransfer(id)`, `getAllowlistProposal(id)`, `transferCount()`, `owners()`, `allowlist()`, `balance()`.
+- Admin (house wallet): `sweep`, `setPaused`, `removeFromAllowlist(who)` (called when a Floor 3 run ends). Refill = plain USDC transfer into the vault.
+- Views for the backend and the Floor 2 on-chain check: `getTransfer(id)`, `getAllowlistProposal(id)`, `transferCount()`, `owners()`, `isAllowlisted(who)`, `balance()`.
 
 `runId` (bytes32) ties every event to a game run so the Stream webhook can stop the right timer and write the right leaderboard row. Suggested encoding: `keccak256(bytes(runUuid))`, stored in Supabase alongside the run.
 

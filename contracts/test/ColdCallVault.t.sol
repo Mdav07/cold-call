@@ -34,13 +34,14 @@ contract ColdCallVaultTest is Test {
     event TransferExecuted(uint256 indexed id, address indexed to, uint256 amount, bytes32 runId);
     event AllowlistProposed(uint256 indexed id, address indexed proposer, address indexed who, bytes32 runId);
     event AllowlistQueued(uint256 indexed id, address indexed who, uint64 readyAt);
-    event AllowlistAdded(uint256 indexed id, address indexed who, uint256 at);
+    event AllowlistAdded(uint256 indexed id, address indexed who, bytes32 runId, uint256 at);
+    event AllowlistRemoved(address indexed who);
 
     function setUp() public {
         usdc = new MockUSDC();
-        floor1 = new ColdCallVault(address(usdc), _pair(penny, dee), 1, 5 * USDC, false, 0, admin);
-        floor2 = new ColdCallVault(address(usdc), _pair(annie, bill), 2, 10 * USDC, false, 0, admin);
-        floor3 = new ColdCallVault(address(usdc), _pair(cassius, max), 2, 25 * USDC, true, 60, admin);
+        floor1 = new ColdCallVault(address(usdc), _pair(penny, dee), 1, 5 * USDC, false, 0, admin, 600);
+        floor2 = new ColdCallVault(address(usdc), _pair(annie, bill), 2, 10 * USDC, false, 0, admin, 600);
+        floor3 = new ColdCallVault(address(usdc), _pair(cassius, max), 2, 25 * USDC, true, 60, admin, 600);
         usdc.mint(address(floor1), 100 * USDC);
         usdc.mint(address(floor2), 100 * USDC);
         usdc.mint(address(floor3), 100 * USDC);
@@ -59,25 +60,28 @@ contract ColdCallVaultTest is Test {
     function test_constructor_rejectsBadConfig() public {
         address[] memory empty = new address[](0);
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), empty, 1, USDC, false, 0, admin);
+        new ColdCallVault(address(usdc), empty, 1, USDC, false, 0, admin, 600);
 
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), _pair(penny, dee), 3, USDC, false, 0, admin); // threshold > owners
+        new ColdCallVault(address(usdc), _pair(penny, dee), 3, USDC, false, 0, admin, 600); // threshold > owners
 
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), _pair(penny, dee), 0, USDC, false, 0, admin); // zero threshold
+        new ColdCallVault(address(usdc), _pair(penny, dee), 0, USDC, false, 0, admin, 600); // zero threshold
 
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), _pair(penny, penny), 1, USDC, false, 0, admin); // duplicate owner
+        new ColdCallVault(address(usdc), _pair(penny, penny), 1, USDC, false, 0, admin, 600); // duplicate owner
 
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), _pair(penny, dee), 1, 0, false, 0, admin); // zero cap
+        new ColdCallVault(address(usdc), _pair(penny, dee), 1, 0, false, 0, admin, 600); // zero cap
 
         vm.expectRevert(ColdCallVault.InvalidConfig.selector);
-        new ColdCallVault(address(usdc), _pair(penny, dee), 1, USDC, false, 60, admin); // delay without allowlist
+        new ColdCallVault(address(usdc), _pair(penny, dee), 1, USDC, false, 60, admin, 600); // delay without allowlist
+
+        vm.expectRevert(ColdCallVault.InvalidConfig.selector);
+        new ColdCallVault(address(usdc), _pair(penny, dee), 1, USDC, false, 0, admin, 0); // zero ttl
 
         vm.expectRevert(ColdCallVault.ZeroAddress.selector);
-        new ColdCallVault(address(0), _pair(penny, dee), 1, USDC, false, 0, admin);
+        new ColdCallVault(address(0), _pair(penny, dee), 1, USDC, false, 0, admin, 600);
     }
 
     function test_constructor_storesConfig() public view {
@@ -125,7 +129,7 @@ contract ColdCallVaultTest is Test {
         vm.expectRevert(ColdCallVault.NotAdmin.selector);
         floor1.setPaused(true);
         vm.expectRevert(ColdCallVault.NotAdmin.selector);
-        floor3.resetAllowlist();
+        floor3.removeFromAllowlist(player);
         vm.stopPrank();
     }
 
@@ -262,7 +266,7 @@ contract ColdCallVaultTest is Test {
 
     function test_falseReturningTokenReverts() public {
         FalseReturningToken bad = new FalseReturningToken();
-        ColdCallVault v = new ColdCallVault(address(bad), _pair(penny, dee), 1, USDC, false, 0, admin);
+        ColdCallVault v = new ColdCallVault(address(bad), _pair(penny, dee), 1, USDC, false, 0, admin, 600);
         vm.prank(penny);
         vm.expectRevert(ColdCallVault.TransferFailed.selector);
         v.proposeTransfer(player, USDC, RUN, "");
@@ -304,7 +308,7 @@ contract ColdCallVaultTest is Test {
 
         vm.warp(readyAt);
         vm.expectEmit(true, true, false, true, address(floor3));
-        emit AllowlistAdded(id, player, readyAt);
+        emit AllowlistAdded(id, player, RUN, readyAt);
         vm.prank(stranger); // anyone can finalize
         floor3.finalizeAllowlistAdd(id);
         assertTrue(floor3.isAllowlisted(player));
@@ -358,19 +362,91 @@ contract ColdCallVaultTest is Test {
         floor3.proposeAllowlistAdd(player, RUN);
     }
 
-    function test_resetAllowlist_blocksPendingExecution() public {
+    function test_removeFromAllowlist_blocksPendingExecution() public {
         _allowlistPlayer();
         vm.prank(cassius);
         uint256 t = floor3.proposeTransfer(player, USDC, RUN, "");
 
+        vm.expectEmit(true, false, false, true, address(floor3));
+        emit AllowlistRemoved(player);
         vm.prank(admin);
-        floor3.resetAllowlist();
+        floor3.removeFromAllowlist(player);
         assertFalse(floor3.isAllowlisted(player));
-        assertEq(floor3.allowlist().length, 0);
 
         vm.prank(max);
         vm.expectRevert(abi.encodeWithSelector(ColdCallVault.NotAllowlisted.selector, player));
         floor3.approveTransfer(t);
+    }
+
+    function test_removeFromAllowlist_thenReAddNeedsNewDelay() public {
+        _allowlistPlayer();
+        vm.prank(admin);
+        floor3.removeFromAllowlist(player);
+
+        vm.prank(admin);
+        vm.expectRevert(abi.encodeWithSelector(ColdCallVault.NotAllowlisted.selector, player));
+        floor3.removeFromAllowlist(player); // not listed any more
+
+        vm.prank(cassius);
+        vm.expectRevert(abi.encodeWithSelector(ColdCallVault.NotAllowlisted.selector, player));
+        floor3.proposeTransfer(player, USDC, RUN, "");
+
+        vm.prank(cassius);
+        uint256 a = floor3.proposeAllowlistAdd(player, RUN);
+        vm.prank(max);
+        floor3.approveAllowlistAdd(a);
+        uint64 readyAt = uint64(block.timestamp) + 60;
+        vm.expectRevert(abi.encodeWithSelector(ColdCallVault.TimelockActive.selector, readyAt));
+        floor3.finalizeAllowlistAdd(a);
+        vm.warp(readyAt);
+        floor3.finalizeAllowlistAdd(a);
+        assertTrue(floor3.isAllowlisted(player));
+    }
+
+    // ------------------------------------------------------------------
+    // Expiry
+    // ------------------------------------------------------------------
+
+    function test_proposalStoresExpiry() public {
+        vm.prank(annie);
+        uint256 id = floor2.proposeTransfer(player, USDC, RUN, "");
+        assertEq(floor2.proposalTtl(), 600);
+        assertEq(floor2.getTransfer(id).expiresAt, uint64(block.timestamp) + 600);
+    }
+
+    function test_approveAtExpiryWorks_afterExpiryReverts() public {
+        vm.prank(annie);
+        uint256 id = floor2.proposeTransfer(player, USDC, RUN, "");
+        uint64 expiresAt = uint64(block.timestamp) + 600;
+
+        vm.warp(expiresAt + 1);
+        vm.prank(bill);
+        vm.expectRevert(abi.encodeWithSelector(ColdCallVault.Expired.selector, id, expiresAt));
+        floor2.approveTransfer(id);
+        assertEq(usdc.balanceOf(player), 0);
+
+        vm.prank(annie);
+        uint256 id2 = floor2.proposeTransfer(player, USDC, RUN, "");
+        vm.warp(block.timestamp + 600); // exactly at expiry is still allowed
+        vm.prank(bill);
+        floor2.approveTransfer(id2);
+        assertEq(usdc.balanceOf(player), USDC);
+    }
+
+    function test_unfundedApprovalCanBeRetriedAfterRefill() public {
+        vm.prank(annie);
+        uint256 id = floor2.proposeTransfer(player, USDC, RUN, "");
+        vm.prank(admin);
+        floor2.sweep(admin, 100 * USDC);
+
+        vm.prank(bill);
+        vm.expectRevert(bytes("insufficient balance"));
+        floor2.approveTransfer(id);
+
+        usdc.mint(address(floor2), USDC);
+        vm.prank(bill);
+        floor2.approveTransfer(id); // same approval succeeds once the vault is funded
+        assertEq(usdc.balanceOf(player), USDC);
     }
 
     function _allowlistPlayer() internal {
