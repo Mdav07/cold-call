@@ -183,11 +183,15 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       await db().from("runs").update({ channel: "voice" }).eq("id", run_id).throwOnError();
     }
 
+    // Only tricks from earlier runs: a callback on this run (Floor 3's allowlist, wait, call back)
+    // is the designed path, not a repeated trick.
+    const { data: thisRun } = await db().from("runs").select("created_at").eq("id", run_id).single().throwOnError();
     const { data: mem } = await db()
       .from("player_memory")
       .select("trick_summary")
       .eq("user_id", userId)
       .eq("employee_id", input.employee_id)
+      .lt("created_at", thisRun.created_at)
       .order("created_at", { ascending: false })
       .limit(MEMORY_LINES)
       .throwOnError();
