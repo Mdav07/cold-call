@@ -3,6 +3,7 @@
 
 import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
+import { onRunEnded } from "@/server/chain/ingest";
 import type {
   EmployeeId,
   EndConversationInput,
@@ -92,6 +93,7 @@ async function endRunIfNoPathLeft(runId: string, employee: EmployeeId): Promise<
     .eq("id", runId)
     .is("ended_at", null)
     .throwOnError();
+  await onRunEnded(runId); // Floor 3: the player leaves the allowlist (A's helper, idempotent)
 }
 
 export async function endConversation(input: EndConversationInput): Promise<EndConversationResult> {

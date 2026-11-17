@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import agentIds from "@/agents/elevenlabs-ids.json";
 import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
+import { onRunEnded } from "@/server/chain/ingest";
 import { signedInUserId } from "@/server/game/auth";
 import { getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
@@ -209,6 +210,16 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 }
 
 async function newRun(userId: string, floor: FloorId, cover: string, channel: Channel): Promise<string> {
+  // A new run closes the player's unfinished ones as "quit" (and clears any Floor 3 allowlist spot).
+  const { data: stale } = await db()
+    .from("runs")
+    .update({ outcome: "quit", ended_at: new Date().toISOString() })
+    .eq("user_id", userId)
+    .is("ended_at", null)
+    .select("id")
+    .throwOnError();
+  for (const r of stale ?? []) await onRunEnded(r.id);
+
   const { data } = await db()
     .from("runs")
     .insert({ user_id: userId, floor, cover, channel })
