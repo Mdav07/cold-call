@@ -6,6 +6,7 @@ import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
 import { KrystalMemo } from "./KrystalMemo";
+import { PORTRAITS } from "./portraits";
 import krystal from "@/content/plumpurse/krystal.json";
 
 const TUTORIAL_STEPS = [
@@ -97,14 +98,18 @@ const clock = (ms: number) => {
 
 function Portrait({ card, suspicion }: { card: EmployeeCard; suspicion: number }) {
   const mood = suspicion >= 60 ? "suspicious" : suspicion <= 5 ? "convinced" : "neutral";
+  const Art = PORTRAITS[card.id];
   const initials = card.name.split(" ").map((w) => w[0]).join("");
   return (
     <div className="flex flex-col items-center gap-3">
-      <div
-        className="pixel-frame grid h-44 w-44 place-items-center bg-[var(--cc-portrait)]"
-        aria-label={`${card.name}, ${mood}`}
-      >
-        <span className="font-pixel text-4xl text-[var(--cc-ink)]">{initials}</span>
+      <div className="pixel-frame grid h-44 w-44 place-items-center overflow-hidden bg-[var(--cc-portrait)]">
+        {Art ? (
+          <Art mood={mood} />
+        ) : (
+          <span className="font-pixel text-4xl text-[var(--cc-ink)]" aria-label={`${card.name}, ${mood}`}>
+            {initials}
+          </span>
+        )}
       </div>
       <div className="text-center">
         <p className="font-pixel text-sm text-[var(--cc-ink)]">{card.name}</p>
