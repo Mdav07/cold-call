@@ -4,6 +4,7 @@ import { timingSafeEqual } from "node:crypto";
 import { erc20Abi, type Hex } from "viem";
 import { checkCalendar, checkVendorList, verifyEmployee } from "@/server/game/lookups";
 import { endConversation, reportSuspicion } from "@/server/game/suspicion";
+import { isPaidDailyAttempt } from "@/server/game/daily";
 import type {
   ApproveAllowlistAddInput,
   ApproveAllowlistAddResult,
@@ -216,8 +217,8 @@ async function recipientLabel(s: Session): Promise<string> {
 async function allowedPayout(s: Session): Promise<bigint> {
   const cap = FLOOR_CAP_UNITS[s.floor];
 
-  // Full pay only on the first clear of this floor, or on a Daily Contract run.
-  let full = s.dailyContract;
+  // Full pay only on the first clear of this floor, or on the day's first Daily Contract clear.
+  let full = s.dailyContract || (await isPaidDailyAttempt(s.userId, s.floor));
   if (!full) {
     const { count } = await db()
       .from("runs")

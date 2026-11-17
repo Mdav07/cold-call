@@ -1,11 +1,14 @@
 // End-to-end check of the tool routes against real Supabase and Arc testnet.
 // Needs `npm run dev` running and .env.local filled.
+// Floor 0 (Barry, tutorial): E2E_FLOOR=0
 // Run: npx tsx --env-file=.env.local scripts/e2e-floor1.ts
 // Moves 0.05 testnet USDC from the Floor 1 vault. Deletes its test user at the end.
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 
 // Optional: E2E_ASK_USDC=5 E2E_EXPECT_USDC=0.5 checks the payout ceiling.
+const FLOOR = Number(process.env.E2E_FLOOR ?? 1);
+const EMP = FLOOR === 0 ? "barry" : "penny";
 const ASK = Number(process.env.E2E_ASK_USDC ?? 0.05);
 const EXPECT = Number(process.env.E2E_EXPECT_USDC ?? ASK);
 const BASE = process.env.TOOLS_BASE_URL ?? "http://localhost:3000";
@@ -39,17 +42,17 @@ async function main() {
 
     const { data: run } = await s
       .from("runs")
-      .insert({ user_id: userId, floor: 1, cover: "vendor", started_at: new Date().toISOString() })
+      .insert({ user_id: userId, floor: FLOOR, cover: "vendor", started_at: new Date().toISOString() })
       .select()
       .single()
       .throwOnError();
     const { data: conv } = await s
       .from("conversations")
-      .insert({ run_id: run.id, employee_id: "penny", channel: "chat" })
+      .insert({ run_id: run.id, employee_id: EMP, channel: "chat" })
       .select()
       .single()
       .throwOnError();
-    const ctx = { run_id: run.id, employee_id: "penny", session_id: conv.id, conversation_id: `conv_e2e_${Date.now()}` };
+    const ctx = { run_id: run.id, employee_id: EMP, session_id: conv.id, conversation_id: `conv_e2e_${Date.now()}` };
 
     // Auth failures
     const noSecret = await post("/api/tools/propose_transfer", ctx, { "content-type": "application/json" });
@@ -90,6 +93,17 @@ async function main() {
     const { data: events } = await s.from("chain_events").select("event, source").eq("run_id", run.id);
     console.log("events", events!.map((e) => `${e.event}:${e.source}`).join(", "));
     assert.ok(events!.some((e) => e.event === "TransferExecuted"), "TransferExecuted stored");
+    // Daily Contract: if today's contract is on this floor, the run counts and the streak starts at 1.
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: contract } = await s.from("daily_contracts").select("id, floor").eq("date", today).maybeSingle();
+    if (contract?.floor === FLOOR) {
+      assert.equal(after.daily_contract_id, contract.id, "run marked as today's Daily Contract");
+      const { data: streak } = await s.from("streaks").select("current, longest, last_completed_date").eq("user_id", userId).single();
+      assert.deepEqual(streak, { current: 1, longest: 1, last_completed_date: today }, "streak after first daily clear");
+      console.log("daily contract ok", streak);
+    } else {
+      console.log(`today's contract is floor ${contract?.floor ?? "none"}; daily check skipped`);
+    }
     const { data: board } = await s.from("leaderboard").select("*").eq("run_id", run.id);
     assert.equal(board!.length, 1, "leaderboard row");
 

@@ -4,6 +4,7 @@
 import type { Hex } from "viem";
 import { bytes32ToRunId, deployment } from "./config";
 import { db, withWalletLease } from "./db";
+import { recordBreach } from "@/server/game/daily";
 import { addressOf, isAllowlisted, publicClient, sendVaultTx, type DecodedVaultEvent } from "./vault";
 
 const blockTimes = new Map<bigint, number>();
@@ -72,6 +73,13 @@ async function onTransferExecuted(e: DecodedVaultEvent, runId: string | null, ti
       payout_units: ev.amount,
     })
     .eq("id", runId);
+
+  // Daily Contract and streak.
+  try {
+    await recordBreach(runId, timeMs);
+  } catch (err) {
+    console.error("recordBreach failed", err);
+  }
 
   // Daily budget for this vault.
   const day = new Date().toISOString().slice(0, 10);
