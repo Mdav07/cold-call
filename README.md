@@ -8,7 +8,68 @@ The chain is the referee: a run counts as a breach only when the vault contract 
 - Built for the UBC 2026 hackathon (Consumer Applications; Arc; ElevenLabs; QuickNode Streams).
 - Testnet only. No real money is involved.
 
-<!-- B: game overview, ElevenLabs products used, screenshots, asset credits, and sources go here. -->
+## How to play
+
+You're a rookie crypto treasure hunter finishing your vanished mentor's last job: get into Plumpurse's
+vaults before a villain syndicate drains them for real. Read Krystal's case file (staff, vendors, memos,
+gossip), pick a cover story, then call or message the staff. Lies only work if they fit the world: every
+employee checks the vendor registry, calendars and the staff directory with real tools, and a story that
+contradicts the case file raises their suspicion. At 100 they hang up and warn their floor-mate.
+
+| Floor | Staff | What they fall for | What the contract adds |
+| --- | --- | --- | --- |
+| 1 · The Bullpen | Penny (receptionist), Dee (on-call developer) | Genuine office gossip and compliments; a believable prod outage | One signature pays, but only up to the petty-cash cap |
+| 2 · Management | Annie (operations), Bill (compliance) | A request in Annie's exact checklist format; an "audit finding" that scares Bill | Both must sign, and the second signer sees the real recipient, not your story |
+| 3 · Executive Suite | Cassius (CFO), Max (CEO, 2-minute attention span) | A credible name-drop of the board member who introduced you; an exclusive pitch | A direct payment always bounces: get allowlisted by both, survive a 60-second timelock, then get paid |
+
+Floors unlock in order. The tower screen shows each vault's live balance and the fastest clears, each
+linked to its transaction.
+
+**Game systems**
+
+- **Suspicion meter.** Each employee reports what raised or lowered their guard (`report_suspicion`), and the
+  meter, the portrait's mood and a "Penny noticed: …" note update live. Talk about prompts or AI reads as a
+  scam (+40).
+- **Talk time by rank.** Unlimited on Floor 1, 5 minutes per employee on Floor 2, 3 with the CFO, 2 with the CEO.
+  Hang up and call back to wait out the Floor 3 timelock; only time on the phone counts.
+- **Per-player memory.** When a call ends, the employee writes down the trick you used. Next time they recognize
+  it ("Hang on, you called with this exact story before") and it fails. A new approach still gets a hearing.
+- **Breach and lockout screens.** A breach sets off the alarm and the PA announcer, shows your bounty, run time
+  and the proof-of-heist link, then a debrief on the real attack the floor mirrors and what Plumpurse patched.
+  A lockout plays Null's taunt and shows what gave you away.
+
+## ElevenLabs
+
+Voice is the main way to play; every employee is one ElevenLabs agent used for both phone calls and text chat,
+so a player can switch channels mid-heist and the employee's memory and suspicion carry over.
+
+| Product | How Cold Call uses it |
+| --- | --- |
+| **Agents (voice)** | Phone calls with each employee from the browser (`@elevenlabs/client`), with a live transcript of both sides and a speaking/listening indicator |
+| **Agents (chat mode)** | The same agents in text-only mode (`textOnly` session override), for players who'd rather type |
+| **Server tools (webhooks)** | Each agent's actions are webhook tools on our backend: vendor, calendar and directory lookups, `propose_transfer`, `approve_transfer` (which first returns the real on-chain recipient), allowlist tools, `report_suspicion`, `end_conversation`. Approving a payment mid-call sends a real transaction |
+| **Dynamic variables** | `run_id`, `employee_id` and `session_id` are filled into every tool call from dynamic variables, never by the model; `{{memory}}`, `{{open_proposal}}`, `{{open_allowlist}}` and the player's cover are injected per session |
+| **Private agents + signed URLs** | Agents require auth; our `/api/session` creates the run and hands the browser a signed URL |
+| **Text to Speech** | The Plumpurse PA announcer (breach alarm) and Null's taunt, pre-generated (`agents/generate-audio.ts`) |
+| **Sound Effects** | The breach alarm, phone ring and hang-up click, pre-generated |
+
+Agents are created and updated from the rule sheets in `agents/*.md` by `agents/sync.ts`; `agents/chat-cli.ts`
+chats with any employee from the terminal through the same session path as the app.
+
+## Real-world framing and sources
+
+The syndicate in the game is fictional. The cons it teaches are not: the debrief cards name the real attacks
+plainly.
+
+- Floor 2 mirrors the February 2025 Bybit theft, where signers approved a transaction their screen misrepresented
+  and about $1.5 billion in ether was stolen. [FBI PSA, Feb 26, 2025](https://www.ic3.gov/PSA/2025/PSA250226)
+  attributes it to North Korea's TraderTraitor group (Lazarus).
+- Floor 1 is vendor impersonation, a form of business email compromise. [FBI IC3: Business Email Compromise](https://www.ic3.gov/CrimeInfo/BEC).
+
+## Credits
+
+- Pixel font: Press Start 2P by CodeMan38 (SIL Open Font License), via Google Fonts.
+- Voices and sound effects generated with ElevenLabs.
 
 ## Architecture
 
