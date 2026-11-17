@@ -13,7 +13,7 @@ import { join } from "node:path";
 const API = "https://api.elevenlabs.io/v1/convai";
 const DIR = join(process.cwd(), "agents");
 const IDS_FILE = join(DIR, "elevenlabs-ids.json");
-const LLM = process.env.ELEVENLABS_LLM ?? "claude-haiku-5-5";
+const LLM = process.env.ELEVENLABS_LLM ?? "gemini-2.5-flash";
 
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
 
