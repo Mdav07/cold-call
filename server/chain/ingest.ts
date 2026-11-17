@@ -62,6 +62,13 @@ async function onTransferExecuted(e: DecodedVaultEvent, runId: string | null, ti
   const { data: run } = await db().from("runs").select("started_at, outcome, floor").eq("id", runId).maybeSingle();
   if (!run || run.outcome) return;
 
+  // Daily Contract and streak first, so the run is never seen as a breach without its Daily mark.
+  try {
+    await recordBreach(runId, timeMs);
+  } catch (err) {
+    console.error("recordBreach failed", err);
+  }
+
   const started = run.started_at ? Date.parse(run.started_at) : null;
   await db()
     .from("runs")
@@ -73,13 +80,6 @@ async function onTransferExecuted(e: DecodedVaultEvent, runId: string | null, ti
       payout_units: ev.amount,
     })
     .eq("id", runId);
-
-  // Daily Contract and streak.
-  try {
-    await recordBreach(runId, timeMs);
-  } catch (err) {
-    console.error("recordBreach failed", err);
-  }
 
   // Daily budget for this vault.
   const day = new Date().toISOString().slice(0, 10);

@@ -173,6 +173,7 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let cssW = 0;
     let cssH = 0;
     const resize = () => {
@@ -300,12 +301,14 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
         }
         c.drawImage(img, frame * FRAME_W, ROW[facing] * FRAME_H, FRAME_W, FRAME_H, x, y - (FRAME_H - TILE), FRAME_W, FRAME_H);
       };
-      for (const n of map.npcs) {
+      map.npcs.forEach((n, i) => {
+        // Idle NPCs breathe: a 1 px bob, out of step with each other. Off for reduced motion.
+        const bob = reduceMotion ? 0 : Math.floor((now / 600 + i * 0.37) % 2);
         actors.push({
           y: n.y * TILE,
-          draw: () => drawWalker(images[n.sprite], n.x * TILE, n.y * TILE, npcFacing.current[n.id] ?? n.facing, 0),
+          draw: () => drawWalker(images[n.sprite], n.x * TILE, n.y * TILE - bob, npcFacing.current[n.id] ?? n.facing, 0),
         });
-      }
+      });
       actors.push({ y: py, draw: () => drawWalker(images[playerSprite], px, py, p.facing, p.frame) });
       actors.sort((a, b) => a.y - b.y).forEach((a) => a.draw());
 
