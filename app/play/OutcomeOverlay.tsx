@@ -130,8 +130,9 @@ export function OutcomeOverlay({
             <p className="font-pixel text-xs text-[var(--cc-accent)]">
               New note on Krystal&apos;s trail: {(krystal.clues as Record<string, { title: string }>)[String(run.floor)].title}
             </p>
-            <p className="mt-2">{(krystal.clues as Record<string, { text: string }>)[String(run.floor)].text}</p>
-            {run.floor === 3 && <p className="mt-2 text-[var(--cc-muted)]">Open the tower to read it.</p>}
+            {/* Krystal's words: the pixel font, like the rest of her UI. */}
+            <p className="mt-2 font-pixel text-[11px] leading-loose">{(krystal.clues as Record<string, { text: string }>)[String(run.floor)].text}</p>
+            {run.floor === 3 && <p className="mt-2 font-pixel text-[10px] text-[var(--cc-muted)]">Open the tower to read it.</p>}
           </div>
         )}
 
