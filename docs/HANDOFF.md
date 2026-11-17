@@ -14,7 +14,7 @@ messages; check it against the code. Deadline: submit Fri Nov 20, 11:00 AM CST t
 
 Live site: **https://coldcall-olive.vercel.app** (Vercel project `coldcall`, Madhav's account).
 **Branch: everything is on `main`** (PR #1 merged on Nov 17, including B's `b/chat-ui` up to `37c1286`, voice calls). Both sides branch from `main` and merge back to it; the older branches (`chain/scaffold`, `b/chat-ui`, `b/penny`, `b/vault-v1`, `spec/pretext-chain`) are stale.
-Production still runs the older build `d3d688e`: **voice calls are on `main` but not deployed.**
+Production runs `main` as of Nov 17 (voice calls included). The Stream filter and settings are in `docs/quicknode-stream.md`.
 
 | Piece | State | Proof |
 | --- | --- | --- |
@@ -96,7 +96,7 @@ npx vercel deploy --prod --yes                   # deploys are manual, from Madh
 Done, as reported: Plumpurse content JSON and lookups; rule sheets and ElevenLabs agents for Penny, Dee,
 Annie, Bill (ids in `agents/elevenlabs-ids.json`, tools attached to the live URL); `/api/session`,
 `/api/session/bind`, `/api/session/state`; chat UI; suspicion meter (`server/game/suspicion.ts`);
-magic-link sign-in; voice calls with transcript (on `main`, not deployed yet).
+magic-link sign-in; voice calls with transcript (deployed, not yet tested on production).
 
 Open, in the order B's agent proposed:
 
@@ -108,11 +108,11 @@ Open, in the order B's agent proposed:
    other executive -> `needs_confirm`, then `confirm: true` -> `executed`.
    Rule-sheet notes: a refused direct transfer does not use up a proposal; proposer and approver must be
    different employees; pass the `allowlist_id` to the second employee the way the open transfer id is
-   passed; tell the player the wait from `unlock_at`. The wait uses talk time, so call-backs must work.
+   passed; tell the player the wait from `unlock_at`. Talk time counts only time on calls, so the wait between calls is free; call-backs must work.
 3. Barry and the tutorial (P2).
 4. Breach screen, failure screen, debrief cards. The breach signal is `runs.outcome = 'breach'` plus `chain_events`; `runs.tx_hash` is the proof link.
 5. Per-player memory, Daily Contract and streaks, case file screens (Audrey's Cursor works only in `app/casefile/`).
-6. Talk-time limits and the per-user voice-minute cap are B's to enforce; A does not check them.
+6. Talk-time limits are B's to enforce (sum of `conversations.seconds_used` per run and employee); A does not check them. The per-user daily voice-minute cap is not built yet.
 7. Realtime needs a signed-in user because of RLS; the UI polls `/api/session/state` for the demo player.
 8. Send A: the Stream filter JS and settings for the README; any new migration file to apply.
 
