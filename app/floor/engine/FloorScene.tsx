@@ -19,6 +19,8 @@ const KEY_DIR: Record<string, Facing> = {
   ArrowUp: "up", KeyW: "up", ArrowDown: "down", KeyS: "down",
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
 };
+/** Seats (chair_down/up/left/right, office chair front/back in tiles.json): hidden under someone standing on them. */
+const CHAIR_TILES = new Set([24, 25, 26, 27, 28, 29]);
 const INTERACT_KEYS = new Set(["Space", "Enter", "KeyE"]);
 const OPPOSITE: Record<Facing, Facing> = { up: "down", down: "up", left: "right", right: "left" };
 /** board_* indexes in app/floor/maps/tiles.json — glints sit on the pinned notes, not tile-center. */
@@ -231,6 +233,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
     ro.observe(wrap);
 
     let last = performance.now();
+    const loopStart = last;
     let nextIdleTurn = last + 2500;
     let raf = 0;
     // Armed unless the player starts on an exit (just arrived through it). A page coming back from
@@ -328,6 +331,15 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           p.ty = p.y + dy;
           p.moving = true;
           p.t = 0;
+        } else if (now - loopStart > 500) {
+          // Standing on a door you came back through (the lobby keeps your spot): pushing on through it
+          // takes it, instead of making you step off and back on. Not in the first moments of the page,
+          // so a key still held from the previous page can't bounce you straight back out.
+          const exit = map.exits?.find((e) => e.x === p.x && e.y === p.y);
+          if (exit) {
+            exitsArmed = false;
+            onEventRef.current({ type: "exit", to: exit.to });
+          }
         }
       }
 
@@ -380,7 +392,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       c.setTransform(dpr * scale, 0, 0, dpr * scale, -Math.round(camX * scale) * dpr, -Math.round(camY * scale) * dpr);
 
       const tiles = images[map.tileset];
-      const drawLayer = (layer: number[] | undefined) => {
+      const drawLayer = (layer: number[] | undefined, keep?: (i: number, t: number) => boolean) => {
         if (!layer || !tiles) return;
         const x0 = Math.max(0, Math.floor(camX / TILE));
         const y0 = Math.max(0, Math.floor(camY / TILE));
@@ -390,6 +402,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           for (let x = x0; x < x1; x++) {
             const t = layer[y * map.width + x];
             if (t == null || t < 0) continue;
+            if (keep && !keep(y * map.width + x, t)) continue;
             const sx = (t % map.tilesetColumns) * TILE;
             const sy = Math.floor(t / map.tilesetColumns) * TILE;
             c.drawImage(tiles, sx, sy, TILE, TILE, x * TILE, y * TILE, TILE, TILE);
@@ -398,7 +411,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       };
       drawLayer(map.layers.ground);
       drawLayer(map.layers.walls);
-      drawLayer(map.layers.decor);
+      // A chair someone stands on is hidden: its frame drew over their legs.
+      const seated = new Set<number>([p.y * map.width + p.x, p.ty * map.width + p.tx, ...map.npcs.map((n) => n.y * map.width + n.x)]);
+      drawLayer(map.layers.decor, (i, t) => !(CHAIR_TILES.has(t) && seated.has(i)));
 
       // Characters, back to front.
       type Actor = { y: number; draw: () => void };
@@ -458,7 +473,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       if (!pausedRef.current) {
         for (const n of map.npcs)
           if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
-        if (nm.player && !facingNpc) nameTag(px, py, nm.player);
+        // The player's own plate gives way when someone stands close enough for the plates to touch.
+        const crowded = map.npcs.some((n) => Math.abs(n.x * TILE - px) < TILE * 2.5 && Math.abs(n.y * TILE - py) < TILE);
+        if (nm.player && !facingNpc && !crowded) nameTag(px, py, nm.player);
       }
 
       // Lighting: warm window light, then a soft shadow along the back wall (cozy, Stardew-like).

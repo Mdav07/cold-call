@@ -6,11 +6,15 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { dailyCase, recentDailyDates } from "@/shared/dailyCase";
+import { useClearedHere } from "@/app/floor/guestProgress";
 
 const dayLabel = (date: string, i: number) =>
   i === 0 ? "Today" : i === 1 ? "Yesterday" : new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
 
-export function DailyArchive() {
+/** @param tutorialCleared The account's tutorial clear (signed in); guests fall back to this browser's. */
+export function DailyArchive({ tutorialCleared }: { tutorialCleared?: boolean } = {}) {
+  const here = useClearedHere()[0];
+  const locked = !(tutorialCleared || here);
   const [open, setOpen] = useState(false);
   const [days, setDays] = useState<{ date: string; title: string; who: string }[]>([]);
   const wrap = useRef<HTMLDivElement>(null);
@@ -53,6 +57,11 @@ export function DailyArchive() {
       </button>
       {open && (
         <div className="pixel-frame absolute left-0 top-full z-30 mt-3 flex w-72 max-w-[calc(100vw-2rem)] flex-col bg-[var(--cc-panel)] p-2">
+          {locked && (
+            <p className="border-b-2 border-[var(--cc-edge)] px-2 pb-2 pt-1 text-[9px] leading-relaxed text-[var(--cc-danger)]">
+              🔒 Opens after you clear the tutorial (the Pocket Branch).
+            </p>
+          )}
           {days.map((d, i) => (
             <Link
               key={d.date}
