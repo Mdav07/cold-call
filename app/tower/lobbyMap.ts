@@ -143,13 +143,16 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   };
 }
 
+/** The tutorial sign: on the front wall to the left of the street door (the note on the right is a prop). */
+export const TUTORIAL_TAG = { x: DOOR_X - 2, y: H - 1, text: "TUTORIAL" };
+
 /** Where a player should head next from the lobby, and the tags that label it. */
 export function lobbyGuide(floors: TowerFloor[]): {
   goal: { x: number; y: number } | null;
   tags: { x: number; y: number; text: string }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
-  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [{ x: DOOR_X, y: H - 1, text: "TUTORIAL" }] };
+  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [TUTORIAL_TAG] };
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
   if (!next) return { goal: null, tags: [] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];
