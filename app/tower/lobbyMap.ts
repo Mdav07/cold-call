@@ -41,12 +41,12 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
       else ground[at(x, y)] = T.floor;
     }
 
-  // Back wall: three elevators; numbered doormat on the tile in front (y=3), doorway at y=2.
+  // Back wall: three elevators; numbered doormat on the doorway tile directly in front (y=2).
   const elevatorMats = { 1: T.mat1, 2: T.mat2, 3: T.mat3 } as const;
   for (const [n, x] of Object.entries(ELEVATORS)) {
     walls[at(x, 1)] = T.elevator;
     ground[at(x, 0)] = T.floor;
-    ground[at(x, 3)] = elevatorMats[Number(n) as 1 | 2 | 3];
+    ground[at(x, 2)] = elevatorMats[Number(n) as 1 | 2 | 3];
   }
   // Front wall: matching street / daily exits — opening in the wall (lobby carpet on the
   // threshold), one rectangular doormat on the tile in front (not doubled on the exit itself).
@@ -105,11 +105,10 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   }
 
   const p0 = byFloor(0);
-  // Always place the Daily exit; lock with `blocked` until the tutorial is cleared.
-  // Guests who cleared Floor 0 in this browser get it unblocked in Lobby.tsx.
+  // Daily doorway is always physically open; Lobby.tsx adds/removes the /daily exit based on
+  // tutorial clear (account or this browser). Blocking the cell made it feel broken.
   const today = dailyCase(todayUtc());
   exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
-  if (!p0?.cleared) blocked.push(at(DAILY_X, H - 1));
   // Readable props sit on the doormats (same tile as the rug) so the SPACE highlight lines up
   // with the T / D — not on the wall tiles beside the doors (that looked like an offset hitbox).
   props.push({

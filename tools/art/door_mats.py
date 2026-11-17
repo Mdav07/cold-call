@@ -1,5 +1,5 @@
 """Cute rectangular doormats for lobby exits: T (tutorial), D (daily), 1–3 (elevators).
-Also rebuilds the elevator so its frame matches the brown wall.
+Tile is carpet-filled (no gray holes), mat centred, colorful outline. Also rebuilds the elevator.
 
     python3 -I tools/art/door_mats.py public/tiles/plumpurse.png app/floor/maps/tiles.json
 """
@@ -13,68 +13,50 @@ from pathlib import Path
 from PIL import Image
 
 T = 16
+# Lobby carpet (floor_executive in plumpurse.png).
+CARPET = (120, 32, 40, 255)
 
-# 3×5 pixel glyphs, drawn into the mat.
+# 3×5 pixel glyphs.
 GLYPHS: dict[str, list[str]] = {
-    "T": [
-        "###",
-        ".#.",
-        ".#.",
-        ".#.",
-        ".#.",
-    ],
-    "D": [
-        "##.",
-        "#.#",
-        "#.#",
-        "#.#",
-        "##.",
-    ],
-    "1": [
-        ".#.",
-        "##.",
-        ".#.",
-        ".#.",
-        "###",
-    ],
-    "2": [
-        "###",
-        "..#",
-        "###",
-        "#..",
-        "###",
-    ],
-    "3": [
-        "###",
-        "..#",
-        "###",
-        "..#",
-        "###",
-    ],
+    "T": ["###", ".#.", ".#.", ".#.", ".#."],
+    "D": ["##.", "#.#", "#.#", "#.#", "##."],
+    "1": [".#.", "##.", ".#.", ".#.", "###"],
+    "2": ["###", "..#", "###", "#..", "###"],
+    "3": ["###", "..#", "###", "..#", "###"],
 }
 
 
-def mat(fill: tuple[int, int, int, int], ink: tuple[int, int, int, int], letter: str) -> Image.Image:
-    """A wide rectangular welcome mat (inset from the tile) with one letter in the middle."""
-    edge = (56, 40, 32, 255)
-    stitch = (255, 250, 236, 255)
-    im = Image.new("RGBA", (T, T), (0, 0, 0, 0))
+def mat(
+    fill: tuple[int, int, int, int],
+    ink: tuple[int, int, int, int],
+    outline: tuple[int, int, int, int],
+    letter: str,
+) -> Image.Image:
+    """Full carpet tile + a centred rug with a colorful outline and letter."""
+    hi = (
+        min(255, outline[0] + 40),
+        min(255, outline[1] + 40),
+        min(255, outline[2] + 40),
+        255,
+    )
+    im = Image.new("RGBA", (T, T), CARPET)
     px = im.load()
-    # Horizontal rug: leave 2px clear top/bottom so it reads as a mat on the floor, not a full tile.
-    y0, y1 = 3, 12
+    # Rug inset so margins show carpet; odd size so the letter can sit dead-centre.
+    x0, y0, x1, y1 = 2, 3, 13, 12
     for y in range(y0, y1 + 1):
-        for x in range(1, 15):
-            if x in (1, 14) or y in (y0, y1):
-                px[x, y] = edge
-            elif x in (2, 13) or y in (y0 + 1, y1 - 1):
-                px[x, y] = stitch
+        for x in range(x0, x1 + 1):
+            edge = x in (x0, x1) or y in (y0, y1)
+            inner = x in (x0 + 1, x1 - 1) or y in (y0 + 1, y1 - 1)
+            if edge:
+                px[x, y] = outline
+            elif inner:
+                px[x, y] = hi
             else:
                 px[x, y] = fill
-    # Letter centred on the mat.
     g = GLYPHS[letter]
     gw, gh = len(g[0]), len(g)
     ox = (T - gw) // 2
-    oy = y0 + 2
+    oy = (T - gh) // 2
     for gy, row in enumerate(g):
         for gx, ch in enumerate(row):
             if ch == "#":
@@ -149,12 +131,16 @@ def main() -> None:
     sheet.alpha_composite(elevator(wall), (ex, ey))
     print(f"elevator repaired @ {eidx}")
 
-    sheet = append_or_replace(sheet, catalog, "mat_tutorial", mat((126, 196, 168, 255), (36, 92, 74, 255), "T"), "walk")
-    sheet = append_or_replace(sheet, catalog, "mat_daily", mat((196, 158, 220, 255), (92, 52, 130, 255), "D"), "walk")
-    # Elevator mats: warm amber so they read with the gold call lights.
-    sheet = append_or_replace(sheet, catalog, "mat_1", mat((232, 186, 96, 255), (120, 72, 24, 255), "1"), "walk")
-    sheet = append_or_replace(sheet, catalog, "mat_2", mat((220, 168, 88, 255), (110, 64, 20, 255), "2"), "walk")
-    sheet = append_or_replace(sheet, catalog, "mat_3", mat((208, 150, 78, 255), (100, 56, 18, 255), "3"), "walk")
+    # fill, ink, outline, letter
+    mats = [
+        ("mat_tutorial", (126, 196, 168, 255), (36, 92, 74, 255), (80, 220, 180, 255), "T"),
+        ("mat_daily", (196, 158, 220, 255), (92, 52, 130, 255), (220, 160, 255, 255), "D"),
+        ("mat_1", (232, 186, 96, 255), (120, 72, 24, 255), (255, 220, 100, 255), "1"),
+        ("mat_2", (220, 168, 88, 255), (110, 64, 20, 255), (255, 200, 90, 255), "2"),
+        ("mat_3", (208, 150, 78, 255), (100, 56, 18, 255), (255, 180, 80, 255), "3"),
+    ]
+    for name, fill, ink, outline, letter in mats:
+        sheet = append_or_replace(sheet, catalog, name, mat(fill, ink, outline, letter), "walk")
 
     sheet.save(sheet_path)
     catalog_path.write_text(json.dumps(catalog, indent=2) + "\n")
