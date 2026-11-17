@@ -1,6 +1,6 @@
 "use client";
 
-// DAILY CASE in the lobby's top bar: today's case and the six before it. Today counts for the board and
+// DAILY CASE in the lobby's top bar: today + five days back (six total). Today counts for the board and
 // the streak; an earlier day is practice (/daily?date=…), played the same way but never counted.
 
 import { useEffect, useRef, useState } from "react";
