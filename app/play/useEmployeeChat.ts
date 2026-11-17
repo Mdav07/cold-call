@@ -25,6 +25,19 @@ function bind(
   }).catch(() => {}); // best effort; the run still works if this fails
 }
 
+/** Short call sounds (pre-generated with ElevenLabs Sound Effects into public/audio). */
+function sfx(file: string, loop = false): HTMLAudioElement | null {
+  try {
+    const a = new Audio(`/audio/${file}`);
+    a.loop = loop;
+    a.volume = 0.6;
+    a.play().catch(() => {});
+    return a;
+  } catch {
+    return null; // no audio (tests, old browsers): the call works without it
+  }
+}
+
 export function useEmployeeChat(employeeId: EmployeeId) {
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [channel, setChannel] = useState<Channel>("chat");
@@ -37,6 +50,11 @@ export function useEmployeeChat(employeeId: EmployeeId) {
   const [connectedAt, setConnectedAt] = useState<number | null>(null); // talk timer: this call
   const [error, setError] = useState<string | null>(null);
   const convo = useRef<Session | null>(null);
+  const ring = useRef<HTMLAudioElement | null>(null);
+  const stopRing = () => {
+    ring.current?.pause();
+    ring.current = null;
+  };
   const nextId = useRef(0);
   const sentFirst = useRef(false);
 
@@ -78,12 +96,14 @@ export function useEmployeeChat(employeeId: EmployeeId) {
         const s = data as StartSessionResult;
         setSession(s);
 
+        if (ch === "voice") ring.current = sfx("phone-ring.mp3", true); // rings until they pick up
         convo.current = await Conversation.startSession({
           signedUrl: s.signed_url,
           dynamicVariables: s.dynamic_variables,
           textOnly: ch === "chat",
           overrides: { conversation: { textOnly: ch === "chat" } },
           onConnect: ({ conversationId }) => {
+            stopRing();
             setConnectedAt(Date.now());
             setStatus("live");
             if (ch === "chat") setWaiting(true); // the agent speaks first
@@ -101,6 +121,8 @@ export function useEmployeeChat(employeeId: EmployeeId) {
           },
           onModeChange: ({ mode: m }) => setMode(m),
           onDisconnect: () => {
+            stopRing();
+            if (ch === "voice") sfx("hang-up.mp3");
             bind(s, { ended: true }); // records talk time used
             convo.current = null;
             setWaiting(false);
@@ -112,6 +134,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
           },
         });
       } catch (e) {
+        stopRing();
         const msg = e instanceof Error ? e.message : String(e);
         setError(
           /Permission|NotAllowed/i.test(msg) ? "Microphone blocked. Allow it in the browser, or use chat." : msg,
