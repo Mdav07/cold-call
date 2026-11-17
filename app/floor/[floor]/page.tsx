@@ -5,15 +5,21 @@ import type { EmployeeId } from "@/shared/interfaces";
 import type { FloorMap } from "@/app/floor/types";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
-import floor1 from "@/app/floor/maps/floor-1.placeholder.json";
+import floor0 from "@/app/floor/maps/floor-0.json";
+import floor1 from "@/app/floor/maps/floor-1.json";
+import floor2 from "@/app/floor/maps/floor-2.json";
+import floor3 from "@/app/floor/maps/floor-3.json";
 import { FloorGame } from "./FloorGame";
 
-/** Floors with a map. B adds floor-<n>.json for the rest; add each here as it lands. */
+/** One map per floor, from B (app/floor/maps/src compiles to these). */
 const MAPS: Record<string, FloorMap> = {
+  "0": floor0 as unknown as FloorMap,
   "1": floor1 as unknown as FloorMap,
+  "2": floor2 as unknown as FloorMap,
+  "3": floor3 as unknown as FloorMap,
 };
 
-const PLAYER_SPRITE = "/sprites/placeholder-player.png";
+const PLAYER_SPRITE = "/sprites/hunter.png";
 
 /** The cover story offered on the first talk of a run (the player can change it). */
 const DEFAULT_COVER: Record<number, string> = {

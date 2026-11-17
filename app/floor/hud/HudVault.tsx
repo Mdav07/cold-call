@@ -1,12 +1,15 @@
 // Server part of the HUD: this floor's vault balance (read live from Arc) and today's Daily
 // Contract badge. Rendered inside <Suspense> because it reads cookies and the chain.
 
+import { connection } from "next/server";
 import { signedInUserId } from "@/server/game/auth";
 import { getDemoUserId } from "@/server/game/players";
 import { getTower } from "@/server/game/tower";
 import { getDaily } from "@/server/game/daily";
 
 export async function HudVault({ floor }: { floor: number }) {
+  // Request-time only: the Daily Contract reads today's date and the balance is live.
+  await connection();
   let balance: number | null = null;
   let vault = "Vault";
   let daily: { modifier: string; cleared: boolean } | null = null;
