@@ -34,6 +34,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
   const [muted, setMuted] = useState(false);
   const [session, setSession] = useState<StartSessionResult | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null); // run timer: first message
+  const [connectedAt, setConnectedAt] = useState<number | null>(null); // talk timer: this call
   const [error, setError] = useState<string | null>(null);
   const convo = useRef<Session | null>(null);
   const nextId = useRef(0);
@@ -58,7 +59,9 @@ export function useEmployeeChat(employeeId: EmployeeId) {
       setLines([]);
       setMode("listening");
       setMuted(false);
+      setConnectedAt(null);
       sentFirst.current = false;
+      if (!runId) setStartedAt(null); // a new run restarts the run clock; a call-back keeps it
       try {
         if (ch === "voice") {
           // Ask for the microphone up front so a denial shows a clear message.
@@ -81,6 +84,7 @@ export function useEmployeeChat(employeeId: EmployeeId) {
           textOnly: ch === "chat",
           overrides: { conversation: { textOnly: ch === "chat" } },
           onConnect: ({ conversationId }) => {
+            setConnectedAt(Date.now());
             setStatus("live");
             if (ch === "chat") setWaiting(true); // the agent speaks first
             bind(s, { conversation_id: conversationId });
@@ -143,5 +147,5 @@ export function useEmployeeChat(employeeId: EmployeeId) {
 
   useEffect(() => () => void convo.current?.endSession(), []);
 
-  return { status, channel, lines, waiting, mode, muted, session, startedAt, error, start, send, hangUp, toggleMute };
+  return { status, channel, lines, waiting, mode, muted, session, startedAt, connectedAt, error, start, send, hangUp, toggleMute };
 }
