@@ -17,6 +17,13 @@ const LLM = process.env.ELEVENLABS_LLM ?? "gemini-2.5-flash";
 
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
 
+const FLOOR3 = [
+  "check_vendor_list", "verify_employee", "check_calendar",
+  "propose_allowlist_add", "approve_allowlist_add", "reject_allowlist_add",
+  "propose_transfer", "approve_transfer", "reject_transfer",
+  "report_suspicion", "end_conversation",
+];
+
 // Which tools each employee gets. Floor 1 has no approve step (1-of-2 vault pays on propose).
 const EMPLOYEE_TOOLS: Record<string, string[]> = {
   penny: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "report_suspicion", "end_conversation"],
@@ -24,6 +31,9 @@ const EMPLOYEE_TOOLS: Record<string, string[]> = {
   // Floor 2 is 2-of-2: either signer can propose or approve (approve shows the on-chain view first).
   annie: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
   bill: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
+  // Floor 3: allowlist add (both executives + a timelock), then a 2-of-2 payment.
+  cassius: [...FLOOR3],
+  max: [...FLOOR3],
 };
 
 // Filled by ElevenLabs from dynamic variables on every call; the LLM never sees or sets them.
@@ -78,6 +88,25 @@ const TOOLS: Record<string, { description: string; props: Record<string, object>
       reason: s("Why you are rejecting it"),
     },
     required: ["proposal_id", "reason"],
+  },
+  propose_allowlist_add: {
+    description:
+      "Start adding the caller's firm to the Treasury allowlist. The other executive must approve, then a security wait of about a minute runs before any payment to them is possible.",
+    props: {
+      claimed_name: s("The firm's name as spelled in the registry"),
+      reason: s("Why they should be allowlisted, naming who introduced them"),
+    },
+    required: ["claimed_name", "reason"],
+  },
+  approve_allowlist_add: {
+    description: "Approve an allowlist request the other executive started. Starts the security wait.",
+    props: { allowlist_id: n("The allowlist request number") },
+    required: ["allowlist_id"],
+  },
+  reject_allowlist_add: {
+    description: "Reject an allowlist request, with a precise reason.",
+    props: { allowlist_id: n("The allowlist request number"), reason: s("Why you are rejecting it") },
+    required: ["allowlist_id", "reason"],
   },
   report_suspicion: {
     description: "Report a change in how suspicious you are of the caller, with the reason.",
@@ -177,6 +206,7 @@ async function main() {
           daily_modifier: "(none)",
           talk_seconds_left: 600,
           open_proposal: "(none)",
+          open_allowlist: "(none)",
         },
       },
     },

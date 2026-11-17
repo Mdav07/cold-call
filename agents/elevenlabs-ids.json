@@ -7,12 +7,17 @@
     "report_suspicion": "tool_5701m7m4k2yrfam87nz79xmj50h7",
     "end_conversation": "tool_4501m7m4k31cf96vqeh5tqgrerd2",
     "approve_transfer": "tool_6901m7m62rx1epx8apwp1epeqtcj",
-    "reject_transfer": "tool_6001m7m62rywfrfvts6e71d1p0fd"
+    "reject_transfer": "tool_6001m7m62rywfrfvts6e71d1p0fd",
+    "propose_allowlist_add": "tool_4201m7m7m8kmf79ad8rnzmkxkxz3",
+    "approve_allowlist_add": "tool_3701m7m7m8p8e9pt6xy7vkawyw0x",
+    "reject_allowlist_add": "tool_4101m7m7m8sjf0zbj34j5fw13r8d"
   },
   "agents": {
     "penny": "agent_5801m7m3njqdewyrf22byk4p10ph",
     "dee": "agent_0401m7m4qkkve4bbpp6brh1vsqgb",
     "annie": "agent_3701m7m62s5afcbs8y94zkn9ww21",
-    "bill": "agent_4701m7m62varemt8r2emcz5mz9tq"
+    "bill": "agent_4701m7m62varemt8r2emcz5mz9tq",
+    "cassius": "agent_0701m7m7m94mej7t9sa74yjmegmw",
+    "max": "agent_5701m7m7mbkxexxawwb1f3pt7yd8"
   }
 }
