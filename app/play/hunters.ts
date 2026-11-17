@@ -14,6 +14,9 @@ export const HUNTERS: HunterOption[] = [
   { id: "hunter-6", label: "Pink hair" },
 ];
 
+/** Looks earned with a Daily Case streak (app/play/streak.ts STREAK_REWARDS). Valid once picked. */
+export const REWARD_HUNTER_IDS = ["hunter-1", "hunter-5"];
+
 export interface HunterChoice {
   sprite: string; // e.g. "hunter-3"
   name: string;
@@ -33,7 +36,8 @@ export function getHunter(): HunterChoice {
     const raw = typeof window !== "undefined" ? window.localStorage.getItem(KEY) : null;
     if (!raw) return DEFAULT_HUNTER;
     const v = JSON.parse(raw) as Partial<HunterChoice>;
-    const sprite = HUNTERS.some((h) => h.id === v.sprite) ? (v.sprite as string) : DEFAULT_HUNTER.sprite;
+    const valid = HUNTERS.some((h) => h.id === v.sprite) || REWARD_HUNTER_IDS.includes(String(v.sprite));
+    const sprite = valid ? (v.sprite as string) : DEFAULT_HUNTER.sprite;
     const name = cleanName(String(v.name ?? "")) || DEFAULT_HUNTER.name;
     return { sprite, name };
   } catch {
