@@ -61,9 +61,13 @@ export async function currentLevel(runId: string, employee: EmployeeId): Promise
 }
 
 export async function reportSuspicion(input: ReportSuspicionInput): Promise<ReportSuspicionResult> {
-  const delta = clamp(Math.round(Number(input.delta) || 0), -20, 40);
+  let delta = clamp(Math.round(Number(input.delta) || 0), -20, 40);
   const before = await currentLevel(input.run_id, input.employee_id);
   if (before >= LOCKOUT) return { level: LOCKOUT, locked_out: true };
+
+  // Grudge: after a serious red flag (+30 or more at once: threats, talk about AI), flattery and
+  // good evidence no longer lower this employee's guard for the rest of the run.
+  if (delta < 0 && (await holdsGrudge(input.run_id, input.employee_id))) delta = 0;
 
   const level = clamp(before + delta, 0, LOCKOUT);
   await db()
@@ -80,6 +84,20 @@ export async function reportSuspicion(input: ReportSuspicionInput): Promise<Repo
   const locked_out = level >= LOCKOUT;
   if (locked_out) await endRunIfNoPathLeft(input.run_id, input.employee_id);
   return { level, locked_out };
+}
+
+/** A single increase this big makes the employee hold a grudge for the rest of the run. */
+export const GRUDGE_DELTA = 30;
+
+async function holdsGrudge(runId: string, employee: EmployeeId): Promise<boolean> {
+  const { count } = await db()
+    .from("suspicion_events")
+    .select("id", { count: "exact", head: true })
+    .eq("run_id", runId)
+    .eq("employee_id", employee)
+    .gte("delta", GRUDGE_DELTA)
+    .throwOnError();
+  return (count ?? 0) > 0;
 }
 
 /** The run fails once every signer on the floor has locked the player out. */
