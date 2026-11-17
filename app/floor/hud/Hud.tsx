@@ -55,7 +55,7 @@ export function Hud({
 }) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">
+      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-1 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2 font-pixel text-[10px] text-[var(--cc-ink)]">
         <a
           href="/tower"
           onClick={(e) => {
@@ -66,12 +66,15 @@ export function Hud({
           className="text-[var(--cc-accent)] underline-offset-2 hover:underline" title="Back to the tower">
           ◀ TOWER
         </a>
-        <span>{floorName}</span>
+        {/* Phones: "Floor 1" only, so the HUD stays two lines and leaves the map visible. */}
+        <span className="sm:hidden">{floorName.split(" · ")[0]}</span>
+        <span className="hidden sm:inline">{floorName}</span>
         <RunClock startedAt={startedAt} finalMs={finalMs} />
         {vault}
         {onCaseFile && (
           <button type="button" onClick={onCaseFile} className="text-[var(--cc-accent)]" title="Open the case file">
-            CASE FILE
+            <span className="sm:hidden">FILE</span>
+            <span className="hidden sm:inline">CASE FILE</span>
           </button>
         )}
         <MuteToggle />
