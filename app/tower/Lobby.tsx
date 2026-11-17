@@ -13,6 +13,7 @@ import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
 import { DAILY_TAG, TUTORIAL_TAG } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
+import { StreakBadge } from "@/app/play/StreakBadge";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
@@ -103,7 +104,10 @@ export function Lobby({
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
         <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-4 gap-y-1 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
           <span className="text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
-          <DailyArchive />
+          <span className="flex items-center gap-2">
+            <DailyArchive />
+            <StreakBadge />
+          </span>
           <Link className="hover:underline" href="/casefile">CASE FILE</Link>
           <Link className="hover:underline" href="/leaderboard">LEADERBOARD</Link>
           <Link className="hover:underline" href="/signin">SIGN IN</Link>

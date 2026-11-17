@@ -9,6 +9,7 @@ import debriefs from "@/content/plumpurse/debriefs.json";
 import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
 import { PORTRAITS } from "./portraits";
+import { StreakBadge } from "./StreakBadge";
 import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 
 type Debrief = {
@@ -99,7 +100,6 @@ export function OutcomeOverlay({
   const breach = outcome === "breach";
   const daily = run.floor === DAILY_FLOOR;
   const paid = run.payout_units != null ? Number(run.payout_units) / 1_000_000 : null;
-  const streak = state.daily_streak;
   const Face = PORTRAITS.krystal;
   // The Daily's debrief is the case itself: who it was, what got through to them, what they won't do.
   // Not after a lockout on today's case: it would hand over the answers to a case you can still retry.
@@ -127,7 +127,7 @@ export function OutcomeOverlay({
           </h2>
         </header>
 
-        {(breach || daily) && (
+        {(breach || (daily && run.practice)) && (
           <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
             {breach && (
               <div>
@@ -141,15 +141,6 @@ export function OutcomeOverlay({
                 <p className="mt-1 font-pixel text-lg text-[var(--cc-ink)]">{run.duration_ms != null ? clock(run.duration_ms) : "…"}</p>
               </div>
             )}
-            {daily && streak && !run.practice && (
-              <div>
-                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">STREAK</p>
-                <p className="mt-1 font-pixel text-lg text-[var(--cc-accent)]">
-                  {streak.current} day{streak.current === 1 ? "" : "s"}
-                  <span className="ml-2 text-[9px] text-[var(--cc-muted)]">best {streak.best}</span>
-                </p>
-              </div>
-            )}
             {daily && run.practice && (
               <p className="pixel-frame bg-[var(--cc-panel-2)] px-2 py-1 font-pixel text-[9px] text-[var(--cc-muted)]">
                 PRACTICE · doesn&apos;t count
@@ -157,6 +148,9 @@ export function OutcomeOverlay({
             )}
           </div>
         )}
+
+        {/* The streak badge knows guests (this browser) from signed-in players (their account). */}
+        {daily && !run.practice && <StreakBadge variant="full" />}
 
         <div className="flex items-start gap-3">
           {Face && (

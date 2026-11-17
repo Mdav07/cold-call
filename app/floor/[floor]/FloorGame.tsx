@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { markClearedHere } from "@/app/floor/guestProgress";
+import { markDailyCleared } from "@/app/play/streak";
 import { useRouter } from "next/navigation";
 import type { EmployeeId } from "@/shared/interfaces";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -83,9 +84,13 @@ export function FloorGame({
 
   const outcome = state?.run?.outcome;
   // A breach opens the next floor for this browser too (guests play as the shared demo player).
+  // A clear of today's Daily Case (not a practice replay) keeps a guest's streak, kept in this browser.
+  const practice = !!state?.run?.practice;
   useEffect(() => {
-    if (outcome === "breach") markClearedHere(map.floor);
-  }, [outcome, map.floor]);
+    if (outcome !== "breach") return;
+    markClearedHere(map.floor);
+    if (daily && !practice) markDailyCleared(daily.date);
+  }, [outcome, map.floor, daily, practice]);
   // The result waits for the employee to finish their last reply (NpcDialogue calls onSettled);
   // with no conversation open it shows at once.
   const [settledRun, setSettledRun] = useState<string | null>(null);

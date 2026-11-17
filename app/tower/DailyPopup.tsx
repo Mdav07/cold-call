@@ -9,6 +9,7 @@ import { dailyCase, todayUtc, type DailyCase } from "@/shared/dailyCase";
 import { useClearedHere } from "@/app/floor/guestProgress";
 import { Walker } from "@/app/intro/Intro";
 import { confirm, ding } from "@/app/floor/hud/sound";
+import { StreakBadge } from "@/app/play/StreakBadge";
 
 const seenKey = (date: string) => `cc-daily-seen-${date}`;
 
@@ -106,6 +107,8 @@ export function DailyPopup({ tutorialCleared, clearedToday = false }: { tutorial
         <p className="font-pixel text-[11px] leading-loose text-[var(--cc-ink)]">
           A new case every day, the same for everyone. One person, one small payment. Fastest times go on the Daily board.
         </p>
+
+        <StreakBadge variant="full" />
 
         <div className="flex flex-wrap gap-2">
           <Link
