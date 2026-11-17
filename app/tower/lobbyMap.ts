@@ -110,18 +110,19 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   const today = dailyCase(todayUtc());
   exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
   if (!p0?.cleared) blocked.push(at(DAILY_X, H - 1));
-  // Readable signs on the wall tiles beside each door (not on the exit cell).
+  // Readable props sit on the doormats (same tile as the rug) so the SPACE highlight lines up
+  // with the T / D — not on the wall tiles beside the doors (that looked like an offset hitbox).
   props.push({
     id: "daily-sign",
-    x: DAILY_X - 1,
-    y: H - 1,
+    x: DAILY_X,
+    y: H - 2,
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
   props.push({
     id: "street-sign",
-    x: DOOR_X + 1,
-    y: H - 1,
+    x: DOOR_X,
+    y: H - 2,
     label: `Across the street · ${p0?.name ?? "Pocket Branch"}${p0?.cleared ? " · CLEARED" : ""}`,
     text: "The tutorial: Barry is closing up the Pocket Branch. Walk out through the door to try your first con.",
   });
@@ -166,21 +167,17 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
   };
 }
 
-/** Short label on the daily doormat (letter is also painted on the tile). No floating TUTORIAL sign. */
-export const DAILY_TAG = { x: DAILY_X, y: H - 2, text: "D" };
 export { H as LOBBY_H, W as LOBBY_W };
 
-/** Where a player should head next from the lobby, and the tags that label it. */
+/** Where a player should head next from the lobby. Mats (T / D / 1–3) are the signs — no floating labels. */
 export function lobbyGuide(floors: TowerFloor[]): {
   goal: { x: number; y: number } | null;
   tags: { x: number; y: number; text: string; endAt?: "x" }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
-  // Tutorial: guide dots only — the mint T mat is the sign.
   if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [] };
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
-  if (!next) return { goal: null, tags: [DAILY_TAG] };
+  if (!next) return { goal: null, tags: [] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];
-  // Numbered mats mark the elevators — no floating FLOOR N signs.
-  return { goal: { x, y: 2 }, tags: [DAILY_TAG] };
+  return { goal: { x, y: 2 }, tags: [] };
 }

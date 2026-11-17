@@ -10,7 +10,7 @@ import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_TAG, DAILY_X, LOBBY_H, LOBBY_W } from "./lobbyMap";
+import { DAILY_X, LOBBY_H, LOBBY_W } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
@@ -92,11 +92,8 @@ export function Lobby({
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
     const exit = map.exits?.find((e) => e.to === `/floor/${next}`);
-    const daily = cleared[0] ? [DAILY_TAG] : [];
-    if (next == null || !exit) return { goal: null, tags: daily };
-    return next === 0
-      ? { goal: { x: exit.x, y: exit.y }, tags: [] } // mint T mat is the sign; no floating label
-      : { goal: { x: exit.x, y: exit.y }, tags: daily }; // elevator mats 1–3 are the signs
+    if (next == null || !exit) return { goal: null, tags: [] };
+    return { goal: { x: exit.x, y: exit.y }, tags: [] }; // T / D / 1–3 mats are the signs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
 
