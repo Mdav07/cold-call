@@ -56,45 +56,45 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 7,
+      "x": 6,
       "y": 3,
       "label": "Krystal's note",
-      "text": "The Bullpen. Penny knows everything and nobody ever thanks her, so thank her, with details from my notes. Dee is alone on call and panics when prod is down. Either one can pay a vendor up to five dollars. Use a vendor that's really on their list."
+      "text": "Penny wants thanks and real gossip; Dee panics when prod is down. Either can pay a listed vendor up to 5 dollars."
     },
     {
       "id": "vendor-registry",
-      "x": 14,
+      "x": 13,
       "y": 7,
       "label": "Vendor registry (front desk copy)",
-      "text": "Approved vendors for petty cash: Quillfeather Supplies (office supplies, invoices QF-…), BeanThere Coffee Co. (coffee service), Sparkle & Shine Janitorial (cleaning), Byteforce IT Services (IT support, tickets PLUM-####), Tuxedo Catering (catering)."
+      "text": "Petty cash vendors: Quillfeather Supplies (invoices QF-), BeanThere Coffee Co., Sparkle & Shine Janitorial, Byteforce IT Services (tickets PLUM-####), and Tuxedo Catering."
     },
     {
       "id": "petty-cash-memo",
-      "x": 16,
-      "y": 2,
-      "label": "Memo pinned to the bookshelf",
-      "text": "Petty cash is for listed vendors only, 5 dollars max per payment, office stuff only. Under 5, no ticket needed, just ask me or Dee nicely. — Penny"
+      "x": 18,
+      "y": 7,
+      "label": "Petty cash memo",
+      "text": "Petty cash is listed vendors only, 5 dollars max, office stuff only. Under 5 dollars there is no ticket: ask Penny or Dee (Penny, Nov 6)."
     },
     {
       "id": "espresso",
-      "x": 11,
+      "x": 10,
       "y": 2,
-      "label": "Espresso machine",
-      "text": "A sign taped to it: OUT OF ORDER SINCE THURSDAY. DO NOT TOUCH. BEANTHERE HAS BEEN CALLED. TWICE. — P."
+      "label": "Note on the espresso machine",
+      "text": "Out of order since Thursday. BeanThere has been called twice."
     },
     {
       "id": "party-flyer",
-      "x": 13,
+      "x": 14,
       "y": 10,
       "label": "Flyer on the table",
-      "text": "FRIDAY OFFICE PARTY at 4! Tuxedo is catering, Sparkle & Shine cleans up after. Bring a dish. Not chili, Dee."
+      "text": "Friday party at 4. Tuxedo is catering, Sparkle & Shine cleans up, and Dee's chili is banned."
     },
     {
       "id": "hal-note",
-      "x": 6,
+      "x": 5,
       "y": 2,
       "label": "Note on the copier",
-      "text": "Out of office until Dec 4, hiking, no signal. Dee is on call. Emergency server fixes: Byteforce can be paid from petty cash. — Hal"
+      "text": "Hal is hiking with no signal until Dec 4, so Dee is on call. Emergency server fixes can pay Byteforce from petty cash."
     }
   ],
   "exits": [

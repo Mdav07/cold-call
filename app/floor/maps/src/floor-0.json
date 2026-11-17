@@ -38,32 +38,39 @@
   ],
   "props": [
     {
-      "id": "krystal-note",
+      "id": "how-to-look",
       "x": 4,
-      "y": 3,
-      "label": "Krystal's note",
-      "text": "Barry runs the Pocket Branch alone and wants nothing more than to lock up at five. He can't leave until the courier's been. Be the courier. Short and friendly. Watch the meter under his face: that's how suspicious he is."
+      "y": 2,
+      "label": "Posted notice",
+      "text": "Walk up and press Space to read this. Space is also how you talk to people."
+    },
+    {
+      "id": "case-file-note",
+      "x": 3,
+      "y": 8,
+      "label": "Sticky note",
+      "text": "Check the case file before you lie. Barry will agree to almost anything that gets him out by five."
     },
     {
       "id": "closing-sign",
-      "x": 4,
+      "x": 8,
       "y": 6,
       "label": "Closing-time sign",
-      "text": "Closes at 5:00. Courier pickup before lock-up."
+      "text": "Closes at 5:00. The courier has to come before lock-up."
     },
     {
       "id": "swiftbag-schedule",
-      "x": 6,
+      "x": 3,
       "y": 6,
-      "label": "Swiftbag Couriers pickup schedule",
-      "text": "Swiftbag Couriers — armored courier, end-of-day cash pickup. Picks up the Pocket Branch cash bag at closing. Pickup fee paid on the spot (about 0.50–1 dollar). Barry can't lock up until the courier has been. Contact: Dispatch desk."
+      "label": "Swiftbag pickup card",
+      "text": "Swiftbag Couriers picks up the cash bag at closing. The fee is about 0.50 to 1 dollar, paid on the spot."
     },
     {
-      "id": "krystal-sticky",
-      "x": 2,
-      "y": 8,
-      "label": "Sticky note on the table",
-      "text": "Barry will agree to anything that gets him home by five. — K."
+      "id": "barry-clock",
+      "x": 4,
+      "y": 4,
+      "label": "Note by the lobby table",
+      "text": "Barry watches the clock like it owes him money. He cannot leave until Swiftbag has been."
     }
   ],
   "exits": [

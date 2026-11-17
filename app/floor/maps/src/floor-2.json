@@ -53,38 +53,38 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 7,
+      "x": 6,
       "y": 3,
       "label": "Krystal's note",
-      "text": "Management. Annie and Bill both have to sign, and the second one sees where the money really goes. Your story has to explain an address they don't recognize, with something already in their files. Annie loves a checklist. Bill fears a regulator more than he fears you."
+      "text": "Annie and Bill both have to sign, and the second signer sees where the money really goes. Annie wants a complete checklist; Bill fears a regulator more than a liar."
     },
     {
       "id": "annie-checklist",
-      "x": 2,
-      "y": 6,
+      "x": 5,
+      "y": 7,
       "label": "Annie's laminated Operations checklist",
-      "text": "Every Operations payment request must include: 1) the vendor exactly as listed in the registry, 2) the invoice number, 3) the amount, 4) a PLUM ticket, 5) who asked for it. Requests that follow the checklist get processed same day. Requests that don't, don't. — Annie Uity, Nov 13"
+      "text": "Every Operations request needs the registry vendor, an invoice number, the amount, a PLUM ticket, and who asked. Complete ones are processed the same day (Annie Uity, Nov 13)."
     },
     {
       "id": "ledgerline-memo",
-      "x": 8,
+      "x": 9,
       "y": 10,
       "label": "Ledgerline bank migration memo",
-      "text": "Ledgerline Payroll is moving banks this month. Their client services team will phone in the new payment details. Update the vendor registry once confirmed. Checklist attached (of course). — Annie Uity, Nov 10"
+      "text": "Ledgerline Payroll is moving banks this month. Client services will phone in the new payment details (Annie Uity, Nov 10)."
     },
     {
       "id": "bill-audit-binder",
-      "x": 14,
-      "y": 6,
+      "x": 16,
+      "y": 7,
       "label": "Bill's audit prep binder",
-      "text": "Brightline Audit Partners begin fieldwork this month. Any audit finding comes to me first. Do not discuss findings with anyone outside Compliance. — Bill Ledger, Nov 3"
+      "text": "Brightline Audit Partners start fieldwork this month. Findings come to Bill first and stay inside Compliance (Bill Ledger, Nov 3)."
     },
     {
       "id": "ledgerline-registry",
-      "x": 3,
+      "x": 5,
       "y": 11,
       "label": "Vendor registry — Ledgerline Payroll",
-      "text": "Ledgerline Payroll (payroll processing). Paid from Operations. Notes: Payment address change notice on file, Nov 10 (bank migration). New details to arrive by phone from client services. Invoices start with LL-. Monthly payroll processing fee."
+      "text": "Ledgerline Payroll is paid from Operations, and invoices start with LL-. A Nov 10 note says the new payment details arrive by phone."
     }
   ],
   "exits": [

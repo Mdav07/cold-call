@@ -57,35 +57,35 @@
   "props": [
     {
       "id": "krystal-note",
-      "x": 8,
+      "x": 7,
       "y": 3,
       "label": "Krystal's note",
-      "text": "The executive suite. This is where I got close. The Treasury won't pay anyone who isn't on its allowlist, and getting added takes both executives and a security wait. Cassius is terrified of Dame Prudence. Max will sign anything that sounds exclusive. You'll need to call them more than once."
+      "text": "Cassius is terrified of Dame Prudence Vault. Max will sign anything that sounds exclusive and makes him look visionary."
     },
     {
       "id": "oakhaven-memo",
       "x": 3,
-      "y": 4,
-      "label": "Memo on Cassius's desk (Oct 30)",
-      "text": "From Cassius Flow to the Executive Suite: Dame Prudence Vault has introduced Oakhaven Advisory as a board advisor. Onboarding to follow. Nobody pays them until they are on the Treasury allowlist."
+      "y": 3,
+      "label": "Memo above Cassius's desk",
+      "text": "Dame Prudence Vault introduced Oakhaven Advisory as a board advisor. Nobody pays them until they are on the Treasury allowlist (Cassius Flow, Oct 30)."
     },
     {
       "id": "prudence-portrait",
-      "x": 1,
+      "x": 2,
       "y": 2,
       "label": "Framed portrait",
-      "text": "Dame Prudence Vault, Chair of the Risk Committee. The frame is heavier than it looks."
+      "text": "Dame Prudence Vault, Chair of the Risk Committee."
     },
     {
       "id": "max-calendar",
       "x": 18,
-      "y": 4,
+      "y": 3,
       "label": "Max's calendar",
-      "text": "Wednesday: Golf with investors. Friday: Yacht photo shoot."
+      "text": "Wednesday: golf with investors. Friday: yacht photo shoot."
     },
     {
       "id": "treasury-plaque",
-      "x": 17,
+      "x": 16,
       "y": 10,
       "label": "Brass plaque",
       "text": "Treasury payments go only to allowlisted recipients. New recipients wait out a security delay."
