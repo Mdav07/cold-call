@@ -7,22 +7,52 @@
 import { useEffect, useRef, useState } from "react";
 
 /** Play/pause for one memo. Used on its own by the floor briefing. */
-export function MemoPlayButton({ title, audio }: { title: string; audio: string }) {
+export function MemoPlayButton({
+  title,
+  audio,
+  onTime,
+  onPlayingChange,
+}: {
+  title: string;
+  audio: string;
+  /** Fires while the clip plays so a multi-page transcript can follow along. */
+  onTime?: (current: number, duration: number) => void;
+  onPlayingChange?: (playing: boolean) => void;
+}) {
   const ref = useRef<HTMLAudioElement | null>(null);
+  const onTimeRef = useRef(onTime);
+  const onPlayingRef = useRef(onPlayingChange);
   const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    onTimeRef.current = onTime;
+    onPlayingRef.current = onPlayingChange;
+  });
 
   useEffect(() => () => ref.current?.pause(), []);
 
+  const setPlay = (next: boolean) => {
+    setPlaying(next);
+    onPlayingRef.current?.(next);
+  };
+
   const toggle = () => {
     if (!ref.current) {
-      ref.current = new Audio(`/audio/${audio}`);
-      ref.current.onended = () => setPlaying(false);
+      const el = new Audio(`/audio/${audio}`);
+      el.ontimeupdate = () => {
+        if (!ref.current) return;
+        onTimeRef.current?.(ref.current.currentTime, ref.current.duration || 0);
+      };
+      el.onended = () => setPlay(false);
+      ref.current = el;
     }
     if (playing) {
       ref.current.pause();
-      setPlaying(false);
+      setPlay(false);
     } else {
-      ref.current.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+      // Fresh press from the start: tell the parent so it can reset the page.
+      if (ref.current.currentTime < 0.05) onTimeRef.current?.(0, ref.current.duration || 0);
+      ref.current.play().then(() => setPlay(true)).catch(() => setPlay(false));
     }
   };
 

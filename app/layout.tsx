@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
+import { Geist_Mono, IBM_Plex_Sans, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import "./play/play.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// The one secondary font, used for running text everywhere (case file included); the pixel font does the rest.
+const bodySans = IBM_Plex_Sans({
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
@@ -24,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${pixel.variable} h-full antialiased`}
+      className={`${bodySans.variable} ${geistMono.variable} ${pixel.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

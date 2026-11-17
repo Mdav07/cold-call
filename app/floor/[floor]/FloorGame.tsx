@@ -27,6 +27,7 @@ export function FloorGame({
   defaultCover,
   vault,
   gate,
+  unlockedFloors,
 }: {
   map: FloorMap;
   npcs: NpcInfo[];
@@ -35,6 +36,8 @@ export function FloorGame({
   vault: ReactNode;
   /** Server-rendered lock screen (null when the floor is open). */
   gate: ReactNode;
+  /** Floors the player has open — drives the case-file filter chips. */
+  unlockedFloors: number[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState<Open>(null);
@@ -197,7 +200,7 @@ export function FloorGame({
 
       <MusicToggle track={`music-floor-${map.floor}.mp3`} />
       {briefing && <Briefing floor={map.floor} floorName={map.name} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} />}
-      {caseFile && <CaseFileOverlay floor={map.floor} onClose={() => setCaseFile(false)} />}
+      {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} onClose={() => setCaseFile(false)} />}
       {gate}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
     </main>

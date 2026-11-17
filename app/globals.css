@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -21,13 +21,13 @@
 
 /*
  * Two fonts, the same on every page: the pixel font (--font-pixel, Press Start 2P) for headings,
- * labels, buttons and the HUD; Geist Sans for running text, so long passages stay readable.
+ * labels, buttons and the HUD; IBM Plex Sans (--font-body) for running text, case file included.
  * The body uses the game's backdrop so no white or black shows around a page.
  */
 body {
   background: #2b2a33;
   color: #f2efe6;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 
 h1,
