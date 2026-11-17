@@ -9,6 +9,8 @@ import company from "@/content/plumpurse/company.json";
 import { db } from "@/server/chain/db";
 import { contractFor } from "@/server/game/daily";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
+import { dailyBoard } from "@/server/game/dailyBoard";
+import { DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
 
 const FLOORS = [0, 1, 2, 3] as const;
 const PER_FLOOR = 20;
@@ -140,12 +142,16 @@ function RivalLadder({ ladder, best }: { ladder: Rival[]; best: number | null })
 async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard">["searchParams"] }) {
   await connection(); // today's contract depends on the current date, so render per request
   const { floor: raw, channel: rawChannel } = await searchParams;
+  // "daily" is the Daily Case tab: today's case, its own board, no rival crews.
+  const isDaily = raw === "daily";
   const floor = FLOORS.includes(Number(raw) as (typeof FLOORS)[number]) ? Number(raw) : 1;
   // Spec decision 19: a voice/chat filter. A run that used voice at all counts as voice.
   const channel = rawChannel === "voice" || rawChannel === "chat" ? rawChannel : "all";
-  const href = (f: number, c: string) => `/leaderboard?floor=${f}${c === "all" ? "" : `&channel=${c}`}`;
+  const href = (f: number | "daily", c: string) => `/leaderboard?floor=${f}${c === "all" ? "" : `&channel=${c}`}`;
+  const tab: number | "daily" = isDaily ? "daily" : floor;
 
-  const [contract, board, streaks] = await Promise.all([
+  const today = dailyCase(todayUtc());
+  const [contract, board, streaks, todaysBoard] = await Promise.all([
     contractFor(),
     db()
       .from("leaderboard")
@@ -158,7 +164,20 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .gt("longest", 0)
       .order("longest", { ascending: false })
       .limit(10),
+    isDaily ? dailyBoard(today.date, PER_FLOOR) : Promise.resolve([]),
   ]);
+  // The Daily Case board's rows, in the floor boards' shape (one per player, fastest first).
+  const dailyRows: Row[] = todaysBoard
+    .filter((r) => channel === "all" || r.channel === channel)
+    .map((r, i) => ({
+      user_id: `${r.name}-${i}`,
+      display_name: r.name,
+      floor: DAILY_FLOOR,
+      channel: r.channel,
+      duration_ms: r.ms,
+      tx_hash: r.tx,
+      daily_contract_id: null,
+    }));
   const rows = ((board.data ?? []) as Row[]).filter((r) => channel === "all" || r.channel === channel);
   const daily = contract ? bestPerPlayer(rows.filter((r) => r.daily_contract_id === contract.id)).slice(0, 10) : [];
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
@@ -195,18 +214,27 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
               href={href(n, channel)}
               replace
               scroll={false}
-              aria-current={n === floor ? "page" : undefined}
-              className={n === floor ? "pixel-button" : `pixel-button ${OFF}`}
+              aria-current={n === tab ? "page" : undefined}
+              className={n === tab ? "pixel-button" : `pixel-button ${OFF}`}
             >
               {n === 0 ? "Tutorial" : `Floor ${n}`}
             </Link>
           ))}
+          <Link
+            href={href("daily", channel)}
+            replace
+            scroll={false}
+            aria-current={isDaily ? "page" : undefined}
+            className={isDaily ? "pixel-button" : `pixel-button ${OFF}`}
+          >
+            Daily
+          </Link>
         </nav>
         <nav aria-label="Channel" className="flex flex-wrap items-center gap-2">
           {(["all", "voice", "chat"] as const).map((c) => (
             <Link
               key={c}
-              href={href(floor, c)}
+              href={href(tab, c)}
               replace
               scroll={false}
               aria-current={c === channel ? "page" : undefined}
@@ -218,9 +246,28 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             </Link>
           ))}
         </nav>
-        <p className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(floor)}</p>
-        <RivalLadder ladder={ladder} best={best} />
-        <Board rows={floorRows} rivals={ladder} empty="No breaches on this floor yet. Be the first." />
+        {isDaily ? (
+          <>
+            <div className="flex flex-col gap-1">
+              <p className="font-pixel text-[10px] text-[var(--cc-accent)]">
+                Daily Case · {today.title}
+              </p>
+              <p className="font-pixel text-[9px] leading-relaxed text-[var(--cc-muted)]">
+                {today.date} · {today.employee.name}, {today.employee.title.toLowerCase()} · {today.place}
+              </p>
+            </div>
+            <Board rows={dailyRows} empty="Nobody has cracked today's case yet. Be the first." />
+            <Link href="/daily" className="pixel-button self-start">
+              Play today&apos;s case ▶
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(floor)}</p>
+            <RivalLadder ladder={ladder} best={best} />
+            <Board rows={floorRows} rivals={ladder} empty="No breaches on this floor yet. Be the first." />
+          </>
+        )}
       </section>
 
       <section aria-labelledby="streaks" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
