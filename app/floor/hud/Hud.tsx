@@ -43,6 +43,7 @@ export function Hud({
   finalMs,
   vault,
   onTower,
+  onCaseFile,
 }: {
   floorName: string;
   startedAt: number | null;
@@ -50,6 +51,7 @@ export function Hud({
   vault: ReactNode;
   /** Leave through the elevator instead of a hard page jump. */
   onTower?: () => void;
+  onCaseFile?: () => void;
 }) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
@@ -67,6 +69,11 @@ export function Hud({
         <span>{floorName}</span>
         <RunClock startedAt={startedAt} finalMs={finalMs} />
         {vault}
+        {onCaseFile && (
+          <button type="button" onClick={onCaseFile} className="text-[var(--cc-accent)]" title="Open the case file">
+            CASE FILE
+          </button>
+        )}
         <MuteToggle />
       </div>
     </div>

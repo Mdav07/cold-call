@@ -32,6 +32,8 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat || typing(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+      // An open modal (case file, evidence) owns the keyboard.
+      if (document.querySelector("[aria-modal=true]")) return;
       const list = ref.current;
       const move = (d: number) => {
         e.preventDefault();

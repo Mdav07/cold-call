@@ -35,7 +35,7 @@ function markBriefed(floor: number) {
   }
 }
 
-export function Briefing({ floor, onStart }: { floor: number; onStart: () => void }) {
+export function Briefing({ floor, onStart, onCaseFile }: { floor: number; onStart: () => void; onCaseFile: () => void }) {
   const startRef = useRef<HTMLButtonElement>(null);
   useEffect(() => startRef.current?.focus(), []);
   const b = briefingFor(floor);
@@ -87,9 +87,9 @@ export function Briefing({ floor, onStart }: { floor: number; onStart: () => voi
           <button ref={startRef} type="button" className="pixel-button" onClick={start}>
             Start
           </button>
-          <a href="/casefile" target="_blank" rel="noopener" className="pixel-button">
+          <button type="button" className="pixel-button" onClick={onCaseFile}>
             Case file
-          </a>
+          </button>
         </div>
       </section>
     </div>

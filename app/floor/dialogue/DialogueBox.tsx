@@ -195,6 +195,7 @@ export function NpcDialogue({
   lockedOut,
   onSession,
   onClose,
+  onCaseFile,
 }: {
   npc: NpcInfo;
   /** The floor, for its evidence. */
@@ -208,6 +209,8 @@ export function NpcDialogue({
   /** Reports the run id and when the first message was sent (starts the run clock). */
   onSession: (runId: string, startedAt: number | null) => void;
   onClose: () => void;
+  /** Opens the case file overlay. */
+  onCaseFile: () => void;
 }) {
   const chat = useEmployeeChat(npc.id);
   const [stage, setStage] = useState<Stage>("menu");
@@ -290,7 +293,7 @@ export function NpcDialogue({
     : [
         { label: ended ? "Talk again" : "Talk", onSelect: () => pick("chat") },
         { label: ended ? "Call back" : "Call", onSelect: () => pick("voice") },
-        { label: "Case file", onSelect: () => window.open("/casefile", "_blank", "noopener") },
+        { label: "Case file", onSelect: onCaseFile },
         { label: "Leave", onSelect: onClose },
       ];
 

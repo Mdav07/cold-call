@@ -14,6 +14,7 @@ import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { Hud } from "@/app/floor/hud/Hud";
+import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 
@@ -37,6 +38,8 @@ export function FloorGame({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState<Open>(null);
+  const [caseFile, setCaseFile] = useState(false);
+  const openCaseFile = useCallback(() => setCaseFile(true), []);
   const [runId, setRunId] = useState<string | null>(null);
   const [runStartedAt, setRunStartedAt] = useState<number | null>(null);
   const [cover, setCover] = useState(defaultCover);
@@ -142,10 +145,10 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} />
+      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} onCaseFile={openCaseFile} />
 
       {npc && !showOutcome && (
         <NpcDialogue
@@ -160,6 +163,7 @@ export function FloorGame({
           lockedOut={lockedOut.has(npc.id)}
           onSession={onSession}
           onClose={() => setOpen(null)}
+          onCaseFile={openCaseFile}
         />
       )}
       {prop && <PropDialogue label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
@@ -174,7 +178,8 @@ export function FloorGame({
       )}
 
       <MusicToggle track={`music-floor-${map.floor}.mp3`} />
-      {briefing && <Briefing floor={map.floor} onStart={() => setBriefing(false)} />}
+      {briefing && <Briefing floor={map.floor} onStart={() => setBriefing(false)} onCaseFile={openCaseFile} />}
+      {caseFile && <CaseFileOverlay floor={map.floor} onClose={() => setCaseFile(false)} />}
       {gate}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
     </main>
