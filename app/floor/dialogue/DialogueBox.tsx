@@ -13,6 +13,7 @@ import { useTypewriter } from "./useTypewriter";
 import { Choices, type Choice } from "./Choices";
 import { ProposalPanel, SuspicionMeter, clock, moodFor } from "./parts";
 import { blip, voicePitch } from "@/app/floor/hud/sound";
+import { DEFAULT_THEME, themeFor, themeVars, type BoxTheme } from "./themes";
 import { EvidenceDrawer, evidenceForFloor, type EvidenceItem } from "@/app/play/EvidenceDrawer";
 
 export interface NpcInfo {
@@ -52,9 +53,12 @@ function Frame({
   portrait,
   side,
   above,
+  theme = DEFAULT_THEME,
   children,
 }: {
   name: string;
+  /** The speaker's colours (see themes.ts). */
+  theme?: BoxTheme;
   portrait?: ReactNode;
   side?: ReactNode;
   above?: ReactNode;
@@ -65,16 +69,26 @@ function Frame({
     <div
       data-dialogue-box
       className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4"
-      style={keyboard ? { bottom: keyboard } : undefined}
+      style={{ ...themeVars(theme), ...(keyboard ? { bottom: keyboard } : {}) }}
     >
       {above && <div className="mx-auto mb-5 max-w-4xl">{above}</div>}
       <div className="relative mx-auto max-w-4xl">
-        <p className="pixel-frame absolute -top-4 left-4 z-10 bg-[var(--cc-accent)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]">
+        <p
+          className="absolute -top-4 left-4 z-10 border-2 bg-[var(--cc-tag)] px-3 py-1 font-pixel text-[10px] text-[var(--cc-edge)]"
+          style={{ borderColor: "var(--cc-border)", boxShadow: "3px 3px 0 0 var(--cc-edge)" }}
+        >
           {name}
         </p>
-        <div className="pixel-frame flex gap-3 bg-[var(--cc-dialog)] p-3 pt-5 sm:gap-4 sm:p-4 sm:pt-6">
+        <div
+          className="flex gap-3 border-[3px] bg-[var(--cc-dialog)] p-3 pt-5 sm:gap-4 sm:p-4 sm:pt-6"
+          style={{
+            borderColor: "var(--cc-border)",
+            boxShadow: "inset 0 0 0 3px var(--cc-dialog), inset 0 0 0 5px var(--cc-border), 4px 4px 0 0 var(--cc-edge)",
+          }}
+        >
           {portrait && (
             <div
+              style={{ borderColor: "var(--cc-border)" }}
               className={`pixel-frame grid h-16 w-16 shrink-0 place-items-center overflow-hidden bg-[var(--cc-portrait)] sm:h-28 sm:w-28 [&>svg]:h-full [&>svg]:w-full ${keyboard ? "hidden" : SHORT}`}
             >
               {portrait}
@@ -301,6 +315,7 @@ export function NpcDialogue({
     <>
       <Frame
         name={npc.name}
+        theme={themeFor(npc.id)}
         portrait={Art ? <Art mood={moodFor(suspicion)} /> : <span className="font-pixel text-xl">{first[0]}</span>}
         side={side}
         above={
