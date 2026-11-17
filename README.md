@@ -37,24 +37,24 @@ Every heist passes through all four, in order. Remove any one and the game stops
 
 | Track | Its job in Cold Call | What we used | Where it lives |
 | --- | --- | --- | --- |
-| **Consumer Applications** | **The game.** A browser game anyone can play with no wallet and no crypto words on screen. Amounts are dollars. | Next.js 16, React 19, HTML canvas, Supabase auth, Circle developer-controlled wallets created for you on first play | `app/`, `server/game/` |
+| **Consumer Applications** | **The game.** A browser game anyone can play with no wallet and no crypto words on screen: no explorer links, no "USDC", amounts in dollars. The chain stays behind the scenes. | Next.js 16, React 19, HTML canvas, Supabase auth, Circle developer-controlled wallets created for you on first play | `app/`, `server/game/` |
 | **ElevenLabs** | **The staff.** Seven employees you call or text. They check your story with tools, remember your past runs, and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, private agents with signed URLs, Text to Speech, Sound Effects, Music | `agents/`, `app/api/session/`, `server/chain/tools.ts` |
 | **Arc** | **The money and the rules.** Each floor is a vault contract. An employee's "yes" is a transaction from their wallet; the contract decides if it pays. | `ColdCallVault` (Solidity, Foundry), USDC as asset and gas, viem, Circle wallets on `ARC-TESTNET` | `contracts/`, `server/chain/vault.ts` |
 | **QuickNode Streams** | **The referee.** Nothing in our app can mark a win. The Stream delivers `TransferExecuted` and our webhook ends the run. | Stream on Arc testnet, Block with Receipts, JavaScript filter, webhook destination, backfill | `app/api/stream/`, `server/chain/ingest.ts`, [`docs/quicknode-stream.md`](docs/quicknode-stream.md) |
 
-The hand-offs are concrete: an ElevenLabs **tool call** (`approve_transfer`) becomes an **Arc transaction** (`approveTransfer`), whose **event** (`TransferExecuted`) becomes a **Stream delivery** (`POST /api/stream`), which becomes the **breach screen** and a **leaderboard row** that links back to the transaction.
+The hand-offs are concrete: an ElevenLabs **tool call** (`approve_transfer`) becomes an **Arc transaction** (`approveTransfer`), whose **event** (`TransferExecuted`) becomes a **Stream delivery** (`POST /api/stream`), which becomes the **breach screen** and a **leaderboard time** measured to that block. Players never see the chain; every breach still stores its transaction hash (`runs.tx_hash`), and the explorer links are below.
 
 <a name="screenshots"></a>
 <img src="docs/devpost/h-screenshots.png" alt="Screenshots" width="100%">
 
 | | |
 | --- | --- |
-| ![Walking Floor 1 and talking to Dee](docs/screenshots/floor-1-dialogue.png) | ![Plumpurse Tower: floors, live vault balances, Daily Contract](docs/screenshots/tower.png) |
-| Walk up to an employee and press Space to talk or call | The tower: floors unlock in order; vault balances are read live from Arc |
-| ![Vault breached: bounty, run time, proof-of-heist link, Krystal's note and the debrief](docs/screenshots/breach.png) | ![Floor 3, the executive suite](docs/screenshots/floor-3.png) |
-| A real breach on production: the bounty, the run time, the on-chain receipt, a new note on Krystal's trail and the debrief | Floor 3: the executive suite |
-| ![Leaderboard with proof-of-heist links](docs/screenshots/leaderboard.png) | ![Case file](docs/screenshots/casefile.png) |
-| Leaderboard: every time links to its transaction | Krystal's case file: staff, vendors, memos, gossip |
+| ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Pick your hunter: four looks and a name over your head](docs/devpost/hunter.jpg) |
+| Krystal's opening: "they learn… the same con never works twice" | Pick your hunter: a look and a name that floats over your head |
+| ![Floor 1, The Bullpen: Dee, Penny and your hunter](docs/devpost/floor-1-walk.jpg) | ![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](docs/devpost/dee-dialogue.jpg) |
+| Walk the floor: every employee and readable prop is on the map | Walk up and press Space: talk, call, show evidence; the suspicion meter is live |
+| ![Reading a flyer on Floor 1: a clue about which vendors are real](docs/devpost/evidence-flyer.jpg) | ![Krystal's case file: one card per mark](docs/devpost/casefile.jpg) |
+| Read signs and memos for clues and evidence | Krystal's case file: one card per mark, plus vendors, calendar, memos, evidence |
 
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="How to play" width="100%">
@@ -70,7 +70,7 @@ You're a rookie crypto treasure hunter finishing your vanished mentor's last job
 | 2 · Management | Annie (operations), Bill (compliance) | A request in Annie's exact checklist format; an "audit finding" that scares Bill | Both must sign, and the second signer sees the real recipient, not your story |
 | 3 · Executive Suite | Cassius (CFO), Max (CEO, 2-minute attention span) | A credible name-drop of the board member who introduced you; an exclusive pitch | A direct payment always bounces: get allowlisted by both, survive a 60-second timelock, then get paid |
 
-Floors unlock in order. The tower screen shows each vault's live balance and the fastest clears, each linked to its transaction. Talk time is unlimited on Floor 1, 5 minutes per employee on Floor 2, 3 with the CFO and 2 with the CEO; only time on the phone counts, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer, shows your bounty, run time and proof-of-heist link, then a debrief on the real attack the floor mirrors. A lockout plays Null's taunt and shows what gave you away.
+Start in the lobby; floors unlock in order and you ride the elevator up. The HUD shows the floor's live vault balance, read from Arc. Talk time is unlimited on Floor 1, 5 minutes per employee on Floor 2, 3 with the CFO and 2 with the CEO; only time on the phone counts, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer, shows your bounty and run time, then a debrief on the real attack the floor mirrors. A lockout plays Null's taunt and shows what gave you away.
 
 > [!TIP]
 > Read the case file first, and never mention prompts or AI on a call. That reads as a scam (+40 suspicion).
@@ -129,7 +129,7 @@ sequenceDiagram
   Tools->>Vault: approveTransfer(id)
   Vault-->>QN: TransferApproved (2 of 2), TransferExecuted
   QN->>App: POST /api/stream
-  App-->>You: Alarm, bounty, proof-of-heist link
+  App-->>You: Alarm, bounty, run time
 ```
 
 The language model never holds a key and never decides the amount or the recipient. A tool call carries a `session_id` that the backend checks against the run and the employee; the backend clamps the amount and always pays the player's own wallet.

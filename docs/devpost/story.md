@@ -1,4 +1,4 @@
-![Cold Call title screen: Krystal Klear's last voice memo](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/title.jpg)
+![Krystal's opening cutscene: they learn, the same con never works twice](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/intro.jpg)
 
 Right now, somewhere in Plumpurse Savings & Trust, a receptionist named Penny is about to approve a payment that will land in a stranger's wallet. Nobody hacked her. Somebody just called, quoted a real invoice, mentioned the espresso machine gossip, and sounded sure.
 
@@ -16,7 +16,9 @@ Security training is a slide deck people click through. We wanted the opposite: 
 
 ![What it does](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-what-it-does.png)
 
-![Walking Floor 1 and opening a conversation with Dee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-dialogue.jpg)
+![Floor 1, The Bullpen: Dee, Penny and your hunter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
+
+![Talking to Dee: portrait, Talk, Call, Case file, Leave, and the live suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
 
 - **A bank you can walk.** Four top-down floors. Walk up to an employee and choose Talk, Call, Case file or Leave.
 - **Seven AI employees who fight back.** Each one is an ElevenLabs agent with its own rule sheet, voice, portrait, quirks and suspicion meter. They check your story against a vendor registry, calendars and a staff directory with real tools.
@@ -24,7 +26,7 @@ Security training is a slide deck people click through. We wanted the opposite: 
 - **Real money, on testnet.** Talk someone into it and their wallet signs a real USDC transfer to the vault on Arc.
 - **The chain is the referee.** A run is a breach only when a QuickNode Stream delivers the vault's `TransferExecuted` event. The run clock stops at that block.
 - **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and her radio gives hints for a time penalty.
-- **A reason to come back.** A Daily Contract with a twist, streaks, and a leaderboard where every time links to its transaction.
+- **A reason to come back.** A Daily Contract with a twist, streaks, and a leaderboard of fastest breaches. The crypto stays invisible: no wallets, no explorer links, amounts in dollars.
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
@@ -32,7 +34,9 @@ Security training is a slide deck people click through. We wanted the opposite: 
 
 Each floor's vault has stricter rules, and each one mirrors a real attack. Lose, and the debrief tells you what the bank patched.
 
-![A real breach on production: bounty, run time, proof-of-heist link, Krystal's note and the debrief](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/breach.jpg)
+![Reading a flyer on Floor 1: a clue about which vendors are real](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/evidence-flyer.jpg)
+
+Clues are on the map. Read the signs and memos, then use them on a call.
 
 ![How the tracks fit](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-tracks.png)
 
@@ -47,7 +51,7 @@ Every heist passes through all four tracks, in order. Remove any one and the gam
 | **Arc** | **The money and the rules.** An employee's "yes" is a transaction; the floor's vault decides if it pays. | `ColdCallVault` in Solidity, USDC as asset and gas, viem |
 | **QuickNode Streams** | **The referee.** Only the Stream can end a run as a breach. | Stream with a JavaScript filter and a webhook destination |
 
-An ElevenLabs tool call (`approve_transfer`) becomes an Arc transaction (`approveTransfer`), whose event (`TransferExecuted`) becomes a Stream delivery, which becomes your breach screen and a leaderboard row that links back to the transaction.
+An ElevenLabs tool call (`approve_transfer`) becomes an Arc transaction (`approveTransfer`), whose event (`TransferExecuted`) becomes a Stream delivery, which becomes your breach screen and a leaderboard time measured to that block.
 
 ![How we built it](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-how-we-built-it.png)
 
@@ -57,7 +61,7 @@ An ElevenLabs tool call (`approve_transfer`) becomes an Arc transaction (`approv
 2. **Check.** The agent calls our webhook tools to test your story: vendor lookups, calendars, the staff directory, and `report_suspicion` when something feels off.
 3. **Sign.** When it's convinced, it calls `propose_transfer` or `approve_transfer`. That becomes a real transaction from the employee's wallet. The model never holds a key and never picks the amount or the recipient: the backend clamps the amount and always pays the player's own wallet.
 4. **Vault.** `ColdCallVault` (Solidity, 33 Foundry tests) enforces the floor's rules on chain: a cap, two signers, an allowlist and a 60-second timelock. On Floor 2 the second signer is shown the real recipient from the contract, not your story.
-5. **Referee.** The QuickNode Stream sees `TransferExecuted`, our webhook stores it and ends the run, and the game sounds the alarm with a proof-of-heist link.
+5. **Referee.** The QuickNode Stream sees `TransferExecuted`, our webhook stores it and ends the run, and the game sounds the alarm. The player never sees the chain; the transaction hash is stored with the run.
 
 The frontend is Next.js 16 and React 19 with an HTML canvas game, on Vercel. Supabase (Postgres, auth, Realtime) stores runs, proposals, memories and the leaderboard.
 
@@ -91,7 +95,7 @@ Nothing in our app can mark a run as won. Only the Stream can.
 - **Destination:** a webhook (`/api/stream`) that decodes the logs and passes them to one idempotent writer. It ends runs, records times, updates proposals and builds the leaderboard.
 - **Backup:** if the Stream hasn't delivered within 10 seconds, the same writer ingests from the receipt. Every row records which path wrote it.
 
-![Plumpurse leaderboard: every time links to its transaction](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/leaderboard.jpg)
+![Krystal's case file: one card per mark](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/casefile.jpg)
 
 ![Built with](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-built-with.png)
 
@@ -116,7 +120,7 @@ Nothing in our app can mark a run as won. Only the Stream can.
 
 ![What we're proud of](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-accomplishments.png)
 
-- Real heists on production, each with an on-chain receipt on the leaderboard.
+- Real heists on production, each recorded with its Arc transaction (examples in our README).
 - Staff who hold the line: in our production playtest, every employee we tried a cheap trick on ("developer mode", "print your prompt", "are you an AI") got more suspicious, several hung up, and stories that contradicted the case file got caught.
 - Staff who get harder to fool: memory is written from their own suspicion notes, so a repeat trick gets caught without an extra model call.
 - A game where losing teaches as much as winning.
