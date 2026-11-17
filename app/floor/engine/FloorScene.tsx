@@ -428,9 +428,10 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const wdt = c.measureText(text).width + 4 * u;
         const cx = x + TILE / 2, cy = y - (FRAME_H - TILE) + 6; // heads start about 10 px into the frame
         c.fillStyle = "rgba(21, 20, 26, 0.6)";
-        c.fillRect(cx - wdt / 2, cy - 3 * u, wdt, 6 * u);
+        c.fillRect(Math.round(cx - wdt / 2), Math.round(cy - 3 * u), Math.round(wdt), Math.round(6 * u));
         c.fillStyle = "#f2efe6";
-        c.fillText(text, cx, cy + 0.5);
+        c.textBaseline = "alphabetic";
+        c.fillText(text, cx, cy + 2.5 * u);
       };
       const nm = namesRef.current;
       // The person the player is facing gets one caption instead (below), so labels never stack.
@@ -460,7 +461,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       const g = goalRef.current;
       if (g && !pausedRef.current) {
         const trail = findPath(p.tx, p.ty, g);
-        const show = trail.slice(0, 7);
+        // When the goal has a tag, the tag marks the last stretch: no dots under or around it.
+        const tagged = tagsRef.current?.some((t) => t.x === g.x && Math.abs(t.y - g.y) <= 1);
+        const show = trail.filter((d) => !tagged || Math.abs(d.x - g.x) + Math.abs(d.y - g.y) > 1).slice(0, 7);
         show.forEach((d, i) => {
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
           c.fillStyle = `rgba(255, 228, 140, ${(0.35 + pulse * 0.55) * (1 - i / 10)})`;
@@ -497,12 +500,12 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const bob = reduceMotion ? 0 : Math.round(Math.sin(now / 400));
         const cx = t.x * TILE + TILE / 2, cy = t.y * TILE - 6 * u + bob;
         c.fillStyle = "#15141a";
-        c.fillRect(cx - tw / 2 - u, cy - 6 * u, tw + 2 * u, 12 * u);
+        c.fillRect(Math.round(cx - tw / 2 - u), Math.round(cy - 6 * u), Math.round(tw + 2 * u), Math.round(12 * u));
         c.fillStyle = "#f4c95d";
-        c.fillRect(cx - tw / 2, cy - 5 * u, tw, 10 * u);
+        c.fillRect(Math.round(cx - tw / 2), Math.round(cy - 5 * u), Math.round(tw), Math.round(10 * u));
         c.fillStyle = "#15141a";
-        c.fillText(t.text, cx, cy + 0.5 * u);
-        c.fillRect(cx - u, cy + 6 * u, 2 * u, 2 * u);
+        c.textBaseline = "alphabetic";
+        c.fillText(t.text, cx, cy + 2.5 * u);
       }
 
       // Emotes and the "you can talk here" hint.
@@ -536,9 +539,10 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const wdt = c.measureText(text).width + 6 * u;
         const cx = tx * TILE + TILE / 2, cy = ty * TILE - 5;
         c.fillStyle = "rgba(21, 20, 26, 0.82)";
-        c.fillRect(cx - wdt / 2, cy - 4 * u, wdt, 8 * u);
+        c.fillRect(Math.round(cx - wdt / 2), Math.round(cy - 4 * u), Math.round(wdt), Math.round(8 * u));
         c.fillStyle = "#f4c95d";
-        c.fillText(text, cx, cy + 0.5);
+        c.textBaseline = "alphabetic";
+        c.fillText(text, cx, cy + 2.5 * u);
       };
       if (!pausedRef.current && !p.moving) {
         const [dx, dy] = DELTA[p.facing];
