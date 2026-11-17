@@ -88,7 +88,7 @@ export function MusicToggle({ track }: { track: string }) {
     <button
       type="button"
       onClick={toggle}
-      className="pixel-button fixed top-3 right-3 z-50 px-2 py-1 text-sm"
+      className="pixel-button fixed right-3 top-3 z-50 grid size-9 place-items-center !p-0 text-sm sm:right-4 sm:top-4"
       aria-label={on ? "Mute music" : "Play music"}
       aria-pressed={on}
       title={on ? "Music on" : "Music off"}

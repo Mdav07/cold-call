@@ -193,6 +193,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             <Link
               key={n}
               href={href(n, channel)}
+              replace
+              scroll={false}
               aria-current={n === floor ? "page" : undefined}
               className={n === floor ? "pixel-button" : `pixel-button ${OFF}`}
             >
@@ -205,6 +207,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             <Link
               key={c}
               href={href(floor, c)}
+              replace
+              scroll={false}
               aria-current={c === channel ? "page" : undefined}
               className={`border-2 border-[var(--cc-edge)] px-2.5 py-1.5 font-pixel text-[9px] ${
                 c === channel ? "bg-[var(--cc-ink)] text-[var(--cc-edge)]" : "bg-[var(--cc-panel-2)] text-[var(--cc-ink)] hover:bg-[var(--cc-portrait)]"
