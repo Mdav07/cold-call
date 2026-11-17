@@ -24,7 +24,8 @@ async function signedUrl(): Promise<string> {
 }
 
 // SESSION_URL=http://localhost:3000 uses the app's real /api/session (real run + conversation
-// rows, so the server tools pass their checks). Without it, ids are fake (persona tests only).
+// rows, so the server tools pass their checks). RUN_ID=... continues a run (call the floor-mate).
+// COVER=... sets the cover story. Without SESSION_URL, ids are fake (persona tests only).
 const SESSION_URL = process.env.SESSION_URL;
 let dynamicVariables: Record<string, string | number> = {
   run_id: "00000000-0000-0000-0000-000000000000",
@@ -41,7 +42,7 @@ async function realSession(): Promise<string> {
   const res = await fetch(`${SESSION_URL}/api/session`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ employee_id: employee, cover: "Sam from Quillfeather Supplies" }),
+    body: JSON.stringify({ employee_id: employee, cover: process.env.COVER ?? "Sam from Quillfeather Supplies", run_id: process.env.RUN_ID }),
   });
   const s = await res.json();
   if (!res.ok) throw new Error(`session -> ${res.status}: ${JSON.stringify(s)}`);
