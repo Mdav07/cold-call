@@ -375,7 +375,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
           onClose={() => setDismissedRun(chat.session?.run_id ?? null)}
         />
       )}
-      <EvidenceDrawer
+      <EvidenceDrawer requireFound={false}
         floor={card.floor}
         open={evidenceOpen}
         onClose={() => setEvidenceOpen(false)}

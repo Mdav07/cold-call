@@ -4,6 +4,7 @@
 
 import { useEffect, useId, useRef } from "react";
 import evidence from "@/content/plumpurse/evidence.json";
+import { useCollectedEvidence } from "./evidence";
 
 export type EvidenceItem = {
   id: string;
@@ -26,10 +27,16 @@ export function EvidenceDrawer({
   open,
   onClose,
   onPresent,
+  requireFound = true,
 }: {
   floor: number;
   open: boolean;
   onClose: () => void;
+  /**
+   * On the walkable floors, only evidence the player found by reading props can be presented; the rest
+   * shows as locked slots. The /play chat fallback (nothing to explore) passes false to list everything.
+   */
+  requireFound?: boolean;
   /** Called with the chosen item's body text when the player presents it. */
   onPresent: (text: string, item: EvidenceItem) => void;
 }) {
@@ -37,6 +44,9 @@ export function EvidenceDrawer({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const items = evidenceForFloor(floor);
+  const found = useCollectedEvidence();
+  const isFound = (id: string) => !requireFound || found.has(id);
+  const foundCount = items.filter((i) => isFound(i.id)).length;
 
   useEffect(() => {
     if (!open) return;
@@ -104,13 +114,25 @@ export function EvidenceDrawer({
           </button>
         </div>
         <p className="text-xs text-[var(--cc-muted)]">
-          Choose a document to present. Escape closes.
+          {requireFound
+            ? `${foundCount} / ${items.length} found. Read notes, memos and signs on this floor to find more. Escape closes.`
+            : "Choose a document to present. Escape closes."}
         </p>
         <ul className="flex flex-col gap-2 overflow-y-auto">
           {items.length === 0 ? (
             <li className="text-sm text-[var(--cc-muted)]">No evidence for this floor yet.</li>
           ) : (
-            items.map((item) => (
+            items.map((item) =>
+              !isFound(item.id) ? (
+                <li
+                  key={item.id}
+                  className="pixel-frame bg-[var(--cc-panel-2)] px-3 py-3 opacity-60"
+                  aria-label="Evidence not found yet"
+                >
+                  <span className="font-pixel block text-xs text-[var(--cc-muted)]">???</span>
+                  <span className="mt-1 block text-sm text-[var(--cc-muted)]">Not found yet. Look around the floor.</span>
+                </li>
+              ) : (
               <li key={item.id}>
                 <button
                   type="button"
@@ -121,7 +143,8 @@ export function EvidenceDrawer({
                   <span className="mt-1 block text-sm text-[var(--cc-ink)]">{item.text}</span>
                 </button>
               </li>
-            ))
+              ),
+            )
           )}
         </ul>
       </div>
