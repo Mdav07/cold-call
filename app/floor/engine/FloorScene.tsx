@@ -209,6 +209,13 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
     }
     if (bx1 <= bx0) { bx0 = 0; by0 = 0; bx1 = map.width; by1 = map.height; }
 
+    // Daylight from the windows (window tiles in /tiles/plumpurse.png): a warm pool on the floor below each.
+    const WINDOW_TILES = new Set([2, 6, 10, 14]);
+    const windows: { x: number; y: number }[] = [];
+    map.layers.walls.forEach((t, i) => {
+      if (WINDOW_TILES.has(t)) windows.push({ x: i % map.width, y: Math.floor(i / map.width) });
+    });
+
     const step = (now: number) => {
       const dt = Math.min(50, now - last);
       last = now;
@@ -340,6 +347,20 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
 
       drawLayer(map.layers.overhead);
 
+      // Lighting: warm window light, then a soft shadow along the back wall (cozy, Stardew-like).
+      c.save();
+      c.globalCompositeOperation = "lighter";
+      for (const wdw of windows) {
+        const cx = wdw.x * TILE + TILE / 2;
+        const cy = (wdw.y + 1) * TILE + TILE;
+        const g = c.createRadialGradient(cx, cy, 2, cx, cy, TILE * 2.6);
+        g.addColorStop(0, "rgba(255, 214, 150, 0.16)");
+        g.addColorStop(1, "rgba(255, 214, 150, 0)");
+        c.fillStyle = g;
+        c.fillRect(cx - TILE * 3, cy - TILE * 3, TILE * 6, TILE * 6);
+      }
+      c.restore();
+
       // Emotes and the "you can talk here" hint.
       const bubble = (tileX: number, tileY: number, text: string, color: string) => {
         const bob = Math.round(Math.sin(now / 250) * 1);
@@ -375,6 +396,14 @@ export function FloorScene({ map, playerSprite, paused, onEvent, emotes, insetBo
           c.fillRect(fx * TILE + 6, fy * TILE - 6 + bob, 4, 4);
         }
       }
+
+      // A soft vignette in screen space draws the eye to the middle of the room.
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const vg = c.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.75);
+      vg.addColorStop(0, "rgba(12, 10, 24, 0)");
+      vg.addColorStop(1, "rgba(12, 10, 24, 0.38)");
+      c.fillStyle = vg;
+      c.fillRect(0, 0, w, h);
     };
 
     raf = requestAnimationFrame(step);
