@@ -72,8 +72,9 @@ async function main() {
       reason: "e2e test: overdue invoice",
     });
     console.log("propose_transfer", heist.json, `${Date.now() - t0} ms`);
-    assert.equal(heist.json.status, "executed");
-    assert.equal(heist.json.amount_used, EXPECT);
+    // "pending" is a valid answer: the receipt took longer than the tool's wait, and the Stream records the breach.
+    assert.ok(["executed", "pending"].includes(heist.json.status), `propose_transfer status: ${heist.json.status}`);
+    if (heist.json.status === "executed") assert.equal(heist.json.amount_used, EXPECT, "amount_used");
 
     // Database state after the ingest (runs after the response)
     let after;
@@ -82,19 +83,19 @@ async function main() {
       if (after.outcome) break;
       await new Promise((r) => setTimeout(r, 500));
     }
-    assert.equal(after.outcome, "breach");
-    assert.equal(after.tx_hash, heist.json.tx_hash);
-    assert.equal(String(after.payout_units), String(Math.round(EXPECT * 1e6)));
-    assert.ok(after.duration_ms >= 0);
+    assert.equal(after.outcome, "breach", "run outcome after 30 s");
+    assert.equal(after.tx_hash, heist.json.tx_hash, "run tx_hash");
+    assert.equal(String(after.payout_units), String(Math.round(EXPECT * 1e6)), "run payout_units");
+    assert.ok(after.duration_ms >= 0, `run duration_ms: ${after.duration_ms}`);
     const { data: events } = await s.from("chain_events").select("event, source").eq("run_id", run.id);
     console.log("events", events!.map((e) => `${e.event}:${e.source}`).join(", "));
-    assert.ok(events!.some((e) => e.event === "TransferExecuted"));
+    assert.ok(events!.some((e) => e.event === "TransferExecuted"), "TransferExecuted stored");
     const { data: board } = await s.from("leaderboard").select("*").eq("run_id", run.id);
-    assert.equal(board!.length, 1);
+    assert.equal(board!.length, 1, "leaderboard row");
 
     // Second proposal in an ended run is refused
     const second = await post("/api/tools/propose_transfer", { ...ctx, amount_usdc: 0.05, claimed_recipient_name: "x", reason: "y" });
-    assert.equal(second.json.status, "denied");
+    assert.equal(second.json.status, "denied", "second proposal in an ended run");
 
     console.log("e2e ok", { run: run.id, duration_ms: after.duration_ms, tx: after.tx_hash });
   } finally {
@@ -104,6 +105,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error(err instanceof assert.AssertionError ? `FAILED: ${err.message}` : err);
   process.exit(1);
 });
