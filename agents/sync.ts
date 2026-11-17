@@ -15,6 +15,17 @@ const DIR = join(process.cwd(), "agents");
 const IDS_FILE = join(DIR, "elevenlabs-ids.json");
 const LLM = process.env.ELEVENLABS_LLM ?? "gemini-2.5-flash";
 
+// One distinct ElevenLabs voice per character (Voice Library ids). ELEVENLABS_VOICE_<NAME> overrides.
+const VOICES: Record<string, string> = {
+  barry: "bIHbv24MWmeRgasZH58o", // Will: relaxed, sleepy end-of-shift teller
+  penny: "cgSgspJ2msm6clMCkdW9", // Jessica: playful, bright, warm gossip queen
+  dee: "FGY2WhTYpPnrIDTdsKH5", // Laura: quirky, sassy, sleep-deprived developer
+  annie: "hpp4J3VqNfWAUOO0d1Us", // Bella: professional, bright, process-loving
+  bill: "pqHfZKP75CvOlQylNhV4", // Bill: wise, mature, crisp compliance controller
+  cassius: "nPczCjzI2devNBz1zQrb", // Brian: deep, resonant, guarded CFO
+  max: "pNInz6obpgDQGcFmaJgB", // Adam: dominant, firm CEO
+};
+
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
 
 const FLOOR3 = [
@@ -202,7 +213,7 @@ async function main() {
   }
 
   const { prompt, firstMessage } = buildPrompt(employee);
-  const voice = process.env[`ELEVENLABS_VOICE_${employee.toUpperCase()}`];
+  const voice = process.env[`ELEVENLABS_VOICE_${employee.toUpperCase()}`] ?? VOICES[employee];
   const conversation_config = {
     agent: {
       first_message: firstMessage,
