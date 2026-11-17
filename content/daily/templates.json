@@ -1,5 +1,5 @@
 {
-  "_about": "Pools for the Daily Case generator (shared/dailyCase.ts). Each day picks one of each, seeded by the UTC date. Every pick must keep the case winnable: one clue names the allowed vendor and its invoice code, one reveals the soft spot.",
+  "_about": "Pools for the Daily Case generator (shared/dailyCase.ts). Each day picks one of each, seeded by the UTC date. Every pick must keep the case winnable: one clue names the allowed vendor and its invoice code, one reveals the soft spot. Pools are large on purpose so cases rarely repeat; sprites are staff-only (never a player hunter look).",
   "places": [
     {
       "title": "The Night Desk",
@@ -84,6 +84,186 @@
       "place": "the Plumpurse booth at the winter ice rink",
       "role": "Booth Teller",
       "duty": "renting skates and changing bills"
+    },
+    {
+      "title": "The Coin Counting Room",
+      "place": "the coin room under the Plumpurse Market branch",
+      "role": "Coin Room Clerk",
+      "duty": "feeding the jammed coin counter"
+    },
+    {
+      "title": "The Lost Card Line",
+      "place": "the Plumpurse lost-card hotline, third shift",
+      "role": "Hotline Agent",
+      "duty": "covering the hotline on their own"
+    },
+    {
+      "title": "The Safe Deposit Vault",
+      "place": "the safe deposit room at Plumpurse Old Town",
+      "role": "Vault Attendant",
+      "duty": "logging box visits"
+    },
+    {
+      "title": "The Pop-Up Branch",
+      "place": "the Plumpurse pop-up booth at the county fair",
+      "role": "Booth Teller",
+      "duty": "minding the booth between funnel-cake runs"
+    },
+    {
+      "title": "The Records Basement",
+      "place": "the Plumpurse records archive, sublevel 2",
+      "role": "Archivist",
+      "duty": "boxing up last year's statements"
+    },
+    {
+      "title": "The Holiday Skeleton Crew",
+      "place": "Plumpurse Tower on a public holiday",
+      "role": "Duty Officer",
+      "duty": "the only one in the building"
+    },
+    {
+      "title": "The Payroll Crunch",
+      "place": "the Plumpurse payroll office, end of the month",
+      "role": "Payroll Assistant",
+      "duty": "racing the payroll deadline"
+    },
+    {
+      "title": "The Mobile Bank Van",
+      "place": "the Plumpurse mobile branch van parked at Elm Square",
+      "role": "Van Teller",
+      "duty": "running the van's single window"
+    },
+    {
+      "title": "The Campus Branch",
+      "place": "the Plumpurse branch inside the university library",
+      "role": "Student Teller",
+      "duty": "studying between customers"
+    },
+    {
+      "title": "The Cheque Printing Floor",
+      "place": "the Plumpurse cheque print shop",
+      "role": "Print Supervisor",
+      "duty": "babysitting the cheque printer"
+    },
+    {
+      "title": "The Mortgage Desk",
+      "place": "the Plumpurse mortgage centre after closing",
+      "role": "Loan Officer",
+      "duty": "finishing the day's paperwork"
+    },
+    {
+      "title": "The ATM Depot",
+      "place": "the Plumpurse ATM service depot",
+      "role": "Depot Coordinator",
+      "duty": "scheduling the ATM refills"
+    },
+    {
+      "title": "The Charity Gala",
+      "place": "the Plumpurse charity gala coat check",
+      "role": "Gala Volunteer Lead",
+      "duty": "watching the donation table"
+    },
+    {
+      "title": "The Harbour Office",
+      "place": "the Plumpurse dockside office at Pier 7",
+      "role": "Harbour Clerk",
+      "duty": "logging shipping deposits"
+    },
+    {
+      "title": "The Mountain Branch",
+      "place": "the tiny Plumpurse branch at the ski lodge",
+      "role": "Lodge Teller",
+      "duty": "keeping the branch open through the snowstorm"
+    },
+    {
+      "title": "The Call Centre",
+      "place": "the Plumpurse customer call centre, quiet hour",
+      "role": "Call Centre Lead",
+      "duty": "covering every phone at once"
+    },
+    {
+      "title": "The Branch Move",
+      "place": "the Plumpurse Westgate branch, mid-move",
+      "role": "Move Coordinator",
+      "duty": "counting the boxes"
+    },
+    {
+      "title": "The Security Desk",
+      "place": "the front security desk of Plumpurse Tower",
+      "role": "Night Guard",
+      "duty": "watching the cameras"
+    },
+    {
+      "title": "The Supply Closet",
+      "place": "the Plumpurse central supply office",
+      "role": "Supplies Manager",
+      "duty": "reordering everything at once"
+    },
+    {
+      "title": "The Branch Bake Sale",
+      "place": "the Plumpurse Northside branch bake sale",
+      "role": "Bake Sale Captain",
+      "duty": "guarding the cash box and the brownies"
+    },
+    {
+      "title": "The Riverboat Branch",
+      "place": "the Plumpurse branch on the river ferry",
+      "role": "Ferry Teller",
+      "duty": "running the branch between docks"
+    },
+    {
+      "title": "The Audit Week",
+      "place": "the Plumpurse audit war room",
+      "role": "Audit Liaison",
+      "duty": "fetching files for the auditors"
+    },
+    {
+      "title": "The Penny Arcade",
+      "place": "the Plumpurse kids' savings club at the arcade",
+      "role": "Savings Club Host",
+      "duty": "running the coin-swap desk"
+    },
+    {
+      "title": "The Fraud Desk",
+      "place": "the Plumpurse fraud desk, Friday afternoon",
+      "role": "Fraud Analyst",
+      "duty": "clearing the alert queue"
+    },
+    {
+      "title": "The Train Station Branch",
+      "place": "the Plumpurse branch at Central Station",
+      "role": "Station Teller",
+      "duty": "serving the commuter rush"
+    },
+    {
+      "title": "The Golf Club Office",
+      "place": "the Plumpurse private banking office at the golf club",
+      "role": "Private Banker",
+      "duty": "waiting for members after the tournament"
+    },
+    {
+      "title": "The Branch Renovation",
+      "place": "the Plumpurse Riverside branch behind the dust sheets",
+      "role": "Site Liaison",
+      "duty": "keeping an eye on the contractors"
+    },
+    {
+      "title": "The Weekend Kiosk",
+      "place": "the Plumpurse kiosk at the Saturday market",
+      "role": "Market Teller",
+      "duty": "running the kiosk alone"
+    },
+    {
+      "title": "The New Accounts Desk",
+      "place": "the Plumpurse new accounts desk on a slow Tuesday",
+      "role": "Accounts Opener",
+      "duty": "waiting for anyone at all"
+    },
+    {
+      "title": "The Stadium Branch",
+      "place": "the Plumpurse booth at the stadium on game night",
+      "role": "Stadium Teller",
+      "duty": "covering the booth during the match"
     }
   ],
   "firstNames": [
@@ -118,7 +298,147 @@
     "Aiyana",
     "Tariq",
     "Hana",
-    "Luca"
+    "Luca",
+    "Aaliyah",
+    "Abebe",
+    "Adaeze",
+    "Adrian",
+    "Aiko",
+    "Akira",
+    "Alejandro",
+    "Alessia",
+    "Amir",
+    "Anaya",
+    "Anders",
+    "Andile",
+    "Ansel",
+    "Anya",
+    "Arjun",
+    "Astrid",
+    "Aurelio",
+    "Ayesha",
+    "Bao",
+    "Beatriz",
+    "Bianca",
+    "Birgit",
+    "Bodhi",
+    "Camila",
+    "Carmen",
+    "Cecilia",
+    "Chidi",
+    "Chiara",
+    "Cyrus",
+    "Dalia",
+    "Damla",
+    "Dario",
+    "Daveed",
+    "Deja",
+    "Desmond",
+    "Dilnoza",
+    "Dmitri",
+    "Ebru",
+    "Eero",
+    "Efua",
+    "Elio",
+    "Emeka",
+    "Emil",
+    "Esme",
+    "Esperanza",
+    "Ezra",
+    "Farah",
+    "Femi",
+    "Fiona",
+    "Freya",
+    "Gabriel",
+    "Gaia",
+    "Gideon",
+    "Grete",
+    "Gulnara",
+    "Hadley",
+    "Halima",
+    "Hamza",
+    "Hiro",
+    "Ibrahim",
+    "Ida",
+    "Ifeoma",
+    "Ilya",
+    "Imani",
+    "Isaac",
+    "Isla",
+    "Itzel",
+    "Jamal",
+    "Javier",
+    "Jia",
+    "Joaquin",
+    "Jonah",
+    "Juniper",
+    "Kai",
+    "Kalani",
+    "Kamal",
+    "Kaveh",
+    "Keanu",
+    "Keziah",
+    "Kiran",
+    "Kofi",
+    "Lars",
+    "Laila",
+    "Leilani",
+    "Leon",
+    "Lior",
+    "Lucia",
+    "Luka",
+    "Mads",
+    "Maeve",
+    "Mateo",
+    "Maya",
+    "Mika",
+    "Milo",
+    "Mirela",
+    "Nadia",
+    "Naomi",
+    "Nasser",
+    "Nia",
+    "Nico",
+    "Odette",
+    "Omari",
+    "Oona",
+    "Orla",
+    "Pablo",
+    "Paloma",
+    "Pita",
+    "Quentin",
+    "Rafael",
+    "Rania",
+    "Reza",
+    "Rhea",
+    "Rohan",
+    "Ruth",
+    "Sade",
+    "Sami",
+    "Sana",
+    "Selin",
+    "Sergei",
+    "Shira",
+    "Siddharth",
+    "Sienna",
+    "Soraya",
+    "Stellan",
+    "Sunita",
+    "Tae",
+    "Talia",
+    "Tendai",
+    "Thandiwe",
+    "Tomas",
+    "Uma",
+    "Valentina",
+    "Vikram",
+    "Xiadani",
+    "Yasmin",
+    "Yusuf",
+    "Zainab",
+    "Zara",
+    "Zeke",
+    "Zofia"
   ],
   "lastNames": [
     "Coinsworth",
@@ -138,14 +458,131 @@
     "Shillingham",
     "Bankshot",
     "Coppersmith",
-    "Mintworth"
+    "Mintworth",
+    "Abacus",
+    "Accrual",
+    "Auditsworth",
+    "Balanceby",
+    "Banksley",
+    "Bondsworth",
+    "Bullion",
+    "Bursary",
+    "Cashwell",
+    "Centsible",
+    "Chequers",
+    "Clearance",
+    "Coffersmith",
+    "Coinbridge",
+    "Collateral",
+    "Copperfield",
+    "Countwell",
+    "Creditwood",
+    "Crumbsby",
+    "Debenture",
+    "Debitson",
+    "Depositi",
+    "Dividendo",
+    "Doubloon",
+    "Drawerton",
+    "Duesbury",
+    "Equitas",
+    "Escrowley",
+    "Feesworth",
+    "Fiscalli",
+    "Florinson",
+    "Fundsby",
+    "Giltworth",
+    "Goldbridge",
+    "Grantley",
+    "Groatsby",
+    "Guineaford",
+    "Hedgeworth",
+    "Holdingsby",
+    "Interesse",
+    "Invoicey",
+    "Kroner",
+    "Ledgerwood",
+    "Lendall",
+    "Levywell",
+    "Liquidi",
+    "Loanbury",
+    "Marginson",
+    "Markworth",
+    "Mintley",
+    "Moneyhall",
+    "Mortgate",
+    "Nestegg",
+    "Nickelson",
+    "Notaro",
+    "Obolus",
+    "Overdraft",
+    "Payley",
+    "Pennyfeather",
+    "Pesoli",
+    "Pocketts",
+    "Poundstone",
+    "Premium",
+    "Profitti",
+    "Pursewell",
+    "Quidley",
+    "Randall",
+    "Receiptson",
+    "Reservo",
+    "Rupeesh",
+    "Safebridge",
+    "Savings",
+    "Scrimshaw",
+    "Shekelman",
+    "Shillingsworth",
+    "Silverby",
+    "Solvent",
+    "Spendlow",
+    "Stashworth",
+    "Sterlington",
+    "Stipend",
+    "Sumner",
+    "Surplusse",
+    "Tallyford",
+    "Taxley",
+    "Tenderfoot",
+    "Thriftwood",
+    "Tillman",
+    "Tipworth",
+    "Tokenby",
+    "Treasurer",
+    "Tuppenny",
+    "Wageworth",
+    "Walletson",
+    "Wealthy",
+    "Yenderson",
+    "Yieldwell",
+    "Zlotsky"
   ],
   "sprites": [
-    "/sprites/hunter-1.png",
-    "/sprites/hunter-3.png",
-    "/sprites/hunter-4.png",
-    "/sprites/hunter-5.png",
-    "/sprites/hunter-6.png"
+    "/sprites/staff-01.png",
+    "/sprites/staff-02.png",
+    "/sprites/staff-03.png",
+    "/sprites/staff-04.png",
+    "/sprites/staff-05.png",
+    "/sprites/staff-06.png",
+    "/sprites/staff-07.png",
+    "/sprites/staff-08.png",
+    "/sprites/staff-09.png",
+    "/sprites/staff-10.png",
+    "/sprites/staff-11.png",
+    "/sprites/staff-12.png",
+    "/sprites/staff-13.png",
+    "/sprites/staff-14.png",
+    "/sprites/staff-15.png",
+    "/sprites/staff-16.png",
+    "/sprites/staff-17.png",
+    "/sprites/staff-18.png",
+    "/sprites/staff-19.png",
+    "/sprites/staff-20.png",
+    "/sprites/staff-21.png",
+    "/sprites/staff-22.png",
+    "/sprites/staff-23.png",
+    "/sprites/staff-24.png"
   ],
   "personalities": [
     {
@@ -187,6 +624,86 @@
     {
       "text": "A trivia buff who can't resist a fun fact.",
       "tic": "slips in a fun fact whenever there's a pause"
+    },
+    {
+      "text": "A nervous new hire on their first week.",
+      "tic": "apologises before answering anything"
+    },
+    {
+      "text": "A retired-sounding veteran who has seen every trick.",
+      "tic": "starts stories with 'back in my day'"
+    },
+    {
+      "text": "A cheerful optimist who loves everyone.",
+      "tic": "calls everyone 'friend'"
+    },
+    {
+      "text": "Extremely busy and short on patience.",
+      "tic": "keeps saying 'quickly, quickly'"
+    },
+    {
+      "text": "A trivia nerd who can't resist a fun fact.",
+      "tic": "drops a random fact into the conversation"
+    },
+    {
+      "text": "A sports fan glued to tonight's game.",
+      "tic": "checks the score mid-sentence"
+    },
+    {
+      "text": "A plant parent who talks to the office ferns.",
+      "tic": "mentions how the plants are doing"
+    },
+    {
+      "text": "Dramatic, treats every small thing like a soap opera.",
+      "tic": "gasps theatrically"
+    },
+    {
+      "text": "Very formal and polite, almost old-fashioned.",
+      "tic": "says 'indeed' a lot"
+    },
+    {
+      "text": "A budding stand-up comic testing material.",
+      "tic": "tries out a joke when nervous"
+    },
+    {
+      "text": "Sleepy, three coffees deep and fading.",
+      "tic": "yawns mid-word"
+    },
+    {
+      "text": "A competitive type who turns everything into a contest.",
+      "tic": "keeps score of everything"
+    },
+    {
+      "text": "Overly suspicious of everyone, but loves compliments.",
+      "tic": "repeats your words back slowly"
+    },
+    {
+      "text": "A music lover humming all shift.",
+      "tic": "hums between sentences"
+    },
+    {
+      "text": "A neat freak who notices every detail.",
+      "tic": "corrects small mistakes"
+    },
+    {
+      "text": "A homesick transfer from a faraway branch.",
+      "tic": "compares everything to their old branch"
+    },
+    {
+      "text": "A gamer who speaks in video-game terms.",
+      "tic": "calls tasks 'quests'"
+    },
+    {
+      "text": "A foodie always thinking about lunch.",
+      "tic": "mentions what they're eating next"
+    },
+    {
+      "text": "Calm and philosophical, a little too zen.",
+      "tic": "says 'it is what it is'"
+    },
+    {
+      "text": "A gossip columnist at heart.",
+      "tic": "lowers their voice for 'the real story'"
     }
   ],
   "softSpots": [
@@ -229,6 +746,86 @@
     {
       "text": "Questions about their marathon training.",
       "clue": "Running shoes under the desk and a training plan: 'Marathon in 3 weeks!!'"
+    },
+    {
+      "text": "Anyone who remembers their marathon this weekend.",
+      "clue": "A race bib pinned to the corkboard: 'Sunday 10K, wish me luck!'"
+    },
+    {
+      "text": "Compliments on their homemade cookies.",
+      "clue": "A tin of cookies with a note: 'Baked these myself, take one! (Please tell me if they're good)'"
+    },
+    {
+      "text": "Asking about their new puppy, Biscuit.",
+      "clue": "A photo of a tiny puppy in a teacup. Caption: 'Biscuit, week one.'"
+    },
+    {
+      "text": "Talking about the book club novel they're reading.",
+      "clue": "A dog-eared paperback with a bookmark: 'Book club Thursday, chapter 12!'"
+    },
+    {
+      "text": "Praise for their handwriting.",
+      "clue": "Beautiful calligraphy on every label. A sticky note: 'Practising every night.'"
+    },
+    {
+      "text": "Anyone who knows it's their birthday today.",
+      "clue": "A single balloon tied to the chair and a card: 'Happy birthday from Mum.'"
+    },
+    {
+      "text": "Interest in their band's gig on Saturday.",
+      "clue": "A gig flyer: 'The Overdrafts, live Saturday. Bass: yours truly.'"
+    },
+    {
+      "text": "Asking about their garden tomatoes.",
+      "clue": "A jar of cherry tomatoes labelled 'My first harvest!'"
+    },
+    {
+      "text": "Recognising their employee-of-the-month award.",
+      "clue": "A framed certificate: 'Employee of the Month.' Nobody has mentioned it."
+    },
+    {
+      "text": "Talking about the local football team's win.",
+      "clue": "A team scarf on the coat hook and last night's score circled in the paper."
+    },
+    {
+      "text": "Anyone who asks about their trip to Lisbon.",
+      "clue": "A postcard of Lisbon trams: 'Leaving Friday!! Can't wait.'"
+    },
+    {
+      "text": "Praise for the playlist on the office speaker.",
+      "clue": "A handwritten playlist taped to the speaker: 'Made this myself, enjoy.'"
+    },
+    {
+      "text": "Asking how their knitting project is going.",
+      "clue": "Half a scarf and two needles in a basket under the desk."
+    },
+    {
+      "text": "Noticing their new haircut.",
+      "clue": "A salon appointment card dated yesterday, and a mirror angled just so."
+    },
+    {
+      "text": "Talking about their grandmother's recipe contest.",
+      "clue": "A recipe card: 'Nana's lemon cake, contest Sunday. Fingers crossed.'"
+    },
+    {
+      "text": "Interest in their sci-fi model collection.",
+      "clue": "A tiny painted spaceship on the monitor stand with a label: 'Hand-painted, 40 hours.'"
+    },
+    {
+      "text": "Asking about their chess tournament.",
+      "clue": "A chess clock and a printout: 'Regional chess, round 3 tonight.'"
+    },
+    {
+      "text": "Anyone who appreciates their terrible puns.",
+      "clue": "A pun calendar, every page annotated with 'lol' in their handwriting."
+    },
+    {
+      "text": "Talking about their kid's school play.",
+      "clue": "A crayon drawing: 'Come see me be a tree! Friday 6pm.'"
+    },
+    {
+      "text": "Praise for how fast they solve the crossword.",
+      "clue": "Today's crossword, finished in pen, time written at the top: '4 min.'"
     }
   ],
   "redLines": [
@@ -255,6 +852,26 @@
     {
       "text": "They never pay more than the work order says.",
       "clue": "A note on the till: 'Pay the work order amount. Never a cent more.'"
+    },
+    {
+      "text": "They never pay a vendor that isn't on today's list.",
+      "clue": "A laminated card: 'Today's vendors only. Not on the list? Not getting paid.'"
+    },
+    {
+      "text": "They hang up on anyone who claims to be their boss.",
+      "clue": "A memo: 'Managers never call asking for payments. If they do, it isn't them.'"
+    },
+    {
+      "text": "They never pay anyone who asks them to keep it secret.",
+      "clue": "A poster: 'Asked to keep a payment quiet? That's the scam.'"
+    },
+    {
+      "text": "They won't pay for a job that hasn't been done yet.",
+      "clue": "A note on the till: 'Pay on completion. No deposits, no advances.'"
+    },
+    {
+      "text": "They never accept a 'new bank account' for a vendor over the phone.",
+      "clue": "A warning taped to the phone: 'Vendor says their bank changed? Hang up and call the number on file.'"
     }
   ],
   "vendors": [
@@ -329,6 +946,126 @@
       "prefix": "CK",
       "what": "coffee supplies",
       "job": "refill the coffee beans"
+    },
+    {
+      "name": "Drip Stop Plumbing",
+      "prefix": "DS",
+      "what": "plumbing",
+      "job": "fix the leaking staff-room tap"
+    },
+    {
+      "name": "Frostline Cooling",
+      "prefix": "FC",
+      "what": "air conditioning",
+      "job": "service the rattling AC unit"
+    },
+    {
+      "name": "Paperjam Printers",
+      "prefix": "PJ",
+      "what": "printer repair",
+      "job": "unjam the receipt printer"
+    },
+    {
+      "name": "Sparky Sparks Electric",
+      "prefix": "SS",
+      "what": "electrical",
+      "job": "rewire the flickering sign"
+    },
+    {
+      "name": "Bugaway Pest Control",
+      "prefix": "BA",
+      "what": "pest control",
+      "job": "deal with the mouse in the archive"
+    },
+    {
+      "name": "Shiny Floors Co.",
+      "prefix": "SF",
+      "what": "floor care",
+      "job": "polish the lobby floor"
+    },
+    {
+      "name": "Quickcopy Print Shop",
+      "prefix": "QC",
+      "what": "printing",
+      "job": "print the new opening-hours signs"
+    },
+    {
+      "name": "Green Thumb Plants",
+      "prefix": "GT",
+      "what": "plant care",
+      "job": "water and trim the lobby plants"
+    },
+    {
+      "name": "Safe & Sound Alarms",
+      "prefix": "SA",
+      "what": "alarms",
+      "job": "test the alarm panel"
+    },
+    {
+      "name": "Lift Lords Elevators",
+      "prefix": "LL",
+      "what": "elevator repair",
+      "job": "inspect the squeaky lift"
+    },
+    {
+      "name": "Ink & Toner Depot",
+      "prefix": "IT",
+      "what": "office supplies",
+      "job": "refill the toner cartridges"
+    },
+    {
+      "name": "Mopsy Cleaning",
+      "prefix": "MC",
+      "what": "cleaning",
+      "job": "clean up after the leak"
+    },
+    {
+      "name": "Hinge Kings",
+      "prefix": "HK",
+      "what": "carpentry",
+      "job": "rehang the sticky office door"
+    },
+    {
+      "name": "ByteFix Computers",
+      "prefix": "BF",
+      "what": "IT repair",
+      "job": "replace the broken keyboard"
+    },
+    {
+      "name": "Coolbox Vending",
+      "prefix": "CV",
+      "what": "vending machines",
+      "job": "restock and fix the snack machine"
+    },
+    {
+      "name": "Bright Window Washers",
+      "prefix": "WW",
+      "what": "window cleaning",
+      "job": "wash the street-front windows"
+    },
+    {
+      "name": "Tidy Bins Waste",
+      "prefix": "TB",
+      "what": "waste collection",
+      "job": "empty the shredding bins"
+    },
+    {
+      "name": "Cozy Heat Boilers",
+      "prefix": "CH",
+      "what": "heating",
+      "job": "bleed the cold radiators"
+    },
+    {
+      "name": "Fresh Brew Coffee",
+      "prefix": "FB",
+      "what": "coffee machines",
+      "job": "descale the staff coffee machine"
+    },
+    {
+      "name": "Stitch Upholstery",
+      "prefix": "SU",
+      "what": "furniture repair",
+      "job": "fix the wobbly waiting-room chairs"
     }
   ],
   "flavour": [
@@ -339,6 +1076,36 @@
     "A framed certificate: 'Employee of the Month, March.' The year has been scratched out.",
     "A jigsaw puzzle of a sailboat, missing exactly one piece.",
     "A whiteboard: 'Days without a stapler incident: 0'.",
-    "A rubber duck wearing a tiny tie sits next to the phone."
+    "A rubber duck wearing a tiny tie sits next to the phone.",
+    "A motivational poster of a cat on a branch: 'Hang in there.' Someone has added 'please'.",
+    "The clock on the wall is five minutes fast. A sticky note says 'on purpose'.",
+    "A stack of free pens chained to the counter. All of them are out of ink.",
+    "A whiteboard countdown: 'Days without a stapler incident: 0.'",
+    "A plant that is clearly plastic, with a watering schedule taped to it.",
+    "A fishbowl with no fish and a sign: 'Gerald, we miss you.'",
+    "A jar labelled 'Swear Jar' holds three buttons and an IOU.",
+    "A suggestion box, padlocked shut, with the key taped to the side.",
+    "Someone's lunch in the fridge, labelled 'DO NOT EAT. I KNOW WHO YOU ARE.'",
+    "A calendar still on last month, with a rubber duck guarding it.",
+    "A printer with a sign: 'Works if you say please.' It has 'please' scratched into it.",
+    "Three umbrellas in the stand, none of them belonging to anyone.",
+    "A sad desk fern named 'Kevin' on a sticky note.",
+    "A coffee mug that reads 'World's Okayest Teller'.",
+    "A queue barrier set up for a line that has never existed.",
+    "A radio tuned to the weather forecast, which is wrong again.",
+    "A tray of cookies with one bite taken out of each.",
+    "A sign over the sink: 'Your mother doesn't work here.' Underneath: 'Actually she does, hi Mum.'",
+    "A fake security camera with a tiny 'smile!' sticker.",
+    "A lost-and-found box containing a single roller skate.",
+    "A sticky note on the monitor: 'Password is NOT password.' It is.",
+    "A stack of brochures for a savings account that was discontinued in 1998.",
+    "A desk bell that's been taped down. A note says 'we heard you'.",
+    "A half-built jigsaw of a bank vault on the break-room table.",
+    "A framed photo of the branch's first customer, who looks extremely unimpressed.",
+    "An inspirational quote on the wall: 'Count every penny.' Someone has written 'ok' under it.",
+    "A pile of returned mail for someone who left ten years ago.",
+    "A whiteboard with a half-finished game of hangman: '_ O _ _ E Y'.",
+    "A tower of empty coffee cups shaped like a small skyscraper.",
+    "A sign on the stapler: 'Property of Accounts. Return or face consequences.'"
   ]
 }
