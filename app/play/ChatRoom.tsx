@@ -126,6 +126,14 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
       ? chat.session.talk_seconds * 1000 - runMs
       : null;
   const lastAgent = [...chat.lines].reverse().find((l) => l.role === "agent");
+  const first = card.name.split(" ")[0];
+  const voice = chat.channel === "voice";
+
+  // Talk time is a per-employee budget on the upper floors: hang up when it runs out.
+  const outOfTime = live && talkLeft != null && talkLeft <= 0;
+  useEffect(() => {
+    if (outOfTime) hangUp();
+  }, [outOfTime, hangUp]);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4">
@@ -169,7 +177,8 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
               className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4"
               onSubmit={(e) => {
                 e.preventDefault();
-                chat.start(cover);
+                const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+                chat.start(cover, submitter?.value === "voice" ? "voice" : "chat");
               }}
             >
               <label className="font-pixel text-xs text-[var(--cc-ink)]" htmlFor="cover">
@@ -182,9 +191,17 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                 maxLength={200}
                 className="pixel-frame bg-[var(--cc-panel-2)] px-3 py-2 text-[var(--cc-ink)] outline-none"
               />
-              <button type="submit" className="pixel-button self-start">
-                Call {card.name.split(" ")[0]}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button type="submit" name="channel" value="voice" className="pixel-button">
+                  ☎ Call {first}
+                </button>
+                <button type="submit" name="channel" value="chat" className="pixel-button">
+                  ✉ Chat with {first}
+                </button>
+              </div>
+              <p className="text-xs text-[var(--cc-muted)]">
+                Calls use your microphone. Talk time counts both ways.
+              </p>
               {chat.error && <p className="text-sm text-[var(--cc-danger)]">{chat.error}</p>}
             </form>
           ) : (
@@ -210,10 +227,8 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                       {l.text}
                     </li>
                   ))}
-                  {chat.waiting && (
-                    <li className="self-start text-sm text-[var(--cc-muted)]">
-                      {card.name.split(" ")[0]} is typing…
-                    </li>
+                  {chat.waiting && !voice && (
+                    <li className="self-start text-sm text-[var(--cc-muted)]">{first} is typing…</li>
                   )}
                 </ul>
                 <div ref={logEnd} />
@@ -226,6 +241,27 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                 </div>
               )}
 
+              {voice ? (
+                <div className="pixel-frame flex flex-wrap items-center justify-between gap-3 bg-[var(--cc-panel)] px-4 py-3">
+                  <p className="font-pixel text-xs text-[var(--cc-ink)]" aria-live="polite">
+                    {!live
+                      ? "Call ended"
+                      : chat.mode === "speaking"
+                        ? `☎ ${first} is talking…`
+                        : chat.muted
+                          ? "☎ You're muted"
+                          : "☎ Your turn: speak"}
+                  </p>
+                  <div className="flex gap-2">
+                    <button type="button" className="pixel-button" onClick={chat.toggleMute} disabled={!live}>
+                      {chat.muted ? "Unmute" : "Mute"}
+                    </button>
+                    <button type="button" className="pixel-button" onClick={chat.hangUp} disabled={!live}>
+                      Hang up
+                    </button>
+                  </div>
+                </div>
+              ) : (
               <form
                 className="flex gap-2"
                 onSubmit={(e) => {
@@ -252,6 +288,17 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
                   Hang up
                 </button>
               </form>
+              )}
+              {!live && chat.session && (
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className="pixel-button" onClick={() => chat.start(cover, "voice", chat.session!.run_id)}>
+                    ☎ Call back
+                  </button>
+                  <button type="button" className="pixel-button" onClick={() => chat.start(cover, "chat", chat.session!.run_id)}>
+                    ✉ Message again
+                  </button>
+                </div>
+              )}
             </>
           )}
         </section>
