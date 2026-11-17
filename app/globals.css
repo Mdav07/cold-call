@@ -65,3 +65,14 @@ summary,
 @media (prefers-reduced-motion: reduce) {
   .cc-stamp { animation: none; }
 }
+
+/* Character preview: walk through the four frames of a sprite sheet's row (--cc-walk-w = -sheet width). */
+@keyframes cc-walk {
+  to { background-position-x: var(--cc-walk-w); }
+}
+.cc-walk {
+  animation: cc-walk 0.7s steps(4) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-walk { animation: none; }
+}
