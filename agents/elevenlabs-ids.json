@@ -8,6 +8,7 @@
     "end_conversation": "tool_4501m7m4k31cf96vqeh5tqgrerd2"
   },
   "agents": {
-    "penny": "agent_5801m7m3njqdewyrf22byk4p10ph"
+    "penny": "agent_5801m7m3njqdewyrf22byk4p10ph",
+    "dee": "agent_0401m7m4qkkve4bbpp6brh1vsqgb"
   }
 }
