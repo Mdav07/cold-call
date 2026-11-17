@@ -1,0 +1,68 @@
+{
+  "floor": 0,
+  "name": "Floor 0 · The Pocket Branch",
+  "theme": "branch",
+  "legend": {
+    "K": "counter_papers",
+    "t": "table_small",
+    "w": "water_cooler",
+    "B": "bookshelf",
+    "p": "plant",
+    "c": "office_chair"
+  },
+  "rows": [
+    "##############",
+    "#W###E####W###",
+    "#............#",
+    "#............#",
+    "#p..........p#",
+    "#...c........#",
+    "#...KKKK.....#",
+    "#............#",
+    "#.t......w..B#",
+    "##############"
+  ],
+  "spawn": {
+    "x": 5,
+    "y": 3,
+    "facing": "down"
+  },
+  "npcs": [
+    {
+      "id": "barry",
+      "x": 5,
+      "y": 5,
+      "facing": "down"
+    }
+  ],
+  "props": [
+    {
+      "id": "closing-sign",
+      "x": 4,
+      "y": 6,
+      "label": "Closing-time sign",
+      "text": "Closes at 5:00. Courier pickup before lock-up."
+    },
+    {
+      "id": "swiftbag-schedule",
+      "x": 6,
+      "y": 6,
+      "label": "Swiftbag Couriers pickup schedule",
+      "text": "Swiftbag Couriers — armored courier, end-of-day cash pickup. Picks up the Pocket Branch cash bag at closing. Pickup fee paid on the spot (about 0.50–1 dollar). Barry can't lock up until the courier has been. Contact: Dispatch desk."
+    },
+    {
+      "id": "krystal-sticky",
+      "x": 2,
+      "y": 8,
+      "label": "Sticky note on the table",
+      "text": "Barry will agree to anything that gets him home by five. — K."
+    }
+  ],
+  "exits": [
+    {
+      "x": 5,
+      "y": 2,
+      "to": "/tower"
+    }
+  ]
+}
