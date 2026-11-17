@@ -1,11 +1,13 @@
 // /daily: today's Daily Case room. A new short case every UTC day, the same for everyone
 // (shared/dailyCase.ts). The room, briefing and case file come from the case; talking, the outcome
 // screen and the elevator are the floors' own (FloorGame).
+// /daily?date=YYYY-MM-DD replays one of the last few days' cases as practice (shared/dailyCase.ts
+// archiveDate); a bad or too-old date plays today's.
 
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { dailyCase, todayUtc } from "@/shared/dailyCase";
+import { archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
 import { FloorGame } from "@/app/floor/[floor]/FloorGame";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
@@ -22,7 +24,7 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
 };
 
-export default function DailyPage() {
+export default function DailyPage({ searchParams }: PageProps<"/daily">) {
   return (
     <Suspense
       fallback={
@@ -31,16 +33,22 @@ export default function DailyPage() {
         </main>
       }
     >
-      <DailyRoom />
+      <DailyRoom searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function DailyRoom() {
+async function DailyRoom({ searchParams }: { searchParams: PageProps<"/daily">["searchParams"] }) {
   // Today's case depends on the date: always render at request time.
   await connection();
-  const c = dailyCase(todayUtc());
+  const { date } = await searchParams;
+  const today = todayUtc();
+  const day = archiveDate(typeof date === "string" ? date : null) ?? today;
+  const practice = day !== today;
+  const c = dailyCase(day);
   const map = buildDailyRoom(c);
+  // An earlier day is practice: it doesn't count for the board or the streak. Say so in the HUD.
+  if (practice) map.name = `Practice · ${c.date} · ${c.title}`;
   const npcs: NpcInfo[] = [
     { id: "daily", name: c.employee.name, title: c.employee.title, sprite: c.employee.sprite },
   ];
