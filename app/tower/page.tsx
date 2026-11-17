@@ -107,6 +107,11 @@ function FloorCard({ f }: { f: TowerFloor }) {
       </div>
       {f.rule && <p className="text-xs text-[var(--cc-muted)]">{f.rule}</p>}
       <div className="flex flex-wrap gap-2">
+        {f.unlocked && (
+          <Link href={`/floor/${f.floor}`} className="pixel-button" title="Walk the floor and talk to the staff">
+            🚶 Walk in
+          </Link>
+        )}
         {f.employees.map((e) =>
           e.playable && f.unlocked ? (
             <Link key={e.id} href={`/play/${e.id}`} className="pixel-button" title={e.title}>
