@@ -85,3 +85,10 @@ export const ding = () => {
   tone(1320, 400, 0.03, "sine");
   tone(1046, 600, 0.03, "sine", 180);
 };
+
+/** Evidence filed: a quick rising three-note chime (muted by the SFX switch). */
+export const chime = () => {
+  tone(784, 90, 0.03, "triangle");
+  tone(988, 90, 0.03, "triangle", 90);
+  tone(1319, 180, 0.03, "triangle", 180);
+};

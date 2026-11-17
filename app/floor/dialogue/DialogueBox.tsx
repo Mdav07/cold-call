@@ -12,7 +12,8 @@ import { PORTRAITS } from "@/app/play/portraits";
 import { useTypewriter } from "./useTypewriter";
 import { Choices, type Choice } from "./Choices";
 import { ProposalPanel, SuspicionMeter, clock, moodFor } from "./parts";
-import { blip, voicePitch } from "@/app/floor/hud/sound";
+import { blip, chime, voicePitch } from "@/app/floor/hud/sound";
+import { collectFromProp, useCollectedEvidence } from "@/app/play/evidence";
 import { DEFAULT_THEME, themeFor, themeVars, type BoxTheme } from "./themes";
 import { EvidenceDrawer, evidenceForFloor, type EvidenceItem } from "@/app/play/EvidenceDrawer";
 
@@ -172,6 +173,22 @@ const isKrystalNote = (id: string) => id.startsWith("krystal");
 export function PropDialogue({ id = "", label, text, onClose }: { id?: string; label: string; text: string; onClose: () => void }) {
   const [done, setDone] = useState(false);
   useEscape(onClose);
+  // Reading a prop files the evidence it reveals (Audrey's evidence.ts). Only new items come back,
+  // so "Evidence found" shows once. (In dev, Strict Mode runs this twice; the second run finds
+  // nothing new and leaves the state alone.)
+  const [found, setFound] = useState<EvidenceItem[]>([]);
+  useEffect(() => {
+    if (!id) return;
+    const fresh = collectFromProp(id);
+    if (fresh.length) setFound(fresh);
+  }, [id]);
+  const announced = useRef(false);
+  useEffect(() => {
+    if (done && found.length && !announced.current) {
+      announced.current = true;
+      chime();
+    }
+  }, [done, found.length]);
   const krystal = isKrystalNote(id);
   const Face = PORTRAITS.krystal;
   return (
@@ -181,6 +198,11 @@ export function PropDialogue({ id = "", label, text, onClose }: { id?: string; l
       portrait={krystal && Face ? <Face mood="neutral" /> : undefined}
     >
       <Say text={text} pitch={krystal ? voicePitch("krystal") : 260} pixel={krystal} onDone={setDone} />
+      {done && found.length > 0 && (
+        <p role="status" className="font-pixel text-[10px] leading-relaxed text-[var(--cc-ok)]">
+          📎 Evidence found: {found.map((f) => f.label).join(", ")}
+        </p>
+      )}
       <Choices active={done} choices={[{ label: "Close", onSelect: onClose }]} />
     </Frame>
   );
@@ -241,7 +263,10 @@ export function NpcDialogue({
   const [typed, setTyped] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [evidenceHint, setEvidenceHint] = useState(false);
-  const hasEvidence = evidenceForFloor(floor).length > 0;
+  const floorEvidence = evidenceForFloor(floor);
+  const hasEvidence = floorEvidence.length > 0;
+  const collected = useCollectedEvidence();
+  const evidenceLabel = `Evidence (${floorEvidence.filter((e) => collected.has(e.id)).length}/${floorEvidence.length})`;
   // Presenting evidence is a chat message the agent reads, as in the chat room.
   const present = (text: string, item: EvidenceItem) => {
     chat.send(`[EVIDENCE: ${item.label}: ${text}]`);
@@ -404,7 +429,7 @@ export function NpcDialogue({
                 </button>
                 {hasEvidence && (
                   <button type="button" className="pixel-button" onClick={() => setEvidenceHint(true)} disabled={!live}>
-                    Evidence
+                    {evidenceLabel}
                   </button>
                 )}
                 <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
@@ -448,7 +473,7 @@ export function NpcDialogue({
               <div className="flex flex-wrap gap-2 [&>button]:!px-2.5 [&>button]:!py-1.5 [&>button]:!text-[9px]">
                 {hasEvidence && (
                   <button type="button" className="pixel-button" onClick={() => setEvidenceOpen(true)} disabled={!live}>
-                    Evidence
+                    {evidenceLabel}
                   </button>
                 )}
                 <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
