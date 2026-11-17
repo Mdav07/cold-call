@@ -1,5 +1,6 @@
 // End-to-end check of Floor 2 (two signers) through the tool routes.
 // Run: TOOLS_BASE_URL=https://coldcall-olive.vercel.app npx tsx --env-file=.env.local scripts/e2e-floor2.ts
+// E2E_REJECT=1: Bill rejects instead, and the check is the suspicion penalty (moves no money).
 // Moves 0.05 testnet USDC from the Floor 2 vault. Deletes its test user at the end.
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
@@ -43,6 +44,20 @@ async function main() {
     assert.equal(proposed.status, "proposed", "Annie's proposal waits for a second signer");
     const self = await tool("approve_transfer", { ...ctx.annie, proposal_id: proposed.proposal_id, confirm: true });
     assert.notEqual(self.status, "executed", `Annie cannot approve her own proposal (got ${self.status})`);
+
+    if (process.env.E2E_REJECT === "1") {
+      const rej = await tool("reject_transfer", { ...ctx.bill, proposal_id: proposed.proposal_id });
+      assert.equal(rej.status, "rejected", "Bill rejects");
+      const { data: ev } = await s.from("suspicion_events").select("delta, reason, level_after").eq("run_id", run.id).eq("employee_id", "bill");
+      console.log("bill suspicion events", ev);
+      assert.ok(ev!.some((e) => e.delta === 15), "rejection adds +15 suspicion to Bill");
+      const again = await tool("propose_transfer", { ...ctx.annie, amount_usdc: 0.05, claimed_recipient_name: "Ledgerline Payroll", reason: "e2e2 retry" });
+      assert.equal(again.status, "proposed", "one more proposal is allowed after a rejection");
+      const third = await tool("propose_transfer", { ...ctx.annie, amount_usdc: 0.05, claimed_recipient_name: "x", reason: "third" });
+      assert.equal(third.status, "proposal_limit", "a third proposal is refused");
+      console.log("e2e floor 2 reject ok");
+      return;
+    }
 
     // Bill sees the real recipient first, then signs.
     const view = await tool("approve_transfer", { ...ctx.bill, proposal_id: proposed.proposal_id });

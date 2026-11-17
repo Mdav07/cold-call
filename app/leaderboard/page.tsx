@@ -64,8 +64,11 @@ function Board({ rows, empty }: { rows: Row[]; empty: string }) {
 
 async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard">["searchParams"] }) {
   await connection(); // today's contract depends on the current date, so render per request
-  const { floor: raw } = await searchParams;
+  const { floor: raw, channel: rawChannel } = await searchParams;
   const floor = FLOORS.includes(Number(raw) as (typeof FLOORS)[number]) ? Number(raw) : 1;
+  // Spec decision 19: a voice/chat filter. A run that used voice at all counts as voice.
+  const channel = rawChannel === "voice" || rawChannel === "chat" ? rawChannel : "all";
+  const href = (f: number, c: string) => `/leaderboard?floor=${f}${c === "all" ? "" : `&channel=${c}`}`;
 
   const [contract, board, streaks] = await Promise.all([
     contractFor(),
@@ -81,7 +84,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .order("longest", { ascending: false })
       .limit(10),
   ]);
-  const rows = (board.data ?? []) as Row[];
+  const rows = ((board.data ?? []) as Row[]).filter((r) => channel === "all" || r.channel === channel);
   const daily = contract ? bestPerPlayer(rows.filter((r) => r.daily_contract_id === contract.id)).slice(0, 10) : [];
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
 
@@ -112,11 +115,23 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
           {FLOORS.map((n) => (
             <Link
               key={n}
-              href={`/leaderboard?floor=${n}`}
+              href={href(n, channel)}
               aria-current={n === floor ? "page" : undefined}
               className={`pixel-button ${n === floor ? "" : "opacity-60"}`}
             >
               {n === 0 ? "Tutorial" : `Floor ${n}`}
+            </Link>
+          ))}
+        </nav>
+        <nav aria-label="Channel" className="flex flex-wrap items-center gap-3 text-sm">
+          {(["all", "voice", "chat"] as const).map((c) => (
+            <Link
+              key={c}
+              href={href(floor, c)}
+              aria-current={c === channel ? "page" : undefined}
+              className={c === channel ? "font-pixel text-[10px] text-[var(--cc-accent)]" : "underline text-[var(--cc-muted)]"}
+            >
+              {c === "all" ? "All" : c === "voice" ? "☎ Voice" : "✉ Chat"}
             </Link>
           ))}
         </nav>

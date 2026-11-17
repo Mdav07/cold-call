@@ -56,6 +56,8 @@ const BUDGET_MULTIPLE = BigInt(process.env.DAILY_BUDGET_CAP_MULTIPLE ?? 20);
 /** Optional hard ceiling on any payout while testnet funds are thin. Unset or 0 = no ceiling. */
 const PAYOUT_CEILING = BigInt(process.env.PAYOUT_CEILING_UNITS ?? 0);
 const MAX_PROPOSALS_PER_RUN = 2;
+/** Suspicion added to the employee who rejects a payment request. */
+const REJECTION_PENALTY = 15;
 const MEMO_MAX = 140;
 export const UNKNOWN_RECIPIENT_LABEL = "Unknown external address, not in vendor registry";
 
@@ -361,6 +363,14 @@ export async function rejectTransfer(input: RejectTransferInput): Promise<[ToolR
     if (!row) return [result("not_found"), noAfter];
     if (row.run_id !== s.runId) return [result("wrong_run"), noAfter];
     const res = await send(s, { functionName: "rejectTransfer", args: [BigInt(id)] });
+    // Spec (handoff 8): a rejected request costs the caller trust; the run gets one more try.
+    if (res.receipt) {
+      await reportSuspicion({
+        ...input,
+        delta: REJECTION_PENALTY,
+        reason: "I had to reject their payment request",
+      }).catch((err) => console.error("rejection penalty failed", err));
+    }
     return [result(res.receipt ? "rejected" : "pending", { tx_hash: res.txHash }), afterOf(res.events)];
   } catch (err) {
     return [failure(err), noAfter];
