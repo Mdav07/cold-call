@@ -118,19 +118,21 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
               key={n}
               href={href(n, channel)}
               aria-current={n === floor ? "page" : undefined}
-              className={`pixel-button ${n === floor ? "" : "opacity-60"}`}
+              className={n === floor ? "pixel-button" : `pixel-button ${OFF}`}
             >
               {n === 0 ? "Tutorial" : `Floor ${n}`}
             </Link>
           ))}
         </nav>
-        <nav aria-label="Channel" className="flex flex-wrap items-center gap-3 text-sm">
+        <nav aria-label="Channel" className="flex flex-wrap items-center gap-2">
           {(["all", "voice", "chat"] as const).map((c) => (
             <Link
               key={c}
               href={href(floor, c)}
               aria-current={c === channel ? "page" : undefined}
-              className={c === channel ? "font-pixel text-[10px] text-[var(--cc-accent)]" : "underline text-[var(--cc-muted)]"}
+              className={`border-2 border-[var(--cc-edge)] px-2.5 py-1.5 font-pixel text-[9px] ${
+                c === channel ? "bg-[var(--cc-ink)] text-[var(--cc-edge)]" : "bg-[var(--cc-panel-2)] text-[var(--cc-ink)] hover:bg-[var(--cc-portrait)]"
+              }`}
             >
               {c === "all" ? "All" : c === "voice" ? "☎ Voice" : "✉ Chat"}
             </Link>
@@ -166,6 +168,9 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
     </>
   );
 }
+
+/** A filter button that is not selected: solid and readable rather than faded. */
+const OFF = "!bg-[var(--cc-panel-2)] !text-[var(--cc-ink)] hover:!bg-[var(--cc-portrait)]";
 
 export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboard">) {
   return (

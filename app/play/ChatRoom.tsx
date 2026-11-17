@@ -394,7 +394,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
         </div>
       </header>
 
-      <div className="grid flex-1 gap-4 md:grid-cols-[220px_1fr]">
+      <div className="grid flex-1 items-start gap-4 md:grid-cols-[220px_1fr]">
         <aside className="pixel-frame flex flex-col items-center gap-5 bg-[var(--cc-panel)] p-4">
           <Portrait card={card} suspicion={suspicion} />
           <SuspicionMeter value={suspicion} />
