@@ -39,7 +39,7 @@ export function todayUtc(ms: number = Date.now()): string {
 }
 
 /** How many days of cases the archive offers (today included). Earlier days are practice. */
-export const DAILY_ARCHIVE_DAYS = 7;
+export const DAILY_ARCHIVE_DAYS = 6;
 
 /** Today first, then the days before it (UTC), `n` in all. */
 export function recentDailyDates(n: number = DAILY_ARCHIVE_DAYS, ms: number = Date.now()): string[] {
