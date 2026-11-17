@@ -1,4 +1,4 @@
-// shared/interfaces.ts — v1
+// shared/interfaces.ts — v1.1
 // The contract between owner A (chain) and owner B (game).
 // Change by agreement only: propose through Coordigent, then update both sides in one commit.
 // All USDC amounts are 6-decimal integer units carried as decimal strings ("1000000" = 1 USDC),
@@ -31,7 +31,13 @@ export const TOOL_SECRET_HEADER = "x-coldcall-tool-secret";
 export interface ToolContext {
   run_id: string; // uuid of the runs row
   employee_id: EmployeeId;
-  conversation_id: string; // ElevenLabs conversation id
+  /**
+   * Our conversations.id (uuid), created by B before the ElevenLabs session starts.
+   * The backend checks that it belongs to run_id + employee_id. This is the auth binding.
+   */
+  session_id: string;
+  /** ElevenLabs system__conversation_id. Logged and stored; not required for the check. */
+  conversation_id?: string;
 }
 
 /** Result codes that an employee must have a spoken line for. */
@@ -124,19 +130,23 @@ export interface RejectAllowlistAddInput extends ToolContext {
 }
 export type RejectAllowlistAddResult = ToolResultBase;
 
-// Lookups (data from content/plumpurse/*.json, owned by B)
+// Lookups. B owns the logic: pure functions checkVendorList, checkCalendar, verifyEmployee in
+// server/game/lookups.ts over content/plumpurse/*.json. A's thin routes call them.
 export interface CheckVendorListInput extends ToolContext {
   vendor_name: string;
 }
 export interface CheckVendorListResult {
   match: boolean;
+  vendor_name?: string; // the registry's spelling of the matched vendor
   payment_address_label?: string;
+  notes?: string[]; // for example "payment address change notice on file, Nov 10"
 }
 export interface CheckCalendarInput extends ToolContext {
   person: string;
   date: string; // YYYY-MM-DD
 }
 export interface CheckCalendarResult {
+  exists: boolean; // false if the person is not in the directory
   busy: boolean;
   pto: boolean;
   meetings: string[];
@@ -148,6 +158,8 @@ export interface VerifyEmployeeResult {
   exists: boolean;
   title?: string;
   manager?: string;
+  department?: string;
+  notes?: string[];
 }
 
 // B's tools (handlers in server/game; A only adds the route)
@@ -161,6 +173,9 @@ export interface ReportSuspicionResult {
 }
 export interface EndConversationInput extends ToolContext {
   reason: string;
+}
+export interface EndConversationResult {
+  ended: boolean;
 }
 
 // ---------- A's other endpoints ----------

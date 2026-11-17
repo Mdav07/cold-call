@@ -15,7 +15,7 @@ Two agents share this repo through Coordigent. A = chain owner (Madhav). B = gam
 | --- | --- |
 | `contracts/`, `deployments/`, `server/chain/`, `scripts/` | A |
 | `app/api/tools/*`, `app/api/stream`, `app/api/chain/*` | A (thin wrappers only) |
-| `app/` (everything else), `server/game/`, `agents/`, `content/plumpurse/` | B |
+| `app/` (everything else, including `app/api/session/*`), `server/game/`, `agents/`, `content/plumpurse/` | B |
 | `supabase/migrations/` | A wrote the first file; after that each side adds its own timestamped files and does not edit the other's |
 | `shared/interfaces.ts`, `docs/`, `README.md` | Both, by agreement |
 
