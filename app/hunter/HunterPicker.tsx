@@ -72,7 +72,7 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
 
       <fieldset>
         <legend className="mb-3 font-pixel text-xs text-[var(--cc-ink)]">Look</legend>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
           {HUNTERS.map((h) => (
             <label
               key={h.id}

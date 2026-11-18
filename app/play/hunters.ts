@@ -1,5 +1,5 @@
 // The player's hunter: which sprite they picked and the name shown above their head.
-// Four looks, the same on /intro and /hunter. Sprites come from tools/art/portrait_sprites.py. Saved in localStorage per
+// Eight looks, the same on /intro and /hunter. Sprites come from tools/art/portrait_sprites.py. Saved in localStorage per
 // browser; the name is also stored as users.display_name for signed-in players (POST /api/hunter).
 
 export interface HunterOption {
@@ -7,11 +7,17 @@ export interface HunterOption {
   label: string;
 }
 
+/** Eight looks across skin tones and gender presentations (tools/art/portrait_sprites.py HUNTERS).
+ *  Labels name the clothes and hair, never the person. */
 export const HUNTERS: HunterOption[] = [
-  { id: "hunter-2", label: "Red coat" },
+  { id: "hunter-2", label: "Red dress" },
   { id: "hunter-3", label: "Gold sweater" },
-  { id: "hunter-4", label: "Violet jacket" },
+  { id: "hunter-4", label: "Violet hijab" },
   { id: "hunter-6", label: "Pink hair" },
+  { id: "hunter-7", label: "Green flannel" },
+  { id: "hunter-8", label: "Teal braids" },
+  { id: "hunter-9", label: "Grey suit" },
+  { id: "hunter-10", label: "Silver specs" },
 ];
 
 /** Looks earned with a Daily Case streak (app/play/streak.ts STREAK_REWARDS). Valid once picked. */

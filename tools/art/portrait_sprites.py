@@ -112,13 +112,20 @@ def head_from_portrait(im32: Image.Image):
 
 
 # Hunters: no portrait, so a head drawn in the same halved style. hair: short | long | curly | bun | slick | messy
+# Hunters: no portrait, so heads drawn in the same halved style. Eight player looks spanning skin tones
+# (light to deep) and gender presentations, plus two streak rewards (hunter-1, hunter-5).
+# hair: short | long | curly | bun | slick | messy | buzz | afro | braids | hijab; extras: beard, glasses, dress.
 HUNTERS = {
     "hunter-1": dict(skin=(240, 200, 168), hair="short", hair_c=(150, 90, 50), outfit=(48, 160, 160)),
-    "hunter-2": dict(skin=(214, 164, 118), hair="long", hair_c=(40, 32, 36), outfit=(196, 70, 70)),
-    "hunter-3": dict(skin=(110, 70, 46), hair="curly", hair_c=(32, 26, 30), outfit=(232, 186, 70)),
-    "hunter-4": dict(skin=(160, 108, 72), hair="bun", hair_c=(70, 44, 30), outfit=(120, 96, 200)),
+    "hunter-2": dict(skin=(226, 176, 132), hair="long", hair_c=(40, 32, 36), outfit=(196, 70, 70), dress=True),
+    "hunter-3": dict(skin=(92, 58, 40), hair="afro", hair_c=(26, 22, 24), outfit=(232, 186, 70), beard=True),
+    "hunter-4": dict(skin=(160, 108, 72), hair="hijab", hair_c=(60, 70, 140), outfit=(120, 96, 200), dress=True),
     "hunter-5": dict(skin=(240, 200, 168), hair="messy", hair_c=(236, 210, 140), outfit=(80, 140, 70)),
     "hunter-6": dict(skin=(214, 164, 118), hair="slick", hair_c=(200, 60, 120), outfit=(36, 36, 44)),
+    "hunter-7": dict(skin=(247, 214, 186), hair="short", hair_c=(120, 70, 40), outfit=(70, 120, 70), beard=True),
+    "hunter-8": dict(skin=(110, 70, 46), hair="braids", hair_c=(30, 24, 28), outfit=(40, 140, 150), dress=True),
+    "hunter-9": dict(skin=(238, 204, 160), hair="bun", hair_c=(28, 24, 30), outfit=(110, 110, 120)),
+    "hunter-10": dict(skin=(176, 118, 80), hair="buzz", hair_c=(170, 170, 176), outfit=(200, 110, 60), glasses=True),
 }
 
 
@@ -153,11 +160,45 @@ def drawn_head(p: dict) -> Image.Image:
         px[2, 0] = hair
         px[5, 0] = hair
         px[8, 0] = hair
+    elif style == "buzz":
+        rect(1, 1, 8, 1, CLEAR)  # close crop: only a thin band of hair
+        rect(1, 3, 1, 6, skin)
+        rect(8, 3, 8, 6, skin)
+        rect(2, 2, 7, 2, hair)
+        rect(2, 3, 7, 3, skin)
+        rect(2, 3, 2, 3, hair)
+        rect(7, 3, 7, 3, hair)
+    elif style == "afro":
+        rect(0, 0, 9, 4, hair)
+        rect(0, 4, 1, 7, hair)
+        rect(8, 4, 9, 7, hair)
+        px[0, 0] = px[9, 0] = CLEAR
+    elif style == "braids":
+        rect(0, 3, 1, 10, hair)
+        rect(8, 3, 9, 10, hair)
+        bead = (220, 180, 60, 255)
+        for y in (5, 8):
+            px[0, y] = px[9, y] = bead
+    elif style == "hijab":
+        rect(0, 0, 9, 3, hair)  # the scarf frames the face and falls to the shoulders
+        rect(0, 3, 1, 10, hair)
+        rect(8, 3, 9, 10, hair)
+        rect(1, 1, 8, 1, shade(hair, 1.2))
     eye = (30, 26, 34, 255)
     px[3, 6] = eye
     px[6, 6] = eye
     px[4, 8] = shade(skin, 0.75)
     px[5, 8] = shade(skin, 0.75)
+    if p.get("beard"):
+        rect(2, 8, 7, 10, hair)
+        rect(2, 7, 2, 7, hair)
+        rect(7, 7, 7, 7, hair)
+        px[4, 8] = px[5, 8] = shade(skin, 0.75)  # the mouth shows through
+    if p.get("glasses"):
+        frame = (30, 30, 36, 255)
+        for x in (2, 3, 4, 5, 6, 7):
+            px[x, 5] = frame
+        px[3, 6] = px[6, 6] = (140, 180, 210, 255)
     return im
 
 
@@ -173,7 +214,7 @@ def back_of(head: Image.Image, skin, hair) -> Image.Image:
     return out
 
 
-def frame(head: Image.Image, outfit, facing: str, step: int, skin) -> Image.Image:
+def frame(head: Image.Image, outfit, facing: str, step: int, skin, dress: bool = False) -> Image.Image:
     f = Image.new("RGBA", (FW, FH), CLEAR)
     px = f.load()
     pants = shade(outfit, 0.55)
@@ -208,6 +249,12 @@ def frame(head: Image.Image, outfit, facing: str, step: int, skin) -> Image.Imag
         rect(front, 27, front + 1, 30, pants)
         rect(min(front, back), 31, max(front, back) + 1, 31, SHOE)
 
+    if dress:  # a skirt over the top of the legs
+        if facing in ("down", "up"):
+            rect(4, 26, 11, 28, outfit)
+        else:
+            rect(5, 26, 10, 28, outfit)
+
     # Head: bottom-aligned on the body (overlaps the neck by a pixel), centred.
     hx = (FW - head.width) // 2
     hy = 21 - head.height
@@ -215,13 +262,13 @@ def frame(head: Image.Image, outfit, facing: str, step: int, skin) -> Image.Imag
     return f
 
 
-def sheet(head: Image.Image, skin, hair, outfit) -> Image.Image:
+def sheet(head: Image.Image, skin, hair, outfit, dress: bool = False) -> Image.Image:
     side = head  # the halved portraits face forward; a profile at this size reads the same
     heads = {"down": head, "left": ImageOps.mirror(side), "right": side, "up": back_of(head, skin, hair)}
     out = Image.new("RGBA", (FW * 4, FH * 4), CLEAR)
     for r, facing in enumerate(["down", "left", "right", "up"]):
         for c, step in enumerate([0, 1, 0, 3]):
-            out.alpha_composite(frame(heads[facing], outfit, facing, step, skin), (c * FW, r * FH))
+            out.alpha_composite(frame(heads[facing], outfit, facing, step, skin, dress), (c * FW, r * FH))
     return out
 
 
@@ -236,7 +283,7 @@ def main() -> None:
         head, skin, hair, outfit = head_from_portrait(raster(svg))
         built[cid] = sheet(head, skin, hair, outfit)
     for hid, p in HUNTERS.items():
-        built[hid] = sheet(drawn_head(p), p["skin"] + (255,), p["hair_c"] + (255,), p["outfit"] + (255,))
+        built[hid] = sheet(drawn_head(p), p["skin"] + (255,), p["hair_c"] + (255,), p["outfit"] + (255,), p.get("dress", False))
     for name, im in built.items():
         im.save(out_dir / f"{name}.png")
     built["hunter-2"].save(out_dir / "hunter.png")  # the default look (app/play/hunters.ts)
