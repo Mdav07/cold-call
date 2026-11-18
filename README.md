@@ -60,7 +60,7 @@ Security training is usually a slide deck. Cold Call puts you on the attacker's 
 
 | | |
 | --- | --- |
-| ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Pick your hunter: four looks and a name over your head](docs/devpost/hunter.jpg) |
+| ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Pick your hunter and a name over your head](docs/devpost/hunter.jpg) |
 | Krystal's opening cutscene | Pick a hunter look and a name |
 | ![Floor 1: Dee, Penny and your hunter](docs/devpost/floor-1-walk.jpg) | ![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](docs/devpost/dee-dialogue.jpg) |
 | Walk the floor; every employee and readable prop is on the map | Press Space to talk, call or show evidence; the suspicion meter is live |
@@ -70,9 +70,11 @@ Security training is usually a slide deck. Cold Call puts you on the attacker's 
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="How to play" width="100%">
 
-You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Read Krystal's case file, walk up to an employee, press Space, and call or message them. Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
+You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Pick one of eight hunters (Red Renata, Gold Gideon, Violet Vida, Pink Pia, Green Glen, Teal Tiana, Charcoal Chen or Silver Sol) and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and call or message them. Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
 
-**The Tutorial.** Barry's one-room branch across the street teaches the loop: read the clues, name a vendor that's really on the list, and talk him into one small payment. Clearing it unlocks the elevators and the Daily door in the lobby.
+**Clues.** Signs, memos and notes on each floor hold clues. Most open a short mini-game first (wires by colour, a keycard swipe, a keypad code from a sticky note, or shredded strips in order; 5 to 15 seconds, with mouse, touch or keyboard). Once you've read a clue it's filed as evidence you can present mid-conversation.
+
+**The Tutorial.** Barry's one-room branch across the street teaches the loop, including one easy mini-game: read the clues, name a vendor that's really on the list, and talk him into one small payment. Clearing it unlocks the elevators and the Daily door in the lobby.
 
 **Floors 1 to 3.** Each floor is a different workplace with a stricter vault. Krystal's two-screen briefing opens each one.
 
@@ -85,7 +87,7 @@ You're a rookie treasure hunter finishing your vanished mentor's last job: get i
 
 Only time on the call counts, and you can call back with less time each call, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer and shows your bounty and run time. A lockout plays the villain's taunt and shows what gave you away.
 
-**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. A daily streak shows as a flame badge, and 3 and 7 days unlock new hunter looks.
+**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. A daily streak shows as a flame badge; 3 days unlocks the Aqua Ari hunter and 7 days unlocks Lime Leo.
 
 **Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, and 10 cents on the Daily Case. On chain each breach pays a 1¢ testnet token. The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest streaks.
 
@@ -352,9 +354,8 @@ Supabase Postgres (`supabase/migrations/`), with Realtime for the live UI and ro
 
 Merged or being built, but not live yet:
 
-- **Bounty display.** The game already records the cracked amount; the result screen and leaderboard will show it as your bounty.
+- **Cracked-amount bounty.** The result screen and Top earners already read the cracked amount, but show the 1¢ sent until a pending database migration (`runs.cracked_units`) is applied.
 - **No Floor 3 wait.** A new Floor 3 vault with no allowlist delay is deployed at [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475). It goes live once funded; until then the vault above, with its 60-second timelock, is the one in play.
-- **Clue mini-games.** Each clue prop opens a 5 to 15 second task before the clue shows.
 - **Branded sign-in email** through Resend; sign-in uses Supabase's default email until the key is set.
 
 <a name="run-it-locally"></a>

@@ -57,7 +57,8 @@ Cold Call is a social-engineering heist game in the browser. You call or text th
 Plumpurse Savings & Trust, and talk them into approving a payment. Each approval is a real transaction from that
 employee's wallet to a USDC vault on Arc testnet, and a run counts as a breach only when the vault pays out.
 
-You walk a pixel-art tower, read clues on each floor, and file them as evidence you can present
+You pick one of eight hunters, walk a pixel-art tower, and crack short mini-games (wires, a keycard swipe, a
+keypad, shredded strips) to read the clues on each floor, which you can present as evidence
 mid-conversation. The staff fight back. They check your story against a vendor registry, calendars and a staff
 directory. A suspicion meter rises with every slip, and at 100 they hang up and warn their colleague. They also
 remember the tricks you used on them before, so the same con never works twice.
@@ -135,8 +136,8 @@ in with an email and password or play as a guest.
 
 ## What's next
 
-- Show the amount you talked the employee into as your bounty (the game already records it), switch Floor 3 to
-  its new no-wait vault, and add short mini-games to the clues.
+- Switch Floor 3 to its new no-wait vault, and finish showing the amount you talked the employee into as your
+  bounty (the game already records it).
 - Move employee signing to Circle developer-controlled wallets, as player wallets already are.
 - New banks with new controls, such as hardware-wallet confirmations, spending limits and delays.
 - Multiplayer: one player attacks while another defends as the employee.
