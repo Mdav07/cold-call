@@ -415,35 +415,6 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       const seated = new Set<number>(map.npcs.map((n) => n.y * map.width + n.x));
       drawLayer(map.layers.decor, (i, t) => !(CHAIR_TILES.has(t) && seated.has(i)));
 
-      // Characters, back to front.
-      type Actor = { y: number; draw: () => void };
-      const actors: Actor[] = [];
-      const drawWalker = (img: HTMLImageElement | undefined, x: number, y: number, facing: Facing, frame: number) => {
-        if (!img) {
-          c.fillStyle = "#f4c95d";
-          c.fillRect(x + 3, y + 2, 10, 13);
-          return;
-        }
-        // A soft oval shadow at the feet grounds each character on the floor.
-        c.fillStyle = "rgba(20, 14, 30, 0.28)";
-        c.beginPath();
-        c.ellipse(x + TILE / 2, y + TILE - 1.5, 5.5, 2, 0, 0, Math.PI * 2);
-        c.fill();
-        c.drawImage(img, frame * FRAME_W, ROW[facing] * FRAME_H, FRAME_W, FRAME_H, x, y - (FRAME_H - TILE), FRAME_W, FRAME_H);
-      };
-      map.npcs.forEach((n, i) => {
-        // Idle NPCs breathe: a 1 px bob, out of step with each other. Off for reduced motion.
-        const bob = reduceMotion ? 0 : Math.floor((now / 600 + i * 0.37) % 2);
-        actors.push({
-          y: n.y * TILE,
-          draw: () => drawWalker(images[n.sprite], n.x * TILE, n.y * TILE - bob, npcFacing.current[n.id] ?? n.facing, 0),
-        });
-      });
-      actors.push({ y: py, draw: () => drawWalker(images[playerSprite], px, py, p.facing, p.frame) });
-      actors.sort((a, b) => a.y - b.y).forEach((a) => a.draw());
-
-      drawLayer(map.layers.overhead);
-
       // On-map text keeps the same size on screen whatever the zoom: sizes below are map pixels at 2x zoom.
       const u = 2 / scale;
 
@@ -480,6 +451,41 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.fillStyle = "#f2efe6";
         c.fillText(text, tx, ty);
       };
+      // Doormat words are printed on the floor: drawn before the characters, so whoever stands on a mat
+      // covers its word instead of the word floating over them.
+      for (const t of tagsRef.current ?? []) {
+        if (t.mat) plate(t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 0, 0, { box: false, clamp: false });
+      }
+
+      // Characters, back to front.
+      type Actor = { y: number; draw: () => void };
+      const actors: Actor[] = [];
+      const drawWalker = (img: HTMLImageElement | undefined, x: number, y: number, facing: Facing, frame: number) => {
+        if (!img) {
+          c.fillStyle = "#f4c95d";
+          c.fillRect(x + 3, y + 2, 10, 13);
+          return;
+        }
+        // A soft oval shadow at the feet grounds each character on the floor.
+        c.fillStyle = "rgba(20, 14, 30, 0.28)";
+        c.beginPath();
+        c.ellipse(x + TILE / 2, y + TILE - 1.5, 5.5, 2, 0, 0, Math.PI * 2);
+        c.fill();
+        c.drawImage(img, frame * FRAME_W, ROW[facing] * FRAME_H, FRAME_W, FRAME_H, x, y - (FRAME_H - TILE), FRAME_W, FRAME_H);
+      };
+      map.npcs.forEach((n, i) => {
+        // Idle NPCs breathe: a 1 px bob, out of step with each other. Off for reduced motion.
+        const bob = reduceMotion ? 0 : Math.floor((now / 600 + i * 0.37) % 2);
+        actors.push({
+          y: n.y * TILE,
+          draw: () => drawWalker(images[n.sprite], n.x * TILE, n.y * TILE - bob, npcFacing.current[n.id] ?? n.facing, 0),
+        });
+      });
+      actors.push({ y: py, draw: () => drawWalker(images[playerSprite], px, py, p.facing, p.frame) });
+      actors.sort((a, b) => a.y - b.y).forEach((a) => a.draw());
+
+      drawLayer(map.layers.overhead);
+
       const nameTag = (x: number, y: number, text: string) => plate(x + TILE / 2, y - (FRAME_H - TILE) + 8, text, 5 * u, 3 * u);
       const nm = namesRef.current;
       // The person the player is facing gets one caption instead (below), so labels never stack.
@@ -552,19 +558,15 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       // TUTORIAL + DAILY CASE stay visible from spawn; FLOOR N lights up when close.
       if (!pausedRef.current) {
         for (const t of tagsRef.current ?? []) {
-          // T / D mats stay lit from spawn; FLOOR N is proximity-only.
-          const always = t.mat || t.text === "TUTORIAL" || t.text === "DAILY CASE";
+          if (t.mat) continue; // doormat words were drawn with the floor, before the characters
+          const always = t.text === "TUTORIAL" || t.text === "DAILY CASE";
           const dist = Math.abs(p.x - t.x) + Math.abs(p.y - t.y);
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
           c.globalAlpha = a;
-          // A doormat's word is printed on the mat itself (no plate); other tags get the dark plate.
-          if (t.mat) plate(t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 0, 0, { box: false, clamp: false });
-          else {
-            c.font = `${5 * u}px ${pixelFont}, monospace`;
-            const wdt = c.measureText(t.text).width + 8 * u;
-            plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u, 2.5 * u, { clamp: false });
-          }
+          c.font = `${5 * u}px ${pixelFont}, monospace`;
+          const wdt = c.measureText(t.text).width + 8 * u;
+          plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u, 2.5 * u, { clamp: false });
           c.globalAlpha = 1;
         }
       }
