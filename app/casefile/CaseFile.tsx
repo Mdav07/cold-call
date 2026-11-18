@@ -3,13 +3,8 @@
 // The case file as a manila folder: tabs along the top, a sheet of paper inside, short cards.
 // Used by /casefile and by the in-game overlay on the floors (which passes the current floor).
 
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
-import dossier from "@/content/plumpurse/dossier.json";
-import directory from "@/content/plumpurse/directory.json";
-import vendorsJson from "@/content/plumpurse/vendors.json";
-import memosJson from "@/content/plumpurse/memos.json";
-import calendar from "@/content/plumpurse/calendar.json";
-import evidence from "@/content/plumpurse/evidence.json";
+import { createContext, useContext, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import type { CaseData } from "./data";
 import pocket from "@/content/pocket-branch/casefile.json";
 import { MyNotes } from "./MyNotes";
 import { useCollectedEvidence, useReadProps } from "@/app/play/evidence";
@@ -47,10 +42,13 @@ const POCKET_TABS: { id: TabId; label: string }[] = [
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const DAY_LABEL: Record<string, string> = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
 
-const employees = directory.employees;
-const byId = Object.fromEntries(employees.map((e) => [e.id, e]));
-const facts = Object.fromEntries(dossier.notes.map((n) => [n.employee_id, n.facts]));
-const memos = [...memosJson.memos].sort((a, b) => b.date.localeCompare(a.date));
+// The file's contents come from the server (app/casefile/data.ts), already limited to unlocked floors.
+const CaseDataContext = createContext<CaseData | null>(null);
+function useCaseData() {
+  const d = useContext(CaseDataContext);
+  if (!d) throw new Error("CaseFile needs data");
+  return { ...d, byId: Object.fromEntries(d.employees.map((e) => [e.id, e])) };
+}
 const floorName = (f: number) => (f === 0 ? "Pocket Branch" : `Floor ${f}`);
 
 function dollars(range: number[]) {
@@ -171,6 +169,7 @@ function onFloor(floor: number, filter: number | "all", allowed: number[]) {
 }
 
 function People({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
+  const { employees, facts } = useCaseData();
   // Only the people you can con; everyone else shows up in their facts.
   const list = employees.filter((e) => facts[e.id] && onFloor(e.floor, floor, allowed));
   return (
@@ -193,9 +192,10 @@ function People({ floor, allowed }: { floor: number | "all"; allowed: number[] }
 }
 
 function Vendors() {
+  const { vendors } = useCaseData();
   return (
     <ul className={GRID}>
-      {vendorsJson.vendors.filter((v) => !v.paid_from.includes("Pocket Branch")).map((v) => (
+      {vendors.filter((v) => !v.paid_from.includes("Pocket Branch")).map((v) => (
         <Card key={v.name} title={v.name}>
           <p className="text-sm text-[var(--cc-ink)]">
             <span className="font-semibold text-[var(--cc-ok)]">{dollars(v.typical_invoice_usdc)}</span> · {v.paid_from}
@@ -208,7 +208,8 @@ function Vendors() {
 }
 
 function Calendar({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
-  const people = calendar.people.filter((p) => {
+  const { calendar, byId } = useCaseData();
+  const people = calendar.filter((p) => {
     const f = byId[p.id]?.floor;
     return f != null && onFloor(f, floor, allowed);
   });
@@ -250,6 +251,7 @@ function Calendar({ floor, allowed }: { floor: number | "all"; allowed: number[]
 
 function Memos({ allowed }: { allowed: number[] }) {
   const read = useReadProps();
+  const { memos } = useCaseData();
   const list = memos.filter((m) => allowed.includes(m.floor));
   return (
     <ul className="flex flex-col gap-3">
@@ -268,7 +270,8 @@ function Memos({ allowed }: { allowed: number[] }) {
 
 function Evidence({ floor, allowed }: { floor: number | "all"; allowed: number[] }) {
   const found = useCollectedEvidence();
-  const items = evidence.items.filter((e) => onFloor(e.floor, floor, allowed));
+  const { evidence } = useCaseData();
+  const items = evidence.filter((e) => onFloor(e.floor, floor, allowed));
   if (items.length === 0) return <p className="text-sm text-[var(--cc-muted)]">Nothing filed for this floor.</p>;
   return (
     <ul className={GRID}>
@@ -402,7 +405,8 @@ function DailyClues({ c }: { c: DailyCase }) {
 
 function PocketEvidence() {
   const found = useCollectedEvidence();
-  const items = evidence.items.filter((e) => e.floor === 0);
+  const { evidence } = useCaseData();
+  const items = evidence.filter((e) => e.floor === 0);
   return (
     <ul className={GRID}>
       {items.map((e) =>
@@ -425,12 +429,15 @@ function PocketEvidence() {
  * `fill` makes the folder fill its parent and scroll inside the paper (for the overlay).
  */
 export function CaseFile({
+  data,
   floor,
   unlockedFloors = [],
   fill = false,
   onClose,
   daily,
 }: {
+  /** The tower file's contents for the player's unlocked floors (app/casefile/data.ts, built on the server). */
+  data: CaseData;
   /** Today's Daily Case: shows its own small file instead of the tower's. */
   daily?: DailyCase;
   floor?: number;
@@ -464,6 +471,7 @@ export function CaseFile({
   const filtered = !isPocket && !isDaily && (tab === "people" || tab === "calendar" || tab === "evidence");
 
   return (
+    <CaseDataContext.Provider value={data}>
     <div className={`flex flex-col ${fill ? "min-h-0 flex-1" : ""}`}>
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-end">
       <div role="tablist" aria-label="Case file" className="grid flex-1 grid-cols-3 items-end gap-1 px-1 sm:flex sm:pl-3">
@@ -513,7 +521,7 @@ export function CaseFile({
                 ? `Daily Case · ${daily.title} · ${daily.date}`
                 : isPocket
                   ? `${pocket.title} · practice file kept by ${pocket.author}`
-                  : `Plumpurse S&T · file kept by ${dossier.author}`}
+                  : `Plumpurse S&T · file kept by ${data.author}`}
             </p>
             <p aria-hidden className="-rotate-6 border-2 border-[#a33a2a] px-2 py-0.5 font-pixel text-[9px] text-[#a33a2a]">
               CONFIDENTIAL
@@ -526,7 +534,7 @@ export function CaseFile({
                 ? `${daily.place}. One person, one small payment. Read the notes in the room: they tell you who to be and what not to say.`
                 : isPocket
                   ? pocket.intro
-                  : dossier.intro}
+                  : data.intro}
             </p>
           )}
           {filtered && <FloorFilter value={active} onChange={setFilter} floors={allowed} />}
@@ -557,5 +565,6 @@ export function CaseFile({
         </div>
       </div>
     </div>
+    </CaseDataContext.Provider>
   );
 }

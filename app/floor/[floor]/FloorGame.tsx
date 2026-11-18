@@ -22,6 +22,7 @@ import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { RestartConfirm } from "@/app/floor/RestartConfirm";
+import type { CaseData } from "@/app/casefile/data";
 import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
@@ -36,6 +37,7 @@ export function FloorGame({
   vault,
   gate,
   unlockedFloors,
+  caseData,
   daily,
 }: {
   map: FloorMap;
@@ -47,6 +49,8 @@ export function FloorGame({
   gate: ReactNode;
   /** Floors the player has open — drives the case-file filter chips. */
   unlockedFloors: number[];
+  /** The case file's contents for the unlocked floors (built on the server). */
+  caseData: CaseData;
   /**
    * Today's Daily Case (/daily): the briefing comes from the case and is remembered per day, and the
    * case file is the case's own small file. Everything else (talk, outcome, elevator) is the same.
@@ -281,7 +285,7 @@ export function FloorGame({
             pages={daily?.brief}
             storageKey={dailyBriefKey ?? undefined}
           /></div>}
-      {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
+      {caseFile && <CaseFileOverlay data={caseData} floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
       {gate}
       {showResume && saved && (
         <ResumeRun

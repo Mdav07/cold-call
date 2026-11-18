@@ -5,7 +5,8 @@ import type { EmployeeId } from "@/shared/interfaces";
 import type { FloorMap } from "@/app/floor/types";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
-import { loadTower } from "@/app/floor/hud/data";
+import { unlockedFloorsForRequest } from "@/server/game/unlocks";
+import { caseDataFor, EMPTY_CASE_DATA } from "@/app/casefile/data";
 import floor0 from "@/app/floor/maps/floor-0.json";
 import floor1 from "@/app/floor/maps/floor-1.json";
 import floor2 from "@/app/floor/maps/floor-2.json";
@@ -61,7 +62,7 @@ export default async function FloorPage({ params }: PageProps<"/floor/[floor]">)
   };
 
   return (
-    <Suspense fallback={<FloorGame {...shared} unlockedFloors={provisionalUnlocks(map.floor)} />}>
+    <Suspense fallback={<FloorGame {...shared} unlockedFloors={provisionalUnlocks(map.floor)} caseData={EMPTY_CASE_DATA} />}>
       <FloorGameWithUnlocks {...shared} />
     </Suspense>
   );
@@ -82,10 +83,11 @@ async function FloorGameWithUnlocks({
   vault: ReactNode;
   gate: ReactNode;
 }) {
-  const { floors } = await loadTower();
-  const unlockedFloors = floors.filter((f) => f.unlocked).map((f) => f.floor);
-  // You can only stand on an unlocked floor; keep the current one visible if the DB hiccups.
-  if (!unlockedFloors.includes(map.floor)) unlockedFloors.push(map.floor);
+  // Signed in: the account's clears. Guests: this browser's clears (cookie). The case file only gets
+  // the contents of floors that are really unlocked, even on a floor reached by typing its URL.
+  const open = await unlockedFloorsForRequest();
+  const caseData = caseDataFor(open);
+  const unlockedFloors = open.includes(map.floor) ? open : [...open, map.floor];
   return (
     <FloorGame
       map={map}
@@ -93,6 +95,7 @@ async function FloorGameWithUnlocks({
       playerSprite={playerSprite}
       defaultCover={defaultCover}
       unlockedFloors={unlockedFloors}
+      caseData={caseData}
       vault={vault}
       gate={gate}
     />

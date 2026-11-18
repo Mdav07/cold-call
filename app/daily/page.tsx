@@ -12,6 +12,7 @@ import { FloorGame } from "@/app/floor/[floor]/FloorGame";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
 import { buildDailyRoom } from "./room";
+import { EMPTY_CASE_DATA } from "@/app/casefile/data";
 import { DailyGate } from "./DailyGate";
 
 export const metadata: Metadata = { title: "Cold Call · Daily Case" };
@@ -59,6 +60,7 @@ async function DailyRoom({ searchParams }: { searchParams: PageProps<"/daily">["
       playerSprite="/sprites/hunter.png"
       defaultCover=""
       unlockedFloors={[0]}
+      caseData={EMPTY_CASE_DATA}
       daily={c}
       // The Daily Case pays from the Pocket Branch vault.
       vault={
