@@ -1,6 +1,6 @@
 "use client";
 
-// The four clue games. Each is 5–15 seconds, works with a mouse, a finger or the keyboard, and calls
+// The first four clue games (games2.tsx has four more). Each is 5–15 seconds, works with a mouse, a finger or the keyboard, and calls
 // onWin once. `rand` is seeded per prop, so a clue's puzzle is the same each time you open it.
 
 import { useEffect, useRef, useState } from "react";
@@ -31,7 +31,7 @@ function arrowNav(e: React.KeyboardEvent<HTMLElement>, cols = 1) {
   btns[(i + step + btns.length) % btns.length]?.focus();
 }
 
-// ---------- 1. Wires: join each wire to the socket of its colour ----------
+// ---------- 1. Wires: drag each wire to the socket of its colour ----------
 
 const WIRES = [
   { name: "red", hex: "#e05d5d" },
@@ -40,19 +40,56 @@ const WIRES = [
   { name: "green", hex: "#6fbf73" },
 ];
 
+/**
+ * Press on a wire's plug and drag: a live wire follows the pointer (mouse or finger), and letting go
+ * over the socket of the same colour connects it. Tapping a plug and then a socket works too, and so
+ * does the keyboard (Tab or arrows to a plug, Enter, then to a socket, Enter).
+ */
+type Pt = { x: number; y: number };
+
 export function Wires({ rand, onWin }: { rand: Rand; onWin: () => void }) {
   const [left] = useState(() => shuffle(WIRES, rand));
   const [right] = useState(() => shuffle(WIRES, rand));
   const [picked, setPicked] = useState<string | null>(null);
   const [done, setDone] = useState<string[]>([]);
   const [miss, setMiss] = useState(false);
-  const ROW = 44; // 40px buttons + 4px gap
+  const [drag, setDrag] = useState<{ name: string; x0: number; y0: number; x: number; y: number } | null>(null);
+  const [lines, setLines] = useState<{ name: string; a: Pt; b: Pt }[]>([]);
+  const box = useRef<HTMLDivElement>(null);
+  const doneRef = useRef<string[]>([]);
 
-  const join = (name: string) => {
-    if (!picked) return;
-    if (picked === name) {
-      const next = [...done, name];
+  const centre = (sel: string, side: "l" | "r") => {
+    const root = box.current;
+    const el = root?.querySelector<HTMLElement>(sel);
+    if (!root || !el) return null;
+    const a = root.getBoundingClientRect(), b = el.getBoundingClientRect();
+    return { x: (side === "l" ? b.right : b.left) - a.left, y: b.top + b.height / 2 - a.top };
+  };
+  // A connected wire runs between the real plug and socket centres: measured when it's joined, and
+  // again whenever the layout changes size.
+  const measure = (names: string[]) =>
+    names.flatMap((name) => {
+      const a = centre(`[data-plug="${name}"]`, "l"), b = centre(`[data-socket="${name}"]`, "r");
+      return a && b ? [{ name, a, b }] : [];
+    });
+  useEffect(() => {
+    const ro = new ResizeObserver(() => setLines(measure(doneRef.current)));
+    if (box.current) ro.observe(box.current);
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const local = (e: { clientX: number; clientY: number }) => {
+    const a = box.current!.getBoundingClientRect();
+    return { x: e.clientX - a.left, y: e.clientY - a.top };
+  };
+
+  const join = (from: string | null, to: string) => {
+    if (!from || doneRef.current.includes(to)) return;
+    if (from === to) {
+      const next = [...doneRef.current, to];
+      doneRef.current = next;
       setDone(next);
+      setLines(measure(next));
       tick();
       if (next.length === WIRES.length) onWin();
     } else {
@@ -62,13 +99,16 @@ export function Wires({ rand, onWin }: { rand: Rand; onWin: () => void }) {
     setPicked(null);
   };
 
+  const hex = (name: string) => WIRES.find((w) => w.name === name)!.hex;
+
   return (
-    <div className={`grid grid-cols-[auto_1fr_auto] items-stretch gap-2 ${miss ? "cc-shake" : ""}`}>
+    <div ref={box} className={`relative grid grid-cols-[auto_1fr_auto] items-stretch gap-2 ${miss ? "cc-shake" : ""}`}>
       <div className="flex flex-col gap-1" role="group" aria-label="Wires" onKeyDown={(e) => arrowNav(e)}>
         {left.map((w) => (
           <button
             key={w.name}
             type="button"
+            data-plug={w.name}
             disabled={done.includes(w.name)}
             aria-pressed={picked === w.name}
             aria-label={`${w.name} wire`}
@@ -76,43 +116,56 @@ export function Wires({ rand, onWin }: { rand: Rand; onWin: () => void }) {
               tick();
               setPicked(w.name);
             }}
-            className={`h-10 w-16 border-2 ${picked === w.name ? "border-[var(--cc-ink)]" : "border-[var(--cc-edge)]"} disabled:opacity-60`}
+            onPointerDown={(e) => {
+              if (done.includes(w.name)) return;
+              e.currentTarget.setPointerCapture(e.pointerId);
+              const a = centre(`[data-plug="${w.name}"]`, "l")!;
+              const p = local(e);
+              setDrag({ name: w.name, x0: a.x, y0: a.y, x: p.x, y: p.y });
+            }}
+            onPointerMove={(e) => {
+              if (!drag) return;
+              const p = local(e);
+              setDrag({ ...drag, x: p.x, y: p.y });
+            }}
+            onPointerUp={(e) => {
+              if (!drag) return;
+              const target = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>("[data-socket]");
+              const moved = Math.hypot(local(e).x - drag.x0, local(e).y - drag.y0) > 24;
+              setDrag(null);
+              if (target) join(drag.name, target.dataset.socket!);
+              else if (moved) setPicked(null);
+            }}
+            onPointerCancel={() => setDrag(null)}
+            className={`h-10 w-16 touch-none border-2 ${picked === w.name ? "border-[var(--cc-ink)]" : "border-[var(--cc-edge)]"} disabled:opacity-60`}
             style={{ background: w.hex }}
           />
         ))}
       </div>
-      <svg className="w-full" style={{ height: ROW * 4 - 4 }} viewBox={`0 0 100 ${ROW * 4}`} preserveAspectRatio="none" aria-hidden>
-        {done.map((name) => {
-          const a = left.findIndex((w) => w.name === name);
-          const b = right.findIndex((w) => w.name === name);
-          return (
-            <line
-              key={name}
-              x1={0}
-              y1={a * ROW + 20}
-              x2={100}
-              y2={b * ROW + 20}
-              stroke={WIRES.find((w) => w.name === name)!.hex}
-              strokeWidth={6}
-              vectorEffect="non-scaling-stroke"
-            />
-          );
-        })}
-      </svg>
+      <div aria-hidden />
       <div className="flex flex-col gap-1" role="group" aria-label="Sockets" onKeyDown={(e) => arrowNav(e)}>
         {right.map((w) => (
           <button
             key={w.name}
             type="button"
+            data-socket={w.name}
             disabled={done.includes(w.name)}
             aria-label={`${w.name} socket`}
-            onClick={() => join(w.name)}
+            onClick={() => join(picked, w.name)}
             className="grid h-10 w-16 place-items-center border-2 border-[var(--cc-edge)] bg-[var(--cc-bg)] disabled:opacity-60"
           >
             <span className="block size-5 rounded-full border-2 border-[var(--cc-edge)]" style={{ background: w.hex }} />
           </button>
         ))}
       </div>
+      <svg className="pointer-events-none absolute inset-0 size-full overflow-visible" aria-hidden>
+        {lines.map((l) => (
+          <line key={l.name} x1={l.a.x} y1={l.a.y} x2={l.b.x} y2={l.b.y} stroke={hex(l.name)} strokeWidth={6} strokeLinecap="round" />
+        ))}
+        {drag && (
+          <line x1={drag.x0} y1={drag.y0} x2={drag.x} y2={drag.y} stroke={hex(drag.name)} strokeWidth={6} strokeLinecap="round" />
+        )}
+      </svg>
     </div>
   );
 }

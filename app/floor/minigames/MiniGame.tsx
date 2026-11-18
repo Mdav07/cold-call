@@ -7,30 +7,44 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Keycard, Keypad, Shred, Wires, winSound, type Rand } from "./games";
+import { MailSort, SafeDial, Sequence, Stamp } from "./games2";
 
-export type GameKind = "wires" | "keycard" | "keypad" | "shred";
-const KINDS: GameKind[] = ["wires", "keycard", "keypad", "shred"];
+export type GameKind = "wires" | "keycard" | "keypad" | "shred" | "stamp" | "dial" | "mail" | "lights";
+const KINDS: GameKind[] = ["wires", "keycard", "keypad", "shred", "stamp", "dial", "mail", "lights"];
 
 const TITLES: Record<GameKind, { title: string; how: string }> = {
-  wires: { title: "Fix the wiring", how: "Join each wire to the socket of the same colour." },
+  wires: { title: "Fix the wiring", how: "Drag each wire to the socket of the same colour." },
   keycard: { title: "Swipe the keycard", how: "Hold to slide the card, let go over the green." },
   keypad: { title: "Enter the code", how: "Type the code from the sticky note." },
   shred: { title: "Tape the shredded memo", how: "Pick the strips in reading order." },
+  stamp: { title: "Approve the invoices", how: "Stamp only the invoices that match the work order." },
+  dial: { title: "Open the safe", how: "Turn the dial to each number, then press Set." },
+  mail: { title: "Sort the mail", how: "Put each letter in its department's pigeonhole." },
+  lights: { title: "Reset the alarm panel", how: "Watch the lights, then press them in the same order." },
 };
 
 /** The tutorial's one teaching game: Barry's courier schedule. */
 const TUTORIAL_PROP = "swiftbag-schedule";
 
 /**
- * Which game a prop gets, if any. Floors 1–3 and the Daily: every prop except Krystal's notes, the
- * kinds dealt in turn across the room's props so a floor mixes them. Tutorial: one easy keypad.
+ * Which game a prop gets, if any. Floors 1–3 and the Daily: every prop except Krystal's notes. The
+ * kinds are shuffled once per room (seeded by the floor and its clue ids, which include the date in the
+ * Daily) and dealt one per clue, so no game repeats in a room while there are no more clues than kinds
+ * (8; rooms have 4–5), and each floor and each day gets its own mix. Tutorial: one easy keypad.
  */
 export function gameFor(floor: number, propIds: string[], id: string): GameKind | null {
   if (id.startsWith("krystal")) return null;
   if (floor === 0) return id === TUTORIAL_PROP ? "keypad" : null;
   const clues = propIds.filter((p) => !p.startsWith("krystal")).sort();
   const i = clues.indexOf(id);
-  return i < 0 ? null : KINDS[(i + floor) % KINDS.length];
+  if (i < 0) return null;
+  const r = seeded(`${floor}|${clues.join(",")}`);
+  const deck = [...KINDS];
+  for (let j = deck.length - 1; j > 0; j--) {
+    const k = Math.floor(r() * (j + 1));
+    [deck[j], deck[k]] = [deck[k], deck[j]];
+  }
+  return deck[i % deck.length];
 }
 
 // ---------- solved clues, per place, for the run ----------
@@ -179,6 +193,10 @@ export function MiniGame({
           {kind === "keycard" && <Keycard rand={rand} onWin={done} />}
           {kind === "keypad" && <Keypad rand={rand} onWin={done} easy={easy} />}
           {kind === "shred" && <Shred rand={rand} onWin={done} />}
+          {kind === "stamp" && <Stamp rand={rand} onWin={done} />}
+          {kind === "dial" && <SafeDial rand={rand} onWin={done} />}
+          {kind === "mail" && <MailSort rand={rand} onWin={done} />}
+          {kind === "lights" && <Sequence rand={rand} onWin={done} />}
         </div>
         <div className="flex items-center justify-between gap-2">
           <p className="font-pixel text-[9px] text-[var(--cc-muted)]">Esc · leave it for later</p>
