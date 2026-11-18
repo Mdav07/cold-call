@@ -1,5 +1,5 @@
 // The tower lobby as a walkable map: elevators to Floors 1–3 on the back wall, the street door to the
-// Pocket Branch (the tutorial) at the front, a reception desk and signs to read. Built in code from the
+// The tutorial at the front, a reception desk and signs to read. Built in code from the
 // shared tileset so it follows the player's progress: a locked floor's elevator has no exit, only a sign.
 import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
@@ -93,7 +93,7 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
   for (const [key, x] of Object.entries(ELEVATORS)) {
     const n = Number(key) as 1 | 2 | 3;
     const f = byFloor(n);
-    const below = n - 1 === 0 ? "the Pocket Branch across the street" : `Floor ${n - 1}`;
+    const below = n - 1 === 0 ? "the Tutorial" : `Floor ${n - 1}`;
     const best = f?.bestMs != null ? ` Your best: ${clock(f.bestMs)}.` : "";
     const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
     const status = !f ? "" : f.cleared ? "CLEARED" : f.unlocked ? "OPEN" : "LOCKED";
@@ -129,8 +129,8 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
     id: "street-sign",
     x: DOOR_X,
     y: H - 2,
-    label: `Across the street · ${p0?.name ?? "Pocket Branch"}${p0?.cleared ? " · CLEARED" : ""}`,
-    text: "The tutorial: Barry is closing up the Pocket Branch. Walk out through the door to try your first con.",
+    label: `Tutorial${p0?.cleared ? " · CLEARED" : ""}`,
+    text: "The tutorial: Barry is closing up the little branch across the street. Walk out through the door to try your first con.",
   });
   props.push({
     id: "reception",
@@ -147,7 +147,7 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
     text: `A new short case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Full board at /leaderboard?floor=daily.`,
   });
   const top = floors
-    .flatMap((f) => f.board.slice(0, 1).map((b) => `Floor ${f.floor}: ${b.name} ${clock(b.ms)}`))
+    .flatMap((f) => f.board.slice(0, 1).map((b) => `${f.floor === 0 ? "Tutorial" : `Floor ${f.floor}`}: ${b.name} ${clock(b.ms)}`))
     .join(" · ");
   props.push({
     id: "leaderboard-plaque",
