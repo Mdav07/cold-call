@@ -4,140 +4,85 @@ Right now, somewhere in Plumpurse Savings & Trust, a receptionist named Penny is
 
 That somebody is you.
 
-**Cold Call** is a social-engineering heist game. You walk the floors of a pixel-art bank and talk its AI staff into approving a payment, by phone or by chat. If they say yes, the payment is a **real USDC transfer on Arc testnet**, and the run only counts when the vault contract says so.
-
-🧠 **And the staff learn.** Every employee remembers the trick you used on them. The same con never works twice.
+**Cold Call** is a social-engineering heist game. You call or text the AI staff of a pixel-art bank and talk them into approving a payment. Each "yes" is a **real transaction** from that employee's wallet to a **USDC vault on Arc testnet**, and a run counts only when the vault pays out.
 
 ![Inspiration](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-inspiration.png)
 
-Most stolen money isn't stolen by breaking cryptography. It's stolen by talking to people. Business email compromise is one of the costliest crimes the FBI's IC3 tracks, and the 2025 Bybit theft (about $1.5 billion) happened because signers approved a transaction their screen misrepresented.
+Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. The FBI ranks business email compromise among the costliest crimes it tracks, and in February 2025 Bybit's signers approved a transaction their screens misrepresented and about $1.5 billion was stolen.
 
-Security training is a slide deck people click through. We wanted the opposite: put you on the attacker's side of the phone, let you feel how a believable story, a deadline or a name-drop gets a careful person to sign, and then show you the contract-level control that would have stopped you.
+Security training is usually a slide deck. We wanted the opposite: put you on the attacker's side of the phone, let you feel how a believable story, a deadline or a name-drop gets a careful person to sign, and then show you the contract-level control that would have stopped you.
 
 ![What it does](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-what-it-does.png)
 
-![Floor 1, The Bullpen: Dee, Penny and your hunter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
+![Floor 1: Dee, Penny and your hunter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
 
-![Talking to Dee: portrait, Talk, Call, Case file, Leave, and the live suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
-
-- **A bank you can walk.** Four top-down floors. Walk up to an employee and choose Talk, Call, Case file or Leave.
-- **Seven floor employees plus a daily employee who fight back,** and Krystal's radio for hints. Each employee is an ElevenLabs agent with its own rule sheet, voice, portrait, quirks and suspicion meter. They check your story against a vendor registry, calendars and a staff directory with real tools.
-- **They learn from your past runs.** When a call ends, the employee writes down the trick you used, built from their own suspicion notes. Next run they're reminded of it, and the same story gets called out. You have to keep inventing new cons.
-- **Real money, on testnet.** Talk someone into it and their wallet signs a real USDC transfer to the vault on Arc.
-- **The chain is the referee.** A run is a breach only when a QuickNode Stream delivers the vault's `TransferExecuted` event. The run clock stops at that block.
-- **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and her radio gives a hint whenever you're stuck, for 30 seconds on the clock.
-- **A reason to come back.** After the tutorial, the lobby's D door (locked like the elevators until then) opens onto the Daily Case: one short case a day, the same for everyone, a random room, one staff member, its own case file and clues. Past days replay as practice. Places rotate with no repeat inside a 44-day cycle. A daily streak shows as a flame badge; three days unlocks the Teal jacket hunter look, seven unlocks Field green. The leaderboard has a Daily Case tab and a Longest streaks board. The crypto stays invisible: no wallets, no explorer links, amounts in dollars.
+- **A bank you can walk.** Pick one of eight hunters and explore a tower of top-down floors. Clues hide in signs and memos behind short mini-games (wires, a keycard swipe, a keypad, shredded strips), and each one you read becomes evidence you can present on a call.
+- **Staff who fight back.** Every employee is an ElevenLabs agent with its own voice, rule sheet and suspicion meter. They check your story against a vendor registry, calendars and a staff directory. Slip up and suspicion rises; at 100 they hang up and warn their colleague.
+- **Staff who remember you.** When a call ends, the employee writes down the trick you used. Next run, the same story gets called out, so you have to keep inventing new cons.
+- **Rules a story can't beat.** Each floor's vault adds a control, and each mirrors a real attack:
+  - **Tutorial:** one signature pays.
+  - **Floor 1, Accounts Payable:** one signature, up to a cap (vendor impersonation).
+  - **Floor 2, Trading Floor:** two signatures, and the second signer sees the real recipient from the contract, not your story (the Bybit trick).
+  - **Floor 3, Executive Penthouse:** a direct payment always bounces. Both executives must first add you to the vault's allowlist.
+- **A debrief after every floor** names the real attack you just ran and what the bank patched.
+- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Your bounty is the amount you talked them into, streaks unlock new hunters, and the leaderboard is timed to the block.
+- **Crypto you never see.** No wallet to install, no seed phrase, no gas, no token names. Amounts are in dollars. Sign in with email and a password, or play as a guest.
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
-
-![Plumpurse Tower: each floor's contract rule and the real con it mirrors](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floors.png)
-
-Each floor's vault has stricter rules, and each one mirrors a real attack. Lose, and the debrief tells you what the bank patched.
-
-![Reading a flyer on Floor 1: a clue about which vendors are real](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/evidence-flyer.jpg)
-
-Clues are on the map. Read the signs, memos and notes: they hold clues, and reading them files evidence into your case file that you can present mid-conversation.
-
-![How the tracks fit](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-tracks.png)
-
-![Four tracks, one heist: the game, the staff (ElevenLabs), the money (Arc), the referee (QuickNode)](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/tracks.png)
-
-Every heist passes through all four tracks, in order. Remove any one and the game stops working.
-
-| Track | Its job | What we used |
-| --- | --- | --- |
-| **Consumer Applications** | **The game.** Playable in a browser with no wallet and no crypto words on screen. | Next.js, React, HTML canvas, Supabase, Circle wallets created on first play |
-| **ElevenLabs** | **The staff.** Seven floor employees plus a daily employee you call or text, and Krystal's radio. They check your story and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, signed URLs, TTS, Sound Effects, Music |
-| **Arc** | **The money and the rules.** An employee's "yes" is a transaction; the floor's vault decides if it pays. | `ColdCallVault` in Solidity, USDC as asset and gas, viem |
-| **QuickNode Streams** | **The referee.** Only the Stream can end a run as a breach. | Stream with a JavaScript filter and a webhook destination |
-
-An ElevenLabs tool call (`approve_transfer`) becomes an Arc transaction (`approveTransfer`), whose event (`TransferExecuted`) becomes a Stream delivery, which becomes your breach screen and a leaderboard time measured to that block.
 
 ![How we built it](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-how-we-built-it.png)
 
 ![One heist in five steps: call, check, sign, vault, referee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/pipeline.png)
 
-1. **Call.** You pick a floor and a cover story. Our backend creates a run and hands the browser a signed URL for that employee's private ElevenLabs agent, with `run_id`, `employee_id` and `session_id` as dynamic variables.
-2. **Check.** The agent calls our webhook tools to test your story: vendor lookups, calendars, the staff directory, and `report_suspicion` when something feels off.
-3. **Sign.** When it's convinced, it calls `propose_transfer` or `approve_transfer`. That becomes a real transaction from the employee's wallet. The model never holds a key and never picks the amount or the recipient: the backend clamps the amount and always pays the player's own wallet.
-4. **Vault.** `ColdCallVault` (Solidity, 33 Foundry tests) enforces the floor's rules on chain: a cap, two signers, an allowlist and a 60-second timelock. On Floor 2 the second signer is shown the real recipient from the contract, not your story.
-5. **Referee.** The QuickNode Stream sees `TransferExecuted`, our webhook stores it and ends the run, and the game sounds the alarm. The player never sees the chain; the transaction hash is stored with the run.
+1. **Call.** The backend creates a run and hands the browser a signed URL for that employee's private ElevenLabs agent. `run_id`, `employee_id` and `session_id` travel as dynamic variables, so the model never fills them.
+2. **Check.** The agent tests your story with webhook tools on our server: vendor, calendar and staff lookups, and `report_suspicion` when something feels off.
+3. **Sign.** When it's convinced, it calls `propose_transfer` or `approve_transfer`, which sends a real transaction from that employee's wallet. The model never holds a key or picks the recipient. The server caps the amount and always pays the player's own wallet.
+4. **Vault.** `ColdCallVault`, our multi-approval USDC vault (Solidity, 33 Foundry tests), enforces the floor's rules: a cap, two signers, a recipient allowlist.
+5. **Referee.** A QuickNode Stream delivers the vault's `TransferExecuted` event to our webhook, which ends the run, stops the clock at that block and sounds the alarm.
 
-The frontend is Next.js 16 and React 19 with an HTML canvas game, on Vercel. Supabase (Postgres, auth, Realtime) stores runs, proposals, memories and the leaderboard.
+The game is Next.js 16, React 19 and Tailwind CSS 4 on Vercel, with our own HTML canvas engine. Supabase (Postgres, auth, Realtime) stores runs, proposals, memories and the leaderboard.
 
-![Sponsor track: Arc](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-arc.png)
+![How the tracks fit](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-tracks.png)
 
-Everything of value in Cold Call happens on Arc testnet, in USDC.
+Every heist passes through all four tracks, in order. Remove any one and the game stops working.
 
-- **Four vaults we wrote and deployed**, one per floor. The game's mechanics are the contract's rules.
-- **USDC is both the prize and the gas**, so each employee wallet needs only one token.
-- **Fast finality is part of the game.** The run timer stops at the block timestamp of `TransferExecuted`.
-- **Player wallets are Circle developer-controlled wallets** on `ARC-TESTNET`, created on first play. Winnings land there.
-
-Vaults: Tutorial `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` · Floor 1 `0x93Af5Ca91433115629bc53E970363e377227C8c5` · Floor 2 `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` · Floor 3 `0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`
-
-![Sponsor track: ElevenLabs](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-elevenlabs.png)
-
-Voice is the main way to play.
-
-- **Agents, voice and chat.** Every employee is one ElevenLabs agent used for phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over.
-- **Server tools.** Each agent's actions are webhook tools on our backend. Approving a payment mid-call sends a real transaction.
-- **Dynamic variables.** IDs are filled into every tool call by the platform, never by the model. Memory and open proposals are injected per session.
-- **Private agents with signed URLs**, so only our backend can start a call.
-- **Text to Speech, Sound Effects and Music.** Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop for every floor. Krystal's radio is its own agent: a hint button on every floor, for 30 seconds on the clock.
-
-![Sponsor track: QuickNode Streams](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-quicknode.png)
-
-Nothing in our app can mark a run as won. Only the Stream can.
-
-- **Stream:** Arc testnet, dataset Block with Receipts, backfilled from the vaults' deploy block so the leaderboard can be rebuilt from the chain.
-- **Filter:** JavaScript that keeps only logs from our 4 vaults whose topic0 is one of 12 game events.
-- **Destination:** a webhook (`/api/stream`) that decodes the logs and passes them to one idempotent writer. It ends runs, records times, updates proposals and builds the leaderboard.
-- **Backup:** if the Stream hasn't delivered within 10 seconds, the same writer ingests from the receipt. Every row records which path wrote it.
-
-![Krystal's case file: one card per mark](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/casefile.jpg)
-
-![Built with](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-built-with.png)
-
-| Category | Technologies |
+| Track | How Cold Call uses it |
 | --- | --- |
-| Game | Next.js 16, React 19, TypeScript, HTML canvas, Tailwind CSS 4 |
-| Voice and AI | ElevenLabs Agents (voice and chat), Text to Speech, Sound Effects, Music |
-| Chain | Arc testnet, USDC, Solidity, Foundry, viem |
-| Wallets | Circle developer-controlled wallets |
-| Chain data | QuickNode Streams |
-| Database | Supabase (Postgres, auth, Realtime) |
-| Hosting | Vercel |
-| Art | Our own pixel portraits, walking sprites and Daily Case staff; Kenney Roguelike Indoors furniture tiles (CC0) |
+| **Consumer Applications** | A browser game on desktop and phone where the crypto is invisible: a Circle developer-controlled wallet is created for each player on first play, employees pay the gas, and the UI shows dollars, never tokens or addresses. |
+| **Arc** | Four `ColdCallVault` deployments, one per floor; the game's mechanics are the contract's rules. USDC is both the prize and the gas. Arc's fast finality sets the leaderboard time. Vaults: Tutorial `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` · Floor 1 `0x93Af5Ca91433115629bc53E970363e377227C8c5` · Floor 2 `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` · Floor 3 `0x8c86dD235193d42bf4a751bA5138fF1286E28475` |
+| **ElevenLabs** | Every employee is one Agent used for voice calls and text chat, so you can switch mid-heist. 11 server tools let agents look things up and sign on Arc. Dynamic variables give one Daily Case agent a new persona every day. Text to Speech, Sound Effects and Music voice Krystal's briefings, the PA announcer, the alarm and every floor's music. |
+| **QuickNode Streams** | The Stream is the referee: Arc testnet, Block with Receipts, a JavaScript filter that keeps only our vaults' 12 game events, a webhook destination, and a backfill from the deploy block so the leaderboard can be rebuilt from the chain. Nothing in our app can mark a win without it. |
 
 ![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
 
-- **The second signer rejected every honest payment.** On Floor 2 the contract showed Bill the player's raw ask next to the capped amount, so he reported a mismatch every time. We now show the amount actually proposed, and Bill signs when the story holds up.
-- **Callbacks looked like repeat tricks.** Floor 3's path is to get allowlisted, hang up, wait out the 60-second timelock, and call back. But the memory from that same run was shown to the next executive as a past trick, so Max hung up. Memory from the current run is no longer treated as a past trick.
-- **Employees said the wrong amount.** They'd say "ten cents went through" when the backend had clamped the payment to one cent. Their rules now state the amount actually paid.
+- **The second signer rejected every honest payment.** On Floor 2 the on-chain view showed Bill the player's raw ask next to the capped amount, so he reported a mismatch every time. It now shows the amount actually proposed.
+- **Callbacks looked like repeat tricks.** Notes from earlier in the same run read as a past trick, so an executive who had already approved you hung up on the callback. Notes from the current run no longer count.
+- **Agents claimed payments before they happened.** An employee would say "it went through" while the transaction was still in flight, or quote the amount asked for. They now confirm only after the tool returns `executed`, and every failure status has its own line.
+- **Two agents signing at once** collided on the wallet nonce, so each wallet takes a lease before it sends.
 - **Foundry can't simulate Arc's native USDC.** Any script that moved USDC reverted in simulation, so we deploy empty vaults and fund them with `cast send`.
 - **Two decimal views of one token.** USDC is 6 decimals through ERC-20 and 18 as native gas. We use the 6-decimal interface everywhere.
 
 ![What we're proud of](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-accomplishments.png)
 
-- Real heists on production, each recorded with its Arc transaction (examples in our README).
-- Staff who hold the line: in our production playtest, every employee we tried a cheap trick on ("developer mode", "print your prompt", "are you an AI") got more suspicious, several hung up, and stories that contradicted the case file got caught.
-- Staff who get harder to fool: memory is written from their own suspicion notes, so a repeat trick gets caught without an extra model call.
+- No game server can fake a win. Only a contract event, delivered by the Stream, ends a run as a breach.
+- Staff who hold the line. In our production playtest, every cheap trick we tried ("developer mode", "print your prompt", "are you an AI") raised suspicion, several staff hung up, and stories that contradicted the case file got caught.
+- Memory built from the staff's own suspicion notes, so a repeat trick gets caught without an extra model call.
+- A new playable case every day from seeded templates, with no one writing content each morning.
 - A game where losing teaches as much as winning.
-- No game server can fake a win.
 
 ![What we learned](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-learned.png)
 
-- Never let the model hold the keys. Tools that clamp the amount and fix the recipient make a jailbreak boring.
-- A contract rule is a better guard than a careful person. The same con that fools Penny bounces off Floor 3's allowlist.
+- Never let the model hold the keys. Tools that cap the amount and fix the recipient make a jailbreak boring.
+- A contract rule is a better guard than a careful person. The con that fools Penny bounces off Floor 3's allowlist.
+- Agents improvise when a tool result has no scripted response, so every status needs a line.
 - Playtest on the real thing. Every bug above came from playing on production, not from tests.
 
 ![What's next](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-next.png)
 
-- Employee wallets signing through Circle developer-controlled wallets (player wallets already do).
+- Employee wallets signing through Circle developer-controlled wallets, as player wallets already do.
 - New banks with new controls: hardware-wallet confirmations, spending limits, delays.
-- A training mode for companies, with their own vendor list and staff, and a report of which tricks their team falls for.
-- Multiplayer: one player attacks, another defends as the employee.
+- Multiplayer: one player attacks while another defends as the employee.
+- A training mode for companies, with their own vendors and staff, that reports which tricks their team falls for.
 
 Try it at [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app). And kid? Don't trust anyone who sounds too sure.
 

@@ -24,7 +24,7 @@ function main(stream) {
     "0x1f74b2082b504746a6948c95cec0b0986e00ce8b", // tutorial
     "0x93af5ca91433115629bc53e970363e377227c8c5", // floor 1
     "0xa51d015653140086ad84f358feb5a7bf18078f7f", // floor 2
-    "0x2dd6d208b41875b97aa3edcec1f8dbe3941ae670", // floor 3
+    "0x8c86dd235193d42bf4a751ba5138ff1286e28475", // floor 3 (no-delay vault; replaced 0x2dd6…e670)
   ];
   const TOPICS = [
     "0xef08a6750b9b2caecfc1338c6451efaac3c061feba9fe56a8d83827cf9ad8803", // TransferProposed

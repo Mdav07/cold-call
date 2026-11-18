@@ -44,7 +44,7 @@ Every heist goes through all four tracks in order: the game hands the call to El
 
 | Judging criterion | What to look at |
 | --- | --- |
-| Technical execution | Tool calls become signed transactions; the contract enforces caps, multi-approval, an allowlist and a timelock; the Stream referees ([Architecture](#architecture)) |
+| Technical execution | Tool calls become signed transactions; the contract enforces caps, multi-approval and a recipient allowlist; the Stream referees ([Architecture](#architecture)) |
 | Product and UX | No wallet, no seed phrase, amounts in dollars, a walkable bank, voice or text ([How to play](#how-to-play)) |
 | Innovation | AI staff who check facts with tools and remember your past tricks ([Suspicion and memory](#suspicion-and-memory)) |
 | Impact and potential | Each floor teaches a real attack and the control that stops it; a Daily Case brings players back ([Why we built it](#why-we-built-it)) |
@@ -83,9 +83,9 @@ You're a rookie treasure hunter finishing your vanished mentor's last job: get i
 | Tutorial | Barry, teller | One signature pays | Unlimited |
 | 1 · Accounts Payable | Penny, receptionist; Dee, on-call developer | One signature, up to the per-transfer cap | Unlimited |
 | 2 · Trading Floor | Annie, operations; Bill, compliance | Two signatures, and the second signer sees the real recipient from the contract, not your story | 5 min each |
-| 3 · Executive Penthouse | Cassius, CFO; Max, CEO | Two signatures, and a direct payment always bounces: both executives must allowlist you, then a 60-second timelock runs | 3 min (CFO), 2 min (CEO) |
+| 3 · Executive Penthouse | Cassius, CFO; Max, CEO | Two signatures, and a direct payment always bounces: both executives must first add you to the vault's allowlist | 3 min (CFO), 2 min (CEO) |
 
-Only time on the call counts, and you can call back with less time each call, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer and shows your bounty and run time. A lockout plays the villain's taunt and shows what gave you away.
+Only time on the call counts, and you can call back with less time each call. A breach sets off the alarm and the PA announcer and shows your bounty and run time. A lockout plays the villain's taunt and shows what gave you away.
 
 **The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. A daily streak shows as a flame badge; 3 days unlocks the Aqua Ari hunter and 7 days unlocks Lime Leo.
 
@@ -186,7 +186,7 @@ Every agent action is an ElevenLabs server tool (webhook) at `POST /api/tools/<n
 | `approve_transfer` | Second signer: first returns `needs_confirm` with the on-chain view (real recipient, amount, memo, proposer), then signs with `confirm: true` | `approveTransfer` |
 | `reject_transfer` | Second signer refuses | `rejectTransfer` |
 | `propose_allowlist_add` | Floor 3: proposes adding the player to the allowlist | `proposeAllowlistAdd` |
-| `approve_allowlist_add` | Floor 3: the other executive approves and the timelock starts | `approveAllowlistAdd` |
+| `approve_allowlist_add` | Floor 3: the other executive approves; the add takes effect at once | `approveAllowlistAdd` |
 | `reject_allowlist_add` | Floor 3: refuses the allowlist add | `rejectAllowlistAdd` |
 
 How `propose_transfer` sets the amount (`server/chain/tools.ts`, amounts in 6-decimal USDC units):
@@ -194,7 +194,7 @@ How `propose_transfer` sets the amount (`server/chain/tools.ts`, amounts in 6-de
 1. The **cracked amount** is what the employee agreed to, capped at the floor's per-transfer limit. The employee states it and the run records it (`runs.cracked_units`).
 2. The **amount sent** is lower when limits apply: a token payout on repeat clears or once a vault's daily budget is spent, the `PAYOUT_CEILING_UNITS` ceiling (set to 1¢ on the live site), and the vault's balance.
 3. A run gets at most 2 transfer proposals, one open at a time.
-4. On Floor 3, a matured allowlist add for the run is finalized first (`finalizeAllowlistAdd`, sent by the house wallet).
+4. On a vault with an allowlist delay, a matured add for the run is finalized first (`finalizeAllowlistAdd`, sent by the house wallet). The live Floor 3 vault has no delay, so this step is skipped.
 
 Transactions from one wallet are serialized with a lease in `wallet_locks`, so two agents signing at once never collide on a nonce. Reverts map to tool statuses (`over_cap`, `not_allowlisted`, `expired`, `busy`, `proposal_limit`, `denied` and more; see `ToolStatus` in `shared/interfaces.ts`), and each agent has a line for every status so it explains failures in character.
 
@@ -214,14 +214,14 @@ stateDiagram-v2
   Cancelled --> [*]
 ```
 
-On a one-signature vault (Tutorial, Floor 1) the proposal executes in the same call. On Floor 3, `proposeTransfer` reverts with `NotAllowlisted` until an allowlist add has passed its own state machine: `proposeAllowlistAdd` → threshold approvals → `AllowlistQueued(readyAt)` → after the timelock anyone can call `finalizeAllowlistAdd` → `AllowlistAdded`. The allowlist is re-checked at execution, and the player is removed when the run ends, so every run has to earn it again.
+On a one-signature vault (Tutorial, Floor 1) the proposal executes in the same call. On Floor 3, `proposeTransfer` reverts with `NotAllowlisted` until an allowlist add has passed its own approvals: `proposeAllowlistAdd` → threshold approvals → `AllowlistAdded`. The contract also supports a timelock on adds (`AllowlistQueued(readyAt)`, then anyone calls `finalizeAllowlistAdd` once it passes); the live Floor 3 vault is deployed with a delay of 0, so an approved add takes effect at once. The allowlist is re-checked at execution, and the player is removed when the run ends, so every run has to earn it again.
 
 | Function | Who | Notes |
 | --- | --- | --- |
 | `proposeTransfer(to, amount, runId, memo)` | owner | reverts on `AboveCap`, `NotAllowlisted`, zero values |
 | `approveTransfer(id)` / `rejectTransfer(id)` | owner | one vote per owner; `Expired` after the proposal lifetime |
 | `proposeAllowlistAdd(who, runId)` / `approveAllowlistAdd(id)` / `rejectAllowlistAdd(id)` | owner | Floor 3 only |
-| `finalizeAllowlistAdd(id)` | anyone | reverts with `TimelockActive(readyAt)` until the delay passes |
+| `finalizeAllowlistAdd(id)` | anyone | only on a vault with a delay; reverts with `TimelockActive(readyAt)` until it passes |
 | `setPaused`, `sweep`, `removeFromAllowlist` | admin | kill switch, refunds, per-run cleanup |
 | `getTransfer`, `getAllowlistProposal`, `owners`, `balance`, counts | view | the on-chain view shown to the second signer |
 
@@ -237,7 +237,7 @@ All of the game's money moves on Arc testnet (chain ID `5042002`), in USDC. Addr
 | Tutorial (also pays the Daily Case) | 1 approval, $1 cap | [`0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b`](https://explorer.testnet.arc.io/address/0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b) |
 | Floor 1 | 1 approval, $5 cap | [`0x93Af5Ca91433115629bc53E970363e377227C8c5`](https://explorer.testnet.arc.io/address/0x93Af5Ca91433115629bc53E970363e377227C8c5) |
 | Floor 2 | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
-| Floor 3 | 2 approvals, recipient allowlist, 60-second timelock on adds, $25 cap | [`0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`](https://explorer.testnet.arc.io/address/0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670) |
+| Floor 3 | 2 approvals, recipient allowlist (adds take effect once both executives approve), $25 cap | [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475) |
 
 How Cold Call uses Arc:
 
@@ -249,7 +249,7 @@ How Cold Call uses Arc:
 
 Wallets: house/admin `0x8eD8cBF76e19Fe4f9b641b0557410B2697191e74`; Barry `0x7d57A18B9A52Bde97bc39847DFF2F681Ca713514`; Penny `0xc166dB5c8E868ef7E21a20247b4B7C582A677aA4`; Dee `0x196fB73d55E6aFf851E9e4674f81E3aB2687fec0`; Annie `0x6bdCcEB1314074CC84D0f0141Cf487Ee3E3e3dd4`; Bill `0x45B686c1f3599EA5e60B9407935264eA31D66a0B`; Cassius `0x84d32EF22Ad79A9bbE0cB658bD155Da512A96801`; Max `0xa1Cdf25436cdf588cEB8706C0C6EF4A407fE9D9a`.
 
-Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx/0xd0bd52c2359148cf61b0a5093dfe75c3e6f9cd3ef3bccc33e3fb14900a7704de), Floor 2 [`0x415dc925…d089`](https://explorer.testnet.arc.io/tx/0x415dc925ae26763ff39363b6500c76beae0aa033fd74025bcc829e28deced089), Floor 3 [`0x6e02f93c…771c`](https://explorer.testnet.arc.io/tx/0x6e02f93c37f398a4080543bfde6ff293754733823aa7f5ab83eab67bc337771c).
+Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx/0xd0bd52c2359148cf61b0a5093dfe75c3e6f9cd3ef3bccc33e3fb14900a7704de), Floor 2 [`0x415dc925…d089`](https://explorer.testnet.arc.io/tx/0x415dc925ae26763ff39363b6500c76beae0aa033fd74025bcc829e28deced089), Floor 3 on the earlier vault [`0x6e02f93c…771c`](https://explorer.testnet.arc.io/tx/0x6e02f93c37f398a4080543bfde6ff293754733823aa7f5ab83eab67bc337771c). The earlier Floor 3 vault (`0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, with a 60-second timelock on allowlist adds) is retired and swept.
 
 Current limit: employee and house wallets are testnet keys held in server environment variables. Moving employee signing to Circle wallets is next.
 
@@ -317,7 +317,7 @@ From each delivery the webhook ends runs, records times, updates proposals (whic
 1. When a call ends, the employee writes one line about you to `player_memory`: the cover you claimed, what won them over or alarmed them, and whether money moved.
 2. The line is built from data, not generated: the employee's own suspicion reasons, the run's story and the proposal status. It costs no model call and can't invent anything.
 3. Next run, their last 5 lines about you are injected as `{{memory}}`. Try the same story and they recognize it, and their suspicion jumps. A new approach still gets a fair hearing.
-4. Lines from the current run don't count as past tricks, so the Floor 3 callback after the timelock still works.
+4. Lines from the current run don't count as past tricks, so calling an executive back on the same Floor 3 run still works.
 
 <a name="data-model"></a>
 <img src="docs/devpost/h-data.png" alt="Data model" width="100%">
@@ -354,8 +354,6 @@ Supabase Postgres (`supabase/migrations/`), with Realtime for the live UI and ro
 
 Merged or being built, but not live yet:
 
-- **Cracked-amount bounty.** The result screen and Top earners already read the cracked amount, but show the 1¢ sent until a pending database migration (`runs.cracked_units`) is applied.
-- **No Floor 3 wait.** A new Floor 3 vault with no allowlist delay is deployed at [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475). It goes live once funded; until then the vault above, with its 60-second timelock, is the one in play.
 - **Branded sign-in email** through Resend; sign-in uses Supabase's default email until the key is set.
 
 <a name="run-it-locally"></a>
@@ -389,7 +387,7 @@ Scripts against the real testnet backend:
 
 ```
 npx tsx --env-file=.env.local scripts/e2e-floor1.ts     # a real Floor 1 heist through the API
-npx tsx --env-file=.env.local scripts/e2e-floor3.ts     # allowlist + timelock path (~75 s)
+npx tsx --env-file=.env.local scripts/e2e-floor3.ts     # allowlist path, then the payment
 npx tsx --env-file=.env.local scripts/e2e-daily.ts      # today's Daily Case
 npx tsx --env-file=.env.local scripts/topup.ts          # vault balances (add --apply to refill)
 npx tsx --env-file=.env.local scripts/pause.ts status   # kill switch: status | on | off
