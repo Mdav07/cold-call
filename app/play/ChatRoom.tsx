@@ -6,7 +6,6 @@ import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
 import { KrystalMemo } from "./KrystalMemo";
-import { KrystalRadio } from "./KrystalRadio";
 import { MusicToggle } from "./MusicToggle";
 import { EvidenceDrawer, type EvidenceItem } from "./EvidenceDrawer";
 import { PORTRAITS } from "./portraits";
@@ -256,7 +255,6 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
           {chat.status === "idle" || chat.status === "error" ? (
             <>
             <Briefing floor={card.floor} />
-            <KrystalRadio floor={card.floor} runId={chat.session?.run_id ?? null} />
             <form
               className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4"
               onSubmit={(e) => {
@@ -291,7 +289,6 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
             </>
           ) : (
             <>
-              <KrystalRadio floor={card.floor} runId={chat.session?.run_id ?? null} />
               <div className="pixel-frame flex-1 overflow-y-auto bg-[var(--cc-panel)] p-4" aria-live="polite">
                 <ul className="flex flex-col gap-3">
                   {chat.lines.map((l) => (
