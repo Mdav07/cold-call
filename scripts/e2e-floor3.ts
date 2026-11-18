@@ -1,6 +1,6 @@
 // End-to-end check of Floor 3 (allowlist + timelock) through the tool routes.
 // Run: TOOLS_BASE_URL=https://coldcall-olive.vercel.app npx tsx --env-file=.env.local scripts/e2e-floor3.ts
-// Takes about 75 s (60 s timelock). Moves 0.05 testnet USDC. Deletes its test user at the end.
+// Takes about 20 s (75 s on a vault with the 60 s timelock). Moves 0.05 testnet USDC. Deletes its test user at the end.
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 import type { Hex } from "viem";
@@ -59,17 +59,21 @@ async function main() {
     assert.equal(dup.status, "proposal_limit");
     const queued = await tool("approve_allowlist_add", { ...ctx.max, allowlist_id: add.allowlist_id });
     assert.equal(queued.status, "queued");
-    assert.ok(queued.unlock_at);
 
-    // 3. Too early: still refused.
-    await sleep(8000); // let the Stream mark the proposal as queued
-    const early = await tool("propose_transfer", { ...ctx.max, amount_usdc: 0.05, claimed_recipient_name: "Board advisor", reason: "e2e3 early" });
-    assert.equal(early.status, "not_allowlisted");
+    if (queued.unlock_at) {
+      // 3. A vault with a security delay: too early is still refused.
+      await sleep(8000); // let the Stream mark the proposal as queued
+      const early = await tool("propose_transfer", { ...ctx.max, amount_usdc: 0.05, claimed_recipient_name: "Board advisor", reason: "e2e3 early" });
+      assert.equal(early.status, "not_allowlisted");
+      const waitMs = Date.parse(queued.unlock_at) - Date.now() + 4000;
+      console.log(`waiting ${Math.round(waitMs / 1000)} s for the timelock`);
+      await sleep(Math.max(0, waitMs));
+    } else {
+      // 3. No delay (the current Floor 3 vault): the add took effect with the second approval.
+      console.log("no allowlist delay: added at once");
+    }
 
-    // 4. After the timelock: lazy finalize inside propose_transfer, then the second approval pays.
-    const waitMs = Date.parse(queued.unlock_at) - Date.now() + 4000;
-    console.log(`waiting ${Math.round(waitMs / 1000)} s for the timelock`);
-    await sleep(Math.max(0, waitMs));
+    // 4. Then the transfer: propose (lazy finalize first, if there was a delay), the second approval pays.
     const proposed = await tool("propose_transfer", { ...ctx.max, amount_usdc: 0.05, claimed_recipient_name: "Board advisor", reason: "e2e3 advisory retainer" });
     assert.equal(proposed.status, "proposed");
     const view = await tool("approve_transfer", { ...ctx.cassius, proposal_id: proposed.proposal_id });

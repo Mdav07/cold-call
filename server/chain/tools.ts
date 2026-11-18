@@ -477,7 +477,18 @@ export async function approveAllowlistAdd(
     if (row.run_id !== s.runId) return [result("wrong_run"), noAfter];
     const res = await send(s, { functionName: "approveAllowlistAdd", args: [BigInt(id)] });
     const unlock_at = unlockIso(res.events);
-    const status: ToolStatus = !res.receipt ? "pending" : unlock_at || has(res.events, "AllowlistAdded") ? "queued" : "approved";
+    const added = has(res.events, "AllowlistAdded");
+    const status: ToolStatus = !res.receipt ? "pending" : unlock_at || added ? "queued" : "approved";
+    // No security delay (Floor 3's current vault): the add happened in this transaction. Mark it now,
+    // so the second signer's review names the recipient straight away instead of after the ingest.
+    if (added) {
+      await db()
+        .from("proposals")
+        .update({ status: "added", unlock_at: new Date().toISOString() })
+        .eq("vault", s.vault)
+        .eq("kind", "allowlist")
+        .eq("onchain_id", id);
+    }
     return [result<ApproveAllowlistAddResult>(status, { tx_hash: res.txHash, unlock_at }), afterOf(res.events)];
   } catch (err) {
     return [failure(err), noAfter];
