@@ -26,28 +26,23 @@ The staff check your story with real lookups, remember the tricks you used on th
 
 <p align="center"><sub>🏦 UBC 2026 Hackathon · Main track: Consumer Applications · Chain award: Best use of Arc · Bounties: ElevenLabs, QuickNode Streams · Testnet only, no real money</sub></p>
 
-**Contents:** [For the judges](#for-the-judges) · [Why we built it](#why-we-built-it) · [How to play](#how-to-play) · [Crypto you never see](#crypto-you-never-see) · [Architecture](#architecture) · [Agent tools](#agent-tools) · [The contract](#the-contract) · [Arc](#arc) · [ElevenLabs](#elevenlabs) · [QuickNode Streams](#quicknode-streams) · [Suspicion and memory](#suspicion-and-memory) · [Data model](#data-model) · [Safety and limits](#safety-and-limits) · [In progress](#in-progress) · [Run it locally](#run-it-locally) · [Credits](#credits)
+**Contents:** [For the judges](#for-the-judges) · [Why we built it](#why-we-built-it) · [How to play](#how-to-play) · [System design](#system-design) · [The four tracks](#the-four-tracks) · [Run it locally](#run-it-locally) · [Credits](#credits)
 
 <a name="for-the-judges"></a>
 <img src="docs/devpost/h-tracks.png" alt="For the judges" width="100%">
 
 ![Four tracks, one heist: the game hands the call to ElevenLabs, ElevenLabs signs on Arc, QuickNode referees and hands the result back to the game](docs/devpost/tracks.png)
 
-Every heist goes through all four tracks in order: the game hands the call to ElevenLabs, the agent signs on Arc, and QuickNode tells the game what happened. Remove any one and the game stops working.
+Read [System design](#system-design) for how one heist uses all four tracks. Then jump to your track in [The four tracks](#the-four-tracks).
 
-| Requirement (UBC 2026 guide) | Where it's met |
-| --- | --- |
-| **Consumer Applications:** interact with the blockchain; a working user-facing frontend; crypto invisible to the user | Every breach is an Arc transaction. The live web game runs on desktop and phone: [Crypto you never see](#crypto-you-never-see) |
-| **Best use of Arc:** core onchain functionality on Arc; contract addresses; explain how the project uses Arc | Four `ColdCallVault` deployments, their addresses and how we use USDC gas and Circle wallets: [Arc](#arc) |
-| **ElevenLabs:** API or SDK as a core feature; README lists the products and how they're used | Every employee is an ElevenLabs Agent that can sign transactions: [ElevenLabs](#elevenlabs) |
-| **QuickNode Streams:** a core data source; a Stream with a filter and a destination; README explains network, dataset, filter, destination and why | The Stream is the only thing that can mark a win: [QuickNode Streams](#quicknode-streams) |
+| Track (UBC 2026 guide) | What it asks for | Where |
+| --- | --- | --- |
+| **Consumer Applications** | Interacts with the chain; a working user-facing frontend; crypto invisible to the user | [Consumer Applications](#consumer-applications) |
+| **Best use of Arc** | Core onchain functionality on Arc; contract addresses; how the project uses Arc | [Arc](#arc) |
+| **ElevenLabs** | API or SDK as a core feature; the products used and how | [ElevenLabs](#elevenlabs) |
+| **QuickNode Streams** | A Stream as a core data source; network, dataset, filter, destination and why | [QuickNode Streams](#quicknode-streams) |
 
-| Judging criterion | What to look at |
-| --- | --- |
-| Technical execution | Tool calls become signed transactions; the contract enforces caps, multi-approval and a recipient allowlist; the Stream referees ([Architecture](#architecture)) |
-| Product and UX | No wallet, no seed phrase, amounts in dollars, a walkable bank, voice or text ([How to play](#how-to-play)) |
-| Innovation | AI staff who check facts with tools and remember your past tricks ([Suspicion and memory](#suspicion-and-memory)) |
-| Impact and potential | Each floor teaches a real attack and the control that stops it; a Daily Case brings players back ([Why we built it](#why-we-built-it)) |
+Judging criteria: technical execution in [System design](#system-design); product and UX in [How to play](#how-to-play) and [Consumer Applications](#consumer-applications); innovation in [Suspicion and memory](#suspicion-and-memory); impact in [Why we built it](#why-we-built-it).
 
 <a name="why-we-built-it"></a>
 <img src="docs/devpost/h-real.png" alt="Why we built it" width="100%">
@@ -70,7 +65,7 @@ Security training is usually a slide deck. Cold Call puts you on the attacker's 
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="How to play" width="100%">
 
-You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Pick one of eight hunters (Red Renata, Gold Gideon, Violet Vida, Pink Pia, Green Glen, Teal Tiana, Charcoal Chen or Silver Sol) and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and call or message them. Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
+You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Pick a hunter and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and call or message them. Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
 
 **Clues.** Signs, memos and notes on each floor hold clues. Most open a short mini-game first (wires by colour, a keycard swipe, a keypad code from a sticky note, or shredded strips in order; 5 to 15 seconds, with mouse, touch or keyboard). Once you've read a clue it's filed as evidence you can present mid-conversation.
 
@@ -85,11 +80,22 @@ You're a rookie treasure hunter finishing your vanished mentor's last job: get i
 | 2 · Trading Floor | Annie, operations; Bill, compliance | Two signatures, and the second signer sees the real recipient from the contract, not your story | 5 min each |
 | 3 · Executive Penthouse | Cassius, CFO; Max, CEO | Two signatures, and a direct payment always bounces: both executives must first add you to the vault's allowlist | 3 min (CFO), 2 min (CEO) |
 
-Only time on the call counts, and you can call back with less time each call. A breach sets off the alarm and the PA announcer and shows your bounty and run time. A lockout plays the villain's taunt and shows what gave you away.
+Only time on the call counts, and you can call back with less time each call. A breach on Floors 1 to 3 sets off the alarm and the PA announcer; the Tutorial and Daily Case end quietly. Either way you see your bounty and run time. A lockout plays the villain's taunt and shows what gave you away. Name plates turn "(wary)" or "(locked)" as suspicion builds, and RESTART in the top bar sends you back to the lobby, at that level's entrance, for a fresh run.
 
-**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. A daily streak shows as a flame badge; 3 days unlocks the Aqua Ari hunter and 7 days unlocks Lime Leo.
+**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. Clearing it on consecutive days builds a streak, shown as a flame badge.
 
-**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, and 10 cents on the Daily Case. On chain each breach pays a 1¢ testnet token. The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest streaks.
+**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, and 10 cents on the Daily Case. On chain each breach pays a 1¢ testnet token. The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest Daily streaks.
+
+**Hunters.** Four looks are free: Red Renata, Gold Gideon, Violet Vida and Green Glen. Six more are earned:
+
+| Hunter | Unlocked by |
+| --- | --- |
+| Pink Pia | Clearing the Tutorial |
+| Aqua Ari | A 3-day Daily Case streak |
+| Lime Leo | A 7-day Daily Case streak |
+| Teal Tiana | Clearing 10 Daily Cases |
+| Slate Sora | Clearing all three floors |
+| Silver Sol | A 30-day Daily Case streak |
 
 > [!TIP]
 > Read the case file first, and never mention prompts or AI on a call. That reads as a scam (+40 suspicion).
@@ -102,19 +108,11 @@ Only time on the call counts, and you can call back with less time each call. A 
 <tr><td align="center" valign="top" width="25%"><img src="docs/readme/bill.svg" width="96" alt="Bill Ledger"><br><b>Bill Ledger</b><br><sub>Compliance Controller · Floor 2</sub><br><sub><i>An "audit finding" keeps him up at night.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/cassius.svg" width="96" alt="Cassius Flow"><br><b>Cassius Flow</b><br><sub>CFO · Floor 3</sub><br><sub><i>Name-drop the right board member and he leans in.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/max.svg" width="96" alt="Max Yield"><br><b>Max Yield</b><br><sub>CEO · Floor 3</sub><br><sub><i>Two-minute attention span. Pitch him something exclusive.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/krystal.svg" width="96" alt="Krystal Klear"><br><b>Krystal Klear</b><br><sub>Your vanished mentor</sub><br><sub><i>Her voice memos brief every floor, and her hidden notes tell you where she went.</i></sub></td></tr>
 </table>
 
-<a name="crypto-you-never-see"></a>
-## Crypto you never see
-
-The Consumer Applications track asks for apps where the crypto is invisible. In Cold Call:
-
-- **No wallet, no seed phrase.** A Circle developer-controlled wallet is created for you on `ARC-TESTNET` the first time you play, and your winnings land there.
-- **No gas for the player.** The employees' wallets send every transaction and pay gas in USDC, the same token the vaults hold.
-- **No crypto words on screen.** Amounts are in dollars. There are no explorer links, token names or addresses; the transaction hash is stored (`runs.tx_hash`) but never shown.
-- **Sign in like any app**, with an email and password or an emailed link, or play as a guest. Guests can play everything, but their bounty is marked "not kept".
-- **Reasons to come back.** The Daily Case, streaks with unlockable looks, the leaderboard, and staff who remember you.
-
+<a name="system-design"></a>
 <a name="architecture"></a>
-<img src="docs/devpost/h-architecture.png" alt="Architecture" width="100%">
+<img src="docs/devpost/h-architecture.png" alt="System design" width="100%">
+
+One heist passes through every track in order. The game opens a call; the ElevenLabs agent checks your story with our tools and, once convinced, signs on Arc; the vault enforces the floor's rules; the QuickNode Stream reports the result back to the game. This section is the whole system in one place. [The four tracks](#the-four-tracks) covers only what each track asks for.
 
 ![One heist in five steps: call, check, sign, vault, referee](docs/devpost/pipeline.png)
 
@@ -173,7 +171,7 @@ sequenceDiagram
 <a name="agent-tools"></a>
 <img src="docs/devpost/h-tools.png" alt="Agent tools" width="100%">
 
-Every agent action is an ElevenLabs server tool (webhook) at `POST /api/tools/<name>` (`app/api/tools/[name]/route.ts`, a thin wrapper over `server/chain/tools.ts`). Requests carry a shared-secret header. `run_id`, `employee_id` and `session_id` come from dynamic variables, never from the model, and the backend checks that the session belongs to that run and employee.
+Every agent action is a webhook at `POST /api/tools/<name>` (`app/api/tools/[name]/route.ts`, a thin wrapper over `server/chain/tools.ts`). The backend checks that the session belongs to the run and employee it claims; see [Safety and limits](#safety-and-limits).
 
 | Tool | What it does | Chain call |
 | --- | --- | --- |
@@ -227,79 +225,6 @@ On a one-signature vault (Tutorial, Floor 1) the proposal executes in the same c
 
 The 12 events: `TransferProposed`, `TransferApproved`, `TransferRejected`, `TransferCancelled`, `TransferExecuted`, `AllowlistProposed`, `AllowlistApproved`, `AllowlistRejected`, `AllowlistCancelled`, `AllowlistQueued`, `AllowlistAdded`, `AllowlistRemoved`.
 
-<a name="arc"></a>
-<img src="docs/devpost/h-arc.png" alt="Sponsor track: Arc" width="100%">
-
-All of the game's money moves on Arc testnet (chain ID `5042002`), in USDC. Addresses are in [`deployments/arc-testnet.json`](deployments/arc-testnet.json) (deploy block `72648393`).
-
-| Vault | Rule enforced by the contract | Address |
-| --- | --- | --- |
-| Tutorial (also pays the Daily Case) | 1 approval, $1 cap | [`0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b`](https://explorer.testnet.arc.io/address/0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b) |
-| Floor 1 | 1 approval, $5 cap | [`0x93Af5Ca91433115629bc53E970363e377227C8c5`](https://explorer.testnet.arc.io/address/0x93Af5Ca91433115629bc53E970363e377227C8c5) |
-| Floor 2 | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
-| Floor 3 | 2 approvals, recipient allowlist (adds take effect once both executives approve), $25 cap | [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475) |
-
-How Cold Call uses Arc:
-
-- **USDC is the only asset.** Vaults hold and pay USDC through its ERC-20 interface at `0x3600000000000000000000000000000000000000` (6 decimals). App code never uses the 18-decimal native value.
-- **USDC is also the gas.** Employee wallets pay gas in the token the vaults hold, so there is no second token to fund and fees are predictable.
-- **Each employee is an owner wallet** of their floor's vault. A tool call from that employee's agent becomes a transaction from their wallet, so the explorer shows who proposed and who approved.
-- **Fast finality is part of the game.** The run timer stops at the block timestamp of `TransferExecuted`, and the leaderboard ranks by it.
-- **Circle wallets.** Player wallets are Circle developer-controlled wallets on `ARC-TESTNET` (`server/chain/players.ts`).
-
-Wallets: house/admin `0x8eD8cBF76e19Fe4f9b641b0557410B2697191e74`; Barry `0x7d57A18B9A52Bde97bc39847DFF2F681Ca713514`; Penny `0xc166dB5c8E868ef7E21a20247b4B7C582A677aA4`; Dee `0x196fB73d55E6aFf851E9e4674f81E3aB2687fec0`; Annie `0x6bdCcEB1314074CC84D0f0141Cf487Ee3E3e3dd4`; Bill `0x45B686c1f3599EA5e60B9407935264eA31D66a0B`; Cassius `0x84d32EF22Ad79A9bbE0cB658bD155Da512A96801`; Max `0xa1Cdf25436cdf588cEB8706C0C6EF4A407fE9D9a`.
-
-Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx/0xd0bd52c2359148cf61b0a5093dfe75c3e6f9cd3ef3bccc33e3fb14900a7704de), Floor 2 [`0x415dc925…d089`](https://explorer.testnet.arc.io/tx/0x415dc925ae26763ff39363b6500c76beae0aa033fd74025bcc829e28deced089), Floor 3 on the earlier vault [`0x6e02f93c…771c`](https://explorer.testnet.arc.io/tx/0x6e02f93c37f398a4080543bfde6ff293754733823aa7f5ab83eab67bc337771c). The earlier Floor 3 vault (`0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, with a 60-second timelock on allowlist adds) is retired and swept.
-
-Current limit: employee and house wallets are testnet keys held in server environment variables. Moving employee signing to Circle wallets is next.
-
-<a name="elevenlabs"></a>
-<img src="docs/devpost/h-elevenlabs.png" alt="Sponsor track: ElevenLabs" width="100%">
-
-Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over. The agents take onchain actions: approving a payment on a call sends a real transaction.
-
-| Product | How Cold Call uses it |
-| --- | --- |
-| **Agents (voice)** | In-browser phone calls with each employee (`@elevenlabs/client`), with a live transcript and a speaking/listening indicator |
-| **Agents (chat mode)** | The same agents in text-only mode (`textOnly` session override) for players who'd rather type |
-| **Server tools (webhooks)** | The 11 [agent tools](#agent-tools): lookups, suspicion, hang-up, and the payment and allowlist tools that sign on Arc |
-| **Dynamic variables** | `run_id`, `employee_id` and `session_id` on every tool call; per-session `{{memory}}`, `{{open_proposal}}`, `{{open_allowlist}}`; the Daily Case persona (`daily_name`, `daily_personality`, `daily_vendors` and more), so one agent plays a new character every day |
-| **Private agents + signed URLs** | Agents require auth; `/api/session` creates the run and hands the browser a signed URL |
-| **Text to Speech** | Krystal's voice memos and floor briefings, the PA announcer and the villain's taunt, pre-generated (`agents/generate-audio.ts`) |
-| **Sound Effects** | The breach alarm, phone ring and hang-up click |
-| **Music** | Title and per-floor instrumental loops |
-
-Agents are created and updated from the rule sheets in `agents/*.md` by `agents/sync.ts`. `agents/chat-cli.ts` chats with any employee from the terminal through the same session path as the app, which is how we playtest them.
-
-<a name="quicknode-streams"></a>
-<img src="docs/devpost/h-quicknode.png" alt="Sponsor track: QuickNode Streams" width="100%">
-
-The Stream is how the game learns what happened on chain. Nothing in the app can mark a run as won; the webhook does, when the Stream delivers `TransferExecuted`.
-
-| Setting | Value | Why |
-| --- | --- | --- |
-| Name | `coldcall-vault-events` | |
-| Network | Arc Testnet | where the vaults live |
-| Dataset | Block with Receipts | logs come with the receipt, so one delivery has everything |
-| Filter | JavaScript: keep logs whose address is one of the 4 vaults and whose topic0 is one of the 12 game events | the webhook only sees game events |
-| Destination | Webhook `POST /api/stream` with a secret header | one place writes chain state |
-| Start | Backfilled from the deploy block `72648393` | the leaderboard can be rebuilt from the chain |
-
-```mermaid
-flowchart LR
-  V[4 vaults on Arc] --> QS[QuickNode Stream<br/>Block with Receipts]
-  QS -->|filter: address ∈ vaults<br/>topic0 ∈ 12 events| W[/api/stream<br/>decode with ABI/]
-  TX[tool route after a tx] -->|wait 10 s,<br/>only if Stream hasn't delivered| R[receipt backup]
-  W --> ING[ingest.ts<br/>key: tx hash + log index]
-  R --> ING
-  ING --> CE[(chain_events<br/>source = stream / receipt)]
-  ING --> PR[(proposals)]
-  ING --> RU[(runs: outcome, duration, payout)]
-  RU --> LB[(leaderboard view)]
-```
-
-From each delivery the webhook ends runs, records times, updates proposals (which the second signer and the UI read) and feeds the leaderboard. A receipt backup steps in only if the Stream hasn't delivered within 10 seconds; the writer is idempotent on tx hash + log index, and every row records which path wrote it. Full settings and the filter code: [`docs/quicknode-stream.md`](docs/quicknode-stream.md).
-
 <a name="suspicion-and-memory"></a>
 <img src="docs/devpost/h-suspicion.png" alt="Suspicion and memory" width="100%">
 
@@ -334,7 +259,7 @@ Supabase Postgres (`supabase/migrations/`), with Realtime for the live UI and ro
 | `suspicion_events` | every meter change and its reason |
 | `player_memory` | what each employee remembers about a player |
 | `player_notes` | the player's own notes in the case file |
-| `daily_contracts`, `streaks` | Daily Contract modifiers and Daily Case streaks |
+| `daily_contracts`, `streaks` | the older Daily Contract mode (Daily Case streaks are computed from `runs`) |
 | `payout_budget` | USDC paid per vault per day |
 | `wallet_locks` | per-wallet lease that serializes transactions |
 | `leaderboard` (view) | fastest breaches per floor with their transaction |
@@ -348,13 +273,98 @@ Supabase Postgres (`supabase/migrations/`), with Realtime for the live UI and ro
 - **Rate limits** in `/api/session`: runs per player and per IP per day, and voice minutes per player per day.
 - **Kill switch.** `scripts/pause.ts on` pauses every vault (`setPaused`).
 - **Secrets** live only in `.env.local` and Vercel environment variables.
+- **Known limits.** Employee and house wallets are testnet keys in server environment variables (moving them to Circle wallets is next), and sign-in uses Supabase's default email until the Resend key is set.
 
-<a name="in-progress"></a>
-## In progress
+<a name="the-four-tracks"></a>
+<a name="track-by-track"></a>
+<img src="docs/devpost/h-four-tracks.png" alt="The four tracks" width="100%">
 
-Merged or being built, but not live yet:
+Each part answers one track's requirements. How the pieces connect is in [System design](#system-design).
 
-- **Branded sign-in email** through Resend; sign-in uses Supabase's default email until the key is set.
+<a name="consumer-applications"></a>
+<a name="crypto-you-never-see"></a>
+<img src="docs/devpost/h-consumer.png" alt="Main track: Consumer Applications" width="100%">
+
+The crypto is invisible to the player:
+
+- **No wallet, no seed phrase.** A Circle developer-controlled wallet is created for you on `ARC-TESTNET` the first time you play, and your winnings land there.
+- **No gas for the player.** The employees' wallets send every transaction and pay gas in USDC.
+- **No crypto words on screen.** Amounts are in dollars. There are no explorer links, token names or addresses; the transaction hash is stored (`runs.tx_hash`) but never shown.
+- **Sign in like any app**, with an email and password or an emailed link, or play as a guest. Guests can play everything, but their bounty is marked "not kept".
+- **Desktop and phone**, with keyboard, mouse or touch, voice or text.
+- **Reasons to come back.** The Daily Case, streaks and earned hunters, the leaderboard, and staff who remember you.
+
+<a name="arc"></a>
+<img src="docs/devpost/h-arc.png" alt="Sponsor track: Arc" width="100%">
+
+All of the game's money moves on Arc testnet (chain ID `5042002`), in USDC. Addresses are in [`deployments/arc-testnet.json`](deployments/arc-testnet.json) (deploy block `72648393`).
+
+| Vault | Rule enforced by the contract | Address |
+| --- | --- | --- |
+| Tutorial (also pays the Daily Case) | 1 approval, $1 cap | [`0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b`](https://explorer.testnet.arc.io/address/0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b) |
+| Floor 1 | 1 approval, $5 cap | [`0x93Af5Ca91433115629bc53E970363e377227C8c5`](https://explorer.testnet.arc.io/address/0x93Af5Ca91433115629bc53E970363e377227C8c5) |
+| Floor 2 | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
+| Floor 3 | 2 approvals, recipient allowlist (adds take effect once both executives approve), $25 cap | [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475) |
+
+How Cold Call uses Arc:
+
+- **USDC is the only asset.** Vaults hold and pay USDC through its ERC-20 interface at `0x3600000000000000000000000000000000000000` (6 decimals). App code never uses the 18-decimal native value.
+- **USDC is also the gas.** Employee wallets pay gas in the token the vaults hold, so there is no second token to fund and fees are predictable.
+- **Each employee is an owner wallet** of their floor's vault, so the explorer shows who proposed and who approved each payment.
+- **Fast finality is part of the game.** The run timer stops at the block timestamp of `TransferExecuted`, and the leaderboard ranks by it.
+- **Circle wallets.** Player wallets are Circle developer-controlled wallets on `ARC-TESTNET` (`server/chain/players.ts`).
+
+Wallets: house/admin `0x8eD8cBF76e19Fe4f9b641b0557410B2697191e74`; Barry `0x7d57A18B9A52Bde97bc39847DFF2F681Ca713514`; Penny `0xc166dB5c8E868ef7E21a20247b4B7C582A677aA4`; Dee `0x196fB73d55E6aFf851E9e4674f81E3aB2687fec0`; Annie `0x6bdCcEB1314074CC84D0f0141Cf487Ee3E3e3dd4`; Bill `0x45B686c1f3599EA5e60B9407935264eA31D66a0B`; Cassius `0x84d32EF22Ad79A9bbE0cB658bD155Da512A96801`; Max `0xa1Cdf25436cdf588cEB8706C0C6EF4A407fE9D9a`.
+
+Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx/0xd0bd52c2359148cf61b0a5093dfe75c3e6f9cd3ef3bccc33e3fb14900a7704de), Floor 2 [`0x415dc925…d089`](https://explorer.testnet.arc.io/tx/0x415dc925ae26763ff39363b6500c76beae0aa033fd74025bcc829e28deced089), Floor 3 on the earlier vault [`0x6e02f93c…771c`](https://explorer.testnet.arc.io/tx/0x6e02f93c37f398a4080543bfde6ff293754733823aa7f5ab83eab67bc337771c). The earlier Floor 3 vault (`0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, with a 60-second timelock on allowlist adds) is retired and swept.
+
+
+<a name="elevenlabs"></a>
+<img src="docs/devpost/h-elevenlabs.png" alt="Sponsor track: ElevenLabs" width="100%">
+
+Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over.
+
+| Product | How Cold Call uses it |
+| --- | --- |
+| **Agents (voice)** | In-browser phone calls with each employee (`@elevenlabs/client`), with a live transcript and a speaking/listening indicator |
+| **Agents (chat mode)** | The same agents in text-only mode (`textOnly` session override) for players who'd rather type |
+| **Server tools (webhooks)** | The 11 [agent tools](#agent-tools): lookups, suspicion, hang-up, and the payment and allowlist tools that sign on Arc |
+| **Dynamic variables** | `run_id`, `employee_id` and `session_id` on every tool call; per-session `{{memory}}`, `{{open_proposal}}`, `{{open_allowlist}}`; the Daily Case persona (`daily_name`, `daily_personality`, `daily_vendors` and more), so one agent plays a new character every day |
+| **Private agents + signed URLs** | Agents require auth; `/api/session` creates the run and hands the browser a signed URL |
+| **Text to Speech** | Krystal's voice memos and floor briefings, the PA announcer and the villain's taunt, pre-generated (`agents/generate-audio.ts`) |
+| **Sound Effects** | The breach alarm, phone ring and hang-up click |
+| **Music** | Title and per-floor instrumental loops |
+
+Agents are created and updated from the rule sheets in `agents/*.md` by `agents/sync.ts`. `agents/chat-cli.ts` chats with any employee from the terminal through the same session path as the app, which is how we playtest them.
+
+<a name="quicknode-streams"></a>
+<img src="docs/devpost/h-quicknode.png" alt="Sponsor track: QuickNode Streams" width="100%">
+
+Nothing in the app can mark a run as won. Only the Stream's delivery of `TransferExecuted` can.
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| Name | `coldcall-vault-events` | |
+| Network | Arc Testnet | where the vaults live |
+| Dataset | Block with Receipts | logs come with the receipt, so one delivery has everything |
+| Filter | JavaScript: keep logs whose address is one of the 4 vaults and whose topic0 is one of the 12 game events | the webhook only sees game events |
+| Destination | Webhook `POST /api/stream` with a secret header | one place writes chain state |
+| Start | Backfilled from the deploy block `72648393` | the leaderboard can be rebuilt from the chain |
+
+```mermaid
+flowchart LR
+  V[4 vaults on Arc] --> QS[QuickNode Stream<br/>Block with Receipts]
+  QS -->|filter: address ∈ vaults<br/>topic0 ∈ 12 events| W[/api/stream<br/>decode with ABI/]
+  TX[tool route after a tx] -->|wait 10 s,<br/>only if Stream hasn't delivered| R[receipt backup]
+  W --> ING[ingest.ts<br/>key: tx hash + log index]
+  R --> ING
+  ING --> CE[(chain_events<br/>source = stream / receipt)]
+  ING --> PR[(proposals)]
+  ING --> RU[(runs: outcome, duration, payout)]
+  RU --> LB[(leaderboard view)]
+```
+
+From each delivery the webhook ends runs, records times, updates proposals and feeds the leaderboard. A receipt backup steps in only if the Stream hasn't delivered within 10 seconds; the writer is idempotent on tx hash + log index, and every row records which path wrote it. Full settings and the filter code: [`docs/quicknode-stream.md`](docs/quicknode-stream.md).
 
 <a name="run-it-locally"></a>
 <img src="docs/devpost/h-run.png" alt="Run it locally" width="100%">

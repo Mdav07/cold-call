@@ -16,7 +16,7 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![Floor 1: Dee, Penny and your hunter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
 
-- **A bank you can walk.** Pick one of eight hunters and explore a tower of top-down floors. Clues hide in signs and memos behind short mini-games (wires, a keycard swipe, a keypad, shredded strips), and each one you read becomes evidence you can present on a call.
+- **A bank you can walk.** Pick a hunter (four to start, six more to earn) and explore a tower of top-down floors. Clues hide in signs and memos behind short mini-games (wires, a keycard swipe, a keypad, shredded strips), and each one you read becomes evidence you can present on a call.
 - **Staff who fight back.** Every employee is an ElevenLabs agent with its own voice, rule sheet and suspicion meter. They check your story against a vendor registry, calendars and a staff directory. Slip up and suspicion rises; at 100 they hang up and warn their colleague.
 - **Staff who remember you.** When a call ends, the employee writes down the trick you used. Next run, the same story gets called out, so you have to keep inventing new cons.
 - **Rules a story can't beat.** Each floor's vault adds a control, and each mirrors a real attack:
@@ -25,8 +25,7 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
   - **Floor 2, Trading Floor:** two signatures, and the second signer sees the real recipient from the contract, not your story (the Bybit trick).
   - **Floor 3, Executive Penthouse:** a direct payment always bounces. Both executives must first add you to the vault's allowlist.
 - **A debrief after every floor** names the real attack you just ran and what the bank patched.
-- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Your bounty is the amount you talked them into, streaks unlock new hunters, and the leaderboard is timed to the block.
-- **Crypto you never see.** No wallet to install, no seed phrase, no gas, no token names. Amounts are in dollars. Sign in with email and a password, or play as a guest.
+- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Your bounty is the amount you talked them into, Daily streaks and finished floors unlock new hunters, and the leaderboard is timed to the block.
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
@@ -40,18 +39,18 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 4. **Vault.** `ColdCallVault`, our multi-approval USDC vault (Solidity, 33 Foundry tests), enforces the floor's rules: a cap, two signers, a recipient allowlist.
 5. **Referee.** A QuickNode Stream delivers the vault's `TransferExecuted` event to our webhook, which ends the run, stops the clock at that block and sounds the alarm.
 
+Each step belongs to a sponsor: the call and the checks run on ElevenLabs, signing and the vault on Arc, and the referee on QuickNode. Remove any one and the game stops working.
+
 The game is Next.js 16, React 19 and Tailwind CSS 4 on Vercel, with our own HTML canvas engine. Supabase (Postgres, auth, Realtime) stores runs, proposals, memories and the leaderboard.
 
-![How the tracks fit](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-tracks.png)
+![The four tracks](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-four-tracks.png)
 
-Every heist passes through all four tracks, in order. Remove any one and the game stops working.
+What each track needed from us, beyond the pipeline above:
 
-| Track | How Cold Call uses it |
-| --- | --- |
-| **Consumer Applications** | A browser game on desktop and phone where the crypto is invisible: a Circle developer-controlled wallet is created for each player on first play, employees pay the gas, and the UI shows dollars, never tokens or addresses. |
-| **Arc** | Four `ColdCallVault` deployments, one per floor; the game's mechanics are the contract's rules. USDC is both the prize and the gas. Arc's fast finality sets the leaderboard time. Vaults: Tutorial `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` · Floor 1 `0x93Af5Ca91433115629bc53E970363e377227C8c5` · Floor 2 `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` · Floor 3 `0x8c86dD235193d42bf4a751bA5138fF1286E28475` |
-| **ElevenLabs** | Every employee is one Agent used for voice calls and text chat, so you can switch mid-heist. 11 server tools let agents look things up and sign on Arc. Dynamic variables give one Daily Case agent a new persona every day. Text to Speech, Sound Effects and Music voice Krystal's briefings, the PA announcer, the alarm and every floor's music. |
-| **QuickNode Streams** | The Stream is the referee: Arc testnet, Block with Receipts, a JavaScript filter that keeps only our vaults' 12 game events, a webhook destination, and a backfill from the deploy block so the leaderboard can be rebuilt from the chain. Nothing in our app can mark a win without it. |
+- **Consumer Applications: hide the crypto.** No wallet to install, no seed phrase, no gas, no token names. A Circle developer-controlled wallet is created for each player on first play, employees pay the gas, and every amount is in dollars. Sign in with email or play as a guest, on desktop or phone.
+- **Arc: make the contract the game.** Each floor's mechanic is a rule in its own `ColdCallVault` deployment. USDC is both the prize and the gas, so there's one token to fund, and the block time of the payout is the leaderboard time. Vaults: Tutorial `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` · Floor 1 `0x93Af5Ca91433115629bc53E970363e377227C8c5` · Floor 2 `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` · Floor 3 `0x8c86dD235193d42bf4a751bA5138fF1286E28475`
+- **ElevenLabs: staff who can say no, and can sign.** One Agent per employee serves voice calls and text chat, so you can switch mid-heist. 11 server tools for lookups, suspicion and signing. Dynamic variables keep IDs out of the model's hands and give one Daily Case agent a new persona every day. Text to Speech, Sound Effects and Music voice Krystal, the PA announcer, the alarm and the floor music.
+- **QuickNode Streams: a referee we can't fake.** Arc testnet, Block with Receipts, a JavaScript filter that keeps only our vaults' 12 events, a webhook destination, and a backfill from the deploy block so the leaderboard can be rebuilt from the chain.
 
 ![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
 
