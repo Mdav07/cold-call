@@ -4,6 +4,7 @@
 // Preference is stored in localStorage so the choice survives navigation.
 
 import { useEffect, useRef, useState } from "react";
+import { useClientValue } from "./clientHooks";
 
 const STORAGE_KEY = "cc-music-on";
 
@@ -42,12 +43,10 @@ function NoteIcon({ muted }: { muted: boolean }) {
 
 export function MusicToggle({ track }: { track: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [on, setOn] = useState(false);
+  const remembered = useClientValue(readPref, false);
+  const [choice, setOn] = useState<boolean | null>(null); // the player's click this visit
+  const on = choice ?? remembered;
   const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    setOn(readPref());
-  }, []);
 
   useEffect(() => {
     return () => {

@@ -4,7 +4,8 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
 import { markDailyCleared } from "@/app/play/streak";
 import { useRouter } from "next/navigation";
@@ -122,21 +123,19 @@ export function FloorGame({
   // Leaving: confirm first, then elevator doors close, then the page changes.
   const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
-  const leavingRef = useRef(leaving);
-  leavingRef.current = leaving;
-  const pendingRef = useRef(pending);
-  pendingRef.current = pending;
+  const leavingRef = useLatest(leaving);
+  const pendingRef = useLatest(pending);
   const askLeave = useCallback((to: string) => {
     if (leavingRef.current || pendingRef.current) return;
     router.prefetch(to);
     setOpen(null);
     setPending(to);
-  }, [router]);
+  }, [router, leavingRef, pendingRef]);
   const leave = useCallback((to: string) => {
     if (leavingRef.current) return;
     setPending(null);
     setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
-  }, []);
+  }, [leavingRef]);
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
     if (!ride) return;
@@ -144,13 +143,16 @@ export function FloorGame({
     // Next keeps this page's state for when you come back; a ride still set then would close the
     // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
     setLeaving(null);
-  }, [router]);
+  }, [router, leavingRef]);
 
   // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
-  const [briefing, setBriefing] = useState<boolean | null>(null);
-  useEffect(() => {
-    setBriefing(dailyBriefKey ? !wasBriefed(dailyBriefKey) : !!briefingFor(map.floor) && !wasBriefed(map.floor));
-  }, [map.floor, dailyBriefKey]);
+  const needsBriefing = useClientValue<boolean | null>(
+    () => (dailyBriefKey ? !wasBriefed(dailyBriefKey) : !!briefingFor(map.floor) && !wasBriefed(map.floor)),
+    null,
+  );
+  const [briefed, setBriefed] = useState(false); // closed this visit
+  const briefing: boolean | null = briefed ? false : needsBriefing;
+  const setBriefing = (v: boolean) => setBriefed(!v);
 
   const onEvent = useCallback(
     (e: SceneEvent) => {
@@ -181,7 +183,7 @@ export function FloorGame({
   const boxOpen = !!open;
   useEffect(() => {
     const box = boxOpen ? document.querySelector<HTMLElement>("[data-dialogue-box]") : null;
-    if (!box) return setInset(0);
+    if (!box) return;
     const ro = new ResizeObserver(() => setInset(box.offsetHeight));
     ro.observe(box);
     return () => ro.disconnect();
@@ -201,7 +203,7 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
       </div>
 
       <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} />

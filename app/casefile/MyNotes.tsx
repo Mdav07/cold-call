@@ -1,25 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useClientValue } from "@/app/play/clientHooks";
 
 const STORAGE_KEY = "coldcall-casefile-my-notes";
 
 export function MyNotes() {
-  const [text, setText] = useState("");
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
+  // null until hydrated (storage is browser-only); then what was saved, until the player types.
+  const saved = useClientValue<string | null>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved != null) setText(saved);
+      return localStorage.getItem(STORAGE_KEY) ?? "";
     } catch {
-      // private mode / blocked storage — keep empty
+      return ""; // private mode / blocked storage
     }
-    setReady(true);
-  }, []);
+  }, null);
+  const [edited, setEdited] = useState<string | null>(null);
+  const ready = saved !== null;
+  const text = edited ?? saved ?? "";
 
   const onChange = (value: string) => {
-    setText(value);
+    setEdited(value);
     try {
       localStorage.setItem(STORAGE_KEY, value);
     } catch {

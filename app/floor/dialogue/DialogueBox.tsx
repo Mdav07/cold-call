@@ -191,6 +191,8 @@ export function PropDialogue({ id = "", label, text, onClose }: { id?: string; l
   useEffect(() => {
     if (!id) return;
     const fresh = collectFromProp(id);
+    // Syncing from an external store (localStorage) the moment the note opens; it runs once per note.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (fresh.length) setFound(fresh);
   }, [id]);
   const announced = useRef(false);

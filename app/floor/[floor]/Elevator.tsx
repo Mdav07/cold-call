@@ -5,6 +5,7 @@
 // the floor label shows briefly and the page switches.
 
 import { useEffect, useRef, useState } from "react";
+import { REDUCED_MOTION, useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import { ding } from "@/app/floor/hud/sound";
 
 const reduced = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
@@ -26,14 +27,12 @@ export function Elevator({
   // Doors start closed (server render too), open after mount, close again on leaving.
   const [open, setOpen] = useState(false);
   const [gone, setGone] = useState(false);
-  const [instant, setInstant] = useState(false);
+  const instant = useMediaQuery(REDUCED_MOTION);
   const closedRef = useRef(false);
-  const onClosedRef = useRef(onClosed);
-  onClosedRef.current = onClosed;
+  const onClosedRef = useLatest(onClosed);
 
   useEffect(() => {
     const r = reduced();
-    setInstant(r);
     let cancelled = false;
     const t1 = setTimeout(() => {
       if (cancelled) return;
@@ -60,6 +59,8 @@ export function Elevator({
       closedRef.current = false;
       return;
     }
+    // Doors back on screen for the close (an animation timeline, synced with timers below).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGone(false);
     // One frame with the doors still open, so the close animates.
     const raf = requestAnimationFrame(() => setOpen(false));
@@ -72,7 +73,7 @@ export function Elevator({
       cancelAnimationFrame(raf);
       clearTimeout(t);
     };
-  }, [closing, instant]);
+  }, [closing, instant, onClosedRef]);
 
   if (gone && !closing) return null;
   const doors = instant ? "" : "transition-transform duration-500 ease-in-out";

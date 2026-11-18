@@ -3,6 +3,7 @@
 // Top-down floor view: a canvas tile renderer with grid movement, collision, a following camera,
 // and interaction with the employee or prop the player faces. Owned by A; contract in ../types.ts.
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useClientValue, useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import type { EmployeeId } from "@/shared/interfaces";
 import type { Facing, FloorMap, FloorSceneProps } from "../types";
 import { getHunter, spriteUrl } from "@/app/play/hunters";
@@ -63,31 +64,27 @@ function isTyping(target: EventTarget | null) {
 /** The hunter the player picked: Audrey's hunter store ("coldcall-hunter") first, then the intro's
  *  "cc-player-sprite". Read after mount (storage is client-only). */
 function usePickedHunter(fallback: string) {
-  const [h, setH] = useState<{ sprite: string; name: string | null }>({ sprite: fallback, name: null });
-  useEffect(() => {
+  const json = useClientValue(() => {
     try {
       if (localStorage.getItem("coldcall-hunter")) {
         const g = getHunter();
-        setH({ sprite: spriteUrl(g.sprite), name: g.name });
-        return;
+        return JSON.stringify({ sprite: spriteUrl(g.sprite), name: g.name });
       }
       const v = localStorage.getItem("cc-player-sprite");
-      if (v && /^\/sprites\/[\w-]+\.png$/.test(v)) setH({ sprite: v, name: null });
+      if (v && /^\/sprites\/[\w-]+\.png$/.test(v)) return JSON.stringify({ sprite: v, name: null });
     } catch {}
-  }, []);
-  return h;
+    return null;
+  }, null);
+  return json ? (JSON.parse(json) as { sprite: string; name: string | null }) : { sprite: fallback, name: null };
 }
 
 export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names }: FloorSceneProps) {
-  const goalRef = useRef(goal);
-  goalRef.current = goal;
-  const tagsRef = useRef(tags);
-  tagsRef.current = tags;
+  const goalRef = useLatest(goal);
+  const tagsRef = useLatest(tags);
   const readProps = useRef(new Set<string>()); // props the player has read: their marker goes away
   const hunter = usePickedHunter(defaultSprite);
   const playerSprite = hunter.sprite;
-  const namesRef = useRef<Record<string, string | undefined>>({});
-  namesRef.current = { ...names, ...(hunter.name ? { player: hunter.name } : {}) };
+  const namesRef = useLatest<Record<string, string | undefined>>({ ...names, ...(hunter.name ? { player: hunter.name } : {}) });
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
@@ -100,14 +97,10 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
   const npcFacing = useRef<Partial<Record<EmployeeId, Facing>>>({});
   const held = useRef<Facing[]>([]); // most recent last
   const tapped = useRef<Facing | null>(null); // a key pressed and released before the next frame
-  const insetRef = useRef(insetBottom);
-  insetRef.current = insetBottom;
-  const pausedRef = useRef(paused);
-  const emotesRef = useRef(emotes);
-  const onEventRef = useRef(onEvent);
-  pausedRef.current = paused;
-  emotesRef.current = emotes;
-  onEventRef.current = onEvent;
+  const insetRef = useLatest(insetBottom);
+  const pausedRef = useLatest(paused);
+  const emotesRef = useLatest(emotes);
+  const onEventRef = useLatest(onEvent);
 
   // Reset when the map changes to another place. Not when the same place comes back: Next keeps a page
   // you left mounted but hidden and re-runs its effects on return (lobby → case file → back), and a
@@ -149,7 +142,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       if (npcAt(x, y)) return false; // props are notes on walls/desks: furniture blocks, the note itself doesn't
       return true;
     },
-    [map, npcAt, propAt],
+    [map, npcAt],
   );
 
   const facedCell = () => {
@@ -157,6 +150,11 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
     const [dx, dy] = DELTA[p.facing];
     return { x: p.x + dx, y: p.y + dy };
   };
+
+  // The touch pad's held direction (the pad must not write the parent's ref itself).
+  const hold = useCallback((d: Facing | null) => {
+    held.current = d ? [d] : [];
+  }, []);
 
   const interact = useCallback(() => {
     const p = player.current;
@@ -174,7 +172,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       readProps.current.add(prop.id);
       onEventRef.current({ type: "interact-prop", id: prop.id });
     }
-  }, [npcAt, propAt]);
+  }, [npcAt, propAt, onEventRef, pausedRef]);
 
   // ---------- input ----------
 
@@ -204,7 +202,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", clear);
     };
-  }, [interact]);
+  }, [interact, pausedRef]);
 
   // ---------- loop ----------
 
@@ -635,42 +633,36 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [map, images, playerSprite, walkable, npcAt, propAt]);
+  }, [map, images, playerSprite, walkable, npcAt, propAt, emotesRef, goalRef, insetRef, namesRef, onEventRef, pausedRef, tagsRef]);
 
   return (
     <div ref={wrapRef} className="relative h-full w-full touch-none select-none overflow-hidden bg-[var(--cc-edge,#15141a)]">
       <canvas ref={canvasRef} className="block [image-rendering:pixelated]" aria-label={`${map.name}. Use the arrow keys to walk and Space to talk.`} role="img" />
-      <TouchControls held={held} onA={interact} hidden={paused} />
+      <TouchControls onHold={hold} onA={interact} hidden={paused} />
     </div>
   );
 }
 
 /** On-screen D-pad and A button, shown on touch screens only. */
 function TouchControls({
-  held,
+  onHold,
   onA,
   hidden,
 }: {
-  held: React.RefObject<Facing[]>;
+  /** The direction being held on the pad, or null when released. */
+  onHold: (d: Facing | null) => void;
   onA: () => void;
   hidden: boolean;
 }) {
-  const [coarse, setCoarse] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
-    setCoarse(mq.matches);
-    const on = () => setCoarse(mq.matches);
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, []);
+  const coarse = useMediaQuery("(pointer: coarse)");
   if (!coarse || hidden) return null;
 
   const press = (d: Facing) => (e: React.PointerEvent) => {
     e.preventDefault();
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    held.current = [d];
+    onHold(d);
   };
-  const release = () => (held.current = []);
+  const release = () => onHold(null);
   const btn =
     "pixel-button flex h-12 w-12 items-center justify-center !p-0 text-base opacity-80 active:opacity-100";
   const pad: [Facing, string, string][] = [

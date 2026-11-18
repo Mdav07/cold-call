@@ -5,6 +5,7 @@
 // public/audio by agents/generate-audio.ts.
 
 import { useEffect, useRef, useState } from "react";
+import { REDUCED_MOTION, useMediaQuery } from "./clientHooks";
 import debriefs from "@/content/plumpurse/debriefs.json";
 import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
@@ -38,11 +39,9 @@ const clock = (ms: number) => {
 /** Counts from 0 up to `to` dollars over about a second (shown at once with reduced motion). */
 function CountUp({ to }: { to: number }) {
   const [v, setV] = useState(0);
+  const reduced = useMediaQuery(REDUCED_MOTION);
   useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setV(to);
-      return;
-    }
+    if (reduced) return;
     let raf = 0;
     const start = performance.now();
     const step = (t: number) => {
@@ -52,8 +51,8 @@ function CountUp({ to }: { to: number }) {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [to]);
-  return <>{"$" + v.toFixed(2)}</>;
+  }, [to, reduced]);
+  return <>{"$" + (reduced ? to : v).toFixed(2)}</>;
 }
 
 /** Krystal's one line on the result: short, in her voice. The longer debrief is behind "More". */

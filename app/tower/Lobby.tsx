@@ -2,6 +2,7 @@
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLatest } from "@/app/play/clientHooks";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorScene } from "@/app/floor/engine/FloorScene";
@@ -38,14 +39,12 @@ export function Lobby({
   const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
 
-  const leavingRef = useRef(leaving);
-  leavingRef.current = leaving;
+  const leavingRef = useLatest(leaving);
   // The Daily door is always an exit; while the tutorial isn't cleared, walking in says so instead of
   // silently doing nothing. Every other exit asks to confirm first (ExitConfirm).
   const [dailyLocked, setDailyLocked] = useState(false);
   const tutorialDoneRef = useRef(false);
-  const pendingRef = useRef(pending);
-  pendingRef.current = pending;
+  const pendingRef = useLatest(pending);
   const onEvent = useCallback((e: SceneEvent) => {
     if (e.type === "exit") {
       if (leavingRef.current || pendingRef.current) return;
@@ -55,7 +54,7 @@ export function Lobby({
       }
       setPending(e.to);
     } else if (e.type === "interact-prop") setProp(e.id);
-  }, []);
+  }, [leavingRef, pendingRef]);
   const startRide = useCallback((to: string) => {
     const n = to.split("/").pop();
     setPending(null);
@@ -71,7 +70,7 @@ export function Lobby({
     // Next keeps this page's state for when you come back; a ride still set then would close the
     // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
     setLeaving(null);
-  }, [router]);
+  }, [router, leavingRef]);
 
   // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
   useEffect(() => {

@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-const reducedMotion = () =>
-  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+import { REDUCED_MOTION, useMediaQuery } from "@/app/play/clientHooks";
 
 /**
  * Reveals `text` one character at a time. `skip()` shows the rest at once.
@@ -19,11 +17,9 @@ export function useTypewriter(text: string, charsPerSecond = 60) {
     setShown(0);
   }
 
+  const reduced = useMediaQuery(REDUCED_MOTION);
   useEffect(() => {
-    if (reducedMotion()) {
-      setShown(text.length);
-      return;
-    }
+    if (reduced) return;
     const step = 1000 / charsPerSecond;
     const t = setInterval(() => {
       setShown((n) => {
@@ -35,9 +31,10 @@ export function useTypewriter(text: string, charsPerSecond = 60) {
       });
     }, step);
     return () => clearInterval(t);
-  }, [text, charsPerSecond]);
+  }, [text, charsPerSecond, reduced]);
 
   const skip = useCallback(() => setShown(text.length), [text]);
-  const done = shown >= text.length;
-  return { visible: text.slice(0, shown), done, skip };
+  const count = reduced ? text.length : shown;
+  const done = count >= text.length;
+  return { visible: text.slice(0, count), done, skip };
 }

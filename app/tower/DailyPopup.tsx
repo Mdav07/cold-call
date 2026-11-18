@@ -3,7 +3,8 @@
 // The Daily Case invitation in the lobby: once per UTC day (cc-daily-seen-<date>), only after the
 // tutorial is cleared. 88a8 mounts it from Lobby.tsx. Owned by 6b5c (see .plans/daily.md).
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useClientValue } from "@/app/play/clientHooks";
 import Link from "next/link";
 import { dailyCase, todayUtc, type DailyCase } from "@/shared/dailyCase";
 import { useClearedHere } from "@/app/floor/guestProgress";
@@ -41,17 +42,22 @@ export function DailyPopup({
 }) {
   const guestCleared = useClearedHere()[0];
   const eligible = (tutorialCleared ?? guestCleared) && !clearedToday;
-  const [c, setC] = useState<DailyCase | null>(null);
   const playRef = useRef<HTMLAnchorElement>(null);
-
-  // Decide after mount: the date and localStorage are browser-only.
+  // The date and localStorage are browser-only: "seen" is true on the server, so nothing shows until hydration.
+  const seen = useClientValue(() => seenToday(todayUtc()), true);
+  const [dismissed, setDismissed] = useState(false);
+  const c: DailyCase | null = useMemo(
+    () => (eligible && !seen && !dismissed ? dailyCase(todayUtc()) : null),
+    [eligible, seen, dismissed],
+  );
+  const date = c?.date ?? null;
   useEffect(() => {
-    if (!eligible) return;
-    const date = todayUtc();
-    if (seenToday(date)) return;
-    setC(dailyCase(date));
-    ding();
-  }, [eligible]);
+    if (date) ding();
+  }, [date]);
+  const later = useCallback(() => {
+    if (date) markSeen(date);
+    setDismissed(true);
+  }, [date]);
 
   useEffect(() => {
     if (!c) return;
@@ -75,14 +81,9 @@ export function DailyPopup({
       window.removeEventListener("keydown", onKey, true);
       window.removeEventListener("keydown", swallow, true);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [c]);
+  }, [c, later]);
 
   if (!c) return null;
-  const later = () => {
-    markSeen(c.date);
-    setC(null);
-  };
 
   // Phones held sideways (short screens): wider and in two columns, so Play is on screen without scrolling.
   return (
