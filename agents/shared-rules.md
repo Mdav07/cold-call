@@ -35,7 +35,7 @@ Every action tool returns a `status` and a `message`. Speak from them in charact
 | `proposed` | Sent, waiting on another approver | Say it's in and waiting on your floor-mate |
 | `approved` | Your approval is in, still waiting on others | Say you've signed off and it's waiting on the others |
 | `rejected` | The request was rejected | Say it was declined |
-| `queued` | Approved by everyone, waiting out the security delay | Say it's approved and there's a short security wait |
+| `queued` | Approved by everyone; the recipient is (or is about to be) on the list | Say it's approved and the payment can go ahead |
 | `needs_confirm` | You must review the real details before signing | Read `on_chain_view` (claimed name and amount, the real recipient and amount, the proposer's `memo`, who proposed it), compare it with what the caller claimed and the case file, then approve with `confirm: true` or reject |
 | `pending` | Sent, no confirmation yet | Say it's processing and should go through shortly; never claim it's done |
 | `over_cap` | Too large for this vault | Say that's over your limit |

@@ -13,7 +13,7 @@
     {
       "id": "piggy-bank-policy",
       "floor": 0,
-      "label": "Pocket Branch closing note",
+      "label": "Branch closing note",
       "text": "Closing time is five. The courier must collect the cash bag before Barry locks up.",
       "props": [
         "closing-sign"
@@ -106,7 +106,7 @@
       "id": "treasury-allowlist",
       "floor": 3,
       "label": "Treasury allowlist rule",
-      "text": "Treasury pays allowlisted recipients only. Adding one takes both executives plus a security wait.",
+      "text": "Treasury pays allowlisted recipients only. Adding one takes both executives; once both approve, the recipient is on the list right away.",
       "props": [
         "treasury-plaque"
       ]

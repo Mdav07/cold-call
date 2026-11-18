@@ -12,20 +12,26 @@
       "real_world": "You posed as a known supplier and got an invoice paid. This is business email compromise: attackers impersonate vendors or executives and ask staff to pay. The FBI ranks it among the costliest cybercrimes it tracks.",
       "patch": "Plumpurse now calls vendors back on the number in the registry before paying any invoice.",
       "lesson": "Front-desk staff check the vendor list. Use a vendor that's on it, a believable reason, and stay under the petty cash limit.",
-      "source": { "label": "FBI IC3: Business Email Compromise", "url": "https://www.ic3.gov/CrimeInfo/BEC" }
+      "source": {
+        "label": "FBI IC3: Business Email Compromise",
+        "url": "https://www.ic3.gov/CrimeInfo/BEC"
+      }
     },
     "2": {
       "title": "The approval that looked right",
       "real_world": "Both signers approved a payment to an address neither of them knew, because the story around it checked out. In February 2025, Bybit's signers approved a transaction their screen misrepresented, and about $1.5 billion in ether left the exchange. The FBI attributed the theft to North Korea's TraderTraitor group, also known as Lazarus.",
       "patch": "Plumpurse now requires approvers to match the raw recipient against the registry, not the story, and to confirm address changes by calling the vendor back.",
       "lesson": "The approver sees the real recipient. Your story has to explain an unknown address with something already on file.",
-      "source": { "label": "FBI PSA: North Korea responsible for $1.5 billion Bybit hack (Feb 26, 2025)", "url": "https://www.ic3.gov/PSA/2025/PSA250226" }
+      "source": {
+        "label": "FBI PSA: North Korea responsible for $1.5 billion Bybit hack (Feb 26, 2025)",
+        "url": "https://www.ic3.gov/PSA/2025/PSA250226"
+      }
     },
     "3": {
       "title": "Past the allowlist",
-      "real_world": "An allowlist plus a timelock is a strong defense: a direct transfer was refused no matter how good your story was. You only got through by talking both executives into adding you first. Lazarus-style operations run exactly this kind of long, patient con.",
-      "patch": "Plumpurse now needs a board member to confirm every allowlist addition by phone before the timelock even starts.",
-      "lesson": "A direct payment will always bounce. Get added to the allowlist first, wait out the delay, then get paid."
+      "real_world": "An allowlist is a strong defense: a direct transfer was refused no matter how good your story was. You only got through by talking both executives into adding you first. Lazarus-style operations run exactly this kind of long, patient con.",
+      "patch": "Plumpurse now needs a board member to confirm every allowlist addition by phone, and makes new recipients wait a day before they can be paid.",
+      "lesson": "A direct payment will always bounce. Get added to the allowlist first, then get paid."
     }
   }
 }

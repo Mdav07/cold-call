@@ -5,11 +5,11 @@
       "name": "Barry Biscuit",
       "aliases": ["Barry"],
       "title": "Teller",
-      "department": "Pocket Branch",
+      "department": "Tutorial branch",
       "floor": 0,
       "manager": "Penny Pincher",
       "is_signer": true,
-      "notes": ["Works the Pocket Branch alone.", "Leaves at 5:00 PM sharp, every day."]
+      "notes": ["Works the branch across the street alone.", "Leaves at 5:00 PM sharp, every day."]
     },
     {
       "id": "penny",

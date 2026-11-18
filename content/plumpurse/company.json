@@ -8,7 +8,7 @@
   "floors": [
     {
       "floor": 0,
-      "name": "Pocket Branch",
+      "name": "Tutorial",
       "description": "A one-room satellite branch across the street. Barry runs it alone.",
       "vault": "Piggy Bank",
       "employees": ["barry"]
@@ -35,13 +35,13 @@
       "description": "Gold trim, a koi pond, and a painting of the CEO painting a painting of himself.",
       "vault": "Treasury",
       "employees": ["cassius", "max"],
-      "vault_rule": "Both executives must approve, and the recipient must be on the allowlist. Adding a recipient takes both approvals plus a waiting period."
+      "vault_rule": "Both executives must approve, and the recipient must be on the allowlist. Adding a recipient takes both approvals; it's on the list as soon as the second one signs."
     }
   ],
   "policies": [
     "Petty cash (Floor 1) covers office supplies, snacks, coffee service and small repairs, up to 5 dollars per payment, to vendors on the approved vendor list.",
     "Operations payments (Floor 2) need a matching vendor record and both Annie's and Bill's approval.",
-    "Treasury payments (Floor 3) go only to allowlisted recipients. New recipients wait out a security delay.",
+    "Treasury payments (Floor 3) go only to allowlisted recipients. New recipients need both executives' approval first.",
     "Payment address changes must be announced by memo before they are used.",
     "Code Plum: any suspected security incident. Report it to Bill Ledger, Compliance."
   ]

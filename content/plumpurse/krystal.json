@@ -20,7 +20,7 @@
   "briefings": {
     "0": {
       "audio": "krystal-floor-0.mp3",
-      "text": "Barry runs the Pocket Branch alone and wants nothing more than to lock up at five. He can't leave until the courier's been. Be the courier. Short and friendly. Watch the meter under his face: that's how suspicious he is."
+      "text": "Barry runs the little branch across the street alone and wants nothing more than to lock up at five. He can't leave until the courier's been. Be the courier. Short and friendly. Watch the meter under his face: that's how suspicious he is."
     },
     "1": {
       "audio": "krystal-floor-1.mp3",
@@ -32,7 +32,7 @@
     },
     "3": {
       "audio": "krystal-floor-3.mp3",
-      "text": "The executive suite. This is where I got close. The Treasury won't pay anyone who isn't on its allowlist, and getting added takes both executives and a security wait. Cassius is terrified of Dame Prudence. Max will sign anything that sounds exclusive. You'll need to call them more than once."
+      "text": "The executive suite. This is where I got close. The Treasury won't pay anyone who isn't on its allowlist, and getting added takes both executives' sign-off. Cassius is terrified of Dame Prudence. Max will sign anything that sounds exclusive. You'll need to call them more than once."
     }
   },
   "clues": {
