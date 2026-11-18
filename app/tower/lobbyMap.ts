@@ -27,7 +27,18 @@ const clock = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-export function buildLobby(floors: TowerFloor[]): FloorMap {
+/**
+ * Where to stand when you come back to the lobby from a level (RESTART sends you to /tower?at=…):
+ * in front of that floor's elevator facing it, or just inside the tutorial / Daily door facing out.
+ */
+export function entranceSpawn(at: string | null | undefined): FloorMap["spawn"] | null {
+  if (at === "floor-0") return { x: DOOR_X, y: H - 3, facing: "down" };
+  if (at === "daily") return { x: DAILY_X, y: H - 3, facing: "down" };
+  const n = Number(at?.match(/^floor-([123])$/)?.[1]);
+  return n ? { x: ELEVATORS[n as 1 | 2 | 3], y: 3, facing: "up" } : null;
+}
+
+export function buildLobby(floors: TowerFloor[], entrance?: string | null): FloorMap {
   const ground = Array<number>(W * H).fill(-1);
   const walls = Array<number>(W * H).fill(-1);
   const decor = Array<number>(W * H).fill(-1);
@@ -166,7 +177,7 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
     tilesetColumns: 16,
     layers: { ground, walls, decor },
     blocked,
-    spawn: { x: DOOR_X, y: H - 3, facing: "up" },
+    spawn: entranceSpawn(entrance) ?? { x: DOOR_X, y: H - 3, facing: "up" },
     npcs: [],
     props,
     exits,
