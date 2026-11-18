@@ -9,6 +9,7 @@ import type { FloorMap, SceneEvent } from "@/app/floor/types";
 import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
+import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
 import { DAILY_X, LOBBY_H, LOBBY_W } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
@@ -34,27 +35,34 @@ export function Lobby({
 }) {
   const router = useRouter();
   const [prop, setProp] = useState<string | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
 
   const leavingRef = useRef(leaving);
   leavingRef.current = leaving;
   // The Daily door is always an exit; while the tutorial isn't cleared, walking in says so instead of
-  // silently doing nothing.
+  // silently doing nothing. Every other exit asks to confirm first (ExitConfirm).
   const [dailyLocked, setDailyLocked] = useState(false);
   const tutorialDoneRef = useRef(false);
+  const pendingRef = useRef(pending);
+  pendingRef.current = pending;
   const onEvent = useCallback((e: SceneEvent) => {
     if (e.type === "exit") {
-      if (leavingRef.current) return;
+      if (leavingRef.current || pendingRef.current) return;
       if (e.to === "/daily" && !tutorialDoneRef.current) {
         setDailyLocked(true);
         return;
       }
-      const n = e.to.split("/").pop();
-      setLeaving({
-        to: e.to,
-        label: e.to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}`,
-      });
+      setPending(e.to);
     } else if (e.type === "interact-prop") setProp(e.id);
+  }, []);
+  const startRide = useCallback((to: string) => {
+    const n = to.split("/").pop();
+    setPending(null);
+    setLeaving({
+      to,
+      label: to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}`,
+    });
   }, []);
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
@@ -82,9 +90,12 @@ export function Lobby({
   }, [tutorialDone]);
   const map = useMemo(() => {
     const dailyCell = DAILY_X + (LOBBY_H - 1) * LOBBY_W;
+    // Elevator mats (y=2): never block — stand/read even when locked; gating is exit-only.
+    const elevMats = new Set(
+      Object.values({ 1: 4, 2: 9, 3: 14 }).map((x) => x + 2 * LOBBY_W),
+    );
     let exits = [...(serverMap.exits ?? [])];
-    // Never leave the doorway tile in blocked — walking onto it must work; gating is exit-only.
-    let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell);
+    let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell && !elevMats.has(i));
 
     // Locked like the elevators until the tutorial is cleared: the doorway is blocked and the sign on the
     // D mat says LOCKED. (onEvent still answers a locked exit with a message, as a fallback.)
@@ -103,13 +114,13 @@ export function Lobby({
     );
 
     if (guest) {
-      const closed = exits.filter((e) => {
-        if (e.to === "/daily") return false; // already handled above
+      // Drop locked-floor exits; keep mats walkable so guests can still read the sparkles.
+      exits = exits.filter((e) => {
+        if (e.to === "/daily") return true;
+        if (!e.to.startsWith("/floor/")) return true;
         const n = Number(e.to.split("/").pop());
-        return e.to.startsWith("/floor/") && !openForGuest(cleared, n);
+        return openForGuest(cleared, n);
       });
-      exits = exits.filter((e) => !closed.includes(e));
-      blocked = [...blocked, ...closed.map((e) => e.y * serverMap.width + e.x)];
     }
 
     return { ...serverMap, exits, blocked, props };
@@ -128,7 +139,7 @@ export function Lobby({
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
@@ -156,6 +167,9 @@ export function Lobby({
           text="The Daily Case opens once you've cleared the tutorial: the Pocket Branch, through the T door. After that, a new case waits behind this door every day."
           onClose={() => setDailyLocked(false)}
         />
+      )}
+      {pending && (
+        <ExitConfirm to={pending} onGo={() => startRide(pending)} onStay={() => setPending(null)} />
       )}
       <MusicToggle track="music-floor-1.mp3" />
       <Elevator label="Lobby · Plumpurse Tower" leaving={leaving} onClosed={arrived} />

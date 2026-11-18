@@ -110,6 +110,8 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
   // Back wall: the elevator (the exit), 1–2 boards, a few windows.
   const backXs = shuffle(Array.from({ length: innerW }, (_, i) => i + 1));
   const doorX = backXs.pop()!;
+  // Boards / elevator sit on row 1; row 0 stays wall top (dark outside). Writing face onto row 0
+  // made wall color bleed into the void — same bug the floor maps fixed via build_maps wall-kind tops.
   const raise = (x: number, tile: number) => {
     walls[idx(x, 1)] = tile;
     ground[idx(x, 1)] = skin.ground; // the door and boards are drawn over floor, as in the floors' maps

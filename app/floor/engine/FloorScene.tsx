@@ -517,7 +517,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const wallTile = map.layers.walls[pr.y * map.width + pr.x];
         const onBoard = BOARD_TILES.has(wallTile);
         const gx = pr.x * TILE + (onBoard ? 11 : 8);
-        const gy = pr.y * TILE + (onBoard ? 4 : 6);
+        const gy = pr.y * TILE + 6; // board papers sit under the 2px wall-color cap
         c.fillStyle = `rgba(255, 246, 214, ${a})`;
         c.fillRect(gx, gy - 1, 1, 3);
         c.fillRect(gx - 1, gy, 3, 1);

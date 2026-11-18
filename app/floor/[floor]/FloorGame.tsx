@@ -18,6 +18,7 @@ import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/Di
 import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
+import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
 
@@ -117,16 +118,24 @@ export function FloorGame({
     if (clearLocks) setLockedOut(new Set());
   };
 
-  // Leaving: the elevator doors close, then the page changes.
+  // Leaving: confirm first, then elevator doors close, then the page changes.
+  const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
   const leavingRef = useRef(leaving);
   leavingRef.current = leaving;
-  const leave = useCallback((to: string) => {
-    if (leavingRef.current) return;
+  const pendingRef = useRef(pending);
+  pendingRef.current = pending;
+  const askLeave = useCallback((to: string) => {
+    if (leavingRef.current || pendingRef.current) return;
     router.prefetch(to);
     setOpen(null);
-    setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
+    setPending(to);
   }, [router]);
+  const leave = useCallback((to: string) => {
+    if (leavingRef.current) return;
+    setPending(null);
+    setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
+  }, []);
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
     if (!ride) return;
@@ -144,14 +153,14 @@ export function FloorGame({
 
   const onEvent = useCallback(
     (e: SceneEvent) => {
-      if (e.type === "exit") return leave(e.to);
+      if (e.type === "exit") return askLeave(e.to);
       if (e.type === "interact-npc") {
         setFocus(e.id);
         setTalked(true);
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [leave],
+    [askLeave],
   );
 
   const emotes: FloorSceneProps["emotes"] = {};
@@ -191,10 +200,10 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={inset} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => leave("/tower")} onCaseFile={openCaseFile} />
+      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} />
 
       {npc && !showOutcome && (
         <NpcDialogue
@@ -240,6 +249,9 @@ export function FloorGame({
           /></div>}
       {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
       {gate}
+      {pending && (
+        <ExitConfirm to={pending} onGo={() => leave(pending)} onStay={() => setPending(null)} />
+      )}
       <Elevator label={map.name} leaving={leaving} onClosed={arrived} />
     </main>
   );

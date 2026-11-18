@@ -131,13 +131,22 @@ def main() -> None:
     sheet.alpha_composite(elevator(wall), (ex, ey))
     print(f"elevator repaired @ {eidx}")
 
-    # fill, ink, outline, letter
+    # Colors sampled from the tileset: plant-pot teal, hunter purple sweater, plant leaf green.
+    pot = (55, 170, 165, 255)
+    pot_ink = (24, 88, 86, 255)
+    pot_edge = (90, 220, 214, 255)
+    sweater = (148, 120, 220, 255)
+    sweater_ink = (56, 36, 110, 255)
+    sweater_edge = (196, 170, 255, 255)
+    leaf = (123, 173, 44, 255)
+    leaf_ink = (40, 72, 20, 255)
+    leaf_edge = (168, 220, 72, 255)
     mats = [
-        ("mat_tutorial", (126, 196, 168, 255), (36, 92, 74, 255), (80, 220, 180, 255), "T"),
-        ("mat_daily", (196, 158, 220, 255), (92, 52, 130, 255), (220, 160, 255, 255), "D"),
-        ("mat_1", (232, 186, 96, 255), (120, 72, 24, 255), (255, 220, 100, 255), "1"),
-        ("mat_2", (220, 168, 88, 255), (110, 64, 20, 255), (255, 200, 90, 255), "2"),
-        ("mat_3", (208, 150, 78, 255), (100, 56, 18, 255), (255, 180, 80, 255), "3"),
+        ("mat_tutorial", pot, pot_ink, pot_edge, "T"),
+        ("mat_daily", sweater, sweater_ink, sweater_edge, "D"),
+        ("mat_1", leaf, leaf_ink, leaf_edge, "1"),
+        ("mat_2", leaf, leaf_ink, leaf_edge, "2"),
+        ("mat_3", leaf, leaf_ink, leaf_edge, "3"),
     ]
     for name, fill, ink, outline, letter in mats:
         sheet = append_or_replace(sheet, catalog, name, mat(fill, ink, outline, letter), "walk")

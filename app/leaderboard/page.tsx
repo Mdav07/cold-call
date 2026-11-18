@@ -7,7 +7,6 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import company from "@/content/plumpurse/company.json";
 import { db } from "@/server/chain/db";
-import { contractFor } from "@/server/game/daily";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 import { dailyBoard } from "@/server/game/dailyBoard";
 import { DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
@@ -96,51 +95,8 @@ function Board({ rows, rivals = [], empty }: { rows: Row[]; rivals?: Rival[]; em
   );
 }
 
-/** The rivals on this floor, slowest first, with the ones the fastest real hunter has already beaten ticked. */
-function RivalLadder({ ladder, best }: { ladder: Rival[]; best: number | null }) {
-  if (!ladder.length) return null;
-  const beaten = (r: Rival) => best != null && best < r.duration_ms;
-  const next = ladder.find((r) => !beaten(r));
-  const count = ladder.filter(beaten).length;
-  return (
-    <div className="flex flex-col gap-2 border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] p-3">
-      <p className="font-pixel text-[10px] text-[var(--cc-accent)]">Rival ladder</p>
-      <ol className="flex flex-wrap items-center gap-1.5">
-        {ladder.map((r, i) => (
-          <li key={r.id} className="flex items-center gap-1.5">
-            <span
-              className="font-pixel border-2 px-1.5 py-1 text-[8px]"
-              style={
-                beaten(r)
-                  ? { background: "var(--cc-panel)", color: "var(--cc-muted)", borderColor: r.crew.color }
-                  : { background: r.crew.color, color: "#15141a", borderColor: "var(--cc-edge)" }
-              }
-              title={`${r.crew.label}: ${r.crew.name}${beaten(r) ? " (beaten)" : ""}`}
-            >
-              {beaten(r) && (
-                <span aria-label="beaten" className="mr-1 font-sans text-[11px] font-bold" style={{ color: r.crew.color }}>
-                  ✓
-                </span>
-              )}
-              {r.name} {clock(r.duration_ms)}
-            </span>
-            {i < ladder.length - 1 && <span aria-hidden className="font-pixel text-[10px] text-[var(--cc-accent)]">▶</span>}
-          </li>
-        ))}
-      </ol>
-      <p className="text-xs text-[var(--cc-muted)]">
-        {best == null
-          ? `Nobody has cleared this floor yet. Start with ${ladder[0].name} (${clock(ladder[0].duration_ms)}).`
-          : next
-            ? `The fastest hunter has beaten ${count} of ${ladder.length}. Next up: ${next.name} of ${next.crew.name} (${clock(next.duration_ms)}).`
-            : `${ladder[ladder.length - 1].name} has been beaten on this floor. The Black Ledger wants a rematch.`}
-      </p>
-    </div>
-  );
-}
-
 async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard">["searchParams"] }) {
-  await connection(); // today's contract depends on the current date, so render per request
+  await connection(); // today's case depends on the current date, so render per request
   const { floor: raw, channel: rawChannel } = await searchParams;
   // "daily" is the Daily Case tab: today's case, its own board, no rival crews.
   const isDaily = raw === "daily";
@@ -151,8 +107,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   const tab: number | "daily" = isDaily ? "daily" : floor;
 
   const today = dailyCase(todayUtc());
-  const [contract, board, streaks, todaysBoard] = await Promise.all([
-    contractFor(),
+  const [board, streaks, todaysBoard] = await Promise.all([
     db()
       .from("leaderboard")
       .select("user_id, display_name, floor, channel, duration_ms, tx_hash, daily_contract_id")
@@ -179,30 +134,11 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       daily_contract_id: null,
     }));
   const rows = ((board.data ?? []) as Row[]).filter((r) => channel === "all" || r.channel === channel);
-  const daily = contract ? bestPerPlayer(rows.filter((r) => r.daily_contract_id === contract.id)).slice(0, 10) : [];
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
   const ladder = ladderFor(floor).filter((r) => channel === "all" || r.channel === channel);
-  const best = floorRows.length ? (floorRows[0].duration_ms as number) : null;
 
   return (
     <>
-      <section aria-labelledby="daily" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="daily" className="font-pixel text-xs text-[var(--cc-accent)]">
-            Today&apos;s Daily Contract
-          </h2>
-          {contract && <span className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(contract.floor)}</span>}
-        </div>
-        {contract ? (
-          <>
-            <p className="text-sm text-[var(--cc-muted)]">{contract.modifier}</p>
-            <Board rows={daily} empty="Nobody has cleared today's contract yet." />
-          </>
-        ) : (
-          <p className="text-sm text-[var(--cc-muted)]">No contract today.</p>
-        )}
-      </section>
-
       <section aria-labelledby="floors" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
         <h2 id="floors" className="font-pixel text-xs text-[var(--cc-accent)]">
           Fastest breaches
@@ -227,7 +163,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             aria-current={isDaily ? "page" : undefined}
             className={isDaily ? "pixel-button" : `pixel-button ${OFF}`}
           >
-            Daily
+            Daily Case
           </Link>
         </nav>
         <nav aria-label="Channel" className="flex flex-wrap items-center gap-2">
@@ -264,7 +200,6 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
         ) : (
           <>
             <p className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(floor)}</p>
-            <RivalLadder ladder={ladder} best={best} />
             <Board rows={floorRows} rivals={ladder} empty="No breaches on this floor yet. Be the first." />
           </>
         )}
@@ -290,7 +225,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             })}
           </ol>
         ) : (
-          <p className="text-sm text-[var(--cc-muted)]">No streaks yet. Clear a Daily Contract to start one.</p>
+          <p className="text-sm text-[var(--cc-muted)]">No streaks yet. Clear the Daily Case to start one.</p>
         )}
       </section>
     </>

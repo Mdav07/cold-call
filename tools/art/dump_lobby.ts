@@ -8,5 +8,5 @@ const floors = [0, 1, 2, 3].map((floor) => ({
   employees: [], cleared: true, unlocked: true, bestMs: null, board: [],
 }));
 // Everything unlocked, so every elevator, exit and sign is present.
-writeFileSync(process.argv[2], JSON.stringify(buildLobby(floors as never, "Daily: test")));
+writeFileSync(process.argv[2], JSON.stringify(buildLobby(floors as never)));
 console.log("lobby dumped");

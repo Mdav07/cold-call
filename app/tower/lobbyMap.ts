@@ -26,7 +26,7 @@ const clock = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap {
+export function buildLobby(floors: TowerFloor[]): FloorMap {
   const ground = Array<number>(W * H).fill(-1);
   const walls = Array<number>(W * H).fill(-1);
   const decor = Array<number>(W * H).fill(-1);
@@ -90,18 +90,18 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
     const best = f?.bestMs != null ? ` Your best: ${clock(f.bestMs)}.` : "";
     const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
     const status = !f ? "" : f.cleared ? "CLEARED" : f.unlocked ? "OPEN" : "LOCKED";
-    // A sign on the elevator doors: face the doors (from the doorway tile) to read it.
+    // Readable prop on the numbered mat (y=2): stand on / face the sparkles to learn what's upstairs.
+    // Locked floors omit the exit so you can read but can't ride.
     props.push({
       id: `sign-${n}`,
       x,
-      y: 1,
+      y: 2,
       label: `Floor ${n} · ${f?.name ?? ""} · ${status}`,
       text: f?.unlocked
         ? `${f.description} Staff: ${people}.${best} Step into the elevator to go up.`
         : `Locked. Clear ${below} first. Staff: ${people ?? "unknown"}.`,
     });
     if (f?.unlocked) exits.push({ x, y: 2, to: `/floor/${n}` });
-    else blocked.push(at(x, 2)); // a locked elevator: you can't stand in its doorway
   }
 
   const p0 = byFloor(0);
@@ -136,8 +136,8 @@ export function buildLobby(floors: TowerFloor[], daily: string | null): FloorMap
     id: "daily-board",
     x: 2,
     y: 9,
-    label: "Daily Contract board",
-    text: daily ?? "No contract posted today.",
+    label: `Daily Case · ${today.title}`,
+    text: `A new short case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Full board at /leaderboard?floor=daily.`,
   });
   const top = floors
     .flatMap((f) => f.board.slice(0, 1).map((b) => `Floor ${f.floor}: ${b.name} ${clock(b.ms)}`))
