@@ -25,7 +25,7 @@ Security training is a slide deck people click through. We wanted the opposite: 
 - **They learn from your past runs.** When a call ends, the employee writes down the trick you used, built from their own suspicion notes. Next run they're reminded of it, and the same story gets called out. You have to keep inventing new cons.
 - **Real money, on testnet.** Talk someone into it and their wallet signs a real USDC transfer to the vault on Arc.
 - **The chain is the referee.** A run is a breach only when a QuickNode Stream delivers the vault's `TransferExecuted` event. The run clock stops at that block.
-- **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and a 📻 Radio Krystal button bottom-left on Floors 0 to 3 opens her hint line; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
+- **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and her radio gives a hint whenever you're stuck, for 30 seconds on the clock.
 - **A reason to come back.** After the tutorial, the lobby's D door (locked like the elevators until then) opens onto the Daily Case: one short case a day, the same for everyone, a random room, one staff member, its own case file and clues. Past days replay as practice. Places rotate with no repeat inside a 44-day cycle. A daily streak shows as a flame badge; three days unlocks the Teal jacket hunter look, seven unlocks Field green. The leaderboard has a Daily Case tab and a Longest streaks board. The crypto stays invisible: no wallets, no explorer links, amounts in dollars.
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
@@ -84,7 +84,7 @@ Voice is the main way to play.
 - **Server tools.** Each agent's actions are webhook tools on our backend. Approving a payment mid-call sends a real transaction.
 - **Dynamic variables.** IDs are filled into every tool call by the platform, never by the model. Memory and open proposals are injected per session.
 - **Private agents with signed URLs**, so only our backend can start a call.
-- **Text to Speech, Sound Effects and Music.** Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop for every floor. Krystal's radio is its own agent: a 📻 Radio Krystal button bottom-left on Floors 0 to 3; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
+- **Text to Speech, Sound Effects and Music.** Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop for every floor. Krystal's radio is its own agent: a hint button on every floor, for 30 seconds on the clock.
 
 ![Sponsor track: QuickNode Streams](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-quicknode.png)
 
@@ -108,7 +108,7 @@ Nothing in our app can mark a run as won. Only the Stream can.
 | Chain data | QuickNode Streams |
 | Database | Supabase (Postgres, auth, Realtime) |
 | Hosting | Vercel |
-| Art | Own pixel portraits and walking sprites; Kenney Roguelike Indoors furniture tiles (CC0); Daily Case staff from tools/art/staff_sprites.py |
+| Art | Our own pixel portraits, walking sprites and Daily Case staff; Kenney Roguelike Indoors furniture tiles (CC0) |
 
 ![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
 
@@ -141,4 +141,4 @@ Nothing in our app can mark a run as won. Only the Stream can.
 
 Try it at [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app). And kid? Don't trust anyone who sounds too sure.
 
-*Credits: furniture tiles from Kenney Roguelike Indoors (CC0). Characters drawn from our own pixel portraits. Daily Case staff from tools/art/staff_sprites.py. Pixel font Press Start 2P (SIL OFL). Voices, sound effects and music generated with ElevenLabs.*
+*Credits: furniture tiles from Kenney Roguelike Indoors (CC0). Characters and Daily Case staff drawn by us from our own pixel portraits. Pixel font Press Start 2P (SIL OFL). Voices, sound effects and music generated with ElevenLabs.*

@@ -39,8 +39,8 @@ the humans didn't.
 - **A chain referee.** A QuickNode Stream delivers every vault event to our backend; a run is a breach only
   when the Stream delivers `TransferExecuted`. The run clock stops at that block's timestamp.
 - **A story to follow:** your vanished mentor Krystal Klear briefs each floor in her own voice, every clear
-  uncovers one of her hidden notes, and a 📻 Radio Krystal button bottom-left on Floors 0 to 3 opens her hint
-  line; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
+  uncovers one of her hidden notes, and her radio gives a hint whenever
+  you're stuck, for 30 seconds on the clock.
 - **A daily game loop:** after the tutorial, the lobby's D door (locked like the elevators until then) opens
   onto the Daily Case: one short case a day, the same for everyone, a random room, one staff member, its own
   case file and clues. Past days replay as practice. Places rotate with no repeat inside a 44-day cycle. A
@@ -131,8 +131,7 @@ Seven floor employees plus a daily employee are ElevenLabs Agents used for both 
 with server tools (webhooks) that read and write game state and send real transactions, dynamic variables for
 per-run context, private agents with signed URLs, and pre-generated Text to Speech, Sound Effects and Music:
 Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music
-loop per floor. Krystal's radio is a separate hint agent: a 📻 Radio Krystal button bottom-left on Floors 0
-to 3; each hint adds 30 s. Also in the chat view. Not on the Daily Case. See the README's ElevenLabs table.
+loop per floor. Krystal's radio is a separate hint agent: a hint button on every floor, for 30 seconds on the clock. See the README's ElevenLabs table.
 
 ### QuickNode Streams
 
