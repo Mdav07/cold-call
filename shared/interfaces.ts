@@ -296,6 +296,8 @@ export interface RunRow {
   tx_hash: Hex | null;
   duration_ms: number | null; // block timestamp of TransferExecuted minus started_at
   payout_units: string | null;
+  /** What the employee agreed to pay, capped by the vault's per-transfer limit (shown as the bounty). */
+  cracked_units: string | null;
   is_first_clear: boolean;
   hints_used: number;
   daily_contract_id: string | null;
