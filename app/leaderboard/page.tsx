@@ -6,6 +6,7 @@ import { BackButton } from "@/app/ui/BackButton";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import company from "@/content/plumpurse/company.json";
+import { getDemoUserId } from "@/server/game/players";
 import { db } from "@/server/chain/db";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 import { dailyBoard } from "@/server/game/dailyBoard";
@@ -107,7 +108,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   const tab: number | "daily" = isDaily ? "daily" : floor;
 
   const today = dailyCase(todayUtc());
-  const [board, streaks, todaysBoard] = await Promise.all([
+  const [board, streaks, todaysBoard, paidRuns, demoId] = await Promise.all([
     db()
       .from("leaderboard")
       .select("user_id, display_name, floor, channel, duration_ms, tx_hash, daily_contract_id")
@@ -120,7 +121,23 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .order("longest", { ascending: false })
       .limit(10),
     isDaily ? dailyBoard(today.date, PER_FLOOR) : Promise.resolve([]),
+    // Winnings: every paid breach (testnet dollars), summed per player below.
+    db().from("runs").select("user_id, payout_units, users(display_name)").eq("outcome", "breach").not("payout_units", "is", null).limit(5000),
+    getDemoUserId().catch(() => null),
   ]);
+  // Top earners: total bounty per player. The shared guest account pools everyone who plays signed out: one row.
+  type PaidRun = { user_id: string; payout_units: string | number | null; users: { display_name: string | null } | { display_name: string | null }[] | null };
+  const earners = new Map<string, { name: string; units: number; clears: number }>();
+  for (const r of (paidRuns.data ?? []) as PaidRun[]) {
+    if (!r.user_id) continue;
+    const u = Array.isArray(r.users) ? r.users[0] : r.users;
+    const name = r.user_id === demoId ? "Guests (shared account)" : (u?.display_name ?? "Anonymous hunter");
+    const e = earners.get(r.user_id) ?? { name, units: 0, clears: 0 };
+    e.units += Number(r.payout_units ?? 0);
+    e.clears += 1;
+    earners.set(r.user_id, e);
+  }
+  const topEarners = [...earners.values()].sort((a, b) => b.units - a.units).slice(0, 10);
   // The Daily Case board's rows, in the floor boards' shape (one per player, fastest first).
   const dailyRows: Row[] = todaysBoard
     .filter((r) => channel === "all" || r.channel === channel)
@@ -203,6 +220,29 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             <Board rows={floorRows} rivals={ladder} empty="No breaches on this floor yet. Be the first." />
           </>
         )}
+      </section>
+
+      <section aria-labelledby="earners" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
+        <h2 id="earners" className="font-pixel text-xs text-[var(--cc-accent)]">
+          Top earners
+        </h2>
+        {topEarners.length ? (
+          <ol className="flex flex-col gap-1.5">
+            {topEarners.map((e, i) => (
+              <li key={`${e.name}-${i}`} className="flex items-center gap-3 border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-3 py-2">
+                <span className="w-5 font-pixel text-[10px] text-[var(--cc-muted)]">{i + 1}</span>
+                <span className="min-w-0 flex-1 truncate font-semibold">{e.name}</span>
+                <span className="text-xs text-[var(--cc-muted)]">
+                  {e.clears} {e.clears === 1 ? "breach" : "breaches"}
+                </span>
+                <span className="font-pixel text-[10px] text-[var(--cc-ok)]">${(e.units / 1_000_000).toFixed(2)}</span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="text-sm text-[var(--cc-muted)]">No winnings yet. Breach a vault to get on the board.</p>
+        )}
+        <p className="text-xs text-[var(--cc-muted)]">Total bounty across all breaches. Everyone playing signed out shares the guest row; sign in to earn under your own name.</p>
       </section>
 
       <section aria-labelledby="streaks" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
