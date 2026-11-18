@@ -21,12 +21,12 @@ Security training is a slide deck people click through. We wanted the opposite: 
 ![Talking to Dee: portrait, Talk, Call, Case file, Leave, and the live suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
 
 - **A bank you can walk.** Four top-down floors. Walk up to an employee and choose Talk, Call, Case file or Leave.
-- **Seven AI employees who fight back.** Each one is an ElevenLabs agent with its own rule sheet, voice, portrait, quirks and suspicion meter. They check your story against a vendor registry, calendars and a staff directory with real tools.
+- **Seven floor employees plus a daily employee who fight back,** and Krystal's radio for hints. Each employee is an ElevenLabs agent with its own rule sheet, voice, portrait, quirks and suspicion meter. They check your story against a vendor registry, calendars and a staff directory with real tools.
 - **They learn from your past runs.** When a call ends, the employee writes down the trick you used, built from their own suspicion notes. Next run they're reminded of it, and the same story gets called out. You have to keep inventing new cons.
 - **Real money, on testnet.** Talk someone into it and their wallet signs a real USDC transfer to the vault on Arc.
 - **The chain is the referee.** A run is a breach only when a QuickNode Stream delivers the vault's `TransferExecuted` event. The run clock stops at that block.
-- **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and her radio gives hints for a time penalty.
-- **A reason to come back.** A Daily Contract with a twist, streaks, and a leaderboard of fastest breaches. The crypto stays invisible: no wallets, no explorer links, amounts in dollars.
+- **A story to follow.** Your vanished mentor Krystal Klear briefs each floor in her own voice, every clear uncovers one of her hidden notes, and a 📻 Radio Krystal button bottom-left on Floors 0 to 3 opens her hint line; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
+- **A reason to come back.** After the tutorial, the lobby's D door (locked like the elevators until then) opens onto the Daily Case: one short case a day, the same for everyone, a random room, one staff member, its own case file and clues. Past days replay as practice. Places rotate with no repeat inside a 44-day cycle. A daily streak shows as a flame badge; three days unlocks the Teal jacket hunter look, seven unlocks Field green. The leaderboard has a Daily Case tab and a Longest streaks board. The crypto stays invisible: no wallets, no explorer links, amounts in dollars.
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
@@ -36,7 +36,7 @@ Each floor's vault has stricter rules, and each one mirrors a real attack. Lose,
 
 ![Reading a flyer on Floor 1: a clue about which vendors are real](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/evidence-flyer.jpg)
 
-Clues are on the map. Read the signs and memos, then use them on a call.
+Clues are on the map. Read the signs, memos and notes: they hold clues, and reading them files evidence into your case file that you can present mid-conversation.
 
 ![How the tracks fit](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-tracks.png)
 
@@ -47,7 +47,7 @@ Every heist passes through all four tracks, in order. Remove any one and the gam
 | Track | Its job | What we used |
 | --- | --- | --- |
 | **Consumer Applications** | **The game.** Playable in a browser with no wallet and no crypto words on screen. | Next.js, React, HTML canvas, Supabase, Circle wallets created on first play |
-| **ElevenLabs** | **The staff.** Seven employees you call or text, who check your story and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, signed URLs, TTS, Sound Effects, Music |
+| **ElevenLabs** | **The staff.** Seven floor employees plus a daily employee you call or text, and Krystal's radio. They check your story and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, signed URLs, TTS, Sound Effects, Music |
 | **Arc** | **The money and the rules.** An employee's "yes" is a transaction; the floor's vault decides if it pays. | `ColdCallVault` in Solidity, USDC as asset and gas, viem |
 | **QuickNode Streams** | **The referee.** Only the Stream can end a run as a breach. | Stream with a JavaScript filter and a webhook destination |
 
@@ -84,7 +84,7 @@ Voice is the main way to play.
 - **Server tools.** Each agent's actions are webhook tools on our backend. Approving a payment mid-call sends a real transaction.
 - **Dynamic variables.** IDs are filled into every tool call by the platform, never by the model. Memory and open proposals are injected per session.
 - **Private agents with signed URLs**, so only our backend can start a call.
-- **Text to Speech, Sound Effects and Music.** Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop for every floor. Krystal's hint radio is its own agent.
+- **Text to Speech, Sound Effects and Music.** Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop for every floor. Krystal's radio is its own agent: a 📻 Radio Krystal button bottom-left on Floors 0 to 3; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
 
 ![Sponsor track: QuickNode Streams](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-quicknode.png)
 
@@ -108,7 +108,7 @@ Nothing in our app can mark a run as won. Only the Stream can.
 | Chain data | QuickNode Streams |
 | Database | Supabase (Postgres, auth, Realtime) |
 | Hosting | Vercel |
-| Art | Hand-drawn pixel portraits, Kenney CC0 tiles |
+| Art | Own pixel portraits and walking sprites; Kenney Roguelike Indoors furniture tiles (CC0); Daily Case staff from tools/art/staff_sprites.py |
 
 ![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
 
@@ -141,4 +141,4 @@ Nothing in our app can mark a run as won. Only the Stream can.
 
 Try it at [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app). And kid? Don't trust anyone who sounds too sure.
 
-*Credits: tiles and characters from Kenney (CC0). Pixel font Press Start 2P (SIL OFL). Voices, sound effects and music generated with ElevenLabs.*
+*Credits: furniture tiles from Kenney Roguelike Indoors (CC0). Characters drawn from our own pixel portraits. Daily Case staff from tools/art/staff_sprites.py. Pixel font Press Start 2P (SIL OFL). Voices, sound effects and music generated with ElevenLabs.*

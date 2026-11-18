@@ -29,18 +29,23 @@ the humans didn't.
 
 - **A walkable pixel-art bank.** Four floors you explore top-down; walk up to an employee and a dialogue box
   opens with Talk, Call, Case file and Leave.
-- **Seven AI employees,** each an ElevenLabs agent with their own rule sheet, voice, pixel portrait, quirks,
-  suspicion meter and memory of your past tricks. Present evidence from the case file mid-conversation
-  (an invoice, a memo) and they check it against their tools.
+- **Seven floor employees plus a daily employee,** each an ElevenLabs agent with their own rule sheet, voice,
+  pixel portrait, quirks, suspicion meter and memory of your past tricks, plus Krystal's radio for hints.
+  Read signs, memos and notes on the floors: they hold clues, and reading them files evidence into your case
+  file that you can present mid-conversation. They check it against their tools.
 - **Four on-chain vaults** (`ColdCallVault`, Solidity, 33 Foundry tests), one per floor, each a multi-approval
   vault with stricter rules: a per-transfer cap, two signers from different people, then an allowlist with a
   60-second timelock.
 - **A chain referee.** A QuickNode Stream delivers every vault event to our backend; a run is a breach only
   when the Stream delivers `TransferExecuted`. The run clock stops at that block's timestamp.
 - **A story to follow:** your vanished mentor Krystal Klear briefs each floor in her own voice, every clear
-  uncovers one of her hidden notes, and her radio gives in-character hints for a time penalty.
-- **A daily game loop:** a Daily Contract with a twist each day, streaks, a leaderboard where every time links
-  to its transaction, and Krystal's case file.
+  uncovers one of her hidden notes, and a 📻 Radio Krystal button bottom-left on Floors 0 to 3 opens her hint
+  line; each hint adds 30 s. Also in the chat view. Not on the Daily Case.
+- **A daily game loop:** after the tutorial, the lobby's D door (locked like the elevators until then) opens
+  onto the Daily Case: one short case a day, the same for everyone, a random room, one staff member, its own
+  case file and clues. Past days replay as practice. Places rotate with no repeat inside a 44-day cycle. A
+  daily streak shows as a flame badge; three days unlocks the Teal jacket hunter look, seven unlocks Field
+  green. The leaderboard has a Daily Case tab and a Longest streaks board.
 
 ## The problem it solves
 
@@ -86,7 +91,8 @@ second signer who sees the real recipient, an allowlist, a timelock) stops the s
 
 TypeScript, Next.js 16.4.6, React 19.3.0, HTML canvas, Tailwind CSS 4.3.3, Solidity, Foundry, viem ^2.58.0,
 Arc testnet, USDC, Circle developer-controlled wallets, QuickNode Streams, ElevenLabs Agents (voice and chat;
-`@elevenlabs/client` 1.33.0), ElevenLabs Text to Speech, Sound Effects and Music, Kenney CC0 pixel art, Supabase (Postgres, auth, Realtime;
+`@elevenlabs/client` 1.33.0), ElevenLabs Text to Speech, Sound Effects and Music, Kenney Roguelike Indoors
+furniture tiles (CC0), own pixel portraits and Daily Case staff sprites, Supabase (Postgres, auth, Realtime;
 `@supabase/supabase-js` ^2.119.0), Vercel.
 
 ## Tracks and bounties
@@ -98,8 +104,8 @@ Interact with the blockchain in some way" and "Provide a working, user-facing fr
 Guide overview: "consumer apps (payments, social, gaming, creator tools, loyalty, and more) where the crypto
 is invisible and the experience is as smooth as any mainstream app."
 Cold Call is a game anyone can play in a browser or on a phone with no wallet and no crypto knowledge. The
-UI never shows "USDC" or "wallet"; amounts are dollars. The loop is built for return visits: a Daily Contract
-with a twist each day, streaks, a public leaderboard, and staff who remember you.
+UI never shows "USDC" or "wallet"; amounts are dollars. The loop is built for return visits: the Daily Case,
+daily streaks with hunter-look rewards, a public leaderboard with a Daily tab, and staff who remember you.
 
 ### Best use of Arc
 
@@ -121,11 +127,12 @@ Use the ElevenLabs API or SDK (text-to-speech, speech-to-text, Agents, etc.) as 
 add-on"; "Your demo video must show the ElevenLabs integration in action, with audio"; "Describe in your
 README which ElevenLabs products you used and how"; "Must also be submitted to a main track and meet its
 requirements".
-Every employee is an ElevenLabs Agent used for both voice calls and text chat, with server tools (webhooks)
-that read and write game state and send real transactions, dynamic variables for per-run context, private
-agents with signed URLs, and pre-generated Text to Speech, Sound Effects and Music: Krystal's voice memos,
-the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music loop per floor. Krystal's
-radio is a separate hint agent. See the README's ElevenLabs table.
+Seven floor employees plus a daily employee are ElevenLabs Agents used for both voice calls and text chat,
+with server tools (webhooks) that read and write game state and send real transactions, dynamic variables for
+per-run context, private agents with signed URLs, and pre-generated Text to Speech, Sound Effects and Music:
+Krystal's voice memos, the PA announcer, the villain's taunt, the breach alarm, the phone ring and a music
+loop per floor. Krystal's radio is a separate hint agent: a 📻 Radio Krystal button bottom-left on Floors 0
+to 3; each hint adds 30 s. Also in the chat view. Not on the Daily Case. See the README's ElevenLabs table.
 
 ### QuickNode Streams
 
