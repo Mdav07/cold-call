@@ -85,7 +85,7 @@ export function StreakBadge({ variant = "compact" }: { variant?: "compact" | "fu
       </ol>
       <p className="text-xs text-[var(--cc-muted)]">
         {next
-          ? `★ ${next.days} days in a row unlocks the ${next.label} hunter look.`
+          ? `★ ${next.days} days in a row unlocks ${next.label}, a new hunter.`
           : "Every hunter look unlocked. Best streak: " + s.best + " days."}
         {s.guest ? " Sign in to keep your streak on any device." : ""}
       </p>

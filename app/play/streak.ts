@@ -15,8 +15,8 @@ export interface StreakReward {
 
 /** Hunter looks earned by streaks (best streak, so they stay unlocked once earned). */
 export const STREAK_REWARDS: StreakReward[] = [
-  { days: 3, sprite: "hunter-1", label: "Teal jacket" },
-  { days: 7, sprite: "hunter-5", label: "Field green" },
+  { days: 3, sprite: "hunter-1", label: "Aqua Ari" },
+  { days: 7, sprite: "hunter-5", label: "Lime Leo" },
 ];
 
 export interface Streak {
