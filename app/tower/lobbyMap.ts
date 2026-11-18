@@ -137,7 +137,7 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
     x: 9,
     y: 6,
     label: "Reception: tower directory",
-    text: "Plumpurse Savings & Trust. Floor 1 The Bullpen, Floor 2 Operations, Floor 3 the Executive Suite. Each floor's vault is stricter than the one below. Clear a floor to unlock the next elevator.",
+    text: "Plumpurse Savings & Trust. Floor 1 Accounts Payable, Floor 2 the Trading Floor, Floor 3 the Executive Penthouse. Each floor's vault is stricter than the one below. Clear a floor to unlock the next elevator.",
   });
   props.push({
     id: "daily-board",
