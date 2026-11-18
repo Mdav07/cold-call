@@ -136,12 +136,12 @@ export function Briefing({
         role="dialog"
         aria-modal="true"
         aria-labelledby="briefing-title"
-        className="pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-5 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-6"
+        className="pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-5 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-6 [&>*]:shrink-0 [@media(max-height:500px)]:max-w-3xl [@media(max-height:500px)]:gap-3 [@media(max-height:500px)]:pb-0 [@media(max-height:500px)]:sm:pb-0"
       >
         {/* Chapter card: a band across the top, like a level title in a handheld RPG. */}
-        <header className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-6 sm:-mt-6 sm:px-6">
+        <header className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-6 sm:-mt-6 sm:px-6 [@media(max-height:500px)]:pb-2 [@media(max-height:500px)]:pt-3">
           <p className="font-pixel text-[9px] tracking-widest">COLD CALL · {kicker.toUpperCase()}</p>
-          <h2 id="briefing-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl">
+          <h2 id="briefing-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl [@media(max-height:500px)]:mt-1 [@media(max-height:500px)]:text-sm">
             {title}
           </h2>
         </header>
@@ -159,7 +159,7 @@ export function Briefing({
           {b.audio && <MemoPlayButton title={`Krystal's briefing for ${title}`} audio={b.audio} onTime={onAudioTime} />}
         </div>
 
-        <div aria-live="polite" className="flex min-h-[7.5rem] flex-col gap-4">
+        <div aria-live="polite" className="flex min-h-[7.5rem] flex-col gap-4 [@media(max-height:500px)]:min-h-0 [@media(max-height:500px)]:gap-2">
           {page === 0 ? (
             <p className={TEXT}>{one}</p>
           ) : (
@@ -167,14 +167,15 @@ export function Briefing({
               <p className={TEXT}>{two}</p>
               {GOALS[floor] && <p className="font-pixel text-[11px] leading-loose text-[var(--cc-accent)]">{GOALS[floor]}</p>}
               {GOALS[floor] && <p className="font-pixel text-[9px] leading-loose text-[var(--cc-muted)]">{REPEAT_NOTE}</p>}
-              <p className="font-pixel text-[10px] leading-loose text-[var(--cc-muted)]">
+              <p className="font-pixel text-[10px] leading-loose text-[var(--cc-muted)] [@media(pointer:coarse)]:hidden">
                 Arrows or WASD to walk. Space to talk.
               </p>
             </>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        {/* On short screens (phones held sideways) the text scrolls and the buttons stay pinned at the bottom. */}
+        <div className="flex flex-wrap items-center gap-2 [@media(max-height:500px)]:sticky [@media(max-height:500px)]:bottom-0 [@media(max-height:500px)]:-mx-4 [@media(max-height:500px)]:border-t-2 [@media(max-height:500px)]:border-[var(--cc-edge)] [@media(max-height:500px)]:bg-[var(--cc-panel)] [@media(max-height:500px)]:px-4 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:sm:-mx-6 [@media(max-height:500px)]:sm:px-6">
           {page === 0 ? (
             <button ref={nextRef} type="button" className="pixel-button" onClick={() => go(1)}>
               Next ▶

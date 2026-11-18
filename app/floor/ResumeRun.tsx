@@ -81,6 +81,7 @@ export function ResumeRun({
   const [open, setOpen] = useState<boolean | null>(null); // null while checking
   const [when, setWhen] = useState("");
   const continueRef = useRef<HTMLButtonElement>(null);
+  const restartRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let live = true;
@@ -99,9 +100,29 @@ export function ResumeRun({
     };
   }, [saved.runId, saved.startedAt, saved.savedAt, employeeId, place]);
 
+  // Keys: Enter answers the focused button (Continue first). Escape keeps the run, the safe choice:
+  // only Start over throws it away. Left/Right/Up/Down move between the two; Tab stays inside.
+  const onContinueRef = useRef(onContinue);
   useEffect(() => {
-    if (open) continueRef.current?.focus();
-  }, [open]);
+    onContinueRef.current = onContinue;
+  });
+  useEffect(() => {
+    if (!open) return;
+    continueRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        onContinueRef.current(saved);
+      } else if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab"].includes(e.key)) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        (document.activeElement === continueRef.current ? restartRef : continueRef).current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [open, saved]);
 
   if (!open) return null;
   return (
@@ -110,7 +131,7 @@ export function ResumeRun({
         role="dialog"
         aria-modal="true"
         aria-labelledby="resume-title"
-        className="pixel-frame flex w-full max-w-sm flex-col gap-4 bg-[var(--cc-panel)] p-4 sm:p-5"
+        className="pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-sm flex-col gap-4 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-5 [@media(max-height:500px)]:gap-3"
       >
         <h2 id="resume-title" className="font-pixel text-xs leading-relaxed text-[var(--cc-accent)]">
           Run in progress
@@ -120,12 +141,13 @@ export function ResumeRun({
           everyone&apos;s suspicion, or start over from scratch?
         </p>
         <div className="flex flex-wrap gap-2">
-          <button ref={continueRef} type="button" className="pixel-button" onClick={() => onContinue(saved)}>
+          <button ref={continueRef} type="button" className="pixel-button min-h-11" onClick={() => onContinue(saved)}>
             Continue ▶
           </button>
           <button
+            ref={restartRef}
             type="button"
-            className="pixel-button"
+            className="pixel-button min-h-11 !bg-[var(--cc-panel-2)] !text-[var(--cc-ink)]"
             onClick={() => {
               clearRun(place);
               onRestart();
