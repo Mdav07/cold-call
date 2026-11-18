@@ -7,21 +7,17 @@ export interface HunterOption {
   label: string;
 }
 
-/** Eight looks across skin tones and gender presentations (tools/art/portrait_sprites.py HUNTERS).
- *  Each has a name with a colour mnemonic (the colour of their outfit or hair, then a name). */
+/** The four looks everyone starts with, across skin tones and gender presentations (art in
+ *  tools/art/portrait_sprites.py). Each name is a colour mnemonic. Six more are earned: app/play/unlocks.ts. */
 export const HUNTERS: HunterOption[] = [
   { id: "hunter-2", label: "Red Renata" },
   { id: "hunter-3", label: "Gold Gideon" },
   { id: "hunter-4", label: "Violet Vida" },
-  { id: "hunter-6", label: "Pink Pia" },
   { id: "hunter-7", label: "Green Glen" },
-  { id: "hunter-8", label: "Teal Tiana" },
-  { id: "hunter-9", label: "Slate Chen" },
-  { id: "hunter-10", label: "Silver Sol" },
 ];
 
-/** Looks earned with a Daily Case streak (app/play/streak.ts STREAK_REWARDS). Valid once picked. */
-export const REWARD_HUNTER_IDS = ["hunter-1", "hunter-5"];
+/** Earned looks (app/play/unlocks.ts UNLOCKS), valid as a saved choice once picked. */
+export const REWARD_HUNTER_IDS = ["hunter-6", "hunter-1", "hunter-5", "hunter-8", "hunter-9", "hunter-10"];
 
 export interface HunterChoice {
   sprite: string; // e.g. "hunter-3"

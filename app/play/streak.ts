@@ -7,17 +7,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { todayUtc } from "@/shared/dailyCase";
 
-export interface StreakReward {
-  days: number;
-  sprite: string; // hunter sprite id
-  label: string;
-}
-
-/** Hunter looks earned by streaks (best streak, so they stay unlocked once earned). */
-export const STREAK_REWARDS: StreakReward[] = [
-  { days: 3, sprite: "hunter-1", label: "Aqua Ari" },
-  { days: 7, sprite: "hunter-5", label: "Lime Leo" },
-];
+// Streak rewards (hunter looks) live in app/play/unlocks.ts with the other unlocks.
 
 export interface Streak {
   current: number;
@@ -98,11 +88,7 @@ export function useBestStreak(): number {
   return useSyncExternalStore(subscribe, readBest, () => 0);
 }
 
-/** Rewards unlocked by a best streak. */
-export const unlockedRewards = (best: number) => STREAK_REWARDS.filter((r) => best >= r.days);
 
-/** The next reward still to earn, or null when all are unlocked. */
-export const nextReward = (best: number) => STREAK_REWARDS.find((r) => best < r.days) ?? null;
 
 /** The player's streak: null while loading. */
 export function useStreak(): Streak | null {
