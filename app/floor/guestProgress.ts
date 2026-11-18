@@ -11,6 +11,14 @@ export function markClearedHere(floor: number) {
   try {
     localStorage.setItem(key(floor), "1");
   } catch {}
+  syncClearedCookie();
+}
+
+/** Mirrors this browser's clears into the "cc-cleared" cookie, so the server can gate the case file too. */
+function syncClearedCookie() {
+  try {
+    document.cookie = `cc-cleared=${snapshot()}; path=/; max-age=31536000; samesite=lax`;
+  } catch {}
 }
 
 function snapshot(): string {
@@ -21,6 +29,7 @@ function snapshot(): string {
   }
 }
 const subscribe = (onChange: () => void) => {
+  syncClearedCookie(); // browsers that cleared floors before the cookie existed
   window.addEventListener("storage", onChange);
   return () => window.removeEventListener("storage", onChange);
 };

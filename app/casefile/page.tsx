@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { BackButton } from "@/app/ui/BackButton";
-import { loadTower } from "@/app/floor/hud/data";
+import { unlockedFloorsForRequest } from "@/server/game/unlocks";
+import { caseDataFor, EMPTY_CASE_DATA } from "./data";
 import { CaseFile } from "./CaseFile";
 
 export default function CaseFilePage() {
@@ -10,7 +11,7 @@ export default function CaseFilePage() {
         <BackButton />
         <h1 className="font-pixel text-xs text-[var(--cc-accent)]">Case file</h1>
       </header>
-      <Suspense fallback={<CaseFile unlockedFloors={[1]} />}>
+      <Suspense fallback={<CaseFile data={EMPTY_CASE_DATA} floor={0} unlockedFloors={[0]} />}>
         <CaseFileWithUnlocks />
       </Suspense>
     </main>
@@ -18,8 +19,9 @@ export default function CaseFilePage() {
 }
 
 async function CaseFileWithUnlocks() {
-  const { floors } = await loadTower();
-  // Standalone /casefile is the main file (no Pocket Branch), limited to unlocked floors.
-  const unlockedFloors = floors.filter((f) => f.unlocked && f.floor > 0).map((f) => f.floor);
-  return <CaseFile unlockedFloors={unlockedFloors.length ? unlockedFloors : [1]} />;
+  // The main file, limited to unlocked floors (gated on the server). Before Floor 1 opens, the tutorial's file.
+  const open = await unlockedFloorsForRequest();
+  const towerFloors = open.filter((f) => f > 0);
+  if (!towerFloors.length) return <CaseFile data={caseDataFor(open)} floor={0} unlockedFloors={[0]} />;
+  return <CaseFile data={caseDataFor(open)} unlockedFloors={towerFloors} />;
 }
