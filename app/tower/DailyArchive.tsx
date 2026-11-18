@@ -93,6 +93,9 @@ export function DailyArchive({ tutorialCleared, clearedToday }: { tutorialCleare
               </span>
             </Link>
           ))}
+          <p aria-hidden className="pointer-events-none sticky -bottom-2 -mx-2 -mb-2 bg-gradient-to-t from-[var(--cc-panel)] from-60% to-transparent px-2 pb-1 pt-4 text-center text-[8px] text-[var(--cc-muted)] [@media(min-height:560px)]:hidden">
+            ▾ scroll for more
+          </p>
         </div>
       )}
     </div>
