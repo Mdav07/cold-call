@@ -1,26 +1,64 @@
 // The Daily Case room: generated from the day's date, the same for everyone that day.
 // Random size and shape (sometimes an L), a back wall with windows, boards and the elevator, random
 // furniture, today's employee behind a counter or a desk, and the four clues on boards and furniture.
+// The look comes from the case's theme (content/daily/themes.json): its floor, walls, board, station
+// (the employee's counter, which also holds clues), seat and three decor pieces, by tile name
+// (app/floor/maps/tiles.json). The four bank themes keep the floors' own furniture.
 // Every layout is checked with a BFS (spawn → exit, the employee, every clue, every free tile); a layout
 // that fails is thrown away and the next attempt uses a new seed.
 
 import type { DailyCase } from "@/shared/dailyCase";
-import { DAILY_EMPLOYEE, DAILY_FLOOR } from "@/shared/dailyCase";
+import { DAILY_EMPLOYEE, DAILY_FLOOR, DAILY_THEMES } from "@/shared/dailyCase";
 import type { Facing, FloorMap } from "@/app/floor/types";
+import tilesFile from "@/app/floor/maps/tiles.json";
 
-/** The tile set of each floor: ground, wall top, wall face, window, board. */
-const SKINS = [
-  { ground: 0, top: 3, face: 1, window: 2, board: 54 }, // Pocket Branch: warm wood
-  { ground: 4, top: 7, face: 5, window: 6, board: 55 }, // Bullpen: office carpet
-  { ground: 8, top: 11, face: 9, window: 10, board: 56 }, // Management
-  { ground: 12, top: 15, face: 13, window: 14, board: 57 }, // Executive suite
-] as const;
+const TILES = tilesFile.tiles as Record<string, { index: number; kind: string }>;
+const tile = (name: string): number => {
+  const t = TILES[name];
+  if (!t) throw new Error(`themes.json names a tile tiles.json doesn't have: ${name}`);
+  return t.index;
+};
+
+/** One room's look. `station` and `notes` are tile choices (the banks mix their four counter tiles). */
+interface Skin {
+  bank: boolean;
+  ground: number;
+  top: number;
+  face: number;
+  window: number;
+  board: number;
+  station: readonly number[];
+  notes: readonly number[];
+  seat: number;
+  decor: readonly number[];
+  executive: boolean;
+}
+
+function skinFor(c: DailyCase): Skin {
+  // An unknown theme (an old case, a typo) gets the Pocket Branch look rather than an error.
+  const theme = DAILY_THEMES.find((t) => t.id === c.theme) ?? DAILY_THEMES.find((t) => t.id === "bank-branch") ?? DAILY_THEMES[0];
+  const t = theme.tiles;
+  const bank = theme.id.startsWith("bank-");
+  return {
+    bank,
+    ground: tile(t.floor),
+    top: tile(t.walltop),
+    face: tile(t.wall),
+    window: tile(t.window),
+    board: tile(t.board),
+    // The banks keep the floors' counter mix (plain, papers, books, files) and its three notes.
+    station: bank ? T.counter : [tile(t.station)],
+    notes: bank ? T.counterNotes : [tile(t.station_note)],
+    seat: tile(t.seat),
+    decor: t.decor.map(tile),
+    executive: theme.id === "bank-executive",
+  };
+}
 
 const T = {
   elevator: 16,
   desk: [17, 18, 19],
   tableOval: [20, 21],
-  officeChair: 28,
   plant: 30,
   plantSmall: 31,
   counter: [32, 33, 34, 35],
@@ -74,8 +112,7 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     return a;
   };
 
-  // The skin is the date's, not the attempt's: a retry changes the layout, not the look.
-  const skin = SKINS[Math.floor(rng(`${c.date}/skin`)() * SKINS.length)];
+  const skin = skinFor(c);
   const W = int(10, 16);
   const H = int(8, 12);
   const ground = new Array<number>(W * H).fill(-1);
@@ -182,17 +219,18 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
       return null;
     }
     if (chair) {
-      decor[idx(chair.x, chair.y)] = T.officeChair; // walkable
+      decor[idx(chair.x, chair.y)] = skin.seat; // walkable
       reserved.add(idx(chair.x, chair.y));
     }
     return cells;
   };
 
-  // 1. The employee's station: a counter or a desk, with the employee standing behind it.
+  // 1. The employee's station: a counter or a desk (a themed workplace: its station, 3 wide), with the
+  // employee standing behind it.
   const surfaces: { cells: Cell[]; kind: Kind }[] = [];
   for (let tries = 0; tries < 30 && !npc; tries++) {
-    const desk = r() < 0.4;
-    const tiles = desk ? T.desk : Array.from({ length: int(3, 5) }, () => pick(T.counter));
+    const desk = skin.bank && r() < 0.4;
+    const tiles = desk ? T.desk : Array.from({ length: skin.bank ? int(3, 5) : 3 }, () => pick(skin.station));
     const x = int(1, W - 1 - tiles.length);
     const y = int(5, H - 3);
     const ex = x + int(0, tiles.length - 1);
@@ -206,7 +244,7 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     }
     npc = { x: ex, y: y - 1 };
     if (!connected()) return null; // the employee walls something off
-    if (desk) decor[idx(ex, y - 1)] = T.officeChair;
+    if (desk) decor[idx(ex, y - 1)] = skin.seat;
     surfaces.push({ cells, kind: desk ? "desk" : "counter" });
   }
   if (!npc) return null;
@@ -223,31 +261,33 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     if (roll < 0.22) {
       cells = place(x, y, T.desk, { x: x + 1, y: y + 1 });
       kind = "desk";
-    } else if (roll < 0.34) {
-      cells = place(x, y, Array.from({ length: int(2, 3) }, () => pick(T.counter)));
+    } else if (roll < (skin.bank ? 0.34 : 0.44)) {
+      // (A themed workplace has no shelves to hold clues, so it gets more of its station.)
+      cells = place(x, y, Array.from({ length: int(2, 3) }, () => pick(skin.station)));
       kind = "counter";
-    } else if (roll < 0.52) {
+    } else if (roll < 0.52 && skin.bank) {
       // Shelves, cabinets and the copier stand against the back wall.
       const tile = pick([T.bookshelf, T.bookshelf, T.cabinet, T.locker, T.copier]);
       cells = place(x, 2, Array.from({ length: tile === T.copier ? 1 : int(1, 3) }, () => tile));
       if (tile !== T.copier) kind = "shelf";
     } else if (roll < 0.74) {
       cells = place(x, y, T.tableOval);
-    } else if (roll < 0.84 && skin.ground === 12) {
+    } else if (roll < 0.84 && skin.executive) {
       cells = place(x, 2, [pick([T.candelabra, ...T.paintings])]);
     } else {
-      // Plants and the water cooler stand against a wall, never out in the middle of the floor.
-      // (Each of these cells has a wall beside it: the back, front, left or right wall.)
+      // Plants and the water cooler (a themed workplace: its three decor pieces) stand against a wall,
+      // never out in the middle of the floor. Each of these cells has a wall beside it.
       const [px, py] = pick([[x, 2], [x, H - 2], [1, y], [W - 2, y]]);
-      cells = place(px, py, [r() < 0.3 ? T.cooler : pick([T.plant, T.plant, T.plantSmall])]);
+      cells = place(px, py, [skin.bank ? (r() < 0.3 ? T.cooler : pick([T.plant, T.plant, T.plantSmall])) : pick(skin.decor)]);
     }
     if (cells) {
       surfaces.push({ cells, kind });
       k++;
     }
   }
-  // Plants in a few of the room's corners.
-  for (const [x, y] of shuffle([[1, 2], [W - 2, 2], [1, H - 2], [W - 2, H - 2]]).slice(0, int(1, 3))) place(x, y, [T.plant]);
+  // Plants (or the theme's decor) in a few of the room's corners.
+  for (const [x, y] of shuffle([[1, 2], [W - 2, 2], [1, H - 2], [W - 2, H - 2]]).slice(0, int(1, 3)))
+    place(x, y, [skin.bank ? T.plant : pick(skin.decor)]);
   // A rug on open floor (walkable decor).
   if (r() < 0.6) {
     const rug = pick(T.rugs);
@@ -266,7 +306,7 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     if (!options.length) continue;
     const p = pick(options);
     spots.push(p);
-    if (s.kind === "counter") decor[idx(p.x, p.y)] = pick(T.counterNotes);
+    if (s.kind === "counter") decor[idx(p.x, p.y)] = pick(skin.notes);
   }
   if (spots.length < c.clues.length) return null;
   // The employee can be talked to, and the way out is open.
