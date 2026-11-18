@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
 import { markDailyCleared } from "@/app/play/streak";
@@ -78,6 +78,10 @@ export function FloorGame({
   // Guide state: who the player has talked to, and has this floor been breached this visit.
   const [talkedTo, setTalkedTo] = useState<ReadonlySet<EmployeeId>>(new Set());
   const [cleared, setCleared] = useState(false);
+  // 100% suspicion: once the employee's last line has played, security walks the player out (the
+  // escort cutscene in FloorScene). Key: run and employee, so each lockout plays it once.
+  const [escort, setEscort] = useState<string | null>(null);
+  const escorted = useRef(new Set<string>());
 
   const polled = useRunState(runId, focus, !!runId);
 
@@ -113,7 +117,9 @@ export function FloorGame({
   // with no conversation open it shows at once.
   const [settledRun, setSettledRun] = useState<string | null>(null);
   const showOutcome =
+    !escort &&
     !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId && (open?.kind !== "npc" || settledRun === runId);
+  const outcomeRef = useLatest(outcome);
   // The HUD's VAULT is a server read: refresh it once the payment has landed and the result is up.
   const paidShown = showOutcome && outcome === "breach";
   useEffect(() => {
@@ -139,6 +145,7 @@ export function FloorGame({
     setRunId(null);
     setRunStartedAt(null);
     setLevels({});
+    setEscort(null);
     if (clearLocks) setLockedOut(new Set());
   };
 
@@ -164,10 +171,10 @@ export function FloorGame({
     setOpen(null);
     setPending(to);
   }, [router, leavingRef, pendingRef]);
-  const leave = useCallback((to: string) => {
+  const leave = useCallback((to: string, label?: string) => {
     if (leavingRef.current) return;
     setPending(null);
-    setLeaving({ to, label: to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}` });
+    setLeaving({ to, label: label ?? (to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}`) });
   }, [leavingRef]);
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
@@ -176,6 +183,7 @@ export function FloorGame({
     // Next keeps this page's state for when you come back; a ride still set then would close the
     // doors and send you off again (the elevator bounce loop). The doors stay shut until the page changes.
     setLeaving(null);
+    setEscort(null); // walked out by security: the room is back to normal if you return
   }, [router, leavingRef]);
 
   // Krystal's briefing on the first visit to this floor (read after mount: storage is client-only).
@@ -232,6 +240,13 @@ export function FloorGame({
   const goal = nextNpc ? { x: nextNpc.x, y: nextNpc.y } : toExit ? { x: exit.x, y: exit.y } : null;
   const tags = toExit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
 
+  // After the escort: if the run is over (everyone who could pay has locked you out), the result shows
+  // here by the door; otherwise the guard has put you in the elevator back to the lobby.
+  const escortDone = useCallback(() => {
+    if (outcomeRef.current) setEscort(null);
+    else leave("/tower", "Escorted out by security · the lobby");
+  }, [outcomeRef, leave]);
+
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   // A clue with a game shows its text only once the game is solved (for this run).
@@ -243,10 +258,10 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={names} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} onRestart={runId && !showOutcome ? () => setAskRestart(true) : undefined} />
+      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} onRestart={runId && !showOutcome && !escort ? () => setAskRestart(true) : undefined} />
 
       {npc && !showOutcome && (
         <NpcDialogue
@@ -262,7 +277,16 @@ export function FloorGame({
           onSession={onSession}
           onClose={() => setOpen(null)}
           onCaseFile={openCaseFile}
-          onSettled={() => setSettledRun(runId)}
+          onSettled={() => {
+            setSettledRun(runId);
+            // Locked out (100% suspicion): close the call and send in security.
+            const k = `${runId}:${npc.id}`;
+            if (lockedOut.has(npc.id) && !escorted.current.has(k)) {
+              escorted.current.add(k);
+              setOpen(null);
+              setEscort(k);
+            }
+          }}
           dailyDate={daily?.date}
         />
       )}

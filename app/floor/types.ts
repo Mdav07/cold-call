@@ -52,4 +52,10 @@ export interface FloorSceneProps {
   tags?: { x: number; y: number; text: string; endAt?: "x"; mat?: boolean }[];
   /** Labels drawn above heads: NPC id -> name, plus "player" for the player's name. */
   names?: Partial<Record<string, string>>;
+  /**
+   * The escort cutscene (an employee hit 100% suspicion): a security guard walks in from the door, stands
+   * over the player, walks them back to the door and the screen fades to black, then onDone runs once.
+   * A new key starts it again; null ends it and lifts the fade.
+   */
+  escort?: { key: string; onDone: () => void } | null;
 }

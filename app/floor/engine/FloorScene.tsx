@@ -78,8 +78,14 @@ function usePickedHunter(fallback: string) {
   return json ? (JSON.parse(json) as { sprite: string; name: string | null }) : { sprite: fallback, name: null };
 }
 
-export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names }: FloorSceneProps) {
+const GUARD_SPRITE = "/sprites/guard.png";
+const GUARD_STEP_MS = 270; // the escort walks a little slower than the player, so it reads as a cutscene
+const GRAB_MS = 1100; // the guard stands over the player before walking them out
+const FADE_MS = 700;
+
+export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names, escort = null }: FloorSceneProps) {
   const goalRef = useLatest(goal);
+  const escortRef = useLatest(escort);
   const tagsRef = useLatest(tags);
   const readProps = useRef(new Set<string>()); // props the player has read: their marker goes away
   const hunter = usePickedHunter(defaultSprite);
@@ -87,7 +93,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
   const namesRef = useLatest<Record<string, string | undefined>>({ ...names, ...(hunter.name ? { player: hunter.name } : {}) });
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const images = useImages([map.tileset, playerSprite, ...map.npcs.map((n) => n.sprite)]);
+  const images = useImages([map.tileset, playerSprite, GUARD_SPRITE, ...map.npcs.map((n) => n.sprite)]);
 
   // Mutable game state lives in refs so the animation loop does not re-render React.
   const player = useRef<Walker>({
@@ -293,14 +299,117 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       return path;
     };
 
+    // ---------- the escort: security walks the player out (a cutscene at 100% suspicion) ----------
+    type Pt = { x: number; y: number };
+    type Escort = { key: string; phase: "in" | "grab" | "out" | "fade"; g: Walker; path: Pt[]; at: number; done: boolean };
+    let esc: Escort | null = null;
+    const door: Pt = map.exits?.[0] ?? map.spawn;
+    /** Breadth-first walk from (sx, sy) to the first cell where isEnd holds; the path excludes the start. */
+    const bfs = (sx: number, sy: number, isEnd: (x: number, y: number) => boolean, pass: (x: number, y: number) => boolean): Pt[] | null => {
+      const W = map.width;
+      const prev = new Map<number, number>([[sy * W + sx, -1]]);
+      const queue = [sy * W + sx];
+      while (queue.length) {
+        const i = queue.shift()!;
+        const x = i % W, y = Math.floor(i / W);
+        if (isEnd(x, y)) {
+          const out: Pt[] = [];
+          for (let k = i; prev.get(k) !== -1; k = prev.get(k)!) out.unshift({ x: k % W, y: Math.floor(k / W) });
+          return out;
+        }
+        for (const [dx, dy] of Object.values(DELTA)) {
+          const nx = x + dx, ny = y + dy, j = ny * W + nx;
+          if (prev.has(j) || !pass(nx, ny)) continue;
+          prev.set(j, i);
+          queue.push(j);
+        }
+      }
+      return null;
+    };
+    const faceTo = (from: Pt, to: Pt): Facing =>
+      to.x > from.x ? "right" : to.x < from.x ? "left" : to.y > from.y ? "down" : "up";
+    const startEscort = (key: string, now: number): Escort | null => {
+      const p = player.current;
+      if (p.moving) return null; // let the current step finish first
+      const g: Walker = { x: door.x, y: door.y, tx: door.x, ty: door.y, facing: "down", t: 0, moving: false, frame: 0 };
+      const notPlayer = (x: number, y: number) => !(x === p.x && y === p.y);
+      const nextTo = (x: number, y: number) => Math.abs(x - p.x) + Math.abs(y - p.y) === 1;
+      const path = bfs(door.x, door.y, nextTo, (x, y) => walkable(x, y) && notPlayer(x, y));
+      return { key, phase: path ? "in" : "fade", g, path: path ?? [], at: now, done: false };
+    };
+    /** Walk the guard one tile along esc.path; returns the tile it left, or null if it didn't start a step. */
+    const guardStep = (e: Escort): Pt | null => {
+      const next = e.path.shift();
+      if (!next) return null;
+      const from = { x: e.g.x, y: e.g.y };
+      e.g.facing = faceTo(from, next);
+      e.g.tx = next.x;
+      e.g.ty = next.y;
+      e.g.t = 0;
+      e.g.moving = true;
+      return from;
+    };
+    const runEscort = (now: number, dt: number) => {
+      const e = esc!;
+      const p = player.current;
+      const g = e.g;
+      if (g.moving) {
+        g.t += dt / GUARD_STEP_MS;
+        g.frame = g.t < 0.5 ? 1 : 3;
+        if (g.t >= 1) {
+          g.x = g.tx;
+          g.y = g.ty;
+          g.t = 0;
+          g.moving = false;
+          g.frame = 0;
+        }
+      }
+      if (g.moving || p.moving) return;
+      if (e.phase === "in") {
+        if (!guardStep(e)) {
+          // Beside the player: they face each other, and the guard says their line.
+          g.facing = faceTo(g, p);
+          p.facing = faceTo(p, g);
+          e.phase = "grab";
+          e.at = now;
+        }
+      } else if (e.phase === "grab") {
+        if (now - e.at < GRAB_MS) return;
+        // Back to the door, with the player one step behind the guard.
+        const path = bfs(g.x, g.y, (x, y) => x === door.x && y === door.y, (x, y) => (walkable(x, y) || (x === door.x && y === door.y)) && !(x === p.x && y === p.y));
+        e.path = path ?? [];
+        e.phase = "out";
+      } else if (e.phase === "out") {
+        const left = guardStep(e);
+        if (left) {
+          p.facing = faceTo(p, left);
+          p.tx = left.x;
+          p.ty = left.y;
+          p.t = 0;
+          p.moving = true;
+        } else {
+          e.phase = "fade";
+          e.at = now;
+        }
+      } else if (e.phase === "fade" && !e.done && now - e.at >= FADE_MS) {
+        e.done = true;
+        escortRef.current?.onDone();
+      }
+    };
+
     const step = (now: number) => {
       const dt = Math.min(50, now - last);
       last = now;
       const p = player.current;
 
+      const wanted = escortRef.current;
+      if (!wanted) esc = null;
+      else if (!esc || esc.key !== wanted.key) esc = startEscort(wanted.key, now) ?? esc;
+      if (esc) runEscort(now, dt);
+
       // Movement
       if (p.moving) {
-        p.t += dt / STEP_MS;
+        p.t += dt / (esc ? GUARD_STEP_MS : STEP_MS);
         p.frame = p.t < 0.5 ? 1 : 3;
         if (p.t >= 1) {
           p.x = p.tx;
@@ -312,7 +421,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           // Exits arm only after the player has walked onto a tile that isn't an exit, so arriving
           // next to the door (or with a key still held from the previous page) can't bounce you out.
           // Disarm on fire so a held key / double step can't queue two rides.
-          if (exit && exitsArmed) {
+          if (esc) {
+            // Walked by the guard: doors don't fire.
+          } else if (exit && exitsArmed) {
             exitsArmed = false;
             onEventRef.current({ type: "exit", to: exit.to });
           } else if (!exit) exitsArmed = true;
@@ -482,6 +593,12 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         });
       });
       actors.push({ y: py, draw: () => drawWalker(images[playerSprite], px, py, p.facing, p.frame) });
+      const guard = esc && esc.phase !== "fade" ? esc.g : null;
+      if (guard) {
+        const gx = (guard.x + (guard.tx - guard.x) * guard.t) * TILE;
+        const gy = (guard.y + (guard.ty - guard.y) * guard.t) * TILE;
+        actors.push({ y: gy, draw: () => drawWalker(images[GUARD_SPRITE], gx, gy, guard.facing, guard.frame) });
+      }
       actors.sort((a, b) => a.y - b.y).forEach((a) => a.draw());
 
       drawLayer(map.layers.overhead);
@@ -588,6 +705,14 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.textBaseline = "middle";
         c.fillText(text, bx + 6, by + 5);
       };
+      if (esc && esc.phase !== "fade") {
+        // The guard's name plate, and their line while they stand over the player.
+        const gx = esc.g.x + (esc.g.tx - esc.g.x) * esc.g.t, gy = esc.g.y + (esc.g.ty - esc.g.y) * esc.g.t;
+        nameTag(gx * TILE, gy * TILE, "Security");
+        if (esc.phase === "grab") {
+          plate(gx * TILE + TILE / 2, gy * TILE - (FRAME_H - TILE) - 6, "That's enough. Out you go.", 4 * u, 2.5 * u);
+        }
+      }
       for (const n of map.npcs) {
         const e = emotesRef.current?.[n.id];
         if (e === "talking") bubble(n.x, n.y, "…", "#15141a");
@@ -629,6 +754,12 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       vg.addColorStop(1, "rgba(12, 10, 24, 0.38)");
       c.fillStyle = vg;
       c.fillRect(0, 0, w, h);
+
+      // The escort ends in a fade to black, which holds until the page moves on.
+      if (esc?.phase === "fade") {
+        c.fillStyle = `rgba(8, 7, 14, ${Math.min(1, (now - esc.at) / FADE_MS)})`;
+        c.fillRect(0, 0, w, h);
+      }
     };
 
     raf = requestAnimationFrame(step);
@@ -636,7 +767,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [map, images, playerSprite, walkable, npcAt, propAt, emotesRef, goalRef, insetRef, namesRef, onEventRef, pausedRef, tagsRef]);
+  }, [map, images, playerSprite, walkable, npcAt, propAt, emotesRef, goalRef, insetRef, namesRef, onEventRef, pausedRef, tagsRef, escortRef]);
 
   return (
     <div ref={wrapRef} className="relative h-full w-full touch-none select-none overflow-hidden bg-[var(--cc-edge,#15141a)]">
