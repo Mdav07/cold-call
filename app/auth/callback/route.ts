@@ -6,9 +6,9 @@ import { ensureUserRow } from "@/server/game/players";
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const code = url.searchParams.get("code");
-  const nextParam = url.searchParams.get("next") ?? "/play/penny";
+  const nextParam = url.searchParams.get("next") ?? "/tower";
   // Only same-site paths, so the link can't bounce players to another site.
-  const next = nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/play/penny";
+  const next = nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/tower";
 
   if (code) {
     const supabase = await supabaseServer();

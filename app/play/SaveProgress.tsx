@@ -68,13 +68,23 @@ export function SaveProgress({
             e.preventDefault();
             setState("sending");
             setMessage(null);
-            const { error } = await supabase().auth.signInWithOtp({
-              email,
-              options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-                data: { handle: handle.slice(0, 24) },
-              },
+            // Our branded email when the server has a key; otherwise Supabase's own.
+            const res = await fetch("/api/auth/link", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, handle: handle.slice(0, 24), kind: "magiclink", next }),
             });
+            const data = (await res.json().catch(() => ({}))) as { sent?: boolean; fallback?: boolean; error?: string };
+            let error: { message: string } | null = data.sent ? null : data.fallback ? null : { message: data.error ?? "Something went wrong. Try again." };
+            if (data.fallback) {
+              ({ error } = await supabase().auth.signInWithOtp({
+                email,
+                options: {
+                  emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+                  data: { handle: handle.slice(0, 24) },
+                },
+              }));
+            }
             if (error) {
               setState("error");
               setMessage(error.message);
