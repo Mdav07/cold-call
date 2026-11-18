@@ -1,6 +1,6 @@
 {
   "_comment": "The Pocket Branch (tutorial) case file. Kept apart from content/plumpurse on purpose: nothing about the tower goes in here. Evidence for this floor comes from content/plumpurse/evidence.json items with floor 0.",
-  "title": "Pocket Branch",
+  "title": "Tutorial",
   "author": "Krystal Klear",
   "intro": "Small branch across the street, one teller, one cash bag. Practice here. Read the cards, then go be the courier.",
   "people": [

@@ -217,8 +217,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 
     // Tutorial stays fresh every visit: Barry never gets past-run memory. The Daily Case is a new
     // person every day: nothing to remember either.
-    // On other floors, only tricks from earlier runs: a callback on this run (Floor 3's allowlist,
-    // wait, call back) is the designed path, not a repeated trick.
+    // On other floors, only tricks from earlier runs: calling back on this run (Floor 3's allowlist,
+    // then the payment) is the designed path, not a repeated trick.
     if (floor > 0 && floor !== DAILY_FLOOR) {
       const { data: thisRun } = await db().from("runs").select("created_at").eq("id", run_id).single().throwOnError();
       const { data: mem } = await db()
@@ -258,7 +258,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       open_proposal = `Request #${open.onchain_id}: ${dollars ?? "?"} dollars to ${open.claimed_name ?? "an unnamed vendor"}, waiting for a second signature.`;
     }
 
-    // Floor 3: the allowlist add the other executive started, and when its security wait ends.
+    // Floor 3: the allowlist add the other executive started, and whether it is approved yet.
     if (floor === 3) {
       const { data: al } = await db()
         .from("proposals")
@@ -276,9 +276,9 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
           open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: waiting for the second executive's approval.`;
         } else if (al.status === "queued" && al.unlock_at && Date.parse(al.unlock_at) > Date.now()) {
           const secs = Math.ceil((Date.parse(al.unlock_at) - Date.now()) / 1000);
-          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: approved by both executives, in the security wait for about ${secs} more seconds. A payment can't be proposed until it ends.`;
+          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: approved by both executives, finishing in about ${secs} seconds; then a payment can be proposed.`;
         } else {
-          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: the security wait is over. A payment to ${who} can be proposed now.`;
+          open_allowlist = `Allowlist request #${al.onchain_id} for ${who}: approved by both executives; ${who} is on the allowlist. A payment to ${who} can be proposed now.`;
         }
       }
     }
@@ -362,7 +362,7 @@ async function newRun(
       .throwOnError();
     if (!count) {
       const what = floor === DAILY_FLOOR ? "The Daily Case" : `Floor ${floor}`;
-      throw new SessionError(`${what} is locked. Clear ${needs === 0 ? "the Pocket Branch" : `Floor ${needs}`} first.`, 403);
+      throw new SessionError(`${what} is locked. Clear ${needs === 0 ? "the Tutorial" : `Floor ${needs}`} first.`, 403);
     }
   }
 

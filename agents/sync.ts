@@ -63,7 +63,7 @@ const EMPLOYEE_TOOLS: Record<string, string[]> = {
   // Floor 2 is 2-of-2: either signer can propose or approve (approve shows the on-chain view first).
   annie: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
   bill: ["check_vendor_list", "verify_employee", "check_calendar", "propose_transfer", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
-  // Floor 3: allowlist add (both executives + a timelock), then a 2-of-2 payment.
+  // Floor 3: allowlist add (both executives; immediate), then a 2-of-2 payment.
   cassius: [...FLOOR3],
   max: [...FLOOR3],
   // The Daily Case: one person a day, single signer on the Pocket Branch vault (shared/dailyCase.ts).
@@ -127,7 +127,7 @@ const TOOLS: Record<string, { description: string; props: Record<string, object>
   },
   propose_allowlist_add: {
     description:
-      "Start adding the caller's firm to the Treasury allowlist. The other executive must approve, then a security wait of about a minute runs before any payment to them is possible.",
+      "Start adding the caller's firm to the Treasury allowlist. The other executive must approve; then the firm is on the allowlist right away and can be paid.",
     props: {
       claimed_name: s("The firm's name as spelled in the registry"),
       reason: s("Why they should be allowlisted, naming who introduced them"),
@@ -135,7 +135,7 @@ const TOOLS: Record<string, { description: string; props: Record<string, object>
     required: ["claimed_name", "reason"],
   },
   approve_allowlist_add: {
-    description: "Approve an allowlist request the other executive started. Starts the security wait.",
+    description: "Approve an allowlist request the other executive started. The firm is on the allowlist as soon as you approve.",
     props: { allowlist_id: n("The allowlist request number") },
     required: ["allowlist_id"],
   },
