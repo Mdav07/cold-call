@@ -16,6 +16,7 @@ import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
 import { MusicToggle } from "@/app/play/MusicToggle";
 import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
+import { clearSolved, gameFor, markSolved, MiniGame, useSolved } from "@/app/floor/minigames/MiniGame";
 import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
@@ -132,6 +133,7 @@ export function FloorGame({
   /** The run is over: the next conversation starts a new one. */
   const resetRun = (clearLocks: boolean) => {
     clearRun(place);
+    clearSolved(place); // a new run: the clue games start over
     setDismissedRun(runId);
     setOpen(null);
     setRunId(null);
@@ -230,6 +232,10 @@ export function FloorGame({
 
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
+  // A clue with a game shows its text only once the game is solved (for this run).
+  const solved = useSolved(place);
+  const propGame = prop ? gameFor(map.floor, (map.props ?? []).map((p) => p.id), prop.id) : null;
+  const playing = prop && propGame && !solved.includes(prop.id) ? propGame : null;
   const finished = !!state?.run?.ended_at;
 
   return (
@@ -258,7 +264,18 @@ export function FloorGame({
           dailyDate={daily?.date}
         />
       )}
-      {prop && <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
+      {prop && playing && (
+        <MiniGame
+          key={prop.id}
+          kind={playing}
+          seed={`${place}:${prop.id}`}
+          label={prop.label}
+          easy={map.floor === 0}
+          onWin={() => markSolved(place, prop.id)}
+          onCancel={() => setOpen(null)}
+        />
+      )}
+      {prop && !playing && <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
 
       {showOutcome && state && (
         <OutcomeOverlay
@@ -295,7 +312,10 @@ export function FloorGame({
             setRunStartedAt(r.startedAt);
             setResumeDecided(true);
           }}
-          onRestart={() => setResumeDecided(true)}
+          onRestart={() => {
+            clearSolved(place); // starting over: the clue games start over too
+            setResumeDecided(true);
+          }}
         />
       )}
       {askRestart && <RestartConfirm onRestart={restart} onStay={() => setAskRestart(false)} />}
