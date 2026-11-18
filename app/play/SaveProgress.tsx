@@ -82,8 +82,7 @@ export function SaveProgress({
           }}
         >
           <p className="text-sm text-[var(--cc-ink)]">
-            Sign in to keep your clears, streak and leaderboard times as <strong>{handle}</strong> on any device. As a
-            guest, your progress stays in this browser only.
+            Sign in to keep your clears, streak and leaderboard times as <strong>{handle}</strong> on any device. As a guest, your progress stays in this browser and winnings aren&apos;t kept.
           </p>
           <label htmlFor="save-email" className="font-pixel text-[10px] text-[var(--cc-muted)]">
             Email

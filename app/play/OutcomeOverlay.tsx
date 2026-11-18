@@ -11,6 +11,7 @@ import krystal from "@/content/plumpurse/krystal.json";
 import type { RunState } from "./useRunState";
 import { PORTRAITS } from "./portraits";
 import { StreakBadge } from "./StreakBadge";
+import { useStreak } from "./streak";
 import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 
 type Debrief = {
@@ -82,6 +83,8 @@ export function OutcomeOverlay({
   const run = state.run;
   const outcome = run?.outcome;
   const played = useRef(false);
+  // Guests can play everything, but only signed-in hunters keep winnings (/api/session/streak says which).
+  const guest = useStreak()?.guest === true;
   const [more, setMore] = useState(false);
   const primary = useRef<HTMLButtonElement>(null);
 
@@ -138,8 +141,10 @@ export function OutcomeOverlay({
           <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
             {breach && (
               <div>
-                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">BOUNTY</p>
-                <p className="mt-1 font-pixel text-lg text-[var(--cc-ok)]">{paid != null ? <CountUp to={paid} /> : "…"}</p>
+                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">{guest ? "BOUNTY · NOT KEPT" : "BOUNTY"}</p>
+                <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)] line-through" : "text-[var(--cc-ok)]"}`}>
+                  {paid != null ? <CountUp to={paid} /> : "…"}
+                </p>
               </div>
             )}
             {breach && (
@@ -225,12 +230,20 @@ export function OutcomeOverlay({
           </div>
         )}
 
-        {tokenOnly && (
+        {breach && guest && (
+          <p className="-mt-2 text-xs text-[var(--cc-ink)]">
+            Played as a guest: winnings aren&apos;t kept.{" "}
+            <a href="/signin" className="underline text-[var(--cc-accent)]">
+              Sign in
+            </a>{" "}
+            to bank your bounties and get on the Top earners board.
+          </p>
+        )}
+        {tokenOnly && !guest && (
           <p className="-mt-2 text-xs text-[var(--cc-muted)]">
             {daily
-              ? "Token pay: today's full bounty was already collected on this account."
-              : "Token pay: this account has cleared this floor before. The full bounty is for the first clear."}{" "}
-            Guests share one account, so sign in to earn your own full bounties.
+              ? "Token pay: today's full bounty was already collected."
+              : "Token pay: you've cleared this floor before. The full bounty is for the first clear."}
           </p>
         )}
 
@@ -238,7 +251,7 @@ export function OutcomeOverlay({
         <div className="sticky -bottom-4 -mx-4 -mb-4 flex flex-wrap items-center gap-2 border-t-2 border-[var(--cc-edge)] bg-[var(--cc-panel)] px-4 py-3 sm:static sm:m-0 sm:border-0 sm:p-0">
           {breach ? (
             <button ref={primary} type="button" className="pixel-button" onClick={onClose}>
-              Collect bounty ▶
+              {guest ? "Continue ▶" : "Collect bounty ▶"}
             </button>
           ) : (
             <>

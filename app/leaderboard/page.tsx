@@ -125,19 +125,20 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
     db().from("runs").select("user_id, payout_units, users(display_name)").eq("outcome", "breach").not("payout_units", "is", null).limit(5000),
     getDemoUserId().catch(() => null),
   ]);
-  // Top earners: total bounty per player. The shared guest account pools everyone who plays signed out: one row.
+  // Top earners: total bounty per signed-in player. Guests can't keep winnings, so they aren't listed.
   type PaidRun = { user_id: string; payout_units: string | number | null; users: { display_name: string | null } | { display_name: string | null }[] | null };
   const earners = new Map<string, { name: string; units: number; clears: number }>();
   for (const r of (paidRuns.data ?? []) as PaidRun[]) {
-    if (!r.user_id) continue;
+    if (!r.user_id || r.user_id === demoId) continue;
     const u = Array.isArray(r.users) ? r.users[0] : r.users;
-    const name = r.user_id === demoId ? "Guests (shared account)" : (u?.display_name ?? "Anonymous hunter");
-    const e = earners.get(r.user_id) ?? { name, units: 0, clears: 0 };
+    const e = earners.get(r.user_id) ?? { name: u?.display_name ?? "Anonymous hunter", units: 0, clears: 0 };
     e.units += Number(r.payout_units ?? 0);
     e.clears += 1;
     earners.set(r.user_id, e);
   }
   const topEarners = [...earners.values()].sort((a, b) => b.units - a.units).slice(0, 10);
+  // The shared guest account isn't a player: keep it off the streaks board too.
+  const streakRows = (streaks.data ?? []).filter((r) => r.user_id !== demoId);
   // The Daily Case board's rows, in the floor boards' shape (one per player, fastest first).
   const dailyRows: Row[] = todaysBoard
     .filter((r) => channel === "all" || r.channel === channel)
@@ -240,18 +241,18 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             ))}
           </ol>
         ) : (
-          <p className="text-sm text-[var(--cc-muted)]">No winnings yet. Breach a vault to get on the board.</p>
+          <p className="text-sm text-[var(--cc-muted)]">No banked winnings yet. Sign in and breach a vault to get on the board.</p>
         )}
-        <p className="text-xs text-[var(--cc-muted)]">Total bounty across all breaches. Everyone playing signed out shares the guest row; sign in to earn under your own name.</p>
+        <p className="text-xs text-[var(--cc-muted)]">Total bounty banked by signed-in hunters. Guests can play every floor, but only signed-in hunters keep their winnings.</p>
       </section>
 
       <section aria-labelledby="streaks" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
         <h2 id="streaks" className="font-pixel text-xs text-[var(--cc-accent)]">
           Longest streaks
         </h2>
-        {streaks.data?.length ? (
+        {streakRows.length ? (
           <ol className="flex flex-col gap-1 text-sm">
-            {streaks.data.map((s, i) => {
+            {streakRows.map((s, i) => {
               const u = s.users as unknown as { display_name: string | null } | null;
               return (
                 <li key={s.user_id} className="flex items-baseline gap-x-3">
