@@ -104,7 +104,9 @@ export function OutcomeOverlay({
   const clue = (krystal.clues as Record<string, { title: string; text: string }>)[String(run.floor)];
   const breach = outcome === "breach";
   const daily = run.floor === DAILY_FLOOR;
-  const paid = run.payout_units != null ? Number(run.payout_units) / 1_000_000 : null;
+  // The bounty is what the employee agreed to ("cracked"), falling back to what the chain paid.
+  const bounty = run.cracked_units ?? run.payout_units;
+  const paid = bounty != null ? Number(bounty) / 1_000_000 : null;
   const Face = PORTRAITS.krystal;
   // The Daily's debrief is the case itself: who it was, what got through to them, what they won't do.
   // Not after a lockout on today's case: it would hand over the answers to a case you can still retry.

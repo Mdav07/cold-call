@@ -21,6 +21,9 @@ export interface RunState {
     ended_at: string | null;
     duration_ms: number | null;
     payout_units: string | number | null;
+    /** What the employee agreed to pay (capped by the vault's limit): the bounty the player is shown.
+     *  The chain may send less (a 1¢ token). Null or missing until the state route returns it. */
+    cracked_units?: string | number | null;
     /** The Daily Case: the case's date, and whether it's an earlier day's case (practice). */
     daily_date?: string | null;
     practice?: boolean;
