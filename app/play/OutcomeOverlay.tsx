@@ -85,12 +85,15 @@ export function OutcomeOverlay({
   const [more, setMore] = useState(false);
   const primary = useRef<HTMLButtonElement>(null);
 
+  // The PA announcer's voice is for the tower's real floors; the tutorial and the Daily Case get the
+  // alarm only.
+  const quietWin = run?.floor === 0 || run?.floor === DAILY_FLOOR;
   useEffect(() => {
     if (played.current || !outcome) return;
     played.current = true;
-    if (outcome === "breach") return playSequence(["breach-alarm.mp3", "breach-announcer.mp3"]);
+    if (outcome === "breach") return playSequence(quietWin ? ["breach-alarm.mp3"] : ["breach-alarm.mp3", "breach-announcer.mp3"]);
     if (outcome === "lockout") return playSequence(["lockout-null.mp3"]);
-  }, [outcome]);
+  }, [outcome, quietWin]);
   useEffect(() => primary.current?.focus(), [outcome]);
 
   if (!run || (outcome !== "breach" && outcome !== "lockout")) return null;
@@ -105,7 +108,8 @@ export function OutcomeOverlay({
   const caseNotes = daily && run.daily_date && (breach || run.practice) ? dailyCase(run.daily_date) : null;
   // Today's case pays its full bounty once per account; a second clear (or a guest on the shared demo
   // account after someone else) gets the token. Say so, or $0.01 reads like a bug.
-  const tokenOnly = daily && breach && !run.practice && paid != null && paid > 0 && paid <= 0.01;
+  // A 1¢ token instead of the full bounty: a repeat clear (or, for the Daily Case, today's bounty already taken).
+  const tokenOnly = breach && !run.practice && paid != null && paid > 0 && paid <= 0.01;
   const hasMore = !!caseNotes || !!debrief || (breach && !!clue) || (!breach && !!state.reason);
 
   return (
@@ -223,7 +227,10 @@ export function OutcomeOverlay({
 
         {tokenOnly && (
           <p className="-mt-2 text-xs text-[var(--cc-muted)]">
-            Token pay: today&apos;s full bounty was already collected on this account.
+            {daily
+              ? "Token pay: today's full bounty was already collected on this account."
+              : "Token pay: this account has cleared this floor before. The full bounty is for the first clear."}{" "}
+            Guests share one account, so sign in to earn your own full bounties.
           </p>
         )}
 

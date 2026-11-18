@@ -233,11 +233,11 @@ function useNow(active: boolean) {
   return now;
 }
 
-type Stage = "menu" | "cover" | "talk";
+type Stage = "menu" | "talk";
 
 /**
  * A conversation with one employee. Mount it with `key={npc.id}`; unmounting ends the call.
- * The floor's run is shared: the first talk asks for a cover story and starts a run, later talks
+ * The floor's run is shared: the first talk starts a run (you introduce yourself in your first message), later talks
  * (this employee again or a floor-mate) continue it with `runId`.
  */
 export function NpcDialogue({
@@ -245,7 +245,6 @@ export function NpcDialogue({
   floor,
   runId,
   cover,
-  onCover,
   state,
   lockedOut,
   onSession,
@@ -266,7 +265,8 @@ export function NpcDialogue({
   dailyDate?: string;
   runId: string | null;
   cover: string;
-  onCover: (cover: string) => void;
+  /** Unused since the cover-story step was removed; kept so callers compile. */
+  onCover?: (cover: string) => void;
   /** Run state polled by the page for this employee. */
   state: RunState | null;
   lockedOut: boolean;
@@ -280,7 +280,6 @@ export function NpcDialogue({
   const [stage, setStage] = useState<Stage>("menu");
   const [channel, setChannel] = useState<"chat" | "voice">("chat");
   const [draft, setDraft] = useState("");
-  const [coverDraft, setCoverDraft] = useState(cover);
   const [showLog, setShowLog] = useState(false);
   const [typed, setTyped] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
@@ -363,15 +362,11 @@ export function NpcDialogue({
   };
   useEscape(leave);
 
-  const begin = (ch: "chat" | "voice", coverStory = cover) => {
+  // No cover-story step: Talk or Call connects at once and the player introduces themselves.
+  const pick = (ch: "chat" | "voice") => {
     setChannel(ch);
     setStage("talk");
-    chat.start(coverStory, ch, runId ?? undefined);
-  };
-  const pick = (ch: "chat" | "voice") => {
-    if (runId) return begin(ch); // the run already has a cover
-    setChannel(ch);
-    setStage("cover");
+    chat.start(cover, ch, runId ?? undefined);
   };
 
   const lastAgent = [...chat.lines].reverse().find((l) => l.role === "agent");
@@ -380,7 +375,6 @@ export function NpcDialogue({
 
   let text: string;
   if (lockedOut) text = `${first} won't talk to you. Security has your description.`;
-  else if (stage === "cover") text = `Who are you today? ${first} will hear this cover story.`;
   else if (stage === "talk" && chat.status === "connecting") text = channel === "voice" ? `Ringing ${first}…` : `Walking up to ${first}'s desk…`;
   else if (stage === "talk" && chat.status === "error") text = chat.error ?? "The line is dead.";
   else if (stage === "talk" && lastAgent && !ended) text = lastAgent.text;
@@ -452,34 +446,7 @@ export function NpcDialogue({
           <SuspicionMeter value={suspicion} />
         </div>
 
-        {stage === "cover" ? (
-          <form
-            className="flex flex-col gap-2 sm:flex-row"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const c = coverDraft.trim() || cover;
-              onCover(c);
-              begin(channel, c);
-            }}
-          >
-            <input
-              autoFocus
-              value={coverDraft}
-              onChange={(e) => setCoverDraft(e.target.value)}
-              maxLength={200}
-              aria-label="Your cover story"
-              className="pixel-frame min-w-0 flex-1 bg-[var(--cc-panel-2)] px-3 py-2 text-[var(--cc-ink)] outline-none"
-            />
-            <div className="flex gap-2">
-              <button type="submit" className="pixel-button">
-                {channel === "voice" ? "☎ Call" : "✉ Talk"}
-              </button>
-              <button type="button" className="pixel-button" onClick={() => setStage("menu")}>
-                Back
-              </button>
-            </div>
-          </form>
-        ) : stage === "talk" && !ended ? (
+        {stage === "talk" && !ended ? (
           channel === "voice" ? (
             <>
             <div className="flex flex-wrap items-center justify-between gap-2">

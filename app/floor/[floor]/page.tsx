@@ -23,12 +23,6 @@ const MAPS: Record<string, FloorMap> = {
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
-/** The cover story offered on the first talk of a run (the player can change it). */
-const DEFAULT_COVER: Record<number, string> = {
-  0: "the Swiftbag Couriers driver, here for the end-of-day pickup",
-};
-const FALLBACK_COVER = "Sam from Quillfeather Supplies, calling about an invoice";
-
 /** Provisional unlocks while tower data streams in (current floor must be open to be here). */
 function provisionalUnlocks(floor: number): number[] {
   if (floor === 0) return [0];
@@ -53,7 +47,7 @@ export default async function FloorPage({ params }: PageProps<"/floor/[floor]">)
     map,
     npcs,
     playerSprite: PLAYER_SPRITE,
-    defaultCover: DEFAULT_COVER[map.floor] ?? FALLBACK_COVER,
+    defaultCover: "", // no cover-story step: the player introduces themselves in their first message
     vault: (
       <Suspense fallback={<span className="text-[var(--cc-muted)]">VAULT …</span>}>
         <HudVault floor={map.floor} />

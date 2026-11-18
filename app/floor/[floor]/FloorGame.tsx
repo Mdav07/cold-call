@@ -21,6 +21,7 @@ import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
+import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
 
@@ -58,6 +59,11 @@ export function FloorGame({
   const openCaseFile = useCallback(() => setCaseFile(true), []);
   const [runId, setRunId] = useState<string | null>(null);
   const [runStartedAt, setRunStartedAt] = useState<number | null>(null);
+  // Continue or restart: this place's open run is remembered in the browser (app/floor/ResumeRun).
+  const place = daily ? `daily-${daily.date}` : `floor-${map.floor}`;
+  const saved = useSavedRun(place);
+  const savedRef = useLatest(saved);
+  const [resumeDecided, setResumeDecided] = useState(false);
   const [cover, setCover] = useState(defaultCover);
   // The employee whose state the page polls: the one you are talking to, or last talked to.
   const [focus, setFocus] = useState<EmployeeId>(map.npcs[0]?.id ?? "penny");
@@ -89,6 +95,10 @@ export function FloorGame({
   // A breach opens the next floor for this browser too (guests play as the shared demo player).
   // A clear of today's Daily Case (not a practice replay) keeps a guest's streak, kept in this browser.
   const practice = !!state?.run?.practice;
+  // A finished run is never offered to continue.
+  useEffect(() => {
+    if (outcome) clearRun(place);
+  }, [outcome, place]);
   useEffect(() => {
     if (outcome !== "breach") return;
     markClearedHere(map.floor);
@@ -105,13 +115,19 @@ export function FloorGame({
     if (paidShown) router.refresh();
   }, [paidShown, router]);
 
-  const onSession = useCallback((id: string, startedAt: number | null) => {
-    setRunId(id);
-    if (startedAt != null) setRunStartedAt((t) => t ?? startedAt);
-  }, []);
+  const onSession = useCallback(
+    (id: string, startedAt: number | null) => {
+      setRunId(id);
+      if (startedAt != null) setRunStartedAt((t) => t ?? startedAt);
+      const prev = savedRef.current;
+      saveRun(place, { runId: id, startedAt: startedAt ?? (prev?.runId === id ? prev.startedAt : null) });
+    },
+    [place, savedRef],
+  );
 
   /** The run is over: the next conversation starts a new one. */
   const resetRun = (clearLocks: boolean) => {
+    clearRun(place);
     setDismissedRun(runId);
     setOpen(null);
     setRunId(null);
@@ -153,6 +169,7 @@ export function FloorGame({
   const [briefed, setBriefed] = useState(false); // closed this visit
   const briefing: boolean | null = briefed ? false : needsBriefing;
   const setBriefing = (v: boolean) => setBriefed(!v);
+  const showResume = !!saved && !runId && !resumeDecided && briefing === false;
 
   const onEvent = useCallback(
     (e: SceneEvent) => {
@@ -203,7 +220,7 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
       </div>
 
       <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} />
@@ -258,6 +275,19 @@ export function FloorGame({
           /></div>}
       {caseFile && <CaseFileOverlay floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
       {gate}
+      {showResume && saved && (
+        <ResumeRun
+          place={place}
+          saved={saved}
+          employeeId={map.npcs[0]?.id ?? "barry"}
+          onContinue={(r) => {
+            setRunId(r.runId);
+            setRunStartedAt(r.startedAt);
+            setResumeDecided(true);
+          }}
+          onRestart={() => setResumeDecided(true)}
+        />
+      )}
       {pending && (
         <ExitConfirm to={pending} onGo={() => leave(pending)} onStay={() => setPending(null)} />
       )}

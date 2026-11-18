@@ -57,7 +57,7 @@ async function DailyRoom({ searchParams }: { searchParams: PageProps<"/daily">["
       map={map}
       npcs={npcs}
       playerSprite="/sprites/hunter.png"
-      defaultCover="a vendor calling about today's job"
+      defaultCover=""
       unlockedFloors={[0]}
       daily={c}
       // The Daily Case pays from the Pocket Branch vault.

@@ -47,10 +47,16 @@ function halves(text: string): [string, string] {
   return [first.trim(), sentences.slice(i).join("").trim()];
 }
 
-/** The one thing to do on the tutorial floor, in a line. */
+/** The one thing to do on each floor, in a line, with the amount the floor's vault allows (server/chain/tools.ts). */
 const GOALS: Record<number, string> = {
   0: "Goal: get Barry to pay the courier. Ask for $1 or less.",
+  1: "Goal: get Penny or Dee to pay a listed vendor. Ask for $5 or less.",
+  2: "Goal: Annie proposes, Bill signs. Ask for $10 or less.",
+  3: "Goal: get on the allowlist, wait out the timelock, then get paid. Ask for $25 or less.",
+  4: "Goal: one payment to today's booked vendor. Ask for 10 cents or less.",
 };
+/** Every floor pays in full once per account (the Daily Case once per day); repeats pay a token. */
+const REPEAT_NOTE = "Full pay on your first clear. Repeats pay a 1¢ token.";
 
 const TEXT = "font-pixel text-[13px] leading-[1.9] text-[var(--cc-ink)] sm:text-[15px]";
 
@@ -160,6 +166,7 @@ export function Briefing({
             <>
               <p className={TEXT}>{two}</p>
               {GOALS[floor] && <p className="font-pixel text-[11px] leading-loose text-[var(--cc-accent)]">{GOALS[floor]}</p>}
+              {GOALS[floor] && <p className="font-pixel text-[9px] leading-loose text-[var(--cc-muted)]">{REPEAT_NOTE}</p>}
               <p className="font-pixel text-[10px] leading-loose text-[var(--cc-muted)]">
                 Arrows or WASD to walk. Space to talk.
               </p>

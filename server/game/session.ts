@@ -149,7 +149,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   // Signed URL first, so a missing key or an ElevenLabs outage leaves no orphan rows behind.
   const signed_url = await signedUrl(agentId);
   const stub = isStubMode();
-  const cover = input.cover.slice(0, 200) || "(no cover given)";
+  const cover = input.cover.slice(0, 200) || "not said yet; they will introduce themselves";
   const talkBudget = TALK_SECONDS[input.employee_id];
 
   let run_id: string;
