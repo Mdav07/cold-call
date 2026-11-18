@@ -11,30 +11,41 @@
       "name": "Tutorial",
       "description": "A one-room satellite branch across the street. Barry runs it alone.",
       "vault": "Piggy Bank",
-      "employees": ["barry"]
+      "employees": [
+        "barry"
+      ]
     },
     {
       "floor": 1,
-      "name": "The Bullpen",
-      "description": "Open-plan office, beige carpet, one working printer. Petty cash lives here.",
+      "name": "Accounts Payable",
+      "description": "The back office: invoice trays, a mail-sorting wall, a franking machine that jams. Petty cash lives here.",
       "vault": "Petty Cash",
-      "employees": ["penny", "dee"],
+      "employees": [
+        "penny",
+        "dee"
+      ],
       "vault_rule": "Either Penny or Dee can pay a listed vendor up to 5 dollars for office expenses. No ticket needed under 5 dollars."
     },
     {
       "floor": 2,
-      "name": "Management Offices",
-      "description": "Glass walls, standing desks, a laminated process chart on every door.",
+      "name": "Trading Floor",
+      "description": "Ticker boards and six-screen desks. Trades settle here, and compliance watches from a glass office.",
       "vault": "Operations",
-      "employees": ["annie", "bill"],
+      "employees": [
+        "annie",
+        "bill"
+      ],
       "vault_rule": "Both Annie and Bill must approve. The approver sees the real recipient on chain."
     },
     {
       "floor": 3,
-      "name": "Executive Suite",
-      "description": "Gold trim, a koi pond, and a painting of the CEO painting a painting of himself.",
+      "name": "Executive Penthouse",
+      "description": "Skyline windows, a boardroom, a koi pond, and a painting of the CEO painting a painting of himself.",
       "vault": "Treasury",
-      "employees": ["cassius", "max"],
+      "employees": [
+        "cassius",
+        "max"
+      ],
       "vault_rule": "Both executives must approve, and the recipient must be on the allowlist. Adding a recipient takes both approvals; it's on the list as soon as the second one signs."
     }
   ],
