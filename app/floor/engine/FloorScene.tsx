@@ -792,15 +792,16 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
   // classic), and the deck below with the HUD bar, the D-pad and the A button.
   return (
     <div className="flex h-full w-full touch-none select-none flex-col bg-[#c9c5ba]">
-      <div className="mx-2 mt-2 flex min-h-0 flex-1 flex-col rounded-md rounded-br-[2rem] bg-[#4f5165] px-2.5 pb-1.5 pt-2.5 shadow-[inset_0_-3px_0_rgba(0,0,0,0.25)]">
+      <div className="mx-1.5 mt-1.5 flex min-h-0 flex-1 flex-col rounded-md rounded-br-[1.75rem] bg-[#4f5165] px-1.5 pb-1 pt-1.5 shadow-[inset_0_-3px_0_rgba(0,0,0,0.25)]">
         <div ref={wrapRef} className="relative min-h-0 flex-1 overflow-hidden rounded-sm bg-[var(--cc-edge,#15141a)] ring-2 ring-black/40">
           {canvas}
         </div>
-        <p className="mt-1.5 text-center font-pixel text-[8px] tracking-[0.35em] text-[#c9c5ba]/75" aria-hidden>
-          COLD CALL
+        {/* Where you are, printed on the bezel (the docked HUD leaves the name out to stay one row). */}
+        <p className="mt-1 truncate text-center font-pixel text-[7px] tracking-[0.3em] text-[#c9c5ba]/80" aria-hidden>
+          {map.name.split(" · ")[0].toUpperCase()}
         </p>
       </div>
-      <div ref={deckRef} className="flex flex-col gap-2 px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2">
+      <div ref={deckRef} className="flex flex-col gap-1.5 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5">
         {deck}
         <ConsolePad onHold={hold} onA={interact} disabled={paused} />
       </div>
@@ -826,7 +827,7 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
     onHold(d);
   };
   const release = () => onHold(null);
-  const arm = "flex size-14 items-center justify-center bg-[#26252e] text-[#8d8b9a] active:bg-[#3a3946] active:text-[#e8e6ef]";
+  const arm = "flex size-12 items-center justify-center bg-[#26252e] text-[#8d8b9a] active:bg-[#3a3946] active:text-[#e8e6ef]";
   const keys: [Facing, string][] = [
     ["up", "col-start-2 row-start-1 rounded-t-md"],
     ["left", "col-start-1 row-start-2 rounded-l-md"],
@@ -835,7 +836,7 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
   ];
   return (
     <div className={`flex items-center justify-between px-1 ${disabled ? "pointer-events-none opacity-60" : ""}`}>
-      <div className="grid grid-cols-[repeat(3,3.5rem)] grid-rows-[repeat(3,3.5rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]">
+      <div className="grid grid-cols-[repeat(3,3rem)] grid-rows-[repeat(3,3rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]">
         {keys.map(([d, pos]) => (
           <button
             key={d}
@@ -851,14 +852,14 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
           </button>
         ))}
         <div className="col-start-2 row-start-2 bg-[#26252e]" aria-hidden>
-          <div className="m-auto mt-[1.25rem] size-4 rounded-full bg-[#1b1a21]" />
+          <div className="m-auto mt-[1rem] size-4 rounded-full bg-[#1b1a21]" />
         </div>
       </div>
       <div className="flex -rotate-[20deg] flex-col items-center gap-1.5 pr-2">
         <button
           type="button"
           aria-label="Talk"
-          className="size-[4.25rem] rounded-full bg-[#a3245a] font-pixel text-sm text-[#f3d6e2] shadow-[0_4px_0_#5e1434] active:translate-y-[3px] active:shadow-[0_1px_0_#5e1434]"
+          className="size-14 rounded-full bg-[#a3245a] font-pixel text-sm text-[#f3d6e2] shadow-[0_4px_0_#5e1434] active:translate-y-[3px] active:shadow-[0_1px_0_#5e1434]"
           // On the completed tap, not on touch-down: the dialogue box opens where this button is, and a
           // touch-down trigger let the same tap's click land on the box's first choice.
           onClick={onA}

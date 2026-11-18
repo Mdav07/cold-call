@@ -139,8 +139,15 @@ export function Lobby({
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.
   const consoleMode = useMediaQuery(CONSOLE_QUERY);
   const nav = (
-  <nav className={`pixel-frame pointer-events-auto flex ${consoleMode ? "w-full justify-center" : "max-w-[calc(100vw-5rem)]"} flex-wrap items-center gap-x-2 gap-y-2 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]`}>
-          <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
+  <nav
+    className={`pixel-frame pointer-events-auto flex items-center bg-[var(--cc-panel)]/95 font-pixel leading-none text-[var(--cc-ink)] ${
+      // On the handheld-console deck: one row that scrolls sideways, so the screen keeps its height.
+      consoleMode
+        ? "w-full flex-nowrap gap-x-1.5 overflow-x-auto px-2 py-1.5 text-[9px] [&>*]:shrink-0"
+        : "max-w-[calc(100vw-5rem)] flex-wrap gap-x-2 gap-y-2 px-3 py-2.5 text-[10px]"
+    }`}
+  >
+          {!consoleMode && <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>}
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
           <span className="flex items-center gap-2">
             <DailyArchive tutorialCleared={tutorialDone} clearedToday={dailyClearedToday} />

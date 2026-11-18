@@ -11,7 +11,7 @@ export async function HudVault({ floor }: { floor: number }) {
   return (
     <>
       <span title={`${f?.vault ?? "Floor"} vault balance`}>
-        <span className="text-[var(--cc-muted)]">VAULT </span>
+        <span className="cc-vault-label text-[var(--cc-muted)]">VAULT </span>
         <span className="text-[var(--cc-ok)]">{balance == null ? "?" : `$${balance.toFixed(2)}`}</span>
       </span>
       {contract && (
