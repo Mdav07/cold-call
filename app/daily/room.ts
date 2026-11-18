@@ -219,8 +219,12 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
       return null;
     }
     if (chair) {
-      decor[idx(chair.x, chair.y)] = skin.seat; // walkable
-      reserved.add(idx(chair.x, chair.y));
+      // Chairs block the player. Skip the chair (keep the furniture) if it would wall something off.
+      blocked.add(idx(chair.x, chair.y));
+      if (connected()) {
+        decor[idx(chair.x, chair.y)] = skin.seat;
+        reserved.add(idx(chair.x, chair.y));
+      } else blocked.delete(idx(chair.x, chair.y));
     }
     return cells;
   };
@@ -244,7 +248,10 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     }
     npc = { x: ex, y: y - 1 };
     if (!connected()) return null; // the employee walls something off
-    if (desk) decor[idx(ex, y - 1)] = skin.seat;
+    if (desk) {
+      decor[idx(ex, y - 1)] = skin.seat; // the employee's own chair (they sit on it; solid either way)
+      blocked.add(idx(ex, y - 1));
+    }
     surfaces.push({ cells, kind: desk ? "desk" : "counter" });
   }
   if (!npc) return null;

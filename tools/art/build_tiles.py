@@ -33,8 +33,8 @@ THEMES = {
 KENNEY = {
     "desk_l": (0, "block"), "desk_m": (1, "block"), "desk_r": (2, "block"),
     "table_oval_l": (3, "block"), "table_oval_r": (4, "block"), "table_small": (5, "block"), "table_round": (6, "block"),
-    "chair_down": (54, "walk"), "chair_up": (55, "walk"), "chair_left": (56, "walk"), "chair_right": (57, "walk"),
-    "office_chair": (216, "walk"), "office_chair_back": (217, "walk"),
+    "chair_down": (54, "block"), "chair_up": (55, "block"), "chair_left": (56, "block"), "chair_right": (57, "block"),
+    "office_chair": (216, "block"), "office_chair_back": (217, "block"),
     "plant": (16, "block"), "plant_small": (17, "block"),
     "counter": (324, "block"), "counter_papers": (328, "block"), "counter_books": (330, "block"), "counter_files": (331, "block"),
     "cabinet_dark": (266, "block"), "locker": (268, "block"), "copier": (239, "block"),

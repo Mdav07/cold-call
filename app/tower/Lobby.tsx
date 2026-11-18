@@ -12,7 +12,7 @@ import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, LOBBY_H, LOBBY_W } from "./lobbyMap";
+import { DAILY_X, LOBBY_H, LOBBY_W, MAT_WORDS } from "./lobbyMap";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
@@ -133,12 +133,13 @@ export function Lobby({
     return { goal: { x: exit.x, y: exit.y }, tags: [] }; // T / D / 1–3 mats are the signs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
+  const tags = useMemo(() => [...MAT_WORDS, ...shown.tags], [shown.tags]);
 
   const open = map.props?.find((p) => p.id === prop);
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={shown.tags} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={tags} />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
@@ -156,7 +157,7 @@ export function Lobby({
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
         </nav>
       </div>
-      <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] [@media(pointer:fine)]:block">
+      <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] sm:[@media(pointer:fine)]:block">
         Arrow keys to walk · Space to read · Elevators go up
       </p>
       {open && <PropDialogue label={open.label} text={open.text} onClose={() => setProp(null)} />}

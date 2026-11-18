@@ -100,27 +100,27 @@
     },
     "chair_down": {
       "index": 24,
-      "kind": "walk"
+      "kind": "block"
     },
     "chair_up": {
       "index": 25,
-      "kind": "walk"
+      "kind": "block"
     },
     "chair_left": {
       "index": 26,
-      "kind": "walk"
+      "kind": "block"
     },
     "chair_right": {
       "index": 27,
-      "kind": "walk"
+      "kind": "block"
     },
     "office_chair": {
       "index": 28,
-      "kind": "walk"
+      "kind": "block"
     },
     "office_chair_back": {
       "index": 29,
-      "kind": "walk"
+      "kind": "block"
     },
     "plant": {
       "index": 30,
@@ -308,7 +308,7 @@
     },
     "seat_restaurant": {
       "index": 76,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_coffee": {
       "index": 77,
@@ -352,7 +352,7 @@
     },
     "seat_coffee": {
       "index": 87,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_consulting": {
       "index": 88,
@@ -396,7 +396,7 @@
     },
     "seat_consulting": {
       "index": 98,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_trading": {
       "index": 99,
@@ -440,7 +440,7 @@
     },
     "seat_trading": {
       "index": 109,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_startup": {
       "index": 110,
@@ -484,7 +484,7 @@
     },
     "seat_startup": {
       "index": 120,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_clinic": {
       "index": 121,
@@ -528,7 +528,7 @@
     },
     "seat_clinic": {
       "index": 131,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_law": {
       "index": 132,
@@ -572,7 +572,7 @@
     },
     "seat_law": {
       "index": 142,
-      "kind": "walk"
+      "kind": "block"
     },
     "floor_hotel": {
       "index": 143,
@@ -616,6 +616,22 @@
     },
     "seat_hotel": {
       "index": 153,
+      "kind": "block"
+    },
+    "mat_tutorial_l": {
+      "index": 154,
+      "kind": "walk"
+    },
+    "mat_tutorial_r": {
+      "index": 155,
+      "kind": "walk"
+    },
+    "mat_daily_l": {
+      "index": 156,
+      "kind": "walk"
+    },
+    "mat_daily_r": {
+      "index": 157,
       "kind": "walk"
     }
   }

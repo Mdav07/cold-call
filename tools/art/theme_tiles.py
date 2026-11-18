@@ -242,7 +242,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("stove_restaurant", kenney(k, 392), "block"),
         ("wine_rack_restaurant", kenney(k, 479), "block"),
         ("herbs_restaurant", Tile() if False else _tile(herbs), "block"),
-        ("seat_restaurant", kenney(k, 54), "walk"),
+        ("seat_restaurant", kenney(k, 54), "block"),
     ]
 
     # Coffee shop: warm planks, sage walls, a chalk board with a cup, a wooden bar.
@@ -300,7 +300,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("espresso_coffee", _tile(espresso), "block"),
         ("pastry_case_coffee", _tile(pastry_case), "block"),
         ("sacks_coffee", _tile(sacks), "block"),
-        ("seat_coffee", _tile(stool), "walk"),
+        ("seat_coffee", _tile(stool), "block"),
     ]
 
     # Consulting firm: blue-grey carpet tiles, white walls with a navy rail, a whiteboard 2x2.
@@ -345,7 +345,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("flipchart_consulting", _tile(flipchart), "block"),
         ("binders_consulting", _tile(binders), "block"),
         ("tall_plant_consulting", _tile(tall_plant), "block"),
-        ("seat_consulting", kenney(k, 216), "walk"),
+        ("seat_consulting", kenney(k, 216), "block"),
     ]
 
     # Trading desk: charcoal carpet, navy walls, a ticker screen, desks with green-lit monitors.
@@ -398,7 +398,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("big_screen_trading", _tile(big_screen), "block"),
         ("globe_trading", _tile(globe), "block"),
         ("server_trading", _tile(server), "block"),
-        ("seat_trading", kenney(k, 217), "walk"),
+        ("seat_trading", kenney(k, 217), "block"),
     ]
 
     # Tech startup: polished concrete, brick walls, a wall of stickies, plywood standing desks.
@@ -451,7 +451,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("arcade_startup", _tile(arcade), "block"),
         ("drinks_fridge_startup", _tile(drinks_fridge), "block"),
         ("white_plant_startup", _tile(white_plant), "block"),
-        ("seat_startup", _tile(beanbag), "walk"),
+        ("seat_startup", _tile(beanbag), "block"),
     ]
 
     # Health clinic: mint vinyl squares, white walls with a mint band, an eye chart, a white front desk.
@@ -503,7 +503,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("med_cabinet_clinic", _tile(med_cabinet), "block"),
         ("iv_stand_clinic", _tile(iv_stand), "block"),
         ("plant_clinic", _tile(clinic_plant), "block"),
-        ("seat_clinic", _tile(plastic_chair), "walk"),
+        ("seat_clinic", _tile(plastic_chair), "block"),
     ]
 
     # Law office: dark herringbone-ish planks, bottle-green walls over walnut, a framed diploma.
@@ -555,7 +555,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("law_books_law", _tile(law_books), "block"),
         ("scales_law", _tile(scales), "block"),
         ("clock_law", _tile(clock), "block"),
-        ("seat_law", armchair((112, 50, 36), (70, 40, 26)), "walk"),
+        ("seat_law", armchair((112, 50, 36), (70, 40, 26)), "block"),
     ]
 
     # Hotel lobby: burgundy patterned carpet, cream walls with a gold rail, a key rack, a marble desk.
@@ -605,7 +605,7 @@ def themes(k: Image.Image) -> dict[str, list[tuple[str, Tile, str]]]:
         ("palm_hotel", _tile(palm), "block"),
         ("luggage_cart_hotel", _tile(luggage), "block"),
         ("piano_hotel", kenney(k, 240), "block"),
-        ("seat_hotel", armchair((60, 110, 90), (150, 110, 50)), "walk"),
+        ("seat_hotel", armchair((60, 110, 90), (150, 110, 50)), "block"),
     ]
     return out
 

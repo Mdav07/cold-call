@@ -454,34 +454,37 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const lo = camX + w / 2 + 2, hi = camX + viewW - w / 2 - 2;
         return lo > hi ? cx : Math.min(hi, Math.max(lo, cx));
       };
-      const nameTag = (x: number, y: number, text: string) => {
+      // White pixel text centred in a dark plate (box = false: text only, with a dark shadow). The glyphs
+      // are placed from their measured ink bounds, so they sit in the middle of the box both ways.
+      const plate = (x: number, y: number, text: string, padX: number, padY: number, opts: { box?: boolean; clamp?: boolean } = {}) => {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
-        c.textAlign = "center";
-        c.textBaseline = "middle";
+        c.textAlign = "left";
+        c.textBaseline = "alphabetic";
         const m = c.measureText(text);
-        const glyphW = Math.max(m.width, (m.actualBoundingBoxLeft ?? 0) + (m.actualBoundingBoxRight ?? 0));
-        const glyphH = Math.max(5 * u, (m.actualBoundingBoxAscent ?? 0) + (m.actualBoundingBoxDescent ?? 0));
-        const padX = 5 * u, padY = 3 * u;
-        const wdt = Math.ceil(glyphW + padX * 2);
-        const h = Math.ceil(glyphH + padY * 2);
-        const cx = Math.round(keepInView(x + TILE / 2, wdt));
-        const cy = Math.round(y - (FRAME_H - TILE) + 8);
-        c.fillStyle = "rgba(21, 20, 26, 0.82)";
-        c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
+        const left = m.actualBoundingBoxLeft ?? 0;
+        const inkW = Math.max(m.width, left + (m.actualBoundingBoxRight ?? m.width));
+        const asc = m.actualBoundingBoxAscent ?? 5 * u;
+        const desc = m.actualBoundingBoxDescent ?? 0;
+        const wdt = Math.ceil(inkW + padX * 2);
+        const h = Math.ceil(asc + desc + padY * 2);
+        const cx = opts.clamp === false ? x : keepInView(x, wdt);
+        const bx = Math.round(cx - wdt / 2), by = Math.round(y - h / 2);
+        const tx = bx + padX + left, ty = by + padY + asc;
+        if (opts.box !== false) {
+          c.fillStyle = "rgba(21, 20, 26, 0.82)";
+          c.fillRect(bx, by, wdt, h);
+        } else {
+          c.fillStyle = "rgba(21, 20, 26, 0.75)";
+          c.fillText(text, tx + u, ty + u);
+        }
         c.fillStyle = "#f2efe6";
-        c.fillText(text, cx, cy);
+        c.fillText(text, tx, ty);
       };
+      const nameTag = (x: number, y: number, text: string) => plate(x + TILE / 2, y - (FRAME_H - TILE) + 8, text, 5 * u, 3 * u);
       const nm = namesRef.current;
       // The person the player is facing gets one caption instead (below), so labels never stack.
       const [fdx, fdy] = DELTA[p.facing];
       const facingNpc = !p.moving ? npcAt(p.x + fdx, p.y + fdy) : undefined;
-      if (!pausedRef.current) {
-        for (const n of map.npcs)
-          if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
-        // The player's own plate gives way when someone stands close enough for the plates to touch.
-        const crowded = map.npcs.some((n) => Math.abs(n.x * TILE - px) < TILE * 2.5 && Math.abs(n.y * TILE - py) < TILE);
-        if (nm.player && !facingNpc && !crowded) nameTag(px, py, nm.player);
-      }
 
       // Lighting: warm window light, then a soft shadow along the back wall (cozy, Stardew-like).
       c.save();
@@ -515,6 +518,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       // the player is close. Read props go quiet.
       for (const pr of map.props ?? []) {
         if (readProps.current.has(pr.id)) continue;
+        if (tagsRef.current?.some((t) => t.mat && t.x === pr.x && t.y === pr.y)) continue; // the mat's word marks it
         const near = Math.abs(pr.x - p.x) + Math.abs(pr.y - p.y) <= 2;
         const tw = reduceMotion ? 0.6 : (Math.sin(now / 520 + pr.x * 1.7 + pr.y) + 1) / 2;
         const a = near ? 0.55 + tw * 0.45 : 0.12 + tw * 0.3;
@@ -535,31 +539,32 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
+      // Name plates go over the guide dots and twinkles, so nothing is drawn across a name.
+      if (!pausedRef.current) {
+        for (const n of map.npcs)
+          if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
+        // The player's own plate gives way when someone stands close enough for the plates to touch.
+        const crowded = map.npcs.some((n) => Math.abs(n.x * TILE - px) < TILE * 2.5 && Math.abs(n.y * TILE - py) < TILE);
+        if (nm.player && !facingNpc && !crowded) nameTag(px, py, nm.player);
+      }
+
       // Door labels: same quiet nameplate as NPC names, centred on the doormat.
       // TUTORIAL + DAILY CASE stay visible from spawn; FLOOR N lights up when close.
       if (!pausedRef.current) {
         for (const t of tagsRef.current ?? []) {
           // T / D mats stay lit from spawn; FLOOR N is proximity-only.
-          const always = t.text === "T" || t.text === "D" || t.text === "TUTORIAL" || t.text === "DAILY CASE";
+          const always = t.mat || t.text === "TUTORIAL" || t.text === "DAILY CASE";
           const dist = Math.abs(p.x - t.x) + Math.abs(p.y - t.y);
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
           c.globalAlpha = a;
-          c.font = `${5 * u}px ${pixelFont}, monospace`;
-          c.textAlign = "center";
-          c.textBaseline = "middle";
-          const m = c.measureText(t.text);
-          const glyphW = Math.max(m.width, (m.actualBoundingBoxLeft ?? 0) + (m.actualBoundingBoxRight ?? 0));
-          const glyphH = Math.max(5 * u, (m.actualBoundingBoxAscent ?? 0) + (m.actualBoundingBoxDescent ?? 0));
-          const padX = 4 * u, padY = 2.5 * u;
-          const wdt = Math.ceil(glyphW + padX * 2);
-          const h = Math.ceil(glyphH + padY * 2);
-          const cx = Math.round(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2);
-          const cy = Math.round(t.y * TILE + TILE / 2);
-          c.fillStyle = "rgba(21, 20, 26, 0.82)";
-          c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
-          c.fillStyle = "#f4c95d";
-          c.fillText(t.text, cx, cy);
+          // A doormat's word is printed on the mat itself (no plate); other tags get the dark plate.
+          if (t.mat) plate(t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 0, 0, { box: false, clamp: false });
+          else {
+            c.font = `${5 * u}px ${pixelFont}, monospace`;
+            const wdt = c.measureText(t.text).width + 8 * u;
+            plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u, 2.5 * u, { clamp: false });
+          }
           c.globalAlpha = 1;
         }
       }
@@ -588,18 +593,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         else if (e === "alarm") bubble(n.x, n.y, "!", "#e05d5d");
       }
       // A small dark caption above what you're facing, saying which key does what.
-      const hint = (tx: number, ty: number, text: string) => {
-        c.font = `${5 * u}px ${pixelFont}, monospace`;
-        c.textAlign = "center";
-        c.textBaseline = "middle";
-        const wdt = c.measureText(text).width + 6 * u;
-        const cx = keepInView(tx * TILE + TILE / 2, wdt), cy = ty * TILE - 5;
-        c.fillStyle = "rgba(21, 20, 26, 0.82)";
-        c.fillRect(Math.round(cx - wdt / 2), Math.round(cy - 4 * u), Math.round(wdt), Math.round(8 * u));
-        c.fillStyle = "#f4c95d";
-        c.textBaseline = "alphabetic";
-        c.fillText(text, cx, cy + 2.5 * u);
-      };
+      const hint = (tx: number, ty: number, text: string) => plate(tx * TILE + TILE / 2, ty * TILE - 5, text, 3 * u, 1.5 * u);
       if (!pausedRef.current && !p.moving) {
         const [dx, dy] = DELTA[p.facing];
         const fx = p.x + dx;

@@ -47,12 +47,49 @@ def audit(m: dict, kinds: dict[int, tuple[str, str]]) -> list[str]:
             out.append(f"prop '{p['id']}' at ({p['x']},{p['y']}) sits on bare floor (invisible wall, marker over nothing)")
     for n in m.get("npcs", []):
         i = n["y"] * w + n["x"]
-        if walls[i] >= 0 or (decor[i] >= 0 and kinds.get(decor[i], ("", ""))[1] == "block"):
+        seat = kinds.get(decor[i], ("", ""))[0].startswith(("chair_", "office_chair", "seat_"))
+        if walls[i] >= 0 or (decor[i] >= 0 and kinds.get(decor[i], ("", ""))[1] == "block" and not seat):
             out.append(f"npc '{n['id']}' at ({n['x']},{n['y']}) overlaps a wall or blocking furniture")
     for p in m.get("props", []):
         for n in m.get("npcs", []):
             if (p["x"], p["y"]) == (n["x"], n["y"]):
                 out.append(f"prop '{p['id']}' and npc '{n['id']}' share a cell")
+
+    # Reachability from the spawn, with the engine's rule (FloorScene walkable): walls, blocked cells and
+    # NPCs are solid; props are not. Every NPC and prop needs a reachable neighbour (or, for a prop, its
+    # own cell) to talk/read from, and every exit must be reachable.
+    solid = set(blocked) | {n["y"] * w + n["x"] for n in m.get("npcs", [])}
+
+    def passable(x, y):
+        if not (0 <= x < w and 0 <= y < h):
+            return False
+        i = y * w + x
+        return i not in solid and walls[i] < 0
+
+    sp = m.get("spawn")
+    if sp:
+        seen = {(sp["x"], sp["y"])}
+        todo = [(sp["x"], sp["y"])]
+        while todo:
+            x, y = todo.pop()
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                q = (x + dx, y + dy)
+                if q not in seen and passable(*q):
+                    seen.add(q)
+                    todo.append(q)
+
+        def near(x, y):
+            return any((x + dx, y + dy) in seen for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+
+        for n in m.get("npcs", []):
+            if not near(n["x"], n["y"]):
+                out.append(f"npc '{n['id']}' at ({n['x']},{n['y']}) can't be reached from the spawn")
+        for p in m.get("props", []):
+            if not near(p["x"], p["y"]) and (p["x"], p["y"]) not in seen:
+                out.append(f"prop '{p['id']}' at ({p['x']},{p['y']}) can't be reached from the spawn")
+        for e in m.get("exits", []):
+            if (e["x"], e["y"]) not in seen:
+                out.append(f"exit to {e.get('to')} at ({e['x']},{e['y']}) can't be reached from the spawn")
     return out
 
 

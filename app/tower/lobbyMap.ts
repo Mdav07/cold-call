@@ -15,6 +15,7 @@ const T = {
   chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
   matTutorial: 61, matDaily: 62, // cute welcome mats (tools/art/door_mats.py)
   mat1: 63, mat2: 64, mat3: 65,
+  matTutorialL: 154, matTutorialR: 155, matDailyL: 156, matDailyR: 157, // 3-wide ends (tools/art/mat_words.py)
 } as const;
 
 const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
@@ -50,10 +51,16 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
   }
   // Front wall: matching street / daily exits — opening in the wall (lobby carpet on the
   // threshold), one rectangular doormat on the tile in front (not doubled on the exit itself).
-  for (const [x, mat] of [[DOOR_X, T.matTutorial], [DAILY_X, T.matDaily]] as const) {
+  for (const [x, l, mat, r] of [
+    [DOOR_X, T.matTutorialL, T.matTutorial, T.matTutorialR],
+    [DAILY_X, T.matDailyL, T.matDaily, T.matDailyR],
+  ] as const) {
     walls[at(x, H - 1)] = -1;
     ground[at(x, H - 1)] = T.floor; // threshold = same carpet as the lobby
-    ground[at(x, H - 2)] = mat; // welcome mat just inside, in front of the door
+    // Welcome mat just inside, three tiles wide so its word fits (printed by the engine, MAT_WORDS).
+    ground[at(x - 1, H - 2)] = l;
+    ground[at(x, H - 2)] = mat;
+    ground[at(x + 1, H - 2)] = r;
   }
 
   const put = (x: number, y: number, tile: number, solid = true) => {
@@ -168,10 +175,17 @@ export function buildLobby(floors: TowerFloor[]): FloorMap {
 
 export { H as LOBBY_H, W as LOBBY_W };
 
+/** The words printed on the doormats, centred on each mat (FloorScene draws tags with `mat`). */
+export const MAT_WORDS: { x: number; y: number; text: string; mat: true }[] = [
+  { x: DOOR_X, y: H - 2, text: "TUTORIAL", mat: true },
+  { x: DAILY_X, y: H - 2, text: "DAILY", mat: true },
+  ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: n, mat: true as const })),
+];
+
 /** Where a player should head next from the lobby. Mats (T / D / 1–3) are the signs — no floating labels. */
 export function lobbyGuide(floors: TowerFloor[]): {
   goal: { x: number; y: number } | null;
-  tags: { x: number; y: number; text: string; endAt?: "x" }[];
+  tags: { x: number; y: number; text: string; endAt?: "x"; mat?: boolean }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
   if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [] };

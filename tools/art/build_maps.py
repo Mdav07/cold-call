@@ -89,6 +89,9 @@ def compile_map(src: dict, catalog: dict) -> dict:
     npcs = [{"sprite": f"/sprites/{n['id']}.png", **n} for n in src.get("npcs", [])]
     for n in npcs:
         if grid[n["y"]][n["x"]] not in ".":
+            # Chairs block the player, but an employee may sit on one (they block the cell anyway).
+            if legend.get(grid[n["y"]][n["x"]], "").startswith(("chair_", "office_chair", "seat_")):
+                continue
             if (n["y"] * w + n["x"]) in blocked or is_wall(n["x"], n["y"]):
                 raise SystemExit(f"floor {src['floor']}: {n['id']} stands on a blocked cell")
 

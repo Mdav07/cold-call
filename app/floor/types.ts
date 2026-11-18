@@ -48,7 +48,8 @@ export interface FloorSceneProps {
   /** Where the player should go next: a faint trail of dots leads there. Null hides it. */
   goal?: { x: number; y: number } | null;
   /** Door / guide labels (e.g. "TUTORIAL") — nameplate style, centred on the tile (or `endAt: "x"`). */
-  tags?: { x: number; y: number; text: string; endAt?: "x" }[];
+  /** Text labels on the map. `mat`: printed on a doormat (no plate, always shown). */
+  tags?: { x: number; y: number; text: string; endAt?: "x"; mat?: boolean }[];
   /** Labels drawn above heads: NPC id -> name, plus "player" for the player's name. */
   names?: Partial<Record<string, string>>;
 }
