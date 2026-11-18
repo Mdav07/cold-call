@@ -266,8 +266,8 @@ export function FloorGame({
   // here by the door; otherwise the guard has put you in the elevator back to the lobby.
   const escortDone = useCallback(() => {
     if (outcomeRef.current) setEscort(null);
-    else leave("/tower", "Escorted out by security · the lobby");
-  }, [outcomeRef, leave]);
+    else leave(`/tower?at=${daily ? "daily" : `floor-${map.floor}`}`, "Escorted out by security · the lobby");
+  }, [outcomeRef, leave, daily, map.floor]);
 
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
