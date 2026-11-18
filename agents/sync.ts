@@ -34,6 +34,8 @@ const DAILY_PLACEHOLDERS = {
   daily_first_name: "Sam",
   daily_title: "Night Clerk",
   daily_place: "a small Plumpurse office",
+  daily_business: "Plumpurse",
+  daily_float: "the branch float",
   daily_personality: "Friendly and a little tired.",
   daily_tic: "sighs before answering",
   daily_soft_spot: "A caller who is polite and patient.",
@@ -197,7 +199,9 @@ function buildPrompt(employee: string) {
   if (employee === "krystal") {
     return { prompt: `${body.trim()}\n`, firstMessage: first[1] };
   }
-  const shared = readFileSync(join(DIR, "shared-rules.md"), "utf8");
+  const sharedRaw = readFileSync(join(DIR, "shared-rules.md"), "utf8");
+  // The Daily Case works at a different business each day (a themed workplace), not always the bank.
+  const shared = employee === "daily" ? sharedRaw.replace("Plumpurse Savings & Trust", "{{daily_business}}") : sharedRaw;
   // Memory goes first: a model weighs the top of its prompt most, and a repeated trick must fail.
   const memory = [
     "# Before anything else: what you remember about this caller",
