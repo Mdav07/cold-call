@@ -367,13 +367,16 @@ async function newRun(
   }
 
   // A new run closes the player's unfinished ones as "quit" (and clears any Floor 3 allowlist spot).
-  const { data: stale } = await db()
+  // Guests all play as the one demo player, so for guests only runs left open over 30 minutes are
+  // closed: a newer open run is another guest mid-call, and closing it would fail their payment.
+  const guest = userId === (await getDemoUserId());
+  let closing = db()
     .from("runs")
     .update({ outcome: "quit", ended_at: new Date().toISOString() })
     .eq("user_id", userId)
-    .is("ended_at", null)
-    .select("id")
-    .throwOnError();
+    .is("ended_at", null);
+  if (guest) closing = closing.lt("created_at", new Date(Date.now() - 30 * 60_000).toISOString());
+  const { data: stale } = await closing.select("id").throwOnError();
   for (const r of stale ?? []) await onRunEnded(r.id);
 
   const { data } = await db()
