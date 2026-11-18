@@ -14,6 +14,7 @@ import type { FloorMap, FloorSceneProps, SceneEvent } from "@/app/floor/types";
 import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
 import { MusicToggle } from "@/app/play/MusicToggle";
+import { KrystalRadio } from "@/app/play/KrystalRadio";
 import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
@@ -238,6 +239,12 @@ export function FloorGame({
       )}
 
       <MusicToggle track={`music-floor-${daily ? 0 : map.floor}.mp3`} />
+
+      {/* Krystal's radio: a hint line for a time penalty, on the four floors (not the Daily Case). Hidden while
+
+          a conversation, the briefing or the result is open, so it never covers them. */}
+
+      {!daily && !open && !showOutcome && briefing === false && <KrystalRadio floor={map.floor} runId={runId} variant="floating" />}
       {/* Hidden, not closed, while the case file is open: its buttons showed through the overlay. */}
       {briefing && <div className={caseFile ? "hidden" : undefined}><Briefing
             floor={map.floor}
