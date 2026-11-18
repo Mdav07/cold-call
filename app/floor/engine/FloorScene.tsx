@@ -20,7 +20,7 @@ const KEY_DIR: Record<string, Facing> = {
   ArrowUp: "up", KeyW: "up", ArrowDown: "down", KeyS: "down",
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
 };
-/** Seats (chair_down/up/left/right, office chair front/back in tiles.json): hidden under someone standing on them. */
+/** Seats (chair_down/up/left/right, office chair front/back in tiles.json): hidden under an employee placed on one. */
 const CHAIR_TILES = new Set([24, 25, 26, 27, 28, 29]);
 const INTERACT_KEYS = new Set(["Space", "Enter", "KeyE"]);
 const OPPOSITE: Record<Facing, Facing> = { up: "down", down: "up", left: "right", right: "left" };
@@ -409,8 +409,10 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       };
       drawLayer(map.layers.ground);
       drawLayer(map.layers.walls);
-      // A chair someone stands on is hidden: its frame drew over their legs.
-      const seated = new Set<number>([p.y * map.width + p.x, p.ty * map.width + p.tx, ...map.npcs.map((n) => n.y * map.width + n.x)]);
+      // A chair an employee is placed on is hidden (they sit at it all day). The player's chair stays:
+      // it's drawn before the characters, so the player simply stands in front of it, and chairs no
+      // longer vanish as you walk over them.
+      const seated = new Set<number>(map.npcs.map((n) => n.y * map.width + n.x));
       drawLayer(map.layers.decor, (i, t) => !(CHAIR_TILES.has(t) && seated.has(i)));
 
       // Characters, back to front.
