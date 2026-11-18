@@ -91,7 +91,7 @@ export function Choices({ choices, active = true }: { choices: Choice[]; active?
                 c.onSelect();
               }}
               aria-current={on ? "true" : undefined}
-              className={`w-full border-2 px-3 py-1.5 text-left font-pixel text-[10px] transition-colors duration-75 disabled:opacity-40 sm:w-auto ${
+              className={`w-full border-2 px-3 py-1.5 pointer-coarse:min-h-10 text-left font-pixel text-[10px] transition-colors duration-75 disabled:opacity-40 sm:w-auto ${
                 on
                   ? "border-[var(--cc-accent)] bg-[var(--cc-accent)] text-[var(--cc-edge)]"
                   : "border-[var(--cc-border)] bg-transparent text-[var(--cc-ink)]"

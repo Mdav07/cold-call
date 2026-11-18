@@ -248,7 +248,7 @@ export function OutcomeOverlay({
         )}
 
         {/* Stays in view when a short (sideways phone) screen makes the panel scroll. */}
-        <div className="sticky -bottom-4 -mx-4 -mb-4 flex flex-wrap items-center gap-2 border-t-2 border-[var(--cc-edge)] bg-[var(--cc-panel)] px-4 py-3 sm:static sm:m-0 sm:border-0 sm:p-0">
+        <div className="sticky -bottom-4 -mx-4 -mb-4 sm:-bottom-6 flex flex-wrap items-center gap-2 border-t-2 border-[var(--cc-edge)] bg-[var(--cc-panel)] px-4 py-3 sm:-mx-6 sm:-mb-6 sm:px-6 [@media(min-height:700px)]:static [@media(min-height:700px)]:m-0 [@media(min-height:700px)]:border-0 [@media(min-height:700px)]:p-0">
           {breach ? (
             <button ref={primary} type="button" className="pixel-button" onClick={onClose}>
               {guest ? "Continue ▶" : "Collect bounty ▶"}
