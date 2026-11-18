@@ -152,13 +152,6 @@ export function FloorGame({
   // RESTART in the HUD (confirmed first): hang up, forget the run, reset the clock, suspicion and lockouts.
   // The next conversation starts a fresh run.
   const [askRestart, setAskRestart] = useState(false);
-  const restart = () => {
-    setAskRestart(false);
-    setCaseFile(false);
-    setTalkedTo(new Set());
-    setCleared(false);
-    resetRun(true);
-  };
 
   // Leaving: confirm first, then elevator doors close, then the page changes.
   const [pending, setPending] = useState<string | null>(null);
@@ -176,6 +169,15 @@ export function FloorGame({
     setPending(null);
     setLeaving({ to, label: label ?? (to === "/tower" ? "Lobby · back to the tower" : `Going to ${to.replace("/floor/", "Floor ")}`) });
   }, [leavingRef]);
+  const restart = () => {
+    setAskRestart(false);
+    setCaseFile(false);
+    setTalkedTo(new Set());
+    setCleared(false);
+    resetRun(true);
+    // Back to the lobby, standing at this level's entrance, to start it fresh.
+    leave(`/tower?at=${daily ? "daily" : `floor-${map.floor}`}`, "Lobby · back to the start");
+  };
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
     if (!ride) return;

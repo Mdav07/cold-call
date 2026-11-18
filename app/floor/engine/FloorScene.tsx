@@ -113,7 +113,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
   // guest's lobby is rebuilt once their progress loads. Both used to throw the player back to spawn.
   const placeRef = useRef<string | null>(null);
   useEffect(() => {
-    const place = `${map.floor}:${map.name}:${map.width}x${map.height}`;
+    // The spawn is part of the place: coming back to the lobby at a different entrance (RESTART) moves you there.
+    const place = `${map.floor}:${map.name}:${map.width}x${map.height}:${map.spawn.x},${map.spawn.y}`;
     if (placeRef.current === place) return;
     placeRef.current = place;
     player.current = {
