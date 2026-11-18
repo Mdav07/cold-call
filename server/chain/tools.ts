@@ -310,6 +310,10 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
     });
     // Shows in the Vercel logs: refill with scripts/topup.ts before the vault runs dry.
     if (balance < LOW_VAULT_UNITS) console.warn(`LOW VAULT floor ${s.floor} ${s.vault}: ${Number(balance) / 1e6} USDC left; run scripts/topup.ts --apply`);
+    // What the player cracked: their ask, up to the floor's per-transfer limit. It's the amount the
+    // employee says and the player sees; the chain sends `amount` (repeat-clear token, budget, ceiling).
+    const cap = FLOOR_CAP_UNITS[s.floor];
+    const cracked = asked < cap ? asked : cap;
     let amount = asked < allowed ? asked : allowed;
     if (PAYOUT_CEILING && amount > PAYOUT_CEILING) amount = PAYOUT_CEILING;
     if (amount > balance) amount = balance;
@@ -334,16 +338,16 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
         run_id: s.runId,
         amount_units: amount.toString(),
         claimed_name: String(input.claimed_recipient_name ?? "").slice(0, 200),
-        // The amount the proposer actually put up (after the cap), which is what they tell the caller.
-        // Storing the raw ask made every capped payment look like a mismatch to the second signer.
-        claimed_amount_units: amount.toString(),
+        // The amount the proposer tells the caller (and the second signer): what was cracked, after the
+        // floor's cap. Storing the raw ask made every capped payment look like a mismatch.
+        claimed_amount_units: cracked.toString(),
       },
       { onConflict: "vault,kind,onchain_id" },
     );
 
     const status: ToolStatus = !res.receipt ? "pending" : has(res.events, "TransferExecuted") ? "executed" : "proposed";
     return [
-      result<ProposeTransferResult>(status, { tx_hash: res.txHash, proposal_id: id, amount_used: toUsdc(amount) }),
+      result<ProposeTransferResult>(status, { tx_hash: res.txHash, proposal_id: id, amount_used: toUsdc(cracked) }),
       afterOf(events),
     ];
   } catch (err) {
@@ -370,7 +374,9 @@ export async function approveTransfer(input: ApproveTransferInput): Promise<[App
             claimed_amount: toUsdc(BigInt(row.claimed_amount_units ?? 0)),
             real_recipient_label: await recipientLabel(s),
             real_recipient_address: onChain.to,
-            real_amount: toUsdc(onChain.amount),
+            // Our own proposal (the chain holds what we put up) reads as the cracked amount, so the
+            // testnet ceiling never looks like a mismatch to the second signer.
+            real_amount: toUsdc(row.amount_units != null && onChain.amount === BigInt(row.amount_units) ? BigInt(row.claimed_amount_units ?? onChain.amount) : onChain.amount),
             memo: onChain.memo,
             proposed_by: employeeByAddress(onChain.proposer),
           },

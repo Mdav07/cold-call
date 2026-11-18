@@ -70,6 +70,14 @@ async function onTransferExecuted(e: DecodedVaultEvent, runId: string | null, ti
   }
 
   const started = run.started_at ? Date.parse(run.started_at) : null;
+  // What the player cracked (the proposal's claimed amount); the chain may have sent a 1-cent token.
+  const { data: prop } = await db()
+    .from("proposals")
+    .select("claimed_amount_units")
+    .eq("vault", e.vault)
+    .eq("kind", "transfer")
+    .eq("onchain_id", "id" in ev ? ev.id : -1)
+    .maybeSingle();
   await db()
     .from("runs")
     .update({
@@ -80,6 +88,12 @@ async function onTransferExecuted(e: DecodedVaultEvent, runId: string | null, ti
       payout_units: ev.amount,
     })
     .eq("id", runId);
+  // Separate write so the breach above never depends on it (migration 20261118150000 adds the column).
+  const { error: crackedErr } = await db()
+    .from("runs")
+    .update({ cracked_units: prop?.claimed_amount_units ?? ev.amount })
+    .eq("id", runId);
+  if (crackedErr) console.warn("cracked_units not saved:", crackedErr.message);
 
   // Daily budget for this vault.
   const day = new Date().toISOString().slice(0, 10);
