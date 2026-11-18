@@ -10,7 +10,7 @@ export interface HunterOption {
 /** Eight looks across skin tones and gender presentations (tools/art/portrait_sprites.py HUNTERS).
  *  Each has a name with a colour mnemonic (the colour of their outfit or hair, then a name). */
 export const HUNTERS: HunterOption[] = [
-  { id: "hunter-2", label: "Red Riya" },
+  { id: "hunter-2", label: "Red Renata" },
   { id: "hunter-3", label: "Gold Gideon" },
   { id: "hunter-4", label: "Violet Vida" },
   { id: "hunter-6", label: "Pink Pia" },
