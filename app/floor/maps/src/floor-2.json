@@ -1,27 +1,24 @@
 {
   "floor": 2,
-  "name": "Floor 2 · Management Offices",
-  "theme": "management",
+  "name": "Floor 2 · Trading Floor",
+  "theme": "trading",
   "legend": {
     "L": "desk_l",
     "M": "desk_m",
     "R": "desk_r",
-    "c": "office_chair",
-    "F": "cabinet_dark",
-    "f": "counter_files",
-    "b": "bookshelf",
-    "p": "plant",
-    "o": "table_oval_l",
-    "O": "table_oval_r",
-    "w": "water_cooler",
-    "n": "table_small",
-    "Q": "board_management",
-    "Z": "counter_note"
+    "c": "seat_trading",
+    "S": "station_trading",
+    "Z": "station_note_trading",
+    "V": "big_screen_trading",
+    "G": "globe_trading",
+    "Y": "server_trading",
+    "Q": "board_trading",
+    "w": "water_cooler"
   },
   "rows": [
     "####################",
     "#W##W##QE####W##W###",
-    "#..................#",
+    "#.G..V........Y.Y.Y#",
     "#..................#",
     "#.#####......#####.#",
     "#.#...#......#...#.#",
@@ -29,8 +26,8 @@
     "#.#.c.#......#.c.#.#",
     "#.#...#......#...#.#",
     "#.##.##......##.##.#",
-    "#......oO.......w..#",
-    "#.FFZ.........bbb.p#",
+    "#..LMR.c.LMR.c....w#",
+    "#.ZS..........SZ...#",
     "####################"
   ],
   "spawn": {
@@ -69,7 +66,7 @@
     },
     {
       "id": "ledgerline-memo",
-      "x": 8,
+      "x": 4,
       "y": 10,
       "label": "Ledgerline bank migration memo",
       "text": "Ledgerline Payroll is moving banks this month. Client services will phone in the new payment details (Annie Uity, Nov 10)."
@@ -83,7 +80,7 @@
     },
     {
       "id": "ledgerline-registry",
-      "x": 4,
+      "x": 3,
       "y": 11,
       "label": "Vendor registry — Ledgerline Payroll",
       "text": "Ledgerline Payroll is paid from Operations, and invoices start with LL-. A Nov 10 note says the new payment details arrive by phone."
