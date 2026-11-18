@@ -1,12 +1,15 @@
 "use client";
 
-// Fixed music button: starts only on the first click (browsers block autoplay), then loops quietly.
-// Preference is stored in localStorage so the choice survives navigation.
+// Fixed music button. One music player for the whole app (module state), so moving from the lobby to a
+// level keeps one source of truth: the button shows whether music is actually playing, never just the
+// remembered wish. Each page says which track it wants; the player swaps tracks and keeps playing.
+// Browsers block autoplay: on a fresh page load a remembered "on" tries to play, and if the browser
+// refuses, the button shows off until the player clicks it.
 
-import { useEffect, useRef, useState } from "react";
-import { useClientValue } from "./clientHooks";
+import { useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "cc-music-on";
+const VOLUME = 0.25;
 
 function readPref(): boolean {
   try {
@@ -22,6 +25,55 @@ function writePref(on: boolean) {
   } catch {
     /* private mode / blocked storage */
   }
+}
+
+// ---------- the one player ----------
+
+let audio: HTMLAudioElement | null = null;
+let playing = false;
+let mounted = 0; // toggles on screen; the music stops when the last one goes
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+
+function player(): HTMLAudioElement {
+  if (!audio) {
+    audio = new Audio();
+    audio.loop = true;
+    audio.volume = VOLUME;
+    audio.addEventListener("play", () => {
+      playing = true;
+      emit();
+    });
+    audio.addEventListener("pause", () => {
+      playing = false;
+      emit();
+    });
+  }
+  return audio;
+}
+
+function setTrack(track: string) {
+  const a = player();
+  const src = `/audio/${track}`;
+  if (a.src.endsWith(src)) return;
+  a.src = src;
+}
+
+function tryPlay() {
+  // A refusal (autoplay) leaves `playing` false, so the button says off: it never lies.
+  void player()
+    .play()
+    .catch(() => {
+      playing = false;
+      emit();
+    });
+}
+
+function subscribe(l: () => void) {
+  listeners.add(l);
+  return () => {
+    listeners.delete(l);
+  };
 }
 
 /** Pixel note drawn in the button box so it stays centred (♪̸ was optically off). */
@@ -42,61 +94,32 @@ function NoteIcon({ muted }: { muted: boolean }) {
 }
 
 export function MusicToggle({ track }: { track: string }) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const remembered = useClientValue(readPref, false);
-  const [choice, setOn] = useState<boolean | null>(null); // the player's click this visit
-  const on = choice ?? remembered;
-  const [started, setStarted] = useState(false);
+  const on = useSyncExternalStore(subscribe, () => playing, () => false);
 
+  // This page's track. If music is playing or remembered on, keep it going across the move.
   useEffect(() => {
+    mounted++;
+    const wasPlaying = playing;
+    setTrack(track);
+    if (wasPlaying || readPref()) tryPlay();
     return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
+      mounted--;
+      // Moving between pages mounts the next toggle right after this one goes; only stop when no page
+      // shows a toggle any more.
+      queueMicrotask(() => {
+        if (mounted === 0) audio?.pause();
+      });
     };
-  }, []);
-
-  // Swap the source when the track changes (e.g. different floor), keep playing if already on.
-  useEffect(() => {
-    const a = audioRef.current;
-    if (!a || !started) return;
-    const next = `/audio/${track}`;
-    if (a.src.endsWith(next)) return;
-    const wasPlaying = !a.paused;
-    a.src = next;
-    a.loop = true;
-    a.volume = 0.25;
-    if (wasPlaying && on) void a.play().catch(() => setOn(false));
-  }, [track, started, on]);
-
-  const ensureAudio = () => {
-    if (!audioRef.current) {
-      const a = new Audio(`/audio/${track}`);
-      a.loop = true;
-      a.volume = 0.25;
-      audioRef.current = a;
-      setStarted(true);
-    }
-    return audioRef.current;
-  };
+  }, [track]);
 
   const toggle = () => {
-    const a = ensureAudio();
-    // Prefer "is audio actually playing" over the remembered flag so a restored
-    // "on" still needs a click to start (browsers block autoplay).
-    if (on && !a.paused) {
-      a.pause();
-      setOn(false);
+    if (playing) {
+      player().pause();
       writePref(false);
     } else {
-      a.play()
-        .then(() => {
-          setOn(true);
-          writePref(true);
-        })
-        .catch(() => {
-          setOn(false);
-          writePref(false);
-        });
+      setTrack(track);
+      writePref(true);
+      tryPlay();
     }
   };
 
