@@ -26,7 +26,7 @@
 
 <p align="center"><sub>🏦 Built for the UBC 2026 hackathon · Main track: Consumer Applications · Chain award: Best use of Arc · Bounties: ElevenLabs, QuickNode Streams · Testnet only, no real money</sub></p>
 
-**Contents:** [How the tracks fit](#how-the-tracks-fit) · [Screenshots](#screenshots) · [How to play](#how-to-play) · [Meet the staff](#meet-the-staff) · [Architecture](#architecture) · [Agent tools](#agent-tools) · [The contract](#the-contract) · [Arc](#arc) · [ElevenLabs](#elevenlabs) · [QuickNode Streams](#quicknode-streams) · [Suspicion and memory](#suspicion-and-memory) · [Data model](#data-model) · [Safety and limits](#safety-and-limits) · [Run it locally](#run-it-locally)
+**Contents:** [How the tracks fit](#how-the-tracks-fit) · [Screenshots](#screenshots) · [How to play](#how-to-play) · [Meet the staff](#meet-the-staff) · [In progress](#in-progress) · [Architecture](#architecture) · [Agent tools](#agent-tools) · [The contract](#the-contract) · [Arc](#arc) · [ElevenLabs](#elevenlabs) · [QuickNode Streams](#quicknode-streams) · [Suspicion and memory](#suspicion-and-memory) · [Data model](#data-model) · [Safety and limits](#safety-and-limits) · [Run it locally](#run-it-locally) · [Credits](#credits)
 
 <a name="how-the-tracks-fit"></a>
 <img src="docs/devpost/h-tracks.png" alt="How the tracks fit" width="100%">
@@ -37,8 +37,8 @@ Every heist passes through all four, in order. Remove any one and the game stops
 
 | Track | Its job in Cold Call | What we used | Where it lives |
 | --- | --- | --- | --- |
-| **Consumer Applications** | **The game.** A browser game anyone can play with no wallet and no crypto words on screen: no explorer links, no "USDC", amounts in dollars. The chain stays behind the scenes. | Next.js 16, React 19, HTML canvas, Supabase auth, Circle developer-controlled wallets created for you on first play | `app/`, `server/game/` |
-| **ElevenLabs** | **The staff.** Seven floor employees plus a daily employee you call or text, and Krystal's radio. They check your story with tools, remember your past runs, and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, private agents with signed URLs, Text to Speech, Sound Effects, Music | `agents/`, `app/api/session/`, `server/chain/tools.ts` |
+| **Consumer Applications** | **The game.** A browser game anyone can play with no wallet and no crypto words on screen: no explorer links, no "USDC", amounts in dollars. The chain stays behind the scenes. | Next.js 16, React 19, Tailwind CSS 4, HTML canvas, Supabase auth, Circle developer-controlled wallets created for you on first play | `app/`, `server/game/` |
+| **ElevenLabs** | **The staff.** Seven floor employees plus a daily employee you call or text. They check your story with tools, remember your past runs, and decide whether to sign. | Agents (voice and chat), server tools, dynamic variables, private agents with signed URLs, Text to Speech, Sound Effects, Music | `agents/`, `app/api/session/`, `server/chain/tools.ts` |
 | **Arc** | **The money and the rules.** Each floor is a vault contract. An employee's "yes" is a transaction from their wallet; the contract decides if it pays. | `ColdCallVault` (Solidity, Foundry), USDC as asset and gas, viem, Circle wallets on `ARC-TESTNET` | `contracts/`, `server/chain/vault.ts` |
 | **QuickNode Streams** | **The referee.** Nothing in our app can mark a win. The Stream delivers `TransferExecuted` and our webhook ends the run. | Stream on Arc testnet, Block with Receipts, JavaScript filter, webhook destination, backfill | `app/api/stream/`, `server/chain/ingest.ts`, [`docs/quicknode-stream.md`](docs/quicknode-stream.md) |
 
@@ -59,18 +59,27 @@ The hand-offs are concrete: an ElevenLabs **tool call** (`approve_transfer`) bec
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="How to play" width="100%">
 
-You're a rookie crypto treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Read Krystal's case file (staff, vendors, memos, gossip), pick a cover story, then call or message the staff. Lies only work if they fit the world: every employee checks the vendor registry, calendars and the staff directory with real tools, and a story that contradicts the case file raises their suspicion. At 100 they hang up and warn their floor-mate.
+You're a rookie crypto treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Read Krystal's case file (staff, vendors, memos, gossip), then call or message the staff and introduce yourself. Lies only work if they fit the world: every employee checks the vendor registry, calendars and the staff directory with real tools, and a story that contradicts the case file raises their suspicion. At 100 they hang up and warn their floor-mate.
+
+**Getting started.** A first visit opens with Krystal's cutscene: who she was, that she vanished, and what the job is. Pick one of four hunter looks and a name that floats over your head, then sign in with an emailed link to keep your progress, or play as a guest. You start in the lobby of Plumpurse Tower. Walk up to someone and press Space to talk or call. Read the signs, memos and notes on each floor: they hold clues, and reading them files evidence into your case file that you can present mid-conversation. The HUD shows the floor's live vault balance, read from Arc.
 
 ![Plumpurse Tower: each floor's staff, contract rule and the real con it mirrors](docs/devpost/floors.png)
 
-| Floor | Staff | What they fall for | What the contract adds |
+| Level | Staff | What they fall for | What the contract adds |
 | --- | --- | --- | --- |
-| 0 · Pocket Branch | Barry (teller) | A courier pickup that's on the vendor list | One signature pays (the tutorial) |
-| 1 · The Bullpen | Penny (receptionist), Dee (on-call developer) | Genuine office gossip and compliments; a believable prod outage | One signature pays, but only up to the petty-cash cap |
+| Tutorial · Pocket Branch | Barry (teller) | A courier pickup that's on the vendor list | One signature pays |
+| 1 · The Bullpen | Penny (receptionist), Dee (on-call developer) | Genuine office gossip and compliments; a believable prod outage | One signature pays, but only up to the per-transfer cap |
 | 2 · Management | Annie (operations), Bill (compliance) | A request in Annie's exact checklist format; an "audit finding" that scares Bill | Both must sign, and the second signer sees the real recipient, not your story |
 | 3 · Executive Suite | Cassius (CFO), Max (CEO, 2-minute attention span) | A credible name-drop of the board member who introduced you; an exclusive pitch | A direct payment always bounces: get allowlisted by both, survive a 60-second timelock, then get paid |
 
-A first visit opens with Krystal's cutscene: who she was, that she vanished, and what the job is. Then you pick one of four hunters and a name that floats over your head, and either sign in to keep your progress or play as a guest. You start in the lobby; floors unlock in order, starting with the tutorial across the street (guests unlock floors from their own clears in that browser), and you ride the elevator up. Each floor opens with Krystal's two-screen briefing. Walk up to someone and press Space to talk or call. A 📻 Radio Krystal button bottom-left on Floors 0 to 3 opens her hint line; each hint adds 30 s. Not on the Daily Case. Read the signs, memos and notes on each floor: they hold clues, and reading them files evidence into your case file that you can present mid-conversation ("Evidence (1/2)"). The HUD shows the floor's live vault balance, read from Arc. After the tutorial, the lobby's D door (locked like the elevators until then) opens onto the Daily Case: one short case a day, the same for everyone, seeded by the UTC date. It has its own random room, one employee (the daily ElevenLabs agent, persona filled by dynamic variables), a small case file and four clues. The last few days replay as practice (no streak, no board). Places rotate with no repeat inside a 44-day cycle; large name pools make repeats very unlikely. A daily streak shows as a flame badge in the lobby, the Daily popup and the result screen; three days unlocks the Teal jacket hunter look, seven unlocks Field green. The leaderboard ranks the fastest breaches per floor against a few fictional rival crews, with a Daily Case tab and a Longest streaks board alongside. Talk time is unlimited on Floor 1, 5 minutes per employee on Floor 2, 3 with the CFO and 2 with the CEO; only time on the phone counts, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer, shows your bounty and run time, then a debrief on the real attack the floor mirrors. A lockout plays Null's taunt and shows what gave you away.
+**The Tutorial.** Barry's one-room branch across the street teaches the loop: read the clues, pick a vendor that's really on the list, and talk him into one small payment. Clearing it unlocks the elevators and the Daily door in the lobby.
+
+**Floors 1 to 3.** Floors unlock in order (guests unlock them from their own clears in that browser), and each opens with Krystal's two-screen briefing. Each floor adds a contract rule, so a con that worked downstairs stops working upstairs. Talk time is unlimited on Floor 1, 5 minutes per employee on Floor 2, 3 with the CFO and 2 with the CEO. Only time on the call counts, and you can call back with less time each call, so you can hang up and wait out the Floor 3 timelock. A breach sets off the alarm and the PA announcer, shows your bounty and run time, then a debrief on the real attack the floor mirrors. A lockout plays Null's taunt and shows what gave you away.
+
+**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. Each day picks one of 12 themed workplaces (four Plumpurse looks, plus a restaurant, coffee shop, consulting firm, trading desk, tech startup, health clinic, law office and hotel lobby). Every theme comes round once per 12-day cycle and never twice within a week. You get one employee (the daily ElevenLabs agent, its persona filled by dynamic variables), three vendors, a small case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice (no streak, no board). A daily streak shows as a flame badge; three days unlocks the Teal jacket hunter look, seven unlocks Field green.
+
+**Payouts and the board.** Your first clear of a floor pays the floor's cap (the briefing states it); repeat clears pay a 1¢ token. Guests can play everything, but their bounty is marked "not kept". The leaderboard ranks the fastest breaches per floor against a few fictional rival crews, with a Daily Case tab, a Top earners board (signed-in players only) and a Longest streaks board.
+<!-- TODO(88a8): confirm whether prod pays the floor cap on a first clear or always 1¢ (PAYOUT_CEILING_UNITS). -->
 
 > [!TIP]
 > Read the case file first, and never mention prompts or AI on a call. That reads as a scam (+40 suspicion).
@@ -80,13 +89,33 @@ A first visit opens with Krystal's cutscene: who she was, that she vanished, and
 
 <table>
 <tr><td align="center" valign="top" width="25%"><img src="docs/readme/barry.svg" width="96" alt="Barry Biscuit"><br><b>Barry Biscuit</b><br><sub>Teller · Pocket Branch</sub><br><sub><i>Your tutorial mark. Harmless, says Krystal.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/penny.svg" width="96" alt="Penny Pincher"><br><b>Penny Pincher</b><br><sub>Receptionist · Floor 1</sub><br><sub><i>Melts for real office gossip and a sincere compliment.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/dee.svg" width="96" alt="Dee Bugg"><br><b>Dee Bugg</b><br><sub>Junior Developer · Floor 1</sub><br><sub><i>On call and jumpy. A believable prod outage does the trick.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/annie.svg" width="96" alt="Annie Uity"><br><b>Annie Uity</b><br><sub>Operations Lead · Floor 2</sub><br><sub><i>Only trusts requests in her exact checklist format.</i></sub></td></tr>
-<tr><td align="center" valign="top" width="25%"><img src="docs/readme/bill.svg" width="96" alt="Bill Ledger"><br><b>Bill Ledger</b><br><sub>Compliance Controller · Floor 2</sub><br><sub><i>An "audit finding" keeps him up at night.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/cassius.svg" width="96" alt="Cassius Flow"><br><b>Cassius Flow</b><br><sub>CFO · Floor 3</sub><br><sub><i>Name-drop the right board member and he leans in.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/max.svg" width="96" alt="Max Yield"><br><b>Max Yield</b><br><sub>CEO · Floor 3</sub><br><sub><i>Two-minute attention span. Pitch him something exclusive.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/krystal.svg" width="96" alt="Krystal Klear"><br><b>Krystal Klear</b><br><sub>Your vanished mentor</sub><br><sub><i>Left a note on every floor. Her radio gives hints, for 30 seconds on the clock.</i></sub></td></tr>
+<tr><td align="center" valign="top" width="25%"><img src="docs/readme/bill.svg" width="96" alt="Bill Ledger"><br><b>Bill Ledger</b><br><sub>Compliance Controller · Floor 2</sub><br><sub><i>An "audit finding" keeps him up at night.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/cassius.svg" width="96" alt="Cassius Flow"><br><b>Cassius Flow</b><br><sub>CFO · Floor 3</sub><br><sub><i>Name-drop the right board member and he leans in.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/max.svg" width="96" alt="Max Yield"><br><b>Max Yield</b><br><sub>CEO · Floor 3</sub><br><sub><i>Two-minute attention span. Pitch him something exclusive.</i></sub></td><td align="center" valign="top" width="25%"><img src="docs/readme/krystal.svg" width="96" alt="Krystal Klear"><br><b>Krystal Klear</b><br><sub>Your vanished mentor</sub><br><sub><i>Left a note on every floor. Her briefings open each one.</i></sub></td></tr>
 </table>
+
+<a name="in-progress"></a>
+## In progress
+
+Built or being built this round, but not yet on the live site. We'll move each item up when it ships.
+
+- **Passwords.** Sign up and sign in with email and password, "set a password" after a link sign-in, and a branded sign-in email. Today sign-in is an emailed magic link.
+- **Themed Floors 1 to 3.** Each floor gets its own workplace: Floor 1 Accounts Payable, Floor 2 Trading Floor, Floor 3 Executive Penthouse, with new maps and matching staff prompts and evidence.
+- **Clue mini-games.** Each clue prop opens a short task (5 to 15 seconds) before the clue shows.
+- **Cracked-amount bounty.** The result screen and leaderboard show the amount the employee agreed to, capped by the vault's per-transfer limit, while the chain still pays the 1¢ token.
+- **No Floor 3 wait.** A new Floor 3 vault with no allowlist delay, so an approved add is immediate. The Floor 3 vault deployed today still has the 60-second timelock.
+- **Level 0 renamed "Tutorial"** everywhere a player sees it, and the case file only shows floors you've unlocked.
 
 <a name="architecture"></a>
 <img src="docs/devpost/h-architecture.png" alt="Architecture" width="100%">
 
 ![One heist in five steps: call, check, sign, vault, referee](docs/devpost/pipeline.png)
+
+| Layer | What we used |
+| --- | --- |
+| App | Next.js 16 (App Router, on Vercel), React 19, Tailwind CSS 4, HTML canvas for the walkable floors |
+| Data | Supabase: Postgres, Auth (email link), Realtime |
+| Staff | ElevenLabs Agents, one per employee, whose webhook tools call `POST /api/tools/<name>` |
+| Chain | `ColdCallVault` (Solidity, Foundry) on Arc testnet, called with viem: threshold approvals on every floor, a per-transfer cap, and a recipient allowlist on Floor 3 |
+| Referee | QuickNode Stream → `POST /api/stream` |
 
 ```mermaid
 flowchart LR
@@ -228,7 +257,6 @@ Voice is the main way to play. Every employee is one ElevenLabs agent used for b
 | **Server tools (webhooks)** | The 11 tools above. Approving a payment mid-call sends a real transaction |
 | **Dynamic variables** | `run_id`, `employee_id` and `session_id` are filled into every tool call from dynamic variables, never by the model; `{{memory}}`, `{{open_proposal}}`, `{{open_allowlist}}` and the player's cover are injected per session |
 | **Private agents + signed URLs** | Agents require auth; `/api/session` creates the run and hands the browser a signed URL |
-| **Krystal's radio** | A 📻 Radio Krystal button bottom-left on Floors 0 to 3 (`/api/radio`); each hint adds 30 s. Also in the chat view. Not on the Daily Case. |
 | **Text to Speech** | Krystal's voice memos and floor briefings, the Plumpurse PA announcer and Null's taunt, pre-generated (`agents/generate-audio.ts`) |
 | **Sound Effects** | The breach alarm, phone ring and hang-up click, pre-generated |
 | **Music** | Title and per-floor instrumental loops, pre-generated via ElevenLabs Music |
@@ -338,37 +366,56 @@ The syndicate in the game is fictional. The cons it teaches are not: the debrief
 <a name="run-it-locally"></a>
 <img src="docs/devpost/h-run.png" alt="Run it locally" width="100%">
 
+Needs Node.js 20+ and [Foundry](https://book.getfoundry.sh/). Copy the example env file and fill in your own testnet values; never commit `.env.local`.
+
 ```
-npm install
 cp .env.example .env.local     # fill in the values
-npm run dev
+npm install
+npm run build                  # type-check and build the app
+npm run dev                    # http://localhost:3000
 
-cd contracts && forge test                                        # contract tests (33)
-npx tsx --env-file=.env.local scripts/e2e-floor1.ts               # a real Floor 1 heist through the API
-npx tsx --env-file=.env.local scripts/e2e-floor3.ts               # allowlist + timelock path (~75 s)
-npx tsx --env-file=.env.local scripts/topup.ts                    # balances (add --apply to refill)
-npx tsx --env-file=.env.local scripts/pause.ts status             # kill switch: status | on | off
+cd contracts && forge test     # 33 contract tests
 ```
 
-| Env group | Variables |
+Keys in `.env.example`, by name only:
+
+| Group | Variables |
 | --- | --- |
 | Arc | `ARC_TESTNET_RPC_URL`, `ARC_CHAIN_ID`, `ARC_EXPLORER_URL`, `USDC_ADDRESS` |
-| Signers | `SIGNER_MODE`, `HOUSE_PRIVATE_KEY`, `<EMPLOYEE>_PRIVATE_KEY` |
-| Circle | `CIRCLE_API_KEY`, `CIRCLE_ENTITY_SECRET`, `CIRCLE_WALLET_SET_ID`, `<NAME>_CIRCLE_WALLET_ID` |
+| Signers | `SIGNER_MODE` (`viem` or `circle`); `HOUSE_PRIVATE_KEY` and one `<NAME>_PRIVATE_KEY` per employee (Barry, Penny, Dee, Annie, Bill, Cassius, Max). Testnet keys only. |
+| Circle | `CIRCLE_API_KEY`, `CIRCLE_ENTITY_SECRET`, `CIRCLE_WALLET_SET_ID`, `HOUSE_CIRCLE_WALLET_ID` and one `<NAME>_CIRCLE_WALLET_ID` per employee |
 | Supabase | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
 | Webhooks | `TOOL_SHARED_SECRET`, `STREAM_WEBHOOK_TOKEN`, `RECEIPT_BACKUP_DELAY_MS` |
 | ElevenLabs, QuickNode | `ELEVENLABS_API_KEY`, `QUICKNODE_API_KEY` |
 | Limits | `DAILY_BUDGET_CAP_MULTIPLE`, `TOKEN_PAYOUT_UNITS`, `PAYOUT_CEILING_UNITS`, `RUNS_PER_USER_PER_DAY`, `RUNS_PER_IP_PER_DAY`, `VOICE_MINUTES_PER_USER_PER_DAY` |
 
+Scripts against the real testnet backend:
+
 ```
-app/                 game UI, pages, /api/session, /api/radio (B)
+npx tsx --env-file=.env.local scripts/e2e-floor1.ts     # a real Floor 1 heist through the API
+npx tsx --env-file=.env.local scripts/e2e-floor3.ts     # allowlist + timelock path (~75 s)
+npx tsx --env-file=.env.local scripts/e2e-daily.ts      # today's Daily Case
+npx tsx --env-file=.env.local scripts/topup.ts          # vault balances (add --apply to refill)
+npx tsx --env-file=.env.local scripts/pause.ts status   # kill switch: status | on | off
+npx tsx --env-file=.env.local agents/sync.ts            # push agents/*.md to ElevenLabs
+```
+
+Repo layout:
+
+```
+app/                 game UI, pages, /api/session (B)
 app/api/tools/       ElevenLabs tool webhooks (thin wrappers, A)
 app/api/stream/      QuickNode Stream webhook (A)
 server/chain/        vault client, tool handlers, ingest, Circle wallets (A)
-server/game/         lookups, suspicion, memory, daily case (B)
+server/game/         lookups, suspicion, memory, sessions, daily board (B)
 agents/              rule sheets, ElevenLabs sync, audio generation (B)
 contracts/           ColdCallVault + Foundry tests (A)
 content/plumpurse/   the bank: staff, vendors, calendar, memos, Krystal's notes (B)
+content/daily/       Daily Case templates and the 12 workplace themes
+shared/              interfaces.ts (the A/B contract), dailyCase.ts, the vault ABI
+deployments/         vault addresses on Arc testnet
+scripts/             e2e heists, top-up, kill switch, demo reset
+tools/art/           tile, map and sprite builders
 supabase/migrations/ database schema
 ```
 
@@ -376,6 +423,15 @@ Repo layout and ownership are in `CLAUDE.md`; the chain design decisions are in 
 
 <a name="credits"></a>
 <img src="docs/devpost/h-credits.png" alt="Credits" width="100%">
+
+**Team**
+
+- **Madhav Vinod**: the chain side (`ColdCallVault`, deployments, tool webhooks and signing, the QuickNode Stream and ingest), the Daily Case, and the canvas engine.
+- **Audrey Bolyard**: the game side (the ElevenLabs agents and rule sheets, sessions, suspicion and memory, the Plumpurse content, the pixel art and maps) and much of the UI.
+
+<!-- TODO(Madhav, Audrey): confirm these one-line roles. -->
+
+**Assets**
 
 - Fonts: Press Start 2P by CodeMan38 (pixel font) and IBM Plex Sans by IBM (running text), both SIL Open Font License, via Google Fonts.
 - Walkable floors: furniture tiles from [Roguelike Indoors](https://kenney.nl/assets/roguelike-indoors) by Kenney (CC0). Floors and walls are generated by `tools/art/build_tiles.py`. The walking characters are drawn from the game's own pixel portraits (`tools/art/portrait_sprites.py`), so each floor character looks the same on the map as in the dialogue box. Daily Case staff sprites come from `tools/art/staff_sprites.py`.
