@@ -51,7 +51,7 @@ const employees = directory.employees;
 const byId = Object.fromEntries(employees.map((e) => [e.id, e]));
 const facts = Object.fromEntries(dossier.notes.map((n) => [n.employee_id, n.facts]));
 const memos = [...memosJson.memos].sort((a, b) => b.date.localeCompare(a.date));
-const floorName = (f: number) => (f === 0 ? "Pocket Branch" : `Floor ${f}`);
+const floorName = (f: number) => (f === 0 ? "Tutorial" : `Floor ${f}`);
 
 function dollars(range: number[]) {
   if (range.length === 0) return "?";

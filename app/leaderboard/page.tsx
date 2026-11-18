@@ -32,7 +32,7 @@ const clock = (ms: number) => {
 
 const floorName = (n: number) => {
   const f = company.floors.find((x) => x.floor === n);
-  if (n === 0) return f?.name ?? "Tutorial";
+  if (n === 0) return "Tutorial";
   return `Floor ${n}${f ? ` · ${f.name}` : ""}`;
 };
 

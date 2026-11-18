@@ -72,7 +72,7 @@ export function DailyArchive({ tutorialCleared, clearedToday }: { tutorialCleare
         <div className="pixel-frame absolute left-0 top-full z-30 mt-3 flex max-h-[calc(100dvh-5rem)] w-72 max-w-[calc(100vw-2rem)] flex-col overflow-y-auto bg-[var(--cc-panel)] p-2">
           {locked && (
             <p className="border-b-2 border-[var(--cc-edge)] px-2 pb-2 pt-1 text-[9px] leading-relaxed text-[var(--cc-danger)]">
-              🔒 Opens after you clear the tutorial (the Pocket Branch).
+              🔒 Opens after you clear the Tutorial.
             </p>
           )}
           {days.map((d, i) => (

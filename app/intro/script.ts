@@ -27,5 +27,5 @@ export const DRAFT_INTRO: IntroScript = {
     },
   ],
   goal: "Breach each floor's vault before the Black Ledger does, and find what Krystal left behind.",
-  next: "Start at the Pocket Branch across the street.",
+  next: "Start with the Tutorial, across the street.",
 };

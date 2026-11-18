@@ -60,7 +60,7 @@ export function Lobby({
     setPending(null);
     setLeaving({
       to,
-      label: to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Pocket Branch" : `Going up · Floor ${n}`,
+      label: to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Tutorial" : `Going up · Floor ${n}`,
     });
   }, []);
   const arrived = useCallback(() => {
@@ -108,7 +108,7 @@ export function Lobby({
             label: `${pr.label.replace(/ · (LOCKED|OPEN)$/, "")} · ${tutorialDone ? "OPEN" : "LOCKED"}`,
             text: tutorialDone
               ? pr.text.replace("Opens once you clear the tutorial.", "Walk through the door to play.")
-              : "Locked. Clear the tutorial first: the Pocket Branch, through the T door. Then a new case opens behind this door every day.",
+              : "Locked. Clear the Tutorial first, through the T door. Then a new case opens behind this door every day.",
           },
     );
 
@@ -163,7 +163,7 @@ export function Lobby({
       {dailyLocked && (
         <PropDialogue
           label="Daily Case · locked"
-          text="The Daily Case opens once you've cleared the tutorial: the Pocket Branch, through the T door. After that, a new case waits behind this door every day."
+          text="The Daily Case opens once you've cleared the Tutorial, through the T door. After that, a new case waits behind this door every day."
           onClose={() => setDailyLocked(false)}
         />
       )}

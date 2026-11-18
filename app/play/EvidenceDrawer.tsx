@@ -101,7 +101,7 @@ export function EvidenceDrawer({
       >
         <div className="flex items-start justify-between gap-3">
           <p id={titleId} className="font-pixel text-sm text-[var(--cc-ink)]">
-            Evidence · Floor {floor === 0 ? "0 (Pocket Branch)" : floor}
+            Evidence · {floor === 0 ? "Tutorial" : `Floor ${floor}`}
           </p>
           <button
             ref={closeRef}
