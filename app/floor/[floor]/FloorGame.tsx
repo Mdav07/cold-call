@@ -221,14 +221,16 @@ export function FloorGame({
     return () => ro.disconnect();
   }, [boxOpen, open]);
 
-  // The guide's dots point to the elevator only once the level is done (a breach). Until then they lead
-  // to the nearest employee you haven't talked to yet and who hasn't locked you out (Floor 1: Dee, then
-  // Penny; Floor 2: Annie, then Bill), and disappear once you've met everyone.
+  // The guide's dots lead to the nearest employee you haven't talked to yet and who hasn't locked you
+  // out (Floor 1: Dee, then Penny; Floor 2: Annie, then Bill), even after a breach: one employee paying
+  // doesn't mean you're done meeting people. Only once everyone's been met do they point at the elevator,
+  // and only if the level is done (a breach); otherwise they disappear.
   const exit = map.exits?.[0];
   const dist = (n: { x: number; y: number }) => Math.abs(n.x - map.spawn.x) + Math.abs(n.y - map.spawn.y);
   const nextNpc = [...map.npcs].filter((n) => !talkedTo.has(n.id) && !lockedOut.has(n.id)).sort((a, b) => dist(a) - dist(b))[0];
-  const goal = cleared && exit ? { x: exit.x, y: exit.y } : nextNpc ? { x: nextNpc.x, y: nextNpc.y } : null;
-  const tags = cleared && exit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
+  const toExit = cleared && !nextNpc && !!exit;
+  const goal = nextNpc ? { x: nextNpc.x, y: nextNpc.y } : toExit ? { x: exit.x, y: exit.y } : null;
+  const tags = toExit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
 
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
