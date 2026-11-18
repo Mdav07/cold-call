@@ -30,6 +30,16 @@ const clock = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
+/**
+ * Every paid breach, for the winnings board. Reads cracked_units (the agreed bounty) when the database
+ * has that column; until its migration is applied, falls back to the paid amount alone.
+ */
+async function paidBreaches() {
+  const q = (cols: string) => db().from("runs").select(cols).eq("outcome", "breach").not("payout_units", "is", null).limit(5000);
+  const withCracked = await q("user_id, payout_units, cracked_units, users(display_name)");
+  return withCracked.error ? q("user_id, payout_units, users(display_name)") : withCracked;
+}
+
 const floorName = (n: number) => {
   const f = company.floors.find((x) => x.floor === n);
   if (n === 0) return "Tutorial";
@@ -122,17 +132,23 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .limit(10),
     isDaily ? dailyBoard(today.date, PER_FLOOR) : Promise.resolve([]),
     // Winnings: every paid breach (testnet dollars), summed per player below.
-    db().from("runs").select("user_id, payout_units, users(display_name)").eq("outcome", "breach").not("payout_units", "is", null).limit(5000),
+    paidBreaches(),
     getDemoUserId().catch(() => null),
   ]);
   // Top earners: total bounty per signed-in player. Guests can't keep winnings, so they aren't listed.
-  type PaidRun = { user_id: string; payout_units: string | number | null; users: { display_name: string | null } | { display_name: string | null }[] | null };
+  type PaidRun = {
+    user_id: string;
+    payout_units: string | number | null;
+    cracked_units?: string | number | null;
+    users: { display_name: string | null } | { display_name: string | null }[] | null;
+  };
   const earners = new Map<string, { name: string; units: number; clears: number }>();
-  for (const r of (paidRuns.data ?? []) as PaidRun[]) {
+  for (const r of (paidRuns.data ?? []) as unknown as PaidRun[]) {
     if (!r.user_id || r.user_id === demoId) continue;
     const u = Array.isArray(r.users) ? r.users[0] : r.users;
     const e = earners.get(r.user_id) ?? { name: u?.display_name ?? "Anonymous hunter", units: 0, clears: 0 };
-    e.units += Number(r.payout_units ?? 0);
+    // What the employee agreed to ("cracked"), or what the chain paid where that isn't recorded.
+    e.units += Number(r.cracked_units ?? r.payout_units ?? 0);
     e.clears += 1;
     earners.set(r.user_id, e);
   }
