@@ -8,16 +8,16 @@ export interface HunterOption {
 }
 
 /** Eight looks across skin tones and gender presentations (tools/art/portrait_sprites.py HUNTERS).
- *  Labels name the clothes and hair, never the person. */
+ *  Each has a name with a colour mnemonic (the colour of their outfit or hair, then a name). */
 export const HUNTERS: HunterOption[] = [
-  { id: "hunter-2", label: "Red dress" },
-  { id: "hunter-3", label: "Gold sweater" },
-  { id: "hunter-4", label: "Violet hijab" },
-  { id: "hunter-6", label: "Pink hair" },
-  { id: "hunter-7", label: "Green flannel" },
-  { id: "hunter-8", label: "Teal braids" },
-  { id: "hunter-9", label: "Grey suit" },
-  { id: "hunter-10", label: "Silver specs" },
+  { id: "hunter-2", label: "Red Riya" },
+  { id: "hunter-3", label: "Gold Gideon" },
+  { id: "hunter-4", label: "Violet Vida" },
+  { id: "hunter-6", label: "Pink Pia" },
+  { id: "hunter-7", label: "Green Glen" },
+  { id: "hunter-8", label: "Teal Tiana" },
+  { id: "hunter-9", label: "Charcoal Chen" },
+  { id: "hunter-10", label: "Silver Sol" },
 ];
 
 /** Looks earned with a Daily Case streak (app/play/streak.ts STREAK_REWARDS). Valid once picked. */
