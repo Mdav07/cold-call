@@ -15,7 +15,8 @@ import { Gate } from "./Gate";
 
 /** One map per floor, from B (app/floor/maps/src compiles to these). */
 const MAPS: Record<string, FloorMap> = {
-  "0": floor0 as unknown as FloorMap,
+  // Level 0 is called "Tutorial" wherever a player sees it (HUD, briefing, elevator).
+  "0": { ...(floor0 as unknown as FloorMap), name: "Tutorial · Barry's Branch" },
   "1": floor1 as unknown as FloorMap,
   "2": floor2 as unknown as FloorMap,
   "3": floor3 as unknown as FloorMap,

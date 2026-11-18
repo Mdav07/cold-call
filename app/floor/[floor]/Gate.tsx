@@ -7,7 +7,7 @@ import { LockedFloor } from "./LockedFloor";
 import { GuestGate } from "./GuestGate";
 
 export async function Gate({ floor }: { floor: number }) {
-  const below = floor - 1 === 0 ? "the Pocket Branch" : `Floor ${floor - 1}`;
+  const below = floor - 1 === 0 ? "the Tutorial" : `Floor ${floor - 1}`;
   // Guests share the demo player's clears, so their gate is this browser's own progress.
   const signedIn = await signedInUserId().catch(() => null);
   if (!signedIn) return <GuestGate floor={floor} below={below} />;

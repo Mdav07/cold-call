@@ -25,7 +25,7 @@ function Briefing({ floor }: { floor: number }) {
   if (!b) return null;
   return (
     <div className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
-      <KrystalMemo title={`Krystal's briefing: ${floor === 0 ? "the Pocket Branch" : `Floor ${floor}`}`} audio={b.audio} text={b.text} />
+      <KrystalMemo title={`Krystal's briefing: ${floor === 0 ? "the Tutorial" : `Floor ${floor}`}`} audio={b.audio} text={b.text} />
       {floor === 0 && (
         <ol className="list-decimal pl-5 text-sm leading-relaxed text-[var(--cc-ink)]">
           {TUTORIAL_STEPS.map((s) => (

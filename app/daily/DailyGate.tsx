@@ -1,4 +1,4 @@
-// The Daily Case opens once the tutorial is cleared: for a signed-in player, a Pocket Branch breach on
+// The Daily Case opens once the tutorial is cleared: for a signed-in player, a Tutorial breach on
 // their account; for a guest, this browser's own clear (guests share the demo player's history).
 // This is the page only; /api/session still decides who may start a daily run.
 
@@ -14,5 +14,5 @@ export async function DailyGate() {
   const tutorial = floors.find((f) => f.floor === 0);
   // No tower data (DB hiccup): don't lock the player out of today's case.
   if (!tutorial || tutorial.cleared) return null;
-  return <LockedFloor floor={4} below="the Pocket Branch" title={LOCKED_TITLE} body={LOCKED_BODY} />;
+  return <LockedFloor floor={4} below="the Tutorial" title={LOCKED_TITLE} body={LOCKED_BODY} />;
 }

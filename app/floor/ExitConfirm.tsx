@@ -7,7 +7,7 @@ import { confirm as confirmSound } from "@/app/floor/hud/sound";
 export function exitLabel(to: string): string {
   if (to === "/tower") return "Leave for the lobby?";
   if (to === "/daily") return "Enter today's Daily Case?";
-  if (to === "/floor/0") return "Cross the street to the Pocket Branch?";
+  if (to === "/floor/0") return "Cross the street to the Tutorial?";
   const n = to.replace("/floor/", "");
   if (/^\d+$/.test(n)) return `Take the elevator to Floor ${n}?`;
   return `Go to ${to}?`;
