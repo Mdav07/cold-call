@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
 import { markDailyCleared } from "@/app/play/streak";
@@ -78,10 +78,11 @@ export function FloorGame({
   // Guide state: who the player has talked to, and has this floor been breached this visit.
   const [talkedTo, setTalkedTo] = useState<ReadonlySet<EmployeeId>>(new Set());
   const [cleared, setCleared] = useState(false);
-  // 100% suspicion: once the employee's last line has played, security walks the player out (the
-  // escort cutscene in FloorScene). Key: run and employee, so each lockout plays it once.
+  // 100% suspicion: security walks the player out (the escort cutscene in FloorScene). Key: run and
+  // employee, so each lockout plays it once. Set below, once the lockout is known.
   const [escort, setEscort] = useState<string | null>(null);
-  const escorted = useRef(new Set<string>());
+  const [escorted, setEscorted] = useState<ReadonlySet<string>>(new Set());
+  const [settledKey, setSettledKey] = useState<string | null>(null);
 
   const polled = useRunState(runId, focus, !!runId);
 
@@ -113,11 +114,19 @@ export function FloorGame({
     markClearedHere(map.floor);
     if (daily && !practice) markDailyCleared(daily.date);
   }, [outcome, map.floor, daily, practice]);
+  // Security comes for an employee who locked you out during this visit (not one found locked when a
+  // saved run is resumed): right away if their call is closed, once their last line has played if it's
+  // still open, and after 7 s at the latest (a call can stay open without settling).
+  const lockNpc = runId ? [...lockedOut].find((id) => talkedTo.has(id) && !escorted.has(`${runId}:${id}`)) : undefined;
+  const lockKey = lockNpc ? `${runId}:${lockNpc}` : null;
+  const lockCallOpen = open?.kind === "npc" && open.id === lockNpc;
+  const lockReady = !lockCallOpen || settledKey === lockKey;
   // The result waits for the employee to finish their last reply (NpcDialogue calls onSettled);
   // with no conversation open it shows at once.
   const [settledRun, setSettledRun] = useState<string | null>(null);
   const showOutcome =
     !escort &&
+    !lockKey && // a lockout still to be walked out: the result waits for the guard
     !!state && (outcome === "breach" || outcome === "lockout") && dismissedRun !== runId && (open?.kind !== "npc" || settledRun === runId);
   const outcomeRef = useLatest(outcome);
   // The HUD's VAULT is a server read: refresh it once the payment has landed and the result is up.
@@ -240,6 +249,16 @@ export function FloorGame({
   const goal = nextNpc ? { x: nextNpc.x, y: nextNpc.y } : toExit ? { x: exit.x, y: exit.y } : null;
   const tags = toExit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
 
+  useEffect(() => {
+    if (!lockKey || escort) return;
+    const t = setTimeout(() => {
+      setEscorted((s) => new Set(s).add(lockKey));
+      setOpen(null);
+      setEscort(lockKey);
+    }, lockReady ? 0 : 7000);
+    return () => clearTimeout(t);
+  }, [lockKey, lockReady, escort]);
+
   // After the escort: if the run is over (everyone who could pay has locked you out), the result shows
   // here by the door; otherwise the guard has put you in the elevator back to the lobby.
   const escortDone = useCallback(() => {
@@ -279,13 +298,7 @@ export function FloorGame({
           onCaseFile={openCaseFile}
           onSettled={() => {
             setSettledRun(runId);
-            // Locked out (100% suspicion): close the call and send in security.
-            const k = `${runId}:${npc.id}`;
-            if (lockedOut.has(npc.id) && !escorted.current.has(k)) {
-              escorted.current.add(k);
-              setOpen(null);
-              setEscort(k);
-            }
+            setSettledKey(`${runId}:${npc.id}`);
           }}
           dailyDate={daily?.date}
         />
