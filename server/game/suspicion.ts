@@ -115,9 +115,15 @@ async function endRunIfNoPathLeft(runId: string, employee: EmployeeId): Promise<
   await onRunEnded(runId); // Floor 3: the player leaves the allowlist (A's helper, idempotent)
 }
 
+/**
+ * Employees hang up only at a lockout (suspicion 100). Anything earlier returns ended: false and the
+ * prompt (shared-rules.md, rules 7 and 13) says to stay on the line. Running out of talk time is
+ * handled by the page, which ends the call itself. Krystal (the radio) ends whenever the caller is done.
+ */
 export async function endConversation(input: EndConversationInput): Promise<EndConversationResult> {
   await recordTalkTime(input.session_id);
-  return { ended: true };
+  if ((input.employee_id as string) === "krystal") return { ended: true }; // the radio isn't an EmployeeId
+  return { ended: (await latestLevel(input.run_id, input.employee_id)) === LOCKOUT };
 }
 
 /** Sets seconds_used from the conversation's start to now. Idempotent enough: last call wins. */

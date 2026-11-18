@@ -150,7 +150,7 @@ const TOOLS: Record<string, { description: string; props: Record<string, object>
     required: ["delta", "reason"],
   },
   end_conversation: {
-    description: "End the call: lockout, talk time over, or the conversation is done.",
+    description: "End the call. Employees: only after report_suspicion returned locked_out: true; it returns ended: false otherwise (stay on the line). Krystal: when the caller is done.",
     props: { reason: s("Why the call is ending") },
     required: ["reason"],
   },
