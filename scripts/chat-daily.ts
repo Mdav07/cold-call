@@ -30,7 +30,7 @@ async function main() {
       console.log(`  ${c.employee.firstName}: ${text}`);
       waiting?.();
     }
-    if (e.type === "agent_tool_response" || e.type === "client_tool_call") console.log("  [tool]", JSON.stringify(e).slice(0, 200));
+    if (e.type === "agent_tool_response" || e.type === "client_tool_call") console.log("  [tool]", JSON.stringify(e).slice(0, 900));
   };
   await new Promise<void>((r) => (ws.onopen = () => r()));
   ws.send(

@@ -447,6 +447,11 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
 
       // Names above heads: small pixel text on a dark plate. Press Start's measureText runs short,
       // so pad generously and size the box from real glyph bounds when the browser reports them.
+      // A caption next to the screen's edge slides in so it isn't clipped (phones show a few tiles only).
+      const keepInView = (cx: number, w: number) => {
+        const lo = camX + w / 2 + 2, hi = camX + viewW - w / 2 - 2;
+        return lo > hi ? cx : Math.min(hi, Math.max(lo, cx));
+      };
       const nameTag = (x: number, y: number, text: string) => {
         c.font = `${5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "center";
@@ -457,7 +462,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const padX = 5 * u, padY = 3 * u;
         const wdt = Math.ceil(glyphW + padX * 2);
         const h = Math.ceil(glyphH + padY * 2);
-        const cx = Math.round(x + TILE / 2);
+        const cx = Math.round(keepInView(x + TILE / 2, wdt));
         const cy = Math.round(y - (FRAME_H - TILE) + 8);
         c.fillStyle = "rgba(21, 20, 26, 0.82)";
         c.fillRect(cx - Math.round(wdt / 2), cy - Math.round(h / 2), wdt, h);
@@ -586,7 +591,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.textAlign = "center";
         c.textBaseline = "middle";
         const wdt = c.measureText(text).width + 6 * u;
-        const cx = tx * TILE + TILE / 2, cy = ty * TILE - 5;
+        const cx = keepInView(tx * TILE + TILE / 2, wdt), cy = ty * TILE - 5;
         c.fillStyle = "rgba(21, 20, 26, 0.82)";
         c.fillRect(Math.round(cx - wdt / 2), Math.round(cy - 4 * u), Math.round(wdt), Math.round(8 * u));
         c.fillStyle = "#f4c95d";
