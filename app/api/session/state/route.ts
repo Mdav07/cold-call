@@ -44,11 +44,7 @@ export async function GET(req: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    db()
-      .from("runs")
-      .select("user_id, floor, outcome, tx_hash, ended_at, duration_ms, payout_units, cracked_units, daily_date, practice")
-      .eq("id", run_id)
-      .maybeSingle(),
+    loadRun(run_id),
   ]);
 
   // The Daily Case: the player's streak (practice replays don't count), for the result screen.
@@ -63,4 +59,13 @@ export async function GET(req: NextRequest) {
     run: run.data ? runRow : null,
     daily_streak,
   });
+}
+
+const RUN_COLUMNS = "user_id, floor, outcome, tx_hash, ended_at, duration_ms, payout_units, daily_date, practice";
+
+/** The run, with cracked_units when the column exists (migration 20261118150000); without it, the rest. */
+async function loadRun(runId: string) {
+  const withCracked = await db().from("runs").select(`${RUN_COLUMNS}, cracked_units`).eq("id", runId).maybeSingle();
+  if (!withCracked.error) return withCracked;
+  return db().from("runs").select(RUN_COLUMNS).eq("id", runId).maybeSingle();
 }
