@@ -9,7 +9,7 @@ import company from "@/content/plumpurse/company.json";
 import { getDemoUserId } from "@/server/game/players";
 import { db } from "@/server/chain/db";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
-import { dailyBoard } from "@/server/game/dailyBoard";
+import { dailyBoard, streakOf } from "@/server/game/dailyBoard";
 import { DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
 
 const FLOORS = [0, 1, 2, 3] as const;
@@ -124,12 +124,15 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .select("user_id, display_name, floor, channel, duration_ms, tx_hash, daily_contract_id")
       .order("duration_ms")
       .limit(2000),
+    // Daily Case streaks: every real (non-practice) Daily clear, grouped per player below.
     db()
-      .from("streaks")
-      .select("user_id, current, longest, users(display_name)")
-      .gt("longest", 0)
-      .order("longest", { ascending: false })
-      .limit(10),
+      .from("runs")
+      .select("user_id, daily_date, users(display_name)")
+      .eq("floor", DAILY_FLOOR)
+      .eq("outcome", "breach")
+      .eq("practice", false)
+      .not("daily_date", "is", null)
+      .limit(5000),
     isDaily ? dailyBoard(today.date, PER_FLOOR) : Promise.resolve([]),
     // Winnings: every paid breach (testnet dollars), summed per player below.
     paidBreaches(),
@@ -154,7 +157,20 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   }
   const topEarners = [...earners.values()].sort((a, b) => b.units - a.units).slice(0, 10);
   // The shared guest account isn't a player: keep it off the streaks board too.
-  const streakRows = (streaks.data ?? []).filter((r) => r.user_id !== demoId);
+  type DailyRow = { user_id: string; daily_date: string; users: { display_name: string | null } | { display_name: string | null }[] | null };
+  const dailyDays = new Map<string, { name: string | null; days: Set<string> }>();
+  for (const r of (streaks.data ?? []) as DailyRow[]) {
+    if (!r.user_id || r.user_id === demoId) continue;
+    const u = Array.isArray(r.users) ? r.users[0] : r.users;
+    const e = dailyDays.get(r.user_id) ?? { name: u?.display_name ?? null, days: new Set<string>() };
+    e.days.add(r.daily_date);
+    dailyDays.set(r.user_id, e);
+  }
+  const streakRows = [...dailyDays.entries()]
+    .map(([user_id, e]) => ({ user_id, users: { display_name: e.name }, longest: streakOf(e.days, todayUtc()).best }))
+    .filter((r) => r.longest > 0)
+    .sort((a, b) => b.longest - a.longest)
+    .slice(0, 10);
   // The Daily Case board's rows, in the floor boards' shape (one per player, fastest first).
   const dailyRows: Row[] = todaysBoard
     .filter((r) => channel === "all" || r.channel === channel)
@@ -264,7 +280,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
 
       <section aria-labelledby="streaks" className="pixel-frame flex flex-col gap-3 bg-[var(--cc-panel)] p-4">
         <h2 id="streaks" className="font-pixel text-xs text-[var(--cc-accent)]">
-          Longest streaks
+          Longest Daily streaks
         </h2>
         {streakRows.length ? (
           <ol className="flex flex-col gap-1 text-sm">

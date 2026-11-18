@@ -3,7 +3,8 @@
 // The Daily Case streak: a pixel flame and the days in a row, what to do next, and (full size) a week of
 // pips with the next reward. Compact for top bars; full for the Daily popup and the result screen.
 
-import { nextReward, useStreak, type Streak } from "./streak";
+import { useStreak, type Streak } from "./streak";
+import { nextStreakUnlock } from "./unlocks";
 
 /** An 8x10 pixel flame; grey when there is no streak going. */
 function Flame({ lit, size = 2 }: { lit: boolean; size?: number }) {
@@ -56,8 +57,9 @@ export function StreakBadge({ variant = "compact" }: { variant?: "compact" | "fu
     );
   }
 
-  const next = nextReward(s.best);
-  const week = Math.max(7, next?.days ?? 7);
+  const next = nextStreakUnlock(s.best);
+  const week = 7; // a week of pips; a longer goal (30 days) is counted in words below
+  const long = !!next?.streakDays && next.streakDays > week;
   return (
     <section aria-label="Daily streak" className="flex flex-col gap-2">
       <div className="flex items-center gap-3">
@@ -67,10 +69,10 @@ export function StreakBadge({ variant = "compact" }: { variant?: "compact" | "fu
           <p className="text-sm text-[var(--cc-ink)]">{status(s)}</p>
         </div>
       </div>
-      <ol className="flex gap-1" aria-label={`${s.current} of ${week} days`}>
+      <ol className="flex gap-1" aria-label={`${Math.min(s.current, week)} of ${week} days`}>
         {Array.from({ length: week }, (_, i) => {
           const done = i < s.current;
-          const reward = next && i + 1 === next.days;
+          const reward = !long && next && i + 1 === next.streakDays;
           return (
             <li
               key={i}
@@ -85,8 +87,10 @@ export function StreakBadge({ variant = "compact" }: { variant?: "compact" | "fu
       </ol>
       <p className="text-xs text-[var(--cc-muted)]">
         {next
-          ? `★ ${next.days} days in a row unlocks ${next.label}, a new hunter.`
-          : "Every hunter look unlocked. Best streak: " + s.best + " days."}
+          ? long
+            ? `★ Day ${s.current} of ${next.streakDays}: a ${next.streakDays}-day Daily streak unlocks ${next.label}, a new hunter.`
+            : `★ ${next.streakDays} Daily Cases in a row unlocks ${next.label}, a new hunter.`
+          : "Every streak hunter unlocked. Best streak: " + s.best + " days."}
         {s.guest ? " Sign in to keep your streak on any device." : ""}
       </p>
     </section>
