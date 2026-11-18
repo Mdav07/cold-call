@@ -306,6 +306,8 @@ function dailyVariables(date: string): Record<string, string> {
     daily_first_name: c.employee.firstName,
     daily_title: c.employee.title,
     daily_place: c.place,
+    daily_business: c.business, // the name they answer the phone with ("Plumpurse", "Rosso's Trattoria")
+    daily_float: c.float, // what they pay small bills from ("the branch float", "the till")
     daily_personality: c.employee.personality,
     daily_tic: c.employee.tic,
     daily_soft_spot: c.employee.softSpot,

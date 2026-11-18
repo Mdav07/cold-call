@@ -1,0 +1,987 @@
+{
+  "_about": "Daily Case themes (shared/dailyCase.ts). One theme a day by a no-repeat rotation. Tile values are names in app/floor/maps/tiles.json (art: tools/art/theme_tiles.py). Bank themes (pool: templates) draw places, vendors and flavour from templates.json; the others use their own. business is the name the employee answers the phone with; float is the money they pay small bills from. Vendor prefixes are unique across both files.",
+  "themes": [
+    {
+      "id": "bank-branch",
+      "name": "Plumpurse: the Pocket Branch look",
+      "business": "Plumpurse",
+      "float": "the branch float",
+      "pool": "templates",
+      "tiles": {
+        "floor": "floor_branch",
+        "wall": "wall_branch",
+        "walltop": "walltop_branch",
+        "window": "window_branch",
+        "board": "board_branch",
+        "station": "counter",
+        "station_note": "counter_note",
+        "decor": [
+          "plant",
+          "bookshelf",
+          "water_cooler"
+        ],
+        "seat": "office_chair"
+      }
+    },
+    {
+      "id": "bank-bullpen",
+      "name": "Plumpurse: the Bullpen look",
+      "business": "Plumpurse",
+      "float": "the branch float",
+      "pool": "templates",
+      "tiles": {
+        "floor": "floor_bullpen",
+        "wall": "wall_bullpen",
+        "walltop": "walltop_bullpen",
+        "window": "window_bullpen",
+        "board": "board_bullpen",
+        "station": "counter",
+        "station_note": "counter_note",
+        "decor": [
+          "plant",
+          "cabinet_dark",
+          "water_cooler"
+        ],
+        "seat": "office_chair"
+      }
+    },
+    {
+      "id": "bank-management",
+      "name": "Plumpurse: the Management look",
+      "business": "Plumpurse",
+      "float": "the branch float",
+      "pool": "templates",
+      "tiles": {
+        "floor": "floor_management",
+        "wall": "wall_management",
+        "walltop": "walltop_management",
+        "window": "window_management",
+        "board": "board_management",
+        "station": "counter",
+        "station_note": "counter_note",
+        "decor": [
+          "plant_small",
+          "bookshelf",
+          "locker"
+        ],
+        "seat": "office_chair"
+      }
+    },
+    {
+      "id": "bank-executive",
+      "name": "Plumpurse: the Executive look",
+      "business": "Plumpurse",
+      "float": "the branch float",
+      "pool": "templates",
+      "tiles": {
+        "floor": "floor_executive",
+        "wall": "wall_executive",
+        "walltop": "walltop_executive",
+        "window": "window_executive",
+        "board": "board_executive",
+        "station": "counter",
+        "station_note": "counter_note",
+        "decor": [
+          "candelabra_gold",
+          "plant",
+          "bookshelf"
+        ],
+        "seat": "office_chair"
+      }
+    },
+    {
+      "id": "restaurant",
+      "name": "Restaurant",
+      "float": "the till",
+      "tiles": {
+        "floor": "floor_restaurant",
+        "wall": "wall_restaurant",
+        "walltop": "walltop_restaurant",
+        "window": "window_restaurant",
+        "board": "board_restaurant",
+        "station": "station_restaurant",
+        "station_note": "station_note_restaurant",
+        "decor": [
+          "stove_restaurant",
+          "wine_rack_restaurant",
+          "herbs_restaurant"
+        ],
+        "seat": "seat_restaurant"
+      },
+      "places": [
+        {
+          "title": "The Late Kitchen",
+          "business": "Rosso's Trattoria",
+          "place": "Rosso's Trattoria, after the dinner rush",
+          "role": "Night Manager",
+          "duty": "closing up the kitchen"
+        },
+        {
+          "title": "The Brunch Shift",
+          "business": "The Golden Spoon",
+          "place": "The Golden Spoon diner on Main Street",
+          "role": "Shift Lead",
+          "duty": "covering the brunch shift alone"
+        },
+        {
+          "title": "The Noodle Bar",
+          "business": "Lucky Noodle",
+          "place": "Lucky Noodle, a twelve-seat noodle bar",
+          "role": "Host",
+          "duty": "running the front of house"
+        },
+        {
+          "title": "The Food Hall",
+          "business": "Harbor Food Hall",
+          "place": "the Harbor Food Hall office",
+          "role": "Hall Manager",
+          "duty": "counting the stalls' takings"
+        },
+        {
+          "title": "The Steakhouse",
+          "business": "Copper & Ash",
+          "place": "Copper & Ash steakhouse",
+          "role": "Maître d'",
+          "duty": "setting tables for a private party"
+        },
+        {
+          "title": "The Taco Window",
+          "business": "Taco Tuesday Every Day",
+          "place": "the Taco Tuesday Every Day takeout window",
+          "role": "Window Lead",
+          "duty": "handling the takeout window"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Fresh Fields Produce",
+          "prefix": "FP",
+          "what": "vegetable deliveries",
+          "job": "deliver the morning produce"
+        },
+        {
+          "name": "Coldline Refrigeration",
+          "prefix": "CR",
+          "what": "walk-in fridges",
+          "job": "fix the walk-in fridge"
+        },
+        {
+          "name": "Greaseaway Hood Cleaning",
+          "prefix": "GA",
+          "what": "kitchen hoods",
+          "job": "clean the kitchen hood"
+        },
+        {
+          "name": "Linen & Co",
+          "prefix": "LC",
+          "what": "tablecloths and aprons",
+          "job": "drop off the clean linens"
+        },
+        {
+          "name": "Knife Guy Sharpening",
+          "prefix": "KG",
+          "what": "knife sharpening",
+          "job": "sharpen the chef's knives"
+        },
+        {
+          "name": "Bayside Seafood",
+          "prefix": "BS",
+          "what": "fish deliveries",
+          "job": "deliver the day's fish"
+        },
+        {
+          "name": "Pestfree Pros",
+          "prefix": "PF",
+          "what": "pest control",
+          "job": "do the monthly pest check"
+        },
+        {
+          "name": "Ice Ice Maybe",
+          "prefix": "IM",
+          "what": "ice machines",
+          "job": "service the ice machine"
+        }
+      ],
+      "flavour": [
+        "A ticket rail with one order left on it: 'table 6, NO onions, she means it.'",
+        "A sign over the sink: 'Wash your hands. Yes, you, Marco.'",
+        "Someone has drawn a mustache on the health inspection certificate.",
+        "A tray of breadsticks cooling. One is missing, and there are crumbs leading to the office.",
+        "The specials board still says 'Soup of the day: soup.'",
+        "A tip jar labelled 'for the dishwasher's guitar fund'.",
+        "A reservation book with 'the critic???' circled three times.",
+        "A burnt pan soaking in the sink, with a note: 'not my fault, it was the stove'."
+      ]
+    },
+    {
+      "id": "coffee",
+      "name": "Coffee shop",
+      "float": "the till",
+      "tiles": {
+        "floor": "floor_coffee",
+        "wall": "wall_coffee",
+        "walltop": "walltop_coffee",
+        "window": "window_coffee",
+        "board": "board_coffee",
+        "station": "station_coffee",
+        "station_note": "station_note_coffee",
+        "decor": [
+          "espresso_coffee",
+          "pastry_case_coffee",
+          "sacks_coffee"
+        ],
+        "seat": "seat_coffee"
+      },
+      "places": [
+        {
+          "title": "The Station Café",
+          "business": "Bean There",
+          "place": "Bean There, the café by the station",
+          "role": "Barista",
+          "duty": "closing the café"
+        },
+        {
+          "title": "The Roastery",
+          "business": "Copperline Roasters",
+          "place": "Copperline Roasters' tasting room",
+          "role": "Head Roaster",
+          "duty": "cooling a fresh batch"
+        },
+        {
+          "title": "The Mall Kiosk",
+          "business": "Daily Grind",
+          "place": "the Daily Grind kiosk in the mall",
+          "role": "Kiosk Barista",
+          "duty": "minding the kiosk alone"
+        },
+        {
+          "title": "The Book Café",
+          "business": "Chapter & Brew",
+          "place": "Chapter & Brew, a café inside a bookshop",
+          "role": "Café Lead",
+          "duty": "restocking the pastry case"
+        },
+        {
+          "title": "The Early Shift",
+          "business": "Sunrise Coffee Co.",
+          "place": "Sunrise Coffee Co. at five in the morning",
+          "role": "Opener",
+          "duty": "opening the shop before dawn"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Milk Run Dairy",
+          "prefix": "MR",
+          "what": "milk deliveries",
+          "job": "deliver the morning milk"
+        },
+        {
+          "name": "Crema Machine Repair",
+          "prefix": "CM",
+          "what": "espresso machines",
+          "job": "descale the espresso machine"
+        },
+        {
+          "name": "Flour Power Bakery",
+          "prefix": "FL",
+          "what": "pastries",
+          "job": "drop off the pastry order"
+        },
+        {
+          "name": "Cup & Lid Supply",
+          "prefix": "CL",
+          "what": "cups and lids",
+          "job": "restock the to-go cups"
+        },
+        {
+          "name": "Grinder Doctors",
+          "prefix": "GD",
+          "what": "coffee grinders",
+          "job": "fix the jammed grinder"
+        },
+        {
+          "name": "Chalkboard Kate",
+          "prefix": "CB",
+          "what": "sign painting",
+          "job": "repaint the menu board"
+        },
+        {
+          "name": "Waterworks Filters",
+          "prefix": "WF",
+          "what": "water filters",
+          "job": "change the water filter"
+        }
+      ],
+      "flavour": [
+        "A tip jar with a sign: 'Fear change? Leave it here.'",
+        "A cup marked 'Jon' that should clearly say 'Joan'.",
+        "The Wi-Fi password is written on the wall: 'buyacoffeefirst'.",
+        "A loyalty card with nine stamps, abandoned on the counter.",
+        "A latte-art practice sheet. The swans look like potatoes.",
+        "A note on the grinder: 'DECAF. Do not tell table 4.'",
+        "Someone's laptop charger, plugged in, attached to no one."
+      ]
+    },
+    {
+      "id": "consulting",
+      "name": "Consulting firm",
+      "float": "petty cash",
+      "tiles": {
+        "floor": "floor_consulting",
+        "wall": "wall_consulting",
+        "walltop": "walltop_consulting",
+        "window": "window_consulting",
+        "board": "board_consulting",
+        "station": "station_consulting",
+        "station_note": "station_note_consulting",
+        "decor": [
+          "flipchart_consulting",
+          "binders_consulting",
+          "tall_plant_consulting"
+        ],
+        "seat": "seat_consulting"
+      },
+      "places": [
+        {
+          "title": "The Strategy Floor",
+          "business": "Pinnacle Partners",
+          "place": "Pinnacle Partners, floor 31",
+          "role": "Office Manager",
+          "duty": "prepping the boardroom for a pitch"
+        },
+        {
+          "title": "The War Room",
+          "business": "Bright Line Advisory",
+          "place": "Bright Line Advisory's project room",
+          "role": "Analyst",
+          "duty": "pulling an all-nighter on slides"
+        },
+        {
+          "title": "The Front Desk",
+          "business": "Hollis & Grant Consulting",
+          "place": "Hollis & Grant Consulting reception",
+          "role": "Receptionist",
+          "duty": "covering reception during the offsite"
+        },
+        {
+          "title": "The Workshop",
+          "business": "Northstar Strategy",
+          "place": "Northstar Strategy's workshop space",
+          "role": "Workshop Coordinator",
+          "duty": "taping up sticky notes for tomorrow"
+        },
+        {
+          "title": "The Client Suite",
+          "business": "Meridian Group",
+          "place": "Meridian Group's client suite",
+          "role": "Engagement Assistant",
+          "duty": "booking the client's flights"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Brightside Catering",
+          "prefix": "BC",
+          "what": "office catering",
+          "job": "deliver the pitch-day lunch"
+        },
+        {
+          "name": "PrintPro Copies",
+          "prefix": "PC",
+          "what": "printing",
+          "job": "print the client decks"
+        },
+        {
+          "name": "AV Wizards",
+          "prefix": "AV",
+          "what": "projectors and screens",
+          "job": "fix the boardroom projector"
+        },
+        {
+          "name": "Swift Couriers",
+          "prefix": "SC",
+          "what": "couriers",
+          "job": "deliver the signed contract"
+        },
+        {
+          "name": "Plantcare Plus",
+          "prefix": "PL",
+          "what": "office plants",
+          "job": "water the office plants"
+        },
+        {
+          "name": "Shred Safe",
+          "prefix": "SH",
+          "what": "document shredding",
+          "job": "shred last quarter's drafts"
+        },
+        {
+          "name": "Coffee Cloud",
+          "prefix": "CC",
+          "what": "office coffee machines",
+          "job": "refill the coffee machine"
+        }
+      ],
+      "flavour": [
+        "A slide titled 'Synergy (cont'd) (cont'd)'.",
+        "A whiteboard where the words 'circle back' are circled back to themselves.",
+        "Seven empty energy-drink cans arranged into a bar chart.",
+        "A sticky note: 'Q4 is a state of mind.'",
+        "An invoice for 'strategic alignment, 40 hours'.",
+        "A framed award for 'Most Decks Delivered, 2025'.",
+        "A calendar blocked solid with meetings about meetings."
+      ]
+    },
+    {
+      "id": "trading",
+      "name": "Trading desk",
+      "float": "the desk's expense account",
+      "tiles": {
+        "floor": "floor_trading",
+        "wall": "wall_trading",
+        "walltop": "walltop_trading",
+        "window": "window_trading",
+        "board": "board_trading",
+        "station": "station_trading",
+        "station_note": "station_note_trading",
+        "decor": [
+          "big_screen_trading",
+          "globe_trading",
+          "server_trading"
+        ],
+        "seat": "seat_trading"
+      },
+      "places": [
+        {
+          "title": "The Trading Floor",
+          "business": "Ridgeway Capital",
+          "place": "Ridgeway Capital's trading floor",
+          "role": "Desk Assistant",
+          "duty": "watching the overnight markets"
+        },
+        {
+          "title": "The Overnight Desk",
+          "business": "Ironbridge Securities",
+          "place": "Ironbridge Securities, overnight",
+          "role": "Overnight Trader",
+          "duty": "covering the Asian open"
+        },
+        {
+          "title": "The Quiet Fund",
+          "business": "Silverbirch Partners",
+          "place": "Silverbirch Partners' quiet office",
+          "role": "Operations Associate",
+          "duty": "reconciling the day's trades"
+        },
+        {
+          "title": "The Pit",
+          "business": "Harborline Commodities",
+          "place": "the Harborline Commodities pit",
+          "role": "Floor Clerk",
+          "duty": "tidying up after the closing bell"
+        },
+        {
+          "title": "The Crypto Desk",
+          "business": "Blockwise Exchange",
+          "place": "the Blockwise Exchange support desk",
+          "role": "Support Lead",
+          "duty": "answering the support line"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Data Feed Direct",
+          "prefix": "DF",
+          "what": "market data",
+          "job": "reconnect the market data feed"
+        },
+        {
+          "name": "Screenwall Displays",
+          "prefix": "SD",
+          "what": "trading screens",
+          "job": "replace a dead monitor"
+        },
+        {
+          "name": "Keyclick Keyboards",
+          "prefix": "KK",
+          "what": "keyboards",
+          "job": "swap the sticky keyboards"
+        },
+        {
+          "name": "Nightbite Delivery",
+          "prefix": "NB",
+          "what": "late-night food",
+          "job": "deliver the desk's dinner"
+        },
+        {
+          "name": "CableCraft Networks",
+          "prefix": "CN",
+          "what": "network cabling",
+          "job": "rewire the trading desk"
+        },
+        {
+          "name": "Cooltech HVAC",
+          "prefix": "CT",
+          "what": "air conditioning",
+          "job": "fix the server room AC"
+        },
+        {
+          "name": "Uptime Power",
+          "prefix": "UP",
+          "what": "backup power",
+          "job": "test the backup generator"
+        }
+      ],
+      "flavour": [
+        "A sticky note on a monitor: 'BUY LOW. (how low??)'",
+        "A stress ball squeezed completely flat.",
+        "A mug that says 'World's Okayest Trader'.",
+        "A chart taped to the wall, with a hand-drawn rocket at the end.",
+        "A note: 'Do NOT touch the red button. It orders pizza.'",
+        "Three phones on the desk, each with a different ringtone.",
+        "A desk calendar where every Monday is crossed out angrily."
+      ]
+    },
+    {
+      "id": "startup",
+      "name": "Tech startup",
+      "float": "the company card",
+      "tiles": {
+        "floor": "floor_startup",
+        "wall": "wall_startup",
+        "walltop": "walltop_startup",
+        "window": "window_startup",
+        "board": "board_startup",
+        "station": "station_startup",
+        "station_note": "station_note_startup",
+        "decor": [
+          "arcade_startup",
+          "drinks_fridge_startup",
+          "white_plant_startup"
+        ],
+        "seat": "seat_startup"
+      },
+      "places": [
+        {
+          "title": "The Garage",
+          "business": "Loopwise",
+          "place": "Loopwise HQ, a converted garage",
+          "role": "Office Manager",
+          "duty": "setting up for demo day"
+        },
+        {
+          "title": "The Co-working Space",
+          "business": "Hivedesk",
+          "place": "the Hivedesk co-working space",
+          "role": "Community Manager",
+          "duty": "closing the space for the night"
+        },
+        {
+          "title": "The Morning After",
+          "business": "Snackbot",
+          "place": "Snackbot's office, the morning after the launch party",
+          "role": "Chief of Staff",
+          "duty": "cleaning up after the launch"
+        },
+        {
+          "title": "The Incubator",
+          "business": "Seedling Labs",
+          "place": "the Seedling Labs incubator",
+          "role": "Program Coordinator",
+          "duty": "minding the incubator's front desk"
+        },
+        {
+          "title": "The Hackathon",
+          "business": "Bytebridge",
+          "place": "the Bytebridge hackathon hall",
+          "role": "Event Lead",
+          "duty": "keeping two hundred hackers fed"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Kombucha Kegs",
+          "prefix": "KB",
+          "what": "kombucha on tap",
+          "job": "refill the kombucha keg"
+        },
+        {
+          "name": "Swag Shack",
+          "prefix": "SG",
+          "what": "branded hoodies",
+          "job": "deliver the launch hoodies"
+        },
+        {
+          "name": "Beanbag Bros",
+          "prefix": "BR",
+          "what": "beanbags",
+          "job": "deliver the new beanbags"
+        },
+        {
+          "name": "Fiberfast Internet",
+          "prefix": "FI",
+          "what": "office internet",
+          "job": "fix the office Wi-Fi"
+        },
+        {
+          "name": "Pizza Pipeline",
+          "prefix": "PZ",
+          "what": "pizza",
+          "job": "deliver forty pizzas"
+        },
+        {
+          "name": "Standup Desk Co",
+          "prefix": "SK",
+          "what": "standing desks",
+          "job": "assemble the standing desks"
+        },
+        {
+          "name": "Neon Nights Signs",
+          "prefix": "NN",
+          "what": "neon signs",
+          "job": "hang the neon logo"
+        }
+      ],
+      "flavour": [
+        "A whiteboard: 'Move fast and fix things (later).'",
+        "A ping-pong paddle with 'CEO' written on it in marker.",
+        "A pivot diagram with five arrows, all pointing at 'AI'.",
+        "A sticky note: 'Runway: ask Dana.'",
+        "A dog bed labelled 'Head of Morale'.",
+        "An unopened box of 500 business cards with last month's logo.",
+        "A sign: 'Please do not unplug the server. It is also the toaster.'"
+      ]
+    },
+    {
+      "id": "clinic",
+      "name": "Health clinic",
+      "float": "petty cash",
+      "tiles": {
+        "floor": "floor_clinic",
+        "wall": "wall_clinic",
+        "walltop": "walltop_clinic",
+        "window": "window_clinic",
+        "board": "board_clinic",
+        "station": "station_clinic",
+        "station_note": "station_note_clinic",
+        "decor": [
+          "med_cabinet_clinic",
+          "iv_stand_clinic",
+          "plant_clinic"
+        ],
+        "seat": "seat_clinic"
+      },
+      "places": [
+        {
+          "title": "The Walk-In Clinic",
+          "business": "Maple Street Clinic",
+          "place": "the Maple Street walk-in clinic",
+          "role": "Receptionist",
+          "duty": "closing the front desk"
+        },
+        {
+          "title": "The Dental Office",
+          "business": "Bright Smile Dental",
+          "place": "Bright Smile Dental",
+          "role": "Office Coordinator",
+          "duty": "confirming tomorrow's appointments"
+        },
+        {
+          "title": "The Pharmacy Counter",
+          "business": "Corner Pharmacy",
+          "place": "the Corner Pharmacy counter",
+          "role": "Pharmacy Clerk",
+          "duty": "minding the counter after hours"
+        },
+        {
+          "title": "The Vet",
+          "business": "Paws & Claws Vet",
+          "place": "Paws & Claws veterinary clinic",
+          "role": "Vet Receptionist",
+          "duty": "watching the overnight patients"
+        },
+        {
+          "title": "The Physio Studio",
+          "business": "Stretch Physio",
+          "place": "the Stretch Physio studio",
+          "role": "Front Desk Lead",
+          "duty": "folding towels between sessions"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Sterilize Right",
+          "prefix": "SR",
+          "what": "sterilizers",
+          "job": "service the sterilizer"
+        },
+        {
+          "name": "Gloves Galore",
+          "prefix": "GG",
+          "what": "gloves and masks",
+          "job": "restock the gloves"
+        },
+        {
+          "name": "MedWaste Movers",
+          "prefix": "MW",
+          "what": "medical waste",
+          "job": "collect the sharps bins"
+        },
+        {
+          "name": "Scrubs & Co",
+          "prefix": "SB",
+          "what": "scrubs laundry",
+          "job": "drop off clean scrubs"
+        },
+        {
+          "name": "Chairside Repair",
+          "prefix": "CS",
+          "what": "exam chairs",
+          "job": "fix the exam chair"
+        },
+        {
+          "name": "Coolcase Pharma",
+          "prefix": "CP",
+          "what": "vaccine fridges",
+          "job": "check the vaccine fridge"
+        },
+        {
+          "name": "True Weight Calibration",
+          "prefix": "QT",
+          "what": "medical scales",
+          "job": "calibrate the scales"
+        }
+      ],
+      "flavour": [
+        "A waiting-room magazine from 2019 with the crossword half done.",
+        "A jar of lollipops labelled 'for brave patients only'.",
+        "A sign: 'Please do not diagnose yourself with the internet.'",
+        "A plush skeleton wearing a tiny party hat.",
+        "A clipboard that says 'sign in here', with the pen chained to it.",
+        "A handwashing poster that someone has given googly eyes.",
+        "A thank-you card: 'Best flu shot of my life!'"
+      ]
+    },
+    {
+      "id": "law",
+      "name": "Law office",
+      "float": "petty cash",
+      "tiles": {
+        "floor": "floor_law",
+        "wall": "wall_law",
+        "walltop": "walltop_law",
+        "window": "window_law",
+        "board": "board_law",
+        "station": "station_law",
+        "station_note": "station_note_law",
+        "decor": [
+          "law_books_law",
+          "scales_law",
+          "clock_law"
+        ],
+        "seat": "seat_law"
+      },
+      "places": [
+        {
+          "title": "The Law Library",
+          "business": "Whitfield & Crane",
+          "place": "Whitfield & Crane's law library",
+          "role": "Paralegal",
+          "duty": "pulling cases for a morning hearing"
+        },
+        {
+          "title": "The Partners' Floor",
+          "business": "Ashby Moreau LLP",
+          "place": "Ashby Moreau LLP, the partners' floor",
+          "role": "Legal Secretary",
+          "duty": "finishing the partners' letters"
+        },
+        {
+          "title": "The Storefront Firm",
+          "business": "Ortiz Legal Aid",
+          "place": "the Ortiz Legal Aid storefront",
+          "role": "Intake Clerk",
+          "duty": "sorting the day's intake forms"
+        },
+        {
+          "title": "The Notary",
+          "business": "Quickseal Notary",
+          "place": "the Quickseal notary office",
+          "role": "Notary Clerk",
+          "duty": "stamping the last affidavits"
+        },
+        {
+          "title": "The Courthouse Annex",
+          "business": "Bellweather Law",
+          "place": "Bellweather Law's courthouse annex",
+          "role": "Docket Clerk",
+          "duty": "updating the court docket"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Rapid Process Servers",
+          "prefix": "RP",
+          "what": "serving papers",
+          "job": "serve the subpoenas"
+        },
+        {
+          "name": "Ink & Seal Supply",
+          "prefix": "IS",
+          "what": "stamps and seals",
+          "job": "deliver the new notary seal"
+        },
+        {
+          "name": "Bindright Binders",
+          "prefix": "BD",
+          "what": "document binding",
+          "job": "bind the trial binders"
+        },
+        {
+          "name": "Archive Boxes Ltd",
+          "prefix": "AB",
+          "what": "archive storage",
+          "job": "collect the old case files"
+        },
+        {
+          "name": "Stenofast Reporters",
+          "prefix": "SN",
+          "what": "court reporting",
+          "job": "transcribe yesterday's deposition"
+        },
+        {
+          "name": "Lockstep Locksmiths",
+          "prefix": "LK",
+          "what": "file-room locks",
+          "job": "rekey the file room"
+        },
+        {
+          "name": "Courier Counsel",
+          "prefix": "CO",
+          "what": "legal couriers",
+          "job": "run the filings to court"
+        }
+      ],
+      "flavour": [
+        "A legal pad with 'objection!' doodled in the margin, many times.",
+        "A coffee mug: 'I object (to Mondays)'.",
+        "A stack of files labelled 'URGENT', 'MORE URGENT' and 'ACTUALLY URGENT'.",
+        "A dusty law book propping open a window.",
+        "A gavel on the desk that is very clearly a toy.",
+        "A note: 'The client says the parrot can testify. It cannot.'",
+        "A framed first dollar, slightly crumpled."
+      ]
+    },
+    {
+      "id": "hotel",
+      "name": "Hotel lobby",
+      "float": "the front desk float",
+      "tiles": {
+        "floor": "floor_hotel",
+        "wall": "wall_hotel",
+        "walltop": "walltop_hotel",
+        "window": "window_hotel",
+        "board": "board_hotel",
+        "station": "station_hotel",
+        "station_note": "station_note_hotel",
+        "decor": [
+          "palm_hotel",
+          "luggage_cart_hotel",
+          "piano_hotel"
+        ],
+        "seat": "seat_hotel"
+      },
+      "places": [
+        {
+          "title": "The Grand Lobby",
+          "business": "The Grand Plumhaven",
+          "place": "the Grand Plumhaven hotel lobby",
+          "role": "Night Concierge",
+          "duty": "covering the front desk overnight"
+        },
+        {
+          "title": "The Boutique Hotel",
+          "business": "Hotel Juniper",
+          "place": "Hotel Juniper, twelve rooms",
+          "role": "Desk Clerk",
+          "duty": "checking in the last guests"
+        },
+        {
+          "title": "The Motor Inn",
+          "business": "Starlite Motor Inn",
+          "place": "the Starlite Motor Inn office",
+          "role": "Manager on Duty",
+          "duty": "minding the office and the ice machine"
+        },
+        {
+          "title": "The Ski Lodge",
+          "business": "Pinecrest Lodge",
+          "place": "the Pinecrest Lodge front desk",
+          "role": "Lodge Host",
+          "duty": "drying ski boots by the fire"
+        },
+        {
+          "title": "The Conference Hotel",
+          "business": "Harborview Hotel",
+          "place": "the Harborview conference hotel",
+          "role": "Events Coordinator",
+          "duty": "setting up the ballroom"
+        }
+      ],
+      "vendors": [
+        {
+          "name": "Fluff & Fold Laundry",
+          "prefix": "FF",
+          "what": "hotel laundry",
+          "job": "deliver the clean sheets"
+        },
+        {
+          "name": "Keycard Systems",
+          "prefix": "KC",
+          "what": "door keycards",
+          "job": "reprogram the room keycards"
+        },
+        {
+          "name": "Petal Pushers Florist",
+          "prefix": "PT",
+          "what": "lobby flowers",
+          "job": "replace the lobby flowers"
+        },
+        {
+          "name": "Liftworks Elevators",
+          "prefix": "LW",
+          "what": "elevators",
+          "job": "service the guest elevator"
+        },
+        {
+          "name": "Poolside Pros",
+          "prefix": "PO",
+          "what": "pool cleaning",
+          "job": "clean the pool filter"
+        },
+        {
+          "name": "Minibar Masters",
+          "prefix": "MM",
+          "what": "minibars",
+          "job": "restock the minibars"
+        },
+        {
+          "name": "Bellhop Carts",
+          "prefix": "BH",
+          "what": "luggage carts",
+          "job": "fix the squeaky luggage cart"
+        }
+      ],
+      "flavour": [
+        "A lost-and-found box with one shoe, one umbrella and one very large trophy.",
+        "A guest comment card: 'The pillows were too nice. I could not leave.'",
+        "A brass bell with a sign: 'Ring once. ONCE.'",
+        "A reservation for 'Mr. Smith, Mr. Smith and Mr. Smith'.",
+        "A tray of pillow chocolates. Several are missing.",
+        "A note: 'Room 214 wants to know if the ghost costs extra.'",
+        "A city map with 'best tacos' circled in three different places."
+      ]
+    }
+  ]
+}

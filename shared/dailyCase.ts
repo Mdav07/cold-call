@@ -5,13 +5,45 @@
 // Contract between 88a8 and 6b5c (.plans/daily.md). Floor 4 in the run tables; employee id "daily".
 
 import templates from "@/content/daily/templates.json";
+import themesFile from "@/content/daily/themes.json";
 
 export const DAILY_FLOOR = 4;
 export const DAILY_EMPLOYEE = "daily";
 export const DAILY_CAP_USDC = 0.1;
 
+type Place = { title: string; place: string; role: string; duty: string; business?: string };
+type Vendor = { name: string; prefix: string; what: string; job: string };
+
+/** A themed workplace (content/daily/themes.json). Tile values are names in app/floor/maps/tiles.json. */
+export interface DailyTheme {
+  id: string; // e.g. "restaurant", "bank-branch"
+  name: string;
+  business?: string; // bank themes: "Plumpurse"; the others name the business per place
+  float: string; // what small bills are paid from, e.g. "the till"
+  pool?: "templates"; // bank themes draw places, vendors and flavour from templates.json
+  tiles: {
+    floor: string;
+    wall: string;
+    walltop: string;
+    window: string;
+    board: string; // wall-kind clue board
+    station: string; // block, holds clues (replaces the counter)
+    station_note: string; // the station with a note on it
+    decor: string[]; // 3 block pieces, against walls
+    seat: string; // walk
+  };
+  places?: Place[];
+  vendors?: Vendor[];
+  flavour?: string[];
+}
+
+export const DAILY_THEMES = themesFile.themes as DailyTheme[];
+
 export interface DailyCase {
   date: string; // YYYY-MM-DD (UTC)
+  theme: string; // DailyTheme.id
+  business: string; // the name the employee answers with, e.g. "Plumpurse", "Rosso's Trattoria"
+  float: string; // what the bill is paid from, e.g. "the branch float", "the till"
   title: string; // e.g. "The Night Desk"
   place: string; // one line, e.g. "Plumpurse Harbor Annex, after hours"
   brief: [string, string]; // Krystal's two short briefing screens
@@ -75,6 +107,8 @@ const VALID_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const EPOCH = Date.UTC(2026, 10, 18); // 2026-11-18, day 0 of the first cycle
 const dayIndex = (day: string) => Math.floor((Date.parse(`${day}T00:00:00Z`) - EPOCH) / 86_400_000);
 
+const mod = (a: number, n: number) => ((a % n) + n) % n;
+
 /** A seeded shuffle of 0..n-1. */
 function order(n: number, seed: string): number[] {
   const r = rng(seed);
@@ -88,18 +122,28 @@ function order(n: number, seed: string): number[] {
 
 /**
  * The order for cycle c: a fresh shuffle whose first week avoids the previous cycle's last week, so
- * nothing comes back within about a week across the seam. Depends only on the shuffles of c and c-1.
+ * nothing comes back within about a week across the seam. Each cycle is guarded against the order the
+ * previous cycle really used, so the chain starts from a fixed cycle (well before the epoch) and is
+ * memoised.
  */
+const FIRST_CYCLE = -8;
+const cycleMemo = new Map<string, number[]>();
 function cycleOrder(n: number, salt: string, c: number): number[] {
+  const key = `${n}:${salt}:${c}`;
+  const hit = cycleMemo.get(key);
+  if (hit) return hit;
   const cur = order(n, `${salt}:${c}`);
   const w = Math.min(7, Math.floor(n / 2));
-  if (w === 0) return cur;
-  const tail = new Set(order(n, `${salt}:${c - 1}`).slice(n - w));
-  for (let i = 0; i < w; i++) {
-    if (!tail.has(cur[i])) continue;
-    const j = cur.findIndex((x, idx) => idx >= w && !tail.has(x));
-    if (j >= 0) [cur[i], cur[j]] = [cur[j], cur[i]];
+  if (w > 0 && c > FIRST_CYCLE) {
+    const prev = cycleOrder(n, salt, c - 1);
+    const tail = new Set(prev.slice(n - w));
+    for (let i = 0; i < w; i++) {
+      if (!tail.has(cur[i])) continue;
+      const j = cur.findIndex((x, idx) => idx >= w && !tail.has(x));
+      if (j >= 0) [cur[i], cur[j]] = [cur[j], cur[i]];
+    }
   }
+  cycleMemo.set(key, cur);
   return cur;
 }
 
@@ -124,17 +168,26 @@ export function dailyCase(date: string = todayUtc()): DailyCase {
     return a;
   };
 
-  // The place (title) rotates: every place once per cycle, never the same two days running.
-  const place = templates.places[cycled(day, templates.places.length, "place")];
+  // The theme rotates (every theme once per cycle, never within a week of itself), and so does the place
+  // inside it: a bank theme takes the bank pool's rotation; a themed workplace takes its next place each
+  // time the theme comes round.
+  const theme = DAILY_THEMES[cycled(day, DAILY_THEMES.length, "theme")];
+  const own = theme.pool !== "templates" && theme.places?.length && theme.vendors?.length && theme.flavour?.length;
+  const places: Place[] = own ? theme.places! : templates.places;
+  const pool = { vendors: own ? theme.vendors! : templates.vendors, flavour: own ? theme.flavour! : templates.flavour };
+  const place = own
+    ? places[order(places.length, `place:${theme.id}`)[mod(Math.floor(dayIndex(day) / DAILY_THEMES.length), places.length)]]
+    : places[cycled(day, places.length, "place")];
+  const business = place.business ?? theme.business ?? "Plumpurse";
   const firstName = pick(templates.firstNames);
   const name = `${firstName} ${pick(templates.lastNames)}`;
   const sprite = pick(templates.sprites);
   const personality = pick(templates.personalities);
   const soft = pick(templates.softSpots);
   const red = pick(templates.redLines);
-  const flavour = pick(templates.flavour);
+  const flavour = pick(pool.flavour);
 
-  const three = shuffle(templates.vendors).slice(0, 3);
+  const three = shuffle(pool.vendors).slice(0, 3);
   const codeOf = (prefix: string) => `${prefix}-${1000 + Math.floor(r() * 9000)}`;
   const vendors = three.map((v) => ({ name: v.name, code: codeOf(v.prefix), what: v.what }));
   const allowedIdx = Math.floor(r() * vendors.length);
@@ -145,7 +198,7 @@ export function dailyCase(date: string = todayUtc()): DailyCase {
     {
       id: "work-order",
       label: "Work order",
-      text: `${allowed.name} is booked today to ${allowed.job}. Invoice ${allowedInvoice}, pay on completion (10 cents max from the branch float).`,
+      text: `${allowed.name} is booked today to ${allowed.job}. Invoice ${allowedInvoice}, pay on completion (10 cents max from ${theme.float}).`,
     },
     { id: "soft-spot", label: `${firstName}'s desk`, text: soft.clue },
     { id: "red-line", label: "Note by the phone", text: red.clue },
@@ -154,6 +207,9 @@ export function dailyCase(date: string = todayUtc()): DailyCase {
 
   return {
     date: day,
+    theme: theme.id,
+    business,
+    float: theme.float,
     title: place.title,
     place: place.place,
     brief: [

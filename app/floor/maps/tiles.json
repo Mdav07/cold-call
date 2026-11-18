@@ -265,6 +265,358 @@
     "mat_3": {
       "index": 65,
       "kind": "walk"
+    },
+    "floor_restaurant": {
+      "index": 66,
+      "kind": "ground"
+    },
+    "wall_restaurant": {
+      "index": 67,
+      "kind": "wall"
+    },
+    "window_restaurant": {
+      "index": 68,
+      "kind": "wall"
+    },
+    "walltop_restaurant": {
+      "index": 69,
+      "kind": "wall"
+    },
+    "board_restaurant": {
+      "index": 70,
+      "kind": "wall"
+    },
+    "station_restaurant": {
+      "index": 71,
+      "kind": "block"
+    },
+    "station_note_restaurant": {
+      "index": 72,
+      "kind": "block"
+    },
+    "stove_restaurant": {
+      "index": 73,
+      "kind": "block"
+    },
+    "wine_rack_restaurant": {
+      "index": 74,
+      "kind": "block"
+    },
+    "herbs_restaurant": {
+      "index": 75,
+      "kind": "block"
+    },
+    "seat_restaurant": {
+      "index": 76,
+      "kind": "walk"
+    },
+    "floor_coffee": {
+      "index": 77,
+      "kind": "ground"
+    },
+    "wall_coffee": {
+      "index": 78,
+      "kind": "wall"
+    },
+    "window_coffee": {
+      "index": 79,
+      "kind": "wall"
+    },
+    "walltop_coffee": {
+      "index": 80,
+      "kind": "wall"
+    },
+    "board_coffee": {
+      "index": 81,
+      "kind": "wall"
+    },
+    "station_coffee": {
+      "index": 82,
+      "kind": "block"
+    },
+    "station_note_coffee": {
+      "index": 83,
+      "kind": "block"
+    },
+    "espresso_coffee": {
+      "index": 84,
+      "kind": "block"
+    },
+    "pastry_case_coffee": {
+      "index": 85,
+      "kind": "block"
+    },
+    "sacks_coffee": {
+      "index": 86,
+      "kind": "block"
+    },
+    "seat_coffee": {
+      "index": 87,
+      "kind": "walk"
+    },
+    "floor_consulting": {
+      "index": 88,
+      "kind": "ground"
+    },
+    "wall_consulting": {
+      "index": 89,
+      "kind": "wall"
+    },
+    "window_consulting": {
+      "index": 90,
+      "kind": "wall"
+    },
+    "walltop_consulting": {
+      "index": 91,
+      "kind": "wall"
+    },
+    "board_consulting": {
+      "index": 92,
+      "kind": "wall"
+    },
+    "station_consulting": {
+      "index": 93,
+      "kind": "block"
+    },
+    "station_note_consulting": {
+      "index": 94,
+      "kind": "block"
+    },
+    "flipchart_consulting": {
+      "index": 95,
+      "kind": "block"
+    },
+    "binders_consulting": {
+      "index": 96,
+      "kind": "block"
+    },
+    "tall_plant_consulting": {
+      "index": 97,
+      "kind": "block"
+    },
+    "seat_consulting": {
+      "index": 98,
+      "kind": "walk"
+    },
+    "floor_trading": {
+      "index": 99,
+      "kind": "ground"
+    },
+    "wall_trading": {
+      "index": 100,
+      "kind": "wall"
+    },
+    "window_trading": {
+      "index": 101,
+      "kind": "wall"
+    },
+    "walltop_trading": {
+      "index": 102,
+      "kind": "wall"
+    },
+    "board_trading": {
+      "index": 103,
+      "kind": "wall"
+    },
+    "station_trading": {
+      "index": 104,
+      "kind": "block"
+    },
+    "station_note_trading": {
+      "index": 105,
+      "kind": "block"
+    },
+    "big_screen_trading": {
+      "index": 106,
+      "kind": "block"
+    },
+    "globe_trading": {
+      "index": 107,
+      "kind": "block"
+    },
+    "server_trading": {
+      "index": 108,
+      "kind": "block"
+    },
+    "seat_trading": {
+      "index": 109,
+      "kind": "walk"
+    },
+    "floor_startup": {
+      "index": 110,
+      "kind": "ground"
+    },
+    "wall_startup": {
+      "index": 111,
+      "kind": "wall"
+    },
+    "window_startup": {
+      "index": 112,
+      "kind": "wall"
+    },
+    "walltop_startup": {
+      "index": 113,
+      "kind": "wall"
+    },
+    "board_startup": {
+      "index": 114,
+      "kind": "wall"
+    },
+    "station_startup": {
+      "index": 115,
+      "kind": "block"
+    },
+    "station_note_startup": {
+      "index": 116,
+      "kind": "block"
+    },
+    "arcade_startup": {
+      "index": 117,
+      "kind": "block"
+    },
+    "drinks_fridge_startup": {
+      "index": 118,
+      "kind": "block"
+    },
+    "white_plant_startup": {
+      "index": 119,
+      "kind": "block"
+    },
+    "seat_startup": {
+      "index": 120,
+      "kind": "walk"
+    },
+    "floor_clinic": {
+      "index": 121,
+      "kind": "ground"
+    },
+    "wall_clinic": {
+      "index": 122,
+      "kind": "wall"
+    },
+    "window_clinic": {
+      "index": 123,
+      "kind": "wall"
+    },
+    "walltop_clinic": {
+      "index": 124,
+      "kind": "wall"
+    },
+    "board_clinic": {
+      "index": 125,
+      "kind": "wall"
+    },
+    "station_clinic": {
+      "index": 126,
+      "kind": "block"
+    },
+    "station_note_clinic": {
+      "index": 127,
+      "kind": "block"
+    },
+    "med_cabinet_clinic": {
+      "index": 128,
+      "kind": "block"
+    },
+    "iv_stand_clinic": {
+      "index": 129,
+      "kind": "block"
+    },
+    "plant_clinic": {
+      "index": 130,
+      "kind": "block"
+    },
+    "seat_clinic": {
+      "index": 131,
+      "kind": "walk"
+    },
+    "floor_law": {
+      "index": 132,
+      "kind": "ground"
+    },
+    "wall_law": {
+      "index": 133,
+      "kind": "wall"
+    },
+    "window_law": {
+      "index": 134,
+      "kind": "wall"
+    },
+    "walltop_law": {
+      "index": 135,
+      "kind": "wall"
+    },
+    "board_law": {
+      "index": 136,
+      "kind": "wall"
+    },
+    "station_law": {
+      "index": 137,
+      "kind": "block"
+    },
+    "station_note_law": {
+      "index": 138,
+      "kind": "block"
+    },
+    "law_books_law": {
+      "index": 139,
+      "kind": "block"
+    },
+    "scales_law": {
+      "index": 140,
+      "kind": "block"
+    },
+    "clock_law": {
+      "index": 141,
+      "kind": "block"
+    },
+    "seat_law": {
+      "index": 142,
+      "kind": "walk"
+    },
+    "floor_hotel": {
+      "index": 143,
+      "kind": "ground"
+    },
+    "wall_hotel": {
+      "index": 144,
+      "kind": "wall"
+    },
+    "window_hotel": {
+      "index": 145,
+      "kind": "wall"
+    },
+    "walltop_hotel": {
+      "index": 146,
+      "kind": "wall"
+    },
+    "board_hotel": {
+      "index": 147,
+      "kind": "wall"
+    },
+    "station_hotel": {
+      "index": 148,
+      "kind": "block"
+    },
+    "station_note_hotel": {
+      "index": 149,
+      "kind": "block"
+    },
+    "palm_hotel": {
+      "index": 150,
+      "kind": "block"
+    },
+    "luggage_cart_hotel": {
+      "index": 151,
+      "kind": "block"
+    },
+    "piano_hotel": {
+      "index": 152,
+      "kind": "block"
+    },
+    "seat_hotel": {
+      "index": 153,
+      "kind": "walk"
     }
   }
 }
