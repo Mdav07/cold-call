@@ -43,6 +43,19 @@ Madhav Vinod, Audrey Bolyard. TODO: confirm both are on the Devpost project.
 The text on Devpost is kept in [`devpost/story.md`](devpost/story.md). Edit that file and paste it whole, so the
 repo and Devpost stay the same.
 
+## Additional info (hackathon form, judges only)
+
+Saved on Devpost on Nov 18. Prizes selected: Consumer Applications Track Winner, Consumer Applications Best use
+of Arc, QuickNode Streams, ElevenLabs. The team, GitHub link and contract addresses are filled in.
+
+**Project description** (the form asks: short description, what you built, the problem, how it works, what's
+unique, what's next, technologies). This section adds no new facts; it restates the project story in that order.
+The text on Devpost is the source; update both together.
+
+**Technical summary:** the stack, the tool-call → vault → Stream path, per-floor rules (caps, multi-approval,
+the Floor 3 allowlist), memory and the Daily Case agent through dynamic variables, and the 1¢ token vs. the
+recorded cracked amount.
+
 ## Contract addresses (Arc testnet, chain ID 5042002)
 
 If Devpost asks for them separately:
