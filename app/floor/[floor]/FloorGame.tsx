@@ -21,6 +21,7 @@ import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
 import { Elevator } from "./Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
+import { RestartConfirm } from "@/app/floor/RestartConfirm";
 import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
@@ -136,6 +137,15 @@ export function FloorGame({
     if (clearLocks) setLockedOut(new Set());
   };
 
+  // RESTART in the HUD (confirmed first): hang up, forget the run, reset the clock, suspicion and lockouts.
+  // The next conversation starts a fresh run.
+  const [askRestart, setAskRestart] = useState(false);
+  const restart = () => {
+    setAskRestart(false);
+    setCaseFile(false);
+    resetRun(true);
+  };
+
   // Leaving: confirm first, then elevator doors close, then the page changes.
   const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
@@ -183,16 +193,14 @@ export function FloorGame({
     [askLeave],
   );
 
+  // Only "talking" is a bubble. Wary (suspicion 60+) and locked out go in the name plate instead: a "?"
+  // or "!" bubble floated a tile above the head, over desks and walls, and hid the name and talk hint.
   const emotes: FloorSceneProps["emotes"] = {};
+  const names: Record<string, string> = {};
   for (const n of map.npcs) {
-    emotes[n.id] =
-      open?.kind === "npc" && open.id === n.id
-        ? "talking"
-        : lockedOut.has(n.id)
-          ? "alarm"
-          : (levels[n.id] ?? 0) >= 60
-            ? "suspicious"
-            : null;
+    emotes[n.id] = open?.kind === "npc" && open.id === n.id ? "talking" : null;
+    const first = npcs.find((x) => x.id === n.id)?.name.split(" ")[0] ?? n.id;
+    names[n.id] = lockedOut.has(n.id) ? `${first} (locked)` : (levels[n.id] ?? 0) >= 60 ? `${first} (wary)` : first;
   }
 
   // Keep the player above the dialogue box: measure it while it is open.
@@ -220,10 +228,10 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={Object.fromEntries(npcs.map((n) => [n.id, n.name.split(" ")[0]]))} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={goal} tags={tags} names={names} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} />
+      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} onRestart={runId && !showOutcome ? () => setAskRestart(true) : undefined} />
 
       {npc && !showOutcome && (
         <NpcDialogue
@@ -288,6 +296,7 @@ export function FloorGame({
           onRestart={() => setResumeDecided(true)}
         />
       )}
+      {askRestart && <RestartConfirm onRestart={restart} onStay={() => setAskRestart(false)} />}
       {pending && (
         <ExitConfirm to={pending} onGo={() => leave(pending)} onStay={() => setPending(null)} />
       )}

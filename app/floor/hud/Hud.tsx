@@ -47,6 +47,7 @@ export function Hud({
   vault,
   onTower,
   onCaseFile,
+  onRestart,
 }: {
   floorName: string;
   startedAt: number | null;
@@ -55,6 +56,8 @@ export function Hud({
   /** Leave through the elevator instead of a hard page jump. */
   onTower?: () => void;
   onCaseFile?: () => void;
+  /** Start the level over (shown while a run is in progress). */
+  onRestart?: () => void;
 }) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
@@ -78,6 +81,11 @@ export function Hud({
           <button type="button" onClick={onCaseFile} className={`${HIT} text-[var(--cc-accent)]`} title="Open the case file">
             <span className="sm:hidden">FILE</span>
             <span className="hidden sm:inline">CASE FILE</span>
+          </button>
+        )}
+        {onRestart && (
+          <button type="button" onClick={onRestart} className={`${HIT} text-[var(--cc-accent)]`} title="Start this level over">
+            RESTART
           </button>
         )}
         <MuteToggle />
