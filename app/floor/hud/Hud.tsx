@@ -16,7 +16,20 @@ function RunClock({ startedAt, finalMs }: { startedAt: number | null; finalMs: n
     return () => clearInterval(t);
   }, [ticking]);
   const ms = finalMs ?? (startedAt != null && now ? now - startedAt : 0);
-  return <span title="Run timer: starts at your first message">RUN {clock(ms)}</span>;
+  // Big and framed so it reads at a glance: muted until the first message, gold while it runs, green
+  // once the run is over.
+  const tone = finalMs != null ? "text-[var(--cc-ok,#6fbf73)]" : ticking ? "text-[var(--cc-accent)]" : "text-[var(--cc-muted)]";
+  return (
+    <span
+      role="timer"
+      aria-label={`Run time ${clock(ms)}`}
+      title="Run timer: starts at your first message"
+      className={`inline-flex items-baseline gap-1.5 border-2 border-[var(--cc-edge)] bg-[var(--cc-bg)] px-2 py-1 tabular-nums ${tone}`}
+    >
+      <span className="text-[8px] text-[var(--cc-muted)]">TIME</span>
+      <span className="text-[13px] sm:text-sm">{clock(ms)}</span>
+    </span>
+  );
 }
 
 /** The HUD's buttons are small pixel text; this grows each one's tap area to about 40px without moving it. */
