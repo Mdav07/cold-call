@@ -28,6 +28,26 @@ export const TALK_SECONDS: Record<EmployeeId, number | null> = {
   daily: null,
 };
 
+/**
+ * Running out of talk time isn't the end: the player can call back, with less time each call. While
+ * more than this is left of the budget the call gets what's left; after that each call-back gets half
+ * the previous one's time (a 5-minute budget: 2:30, 1:15, 0:37, …), never less than this.
+ */
+export const CALLBACK_MIN_SECONDS = 20;
+
+/** Talk time for the next call, from the earlier calls' seconds in start order. */
+export function nextTalkSeconds(budget: number, earlier: number[]): number {
+  let spent = 0;
+  let callbacks = 0;
+  for (const secs of earlier) {
+    if (budget - spent <= CALLBACK_MIN_SECONDS) callbacks++; // that call was already a call-back
+    spent += secs;
+  }
+  const left = budget - spent;
+  if (left > CALLBACK_MIN_SECONDS) return left;
+  return Math.max(CALLBACK_MIN_SECONDS, Math.floor(budget / 2 ** (callbacks + 1)));
+}
+
 export interface StartSessionInput {
   employee_id: EmployeeId;
   channel: Channel;
@@ -266,13 +286,14 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     if (talkBudget != null) {
       const { data: used } = await db()
         .from("conversations")
-        .select("seconds_used")
+        .select("id, seconds_used")
         .eq("run_id", run_id)
         .eq("employee_id", input.employee_id)
+        .order("created_at", { ascending: true })
         .throwOnError();
-      const spent = (used ?? []).reduce((sum, r) => sum + (r.seconds_used ?? 0), 0);
-      talk_seconds = Math.max(0, talkBudget - spent);
-      if (talk_seconds === 0) throw new SessionError("No talk time left with this employee on this run", 409);
+      // This call's own row (just inserted) doesn't count.
+      const earlier = (used ?? []).filter((r) => r.id !== session_id).map((r) => r.seconds_used ?? 0);
+      talk_seconds = nextTalkSeconds(talkBudget, earlier);
     }
   }
 

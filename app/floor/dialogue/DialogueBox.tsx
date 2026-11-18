@@ -378,6 +378,8 @@ export function NpcDialogue({
   else if (stage === "talk" && chat.status === "connecting") text = channel === "voice" ? `Ringing ${first}…` : `Walking up to ${first}'s desk…`;
   else if (stage === "talk" && chat.status === "error") text = chat.error ?? "The line is dead.";
   else if (stage === "talk" && lastAgent && !ended) text = lastAgent.text;
+  // Out of time isn't the end: the player can call back, with less time each call (server/game/session.ts).
+  else if (ended && talkLeft != null && talkLeft <= 0) text = `Out of time: ${first} has to get back to work. Call back for a shorter chat.`;
   else if (ended) text = lastSystem ?? lastAgent?.text ?? "The line went quiet.";
   else text = `${npc.name}, ${npc.title}. ${first} looks up from the desk.`;
 
