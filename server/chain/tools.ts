@@ -62,6 +62,7 @@ const FLOOR_CAP_UNITS: Record<FloorId, bigint> = {
 };
 
 const TOKEN_PAYOUT = BigInt(process.env.TOKEN_PAYOUT_UNITS ?? 10_000);
+const LOW_VAULT_UNITS = 5_000_000n; // 5 USDC
 const BUDGET_MULTIPLE = BigInt(process.env.DAILY_BUDGET_CAP_MULTIPLE ?? 20);
 /** Optional hard ceiling on any payout while testnet funds are thin. Unset or 0 = no ceiling. */
 const PAYOUT_CEILING = BigInt(process.env.PAYOUT_CEILING_UNITS ?? 0);
@@ -307,6 +308,8 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
       functionName: "balanceOf",
       args: [s.vault],
     });
+    // Shows in the Vercel logs: refill with scripts/topup.ts before the vault runs dry.
+    if (balance < LOW_VAULT_UNITS) console.warn(`LOW VAULT floor ${s.floor} ${s.vault}: ${Number(balance) / 1e6} USDC left; run scripts/topup.ts --apply`);
     let amount = asked < allowed ? asked : allowed;
     if (PAYOUT_CEILING && amount > PAYOUT_CEILING) amount = PAYOUT_CEILING;
     if (amount > balance) amount = balance;
