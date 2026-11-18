@@ -125,8 +125,8 @@
         },
         {
           "title": "The Noodle Bar",
-          "business": "Lucky Noodle",
-          "place": "Lucky Noodle, a twelve-seat noodle bar",
+          "business": "Corner Noodle Bar",
+          "place": "the Corner Noodle Bar, twelve seats at the counter",
           "role": "Host",
           "duty": "running the front of house"
         },
@@ -146,8 +146,8 @@
         },
         {
           "title": "The Taco Window",
-          "business": "Taco Tuesday Every Day",
-          "place": "the Taco Tuesday Every Day takeout window",
+          "business": "Sunset Taqueria",
+          "place": "the Sunset Taqueria takeout window",
           "role": "Window Lead",
           "duty": "handling the takeout window"
         }

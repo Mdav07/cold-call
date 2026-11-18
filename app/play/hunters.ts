@@ -16,7 +16,7 @@ export const HUNTERS: HunterOption[] = [
   { id: "hunter-6", label: "Pink Pia" },
   { id: "hunter-7", label: "Green Glen" },
   { id: "hunter-8", label: "Teal Tiana" },
-  { id: "hunter-9", label: "Charcoal Chen" },
+  { id: "hunter-9", label: "Slate Chen" },
   { id: "hunter-10", label: "Silver Sol" },
 ];
 
