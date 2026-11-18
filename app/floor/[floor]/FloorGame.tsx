@@ -70,8 +70,8 @@ export function FloorGame({
   const [lockedOut, setLockedOut] = useState<Set<EmployeeId>>(new Set());
   const [levels, setLevels] = useState<Partial<Record<EmployeeId, number>>>({});
   const [dismissedRun, setDismissedRun] = useState<string | null>(null);
-  // Guide state: has the player talked to anyone yet, and has this floor been breached this visit.
-  const [talked, setTalked] = useState(false);
+  // Guide state: who the player has talked to, and has this floor been breached this visit.
+  const [talkedTo, setTalkedTo] = useState<ReadonlySet<EmployeeId>>(new Set());
   const [cleared, setCleared] = useState(false);
 
   const polled = useRunState(runId, focus, !!runId);
@@ -142,6 +142,8 @@ export function FloorGame({
   const restart = () => {
     setAskRestart(false);
     setCaseFile(false);
+    setTalkedTo(new Set());
+    setCleared(false);
     resetRun(true);
   };
 
@@ -185,7 +187,7 @@ export function FloorGame({
       if (e.type === "exit") return askLeave(e.to);
       if (e.type === "interact-npc") {
         setFocus(e.id);
-        setTalked(true);
+        setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id)));
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
@@ -213,11 +215,13 @@ export function FloorGame({
     return () => ro.disconnect();
   }, [boxOpen, open]);
 
-  // The guide's dots: to the first person until you've spoken to someone, to the elevator after a breach.
+  // The guide's dots point to the elevator only once the level is done (a breach). Until then they lead
+  // to the nearest employee you haven't talked to yet and who hasn't locked you out (Floor 1: Dee, then
+  // Penny; Floor 2: Annie, then Bill), and disappear once you've met everyone.
   const exit = map.exits?.[0];
   const dist = (n: { x: number; y: number }) => Math.abs(n.x - map.spawn.x) + Math.abs(n.y - map.spawn.y);
-  const firstNpc = [...map.npcs].sort((a, b) => dist(a) - dist(b))[0];
-  const goal = cleared && exit ? { x: exit.x, y: exit.y } : !talked && firstNpc ? { x: firstNpc.x, y: firstNpc.y } : null;
+  const nextNpc = [...map.npcs].filter((n) => !talkedTo.has(n.id) && !lockedOut.has(n.id)).sort((a, b) => dist(a) - dist(b))[0];
+  const goal = cleared && exit ? { x: exit.x, y: exit.y } : nextNpc ? { x: nextNpc.x, y: nextNpc.y } : null;
   const tags = cleared && exit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
 
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
