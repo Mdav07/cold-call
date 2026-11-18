@@ -2,10 +2,10 @@
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the street door as exits.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLatest } from "@/app/play/clientHooks";
+import { useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FloorScene } from "@/app/floor/engine/FloorScene";
+import { CONSOLE_QUERY, FloorScene } from "@/app/floor/engine/FloorScene";
 import type { FloorMap, SceneEvent } from "@/app/floor/types";
 import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
 import { MusicToggle } from "@/app/play/MusicToggle";
@@ -136,14 +136,10 @@ export function Lobby({
   const tags = useMemo(() => [...MAT_WORDS, ...shown.tags], [shown.tags]);
 
   const open = map.props?.find((p) => p.id === prop);
-  return (
-    <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
-      <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={tags} />
-      </div>
-      <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
-      <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-        <nav className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-2 gap-y-2 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
+  // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.
+  const consoleMode = useMediaQuery(CONSOLE_QUERY);
+  const nav = (
+  <nav className={`pixel-frame pointer-events-auto flex ${consoleMode ? "w-full justify-center" : "max-w-[calc(100vw-5rem)]"} flex-wrap items-center gap-x-2 gap-y-2 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]`}>
           <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
           <span className="flex items-center gap-2">
@@ -156,7 +152,15 @@ export function Lobby({
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/hunter">YOUR HUNTER</Link>
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
         </nav>
+  );
+
+  return (
+    <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
+      <div className="relative min-h-0 flex-1">
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
       </div>
+      <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
+      {!consoleMode && <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">{nav}</div>}
       <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap font-pixel text-[9px] text-[var(--cc-muted)] sm:[@media(pointer:fine)]:block">
         Arrow keys to walk · Space to read · Elevators go up
       </p>

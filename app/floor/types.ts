@@ -58,4 +58,7 @@ export interface FloorSceneProps {
    * A new key starts it again; null ends it and lifts the fade.
    */
   escort?: { key: string; onDone: () => void } | null;
+  /** Phones held upright show the room as a handheld console: the map is the screen and the controls sit
+   *  on a deck below it. Whatever is passed here (the HUD bar) is docked on that deck. */
+  deck?: import("react").ReactNode;
 }

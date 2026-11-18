@@ -83,7 +83,13 @@ const GUARD_STEP_MS = 270; // the escort walks a little slower than the player, 
 const GRAB_MS = 1100; // the guard stands over the player before walking them out
 const FADE_MS = 700;
 
-export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names, escort = null }: FloorSceneProps) {
+/** Phones held upright: the handheld-console layout (screen on top, controls on a deck below). */
+export const CONSOLE_QUERY = "(pointer: coarse) and (orientation: portrait)";
+
+export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names, escort = null, deck }: FloorSceneProps) {
+  const consoleMode = useMediaQuery(CONSOLE_QUERY);
+  // The deck under the screen: the dialogue box covers it first, so only the rest hides the map.
+  const deckRef = useRef<HTMLDivElement>(null);
   const goalRef = useLatest(goal);
   const escortRef = useLatest(escort);
   const tagsRef = useLatest(tags);
@@ -474,7 +480,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         MIN_SCALE,
         Math.floor(Math.min(w / (VIEW_TILES.w * TILE), h / (VIEW_TILES.h * TILE))) || 1,
       );
-      const inset = Math.min(insetRef.current, h * 0.6) / scale; // map pixels hidden under the dialogue box
+      const deckH = deckRef.current?.offsetHeight ?? 0;
+      const inset = Math.min(Math.max(0, insetRef.current - deckH), h * 0.6) / scale; // map pixels hidden under the dialogue box
       c.setTransform(1, 0, 0, 1, 0, 0);
       c.imageSmoothingEnabled = false;
       c.fillStyle = "#15141a";
@@ -767,12 +774,100 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [map, images, playerSprite, walkable, npcAt, propAt, emotesRef, goalRef, insetRef, namesRef, onEventRef, pausedRef, tagsRef, escortRef]);
+    // consoleMode: rotating the phone moves the canvas into (or out of) the console's screen.
+  }, [map, images, playerSprite, walkable, npcAt, propAt, emotesRef, goalRef, insetRef, namesRef, onEventRef, pausedRef, tagsRef, escortRef, consoleMode]);
 
+  const canvas = <canvas ref={canvasRef} className="block [image-rendering:pixelated]" aria-label={`${map.name}. Use the arrow keys to walk and Space to talk.`} role="img" />;
+
+  if (!consoleMode)
+    return (
+      <div ref={wrapRef} className="relative h-full w-full touch-none select-none overflow-hidden bg-[var(--cc-edge,#15141a)]">
+        {canvas}
+        <TouchControls onHold={hold} onA={interact} hidden={paused} />
+      </div>
+    );
+
+  // Handheld console: a grey body, the map in a dark bezel (rounded bottom-right corner, like the
+  // classic), and the deck below with the HUD bar, the D-pad and the A button.
   return (
-    <div ref={wrapRef} className="relative h-full w-full touch-none select-none overflow-hidden bg-[var(--cc-edge,#15141a)]">
-      <canvas ref={canvasRef} className="block [image-rendering:pixelated]" aria-label={`${map.name}. Use the arrow keys to walk and Space to talk.`} role="img" />
-      <TouchControls onHold={hold} onA={interact} hidden={paused} />
+    <div className="flex h-full w-full touch-none select-none flex-col bg-[#c9c5ba]">
+      <div className="mx-2 mt-2 flex min-h-0 flex-1 flex-col rounded-md rounded-br-[2rem] bg-[#4f5165] px-2.5 pb-1.5 pt-2.5 shadow-[inset_0_-3px_0_rgba(0,0,0,0.25)]">
+        <div ref={wrapRef} className="relative min-h-0 flex-1 overflow-hidden rounded-sm bg-[var(--cc-edge,#15141a)] ring-2 ring-black/40">
+          {canvas}
+        </div>
+        <p className="mt-1.5 text-center font-pixel text-[8px] tracking-[0.35em] text-[#c9c5ba]/75" aria-hidden>
+          COLD CALL
+        </p>
+      </div>
+      <div ref={deckRef} className="flex flex-col gap-2 px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2">
+        {deck}
+        <ConsolePad onHold={hold} onA={interact} disabled={paused} />
+      </div>
+    </div>
+  );
+}
+
+/** One D-pad arrow: the same triangle for all four, so every key is the same size. */
+function Arrow({ dir }: { dir: Facing }) {
+  const rot = { up: 0, right: 90, down: 180, left: 270 }[dir];
+  return (
+    <svg viewBox="0 0 10 10" width="16" height="16" aria-hidden style={{ transform: `rotate(${rot}deg)` }} shapeRendering="crispEdges">
+      <path d="M5 1 L9 7 L1 7 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** The console deck's controls: a D-pad cross on the left, the A button on the right. */
+function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => void; onA: () => void; disabled: boolean }) {
+  const press = (d: Facing) => (e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    onHold(d);
+  };
+  const release = () => onHold(null);
+  const arm = "flex size-14 items-center justify-center bg-[#26252e] text-[#8d8b9a] active:bg-[#3a3946] active:text-[#e8e6ef]";
+  const keys: [Facing, string][] = [
+    ["up", "col-start-2 row-start-1 rounded-t-md"],
+    ["left", "col-start-1 row-start-2 rounded-l-md"],
+    ["right", "col-start-3 row-start-2 rounded-r-md"],
+    ["down", "col-start-2 row-start-3 rounded-b-md"],
+  ];
+  return (
+    <div className={`flex items-center justify-between px-1 ${disabled ? "pointer-events-none opacity-60" : ""}`}>
+      <div className="grid grid-cols-[repeat(3,3.5rem)] grid-rows-[repeat(3,3.5rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]">
+        {keys.map(([d, pos]) => (
+          <button
+            key={d}
+            type="button"
+            aria-label={`Walk ${d}`}
+            className={`${arm} ${pos}`}
+            onPointerDown={press(d)}
+            onPointerUp={release}
+            onPointerCancel={release}
+            onPointerLeave={release}
+          >
+            <Arrow dir={d} />
+          </button>
+        ))}
+        <div className="col-start-2 row-start-2 bg-[#26252e]" aria-hidden>
+          <div className="m-auto mt-[1.25rem] size-4 rounded-full bg-[#1b1a21]" />
+        </div>
+      </div>
+      <div className="flex -rotate-[20deg] flex-col items-center gap-1.5 pr-2">
+        <button
+          type="button"
+          aria-label="Talk"
+          className="size-[4.25rem] rounded-full bg-[#a3245a] font-pixel text-sm text-[#f3d6e2] shadow-[0_4px_0_#5e1434] active:translate-y-[3px] active:shadow-[0_1px_0_#5e1434]"
+          // On the completed tap, not on touch-down: the dialogue box opens where this button is, and a
+          // touch-down trigger let the same tap's click land on the box's first choice.
+          onClick={onA}
+        >
+          A
+        </button>
+        <span className="font-pixel text-[9px] tracking-widest text-[#3c3f78]" aria-hidden>
+          TALK
+        </span>
+      </div>
     </div>
   );
 }
@@ -799,16 +894,16 @@ function TouchControls({
   const release = () => onHold(null);
   const btn =
     "pixel-button flex h-12 w-12 items-center justify-center !p-0 text-base opacity-80 active:opacity-100";
-  const pad: [Facing, string, string][] = [
-    ["up", "▲", "col-start-2 row-start-1"],
-    ["left", "◀", "col-start-1 row-start-2"],
-    ["right", "▶", "col-start-3 row-start-2"],
-    ["down", "▼", "col-start-2 row-start-3"],
+  const pad: [Facing, string][] = [
+    ["up", "col-start-2 row-start-1"],
+    ["left", "col-start-1 row-start-2"],
+    ["right", "col-start-3 row-start-2"],
+    ["down", "col-start-2 row-start-3"],
   ];
   return (
     <>
       <div className="absolute bottom-4 left-4 grid grid-cols-3 grid-rows-3 gap-1">
-        {pad.map(([d, label, pos]) => (
+        {pad.map(([d, pos]) => (
           <button
             key={d}
             type="button"
@@ -819,7 +914,7 @@ function TouchControls({
             onPointerCancel={release}
             onPointerLeave={release}
           >
-            {label}
+            <Arrow dir={d} />
           </button>
         ))}
       </div>
@@ -827,10 +922,7 @@ function TouchControls({
         type="button"
         aria-label="Talk"
         className={`${btn} absolute bottom-10 right-6 !h-16 !w-16 rounded-full`}
-        onPointerDown={(e) => {
-          e.preventDefault();
-          onA();
-        }}
+        onClick={onA}
       >
         A
       </button>
