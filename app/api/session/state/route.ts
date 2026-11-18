@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       .maybeSingle(),
     db()
       .from("runs")
-      .select("user_id, floor, outcome, tx_hash, ended_at, duration_ms, payout_units, daily_date, practice")
+      .select("user_id, floor, outcome, tx_hash, ended_at, duration_ms, payout_units, cracked_units, daily_date, practice")
       .eq("id", run_id)
       .maybeSingle(),
   ]);
