@@ -12,7 +12,8 @@ import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, LOBBY_H, LOBBY_W, MAT_WORDS } from "./lobbyMap";
+import { DAILY_X, ELEVATORS, LOBBY_H, LOBBY_W, MAT_WORDS, elevatorSign } from "./lobbyMap";
+import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
@@ -21,12 +22,15 @@ const PLAYER_SPRITE = "/sprites/hunter.png";
 
 export function Lobby({
   map: serverMap,
+  floors,
   guide,
   guest,
   tutorialCleared,
   dailyClearedToday,
 }: {
   map: FloorMap;
+  /** The tower as the server sees it (for a guest, the shared demo player): signs are redone per player. */
+  floors: TowerFloor[];
   /** Signed in: whether the account cleared the tutorial (the Daily Case opens after it). Guests: undefined. */
   tutorialCleared?: boolean;
   dailyClearedToday?: boolean;
@@ -91,7 +95,7 @@ export function Lobby({
     const dailyCell = DAILY_X + (LOBBY_H - 1) * LOBBY_W;
     // Elevator mats (y=2): never block — stand/read even when locked; gating is exit-only.
     const elevMats = new Set(
-      Object.values({ 1: 4, 2: 9, 3: 14 }).map((x) => x + 2 * LOBBY_W),
+      Object.values(ELEVATORS).map((x) => x + 2 * LOBBY_W),
     );
     let exits = [...(serverMap.exits ?? [])];
     let blocked = (serverMap.blocked ?? []).filter((i) => i !== dailyCell && !elevMats.has(i));
@@ -100,8 +104,11 @@ export function Lobby({
     // D mat says LOCKED. (onEvent still answers a locked exit with a message, as a fallback.)
     if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: LOBBY_H - 1, to: "/daily" });
     if (!tutorialDone) blocked = [...blocked, dailyCell];
-    const props = (serverMap.props ?? []).map((pr) =>
-      pr.id !== "daily-sign"
+    const props = (serverMap.props ?? []).map((pr) => {
+      // Guests: each elevator sign follows this browser's clears, not the shared demo player's.
+      const n = Number(pr.id.match(/^sign-([123])$/)?.[1]);
+      if (n && guest) return { ...pr, ...elevatorSign(floors.find((f) => f.floor === n), n, openForGuest(cleared, n), !!cleared[n]) };
+      return pr.id !== "daily-sign"
         ? pr
         : {
             ...pr,
@@ -109,8 +116,8 @@ export function Lobby({
             text: tutorialDone
               ? pr.text.replace("Opens once you clear the tutorial.", "Walk through the door to play.")
               : "Locked. Clear the Tutorial first, through the T door. Then a new case opens behind this door every day.",
-          },
-    );
+          };
+    });
 
     if (guest) {
       // Drop locked-floor exits; keep mats walkable so guests can still read the sparkles.
@@ -124,7 +131,7 @@ export function Lobby({
 
     return { ...serverMap, exits, blocked, props };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverMap, guest, key, tutorialDone]);
+  }, [serverMap, floors, guest, key, tutorialDone]);
   const shown = useMemo(() => {
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
@@ -133,7 +140,14 @@ export function Lobby({
     return { goal: { x: exit.x, y: exit.y }, tags: [] }; // T / D / 1–3 mats are the signs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest, guide, key, map]);
-  const tags = useMemo(() => [...MAT_WORDS, ...shown.tags], [shown.tags]);
+  // A LOCKED sign, always visible, on every door you can't use yet (and none on doors you can).
+  const tags = useMemo(() => {
+    const locked: { x: number; y: number; text: string; always: true }[] = [];
+    for (const [k, x] of Object.entries(ELEVATORS))
+      if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 1, text: "LOCKED", always: true });
+    if (!tutorialDone) locked.push({ x: DAILY_X, y: LOBBY_H - 1, text: "LOCKED", always: true });
+    return [...MAT_WORDS, ...shown.tags, ...locked];
+  }, [shown.tags, map, tutorialDone]);
 
   const open = map.props?.find((p) => p.id === prop);
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.
