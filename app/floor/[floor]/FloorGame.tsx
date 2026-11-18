@@ -10,7 +10,8 @@ import { markClearedHere } from "@/app/floor/guestProgress";
 import { markDailyCleared } from "@/app/play/streak";
 import { useRouter } from "next/navigation";
 import type { EmployeeId } from "@/shared/interfaces";
-import { FloorScene } from "@/app/floor/engine/FloorScene";
+import { CONSOLE_QUERY, FloorScene } from "@/app/floor/engine/FloorScene";
+import { useMediaQuery } from "@/app/play/clientHooks";
 import type { FloorMap, FloorSceneProps, SceneEvent } from "@/app/floor/types";
 import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
@@ -255,13 +256,18 @@ export function FloorGame({
   const playing = prop && propGame && !solved.includes(prop.id) ? propGame : null;
   const finished = !!state?.run?.ended_at;
 
+  // Phones held upright: the handheld-console layout, with the HUD bar docked on the deck under the map.
+  const consoleMode = useMediaQuery(CONSOLE_QUERY);
+  const hudProps = { floorName: map.name, startedAt: runStartedAt, finalMs: state?.run?.duration_ms ?? null, vault, onTower: () => askLeave("/tower"), onCaseFile: openCaseFile, onRestart: runId && !showOutcome && !escort ? () => setAskRestart(true) : undefined };
+  const hud = <Hud {...hudProps} />;
+
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} />
+        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} deck={consoleMode ? <Hud docked {...hudProps} /> : undefined} />
       </div>
 
-      <Hud floorName={map.name} startedAt={runStartedAt} finalMs={state?.run?.duration_ms ?? null} vault={vault} onTower={() => askLeave("/tower")} onCaseFile={openCaseFile} onRestart={runId && !showOutcome && !escort ? () => setAskRestart(true) : undefined} />
+      {!consoleMode && hud}
 
       {npc && !showOutcome && (
         <NpcDialogue

@@ -61,6 +61,7 @@ export function Hud({
   onTower,
   onCaseFile,
   onRestart,
+  docked = false,
 }: {
   floorName: string;
   startedAt: number | null;
@@ -71,10 +72,12 @@ export function Hud({
   onCaseFile?: () => void;
   /** Start the level over (shown while a run is in progress). */
   onRestart?: () => void;
+  /** On the handheld-console deck (phones held upright) instead of floating over the map. */
+  docked?: boolean;
 }) {
   return (
-    <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">
-      <div className="pixel-frame pointer-events-auto flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-x-3 gap-y-3 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]">
+    <div className={docked ? "w-full" : "pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4"}>
+      <div className={`pixel-frame pointer-events-auto flex ${docked ? "w-full justify-center" : "max-w-[calc(100vw-5rem)]"} flex-wrap items-center gap-x-3 gap-y-3 sm:gap-x-4 bg-[var(--cc-panel)]/95 px-3 py-2.5 font-pixel text-[10px] leading-none text-[var(--cc-ink)]`}>
         <a
           href="/tower"
           onClick={(e) => {
