@@ -88,13 +88,13 @@ export function OutcomeOverlay({
   const [more, setMore] = useState(false);
   const primary = useRef<HTMLButtonElement>(null);
 
-  // The PA announcer's voice is for the tower's real floors; the tutorial and the Daily Case get the
-  // alarm only.
+  // The alarm (and the PA announcer, and the flashing red border) is for the tower's real floors, 1–3.
+  // The tutorial and the Daily Case win quietly.
   const quietWin = run?.floor === 0 || run?.floor === DAILY_FLOOR;
   useEffect(() => {
     if (played.current || !outcome) return;
     played.current = true;
-    if (outcome === "breach") return playSequence(quietWin ? ["breach-alarm.mp3"] : ["breach-alarm.mp3", "breach-announcer.mp3"]);
+    if (outcome === "breach") return quietWin ? undefined : playSequence(["breach-alarm.mp3", "breach-announcer.mp3"]);
     if (outcome === "lockout") return playSequence(["lockout-null.mp3"]);
   }, [outcome, quietWin]);
   useEffect(() => primary.current?.focus(), [outcome]);
@@ -121,7 +121,7 @@ export function OutcomeOverlay({
         role="dialog"
         aria-modal="true"
         aria-labelledby="outcome-title"
-        className={`pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-5 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-6 ${breach ? "cc-alarm" : ""}`}
+        className={`pixel-frame flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col gap-5 overflow-y-auto bg-[var(--cc-panel)] p-4 sm:p-6 ${breach && !quietWin ? "cc-alarm" : ""}`}
       >
         {/* The same chapter band as Krystal's briefing: gold for a breach, red for a lockout. */}
         <header
