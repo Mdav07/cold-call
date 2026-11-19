@@ -1,7 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the two front doors (Tutorial, Daily) as exits.
-import { FallingLeaves } from "@/app/play/FallingLeaves";
+import { SeasonWeather } from "@/app/play/SeasonWeather";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import { useRouter } from "next/navigation";
@@ -125,7 +125,7 @@ export function Lobby({
   useEffect(() => {
     tutorialDoneRef.current = tutorialDone;
   }, [tutorialDone]);
-  // Theme off → drop harvest décor/leaves, but keep the Thanksgiving door + mat.
+  // Theme off → drop the holiday dressing and weather, but keep the holiday door + mat.
   const map = useMemo(() => {
     const base = buildLobby(floors, null, { seasonalDecor: seasonThemeOn, case2Door: showCase2 });
     base.spawn = serverMap.spawn;
@@ -230,7 +230,7 @@ export function Lobby({
           goal={shown.goal}
           tags={tags}
           deck={consoleMode ? nav : undefined}
-          screenOverlay={seasonThemeOn && currentSeason()?.fx === "leaves" ? <FallingLeaves /> : null}
+          screenOverlay={seasonThemeOn && currentSeason() ? <SeasonWeather fx={currentSeason()!.fx} /> : null}
         />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />

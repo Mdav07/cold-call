@@ -26,7 +26,7 @@ const VOICES: Record<string, string> = {
   max: "pNInz6obpgDQGcFmaJgB", // Adam: dominant, firm CEO
   krystal: "EXAVITQu4vr4xnSDxMaL", // Sarah: mature, reassuring mentor on the radio
   daily: "XrExE9yKIg1WjnnlVkGX", // Matilda: friendly, neutral; the Daily Case's persona changes every day
-  helper: "TX3LPaxmHKxFdv7VOQHJ", // Liam: warm sous-chef second signer (seasonal)
+  helper: "TX3LPaxmHKxFdv7VOQHJ", // Liam: warm second signer on every holiday case (persona per layout)
 };
 
 // The Daily Case persona, filled per session by server/game/session.ts (dailyVariables).
@@ -56,6 +56,7 @@ const HELPER_PLACEHOLDERS = {
   helper_personality: "Warm under pressure and protective of the kitchen.",
   helper_soft_spot: "A caller who treats the kitchen with respect.",
   helper_check: "thirty-eight pies",
+  helper_first_message: "Kitchen, Dev speaking. Make it quick, I've got gravy on.",
   ...DAILY_PLACEHOLDERS,
 };
 

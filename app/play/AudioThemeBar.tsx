@@ -2,7 +2,7 @@
 
 // Top-right cluster: Music, SFX, and (when a season is open) Theme. Same vein of ambient controls.
 // Music reuses the module player in MusicToggle; SFX reuses the HUD mute switch; Theme swaps the
-// seasonal lobby (holiday door + harvest dressing + leaves) for the original Tutorial/Daily lobby.
+// seasonal lobby (holiday door + dressing + weather) for the original Tutorial/Daily lobby.
 
 import { useClientValue } from "@/app/play/clientHooks";
 import { MusicToggle } from "@/app/play/MusicToggle";
@@ -36,7 +36,7 @@ function ThemeButton() {
       type="button"
       onClick={() => setSeasonTheme(!on)}
       className="pixel-button grid size-10 place-items-center !p-0 text-[var(--cc-edge)]"
-      aria-label={on ? "Seasonal décor on. Turn off leaves and harvest dressing" : "Seasonal décor off. Turn on leaves and harvest dressing"}
+      aria-label={on ? "Seasonal décor on. Turn off holiday weather and decorations" : "Seasonal décor off. Turn on holiday weather and decorations"}
       aria-pressed={on}
       title={on ? "Seasonal décor on" : "Seasonal décor off"}
     >

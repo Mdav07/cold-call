@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { FallingLeaves } from "@/app/play/FallingLeaves";
+import { SeasonWeather } from "@/app/play/SeasonWeather";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
@@ -320,7 +320,7 @@ export function FloorGame({
           escort={escort ? { key: escort, onDone: escortDone } : null}
           deck={consoleMode ? <Hud docked {...hudProps} /> : undefined}
           screenOverlay={
-            seasonThemeOn && daily && seasonOfDate(daily.date)?.fx === "leaves" ? <FallingLeaves /> : null
+            seasonThemeOn && daily && seasonOfDate(daily.date) ? <SeasonWeather fx={seasonOfDate(daily.date)!.fx} /> : null
           }
         />
       </div>

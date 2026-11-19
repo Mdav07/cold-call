@@ -74,7 +74,7 @@ export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean
 }
 
 /**
- * @param opts.seasonalDecor Theme on: harvest dressing (pumpkins, hay, garland) while that season is open.
+ * @param opts.seasonalDecor Theme on: the open holiday's lobby dressing (two pieces and a garland).
  * Theme off: plain plants — the seasonal door and mat stay either way. Server default is true so SSR
  * matches a Theme-on first paint; Lobby rebuilds from the preference.
  * @param opts.case2Door Right-wall Fatwallet Federal tease: only after Floor 3 clear + ending seen.
@@ -178,7 +178,7 @@ export function buildLobby(
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Max bounty ${maxBountyLabel(4)}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
-  // Seasonal door + sign always (Theme only toggles harvest décor / leaves, not the door).
+  // Seasonal door + sign always (Theme only toggles the holiday dressing and weather, not the door).
   {
     const open = openSeasons();
     const season = open[0] ?? null;

@@ -1,6 +1,6 @@
 "use client";
 
-// Seasonal lobby/room decor on/off (falling leaves, harvest dressing). Remembered in this browser.
+// Seasonal lobby/room decor on/off (holiday weather and lobby dressing). Remembered in this browser.
 // Only meaningful while a season is open; the Theme button hides itself otherwise.
 
 import { useSyncExternalStore } from "react";
