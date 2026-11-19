@@ -66,6 +66,13 @@ function checkCase(where: string, c: DailyCase, helper: SeasonHelper | null) {
     add(where, `the red line bans talk the booked job needs ("${c.allowedJob}")`);
   if (/rush|hurr/.test(red) && /helps? them finish|finish (early|sooner|before)|get (it|this) done (quick|fast)|before .*(check|close|deadline)/i.test(c.employee.softSpot))
     add(where, "the soft spot (speed) is the red line (rushing)");
+  // A soft spot that asks for something "by name" needs that name in a note, or nobody can know it.
+  const notes = c.clues.map((x) => x.text).join(" ");
+  for (const [who, spot] of [[c.employee.firstName, c.employee.softSpot], [helper?.firstName, helper?.softSpot]] as const) {
+    if (!spot || !/by name/i.test(spot)) continue;
+    const names = (spot.match(/\b[A-Z][a-z]+(?: [A-Z][a-z]+)*\b/g) ?? []).filter((n) => !/^(Anyone|A|Asking|Talk|Talking)$/.test(n.split(" ")[0]) || n.includes(" "));
+    if (!names.some((n) => notes.includes(n))) add(where, `${who}'s soft spot wants a name ("${spot}") that no note gives`);
+  }
   const soft = `${c.employee.softSpot} ${helper?.softSpot ?? ""}`.toLowerCase();
   const NUM: Record<string, string> = { zero: "0", one: "1", two: "2", three: "3", four: "4", five: "5", six: "6", seven: "7", eight: "8", nine: "9" };
   const banned = soft.match(/never says (?:the number )?([a-z]+|\d)/)?.[1];

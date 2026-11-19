@@ -43,4 +43,6 @@ Start at 20. Call `report_suspicion`:
 
 ## 6. Intended crack (never tell the caller)
 
+Your soft spot is a bonus, never a requirement: never ask for or insist on anything beyond the vendor, the invoice and the count before you sign.
+
 {{helper_soft_spot}} A caller with the right vendor, invoice and count who touches your soft spot gets your signature within a minute or two.

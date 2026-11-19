@@ -1922,13 +1922,13 @@
               }
             ],
             "allowedVendor": "Inkwell Distributors",
-            "allowedJob": "deliver forty-five signed copies for the reading (down from fifty)",
+            "allowedJob": "deliver forty-five signed copies of Mara Quill's new novel for the reading (down from fifty)",
             "allowedInvoice": "IDI-9714",
             "clues": [
               {
                 "id": "work-order",
                 "label": "Work order",
-                "text": "Inkwell Distributors is booked to deliver forty-five signed copies for the reading (down from fifty). Invoice IDI-9714, 50 cents max from the register. Oliver proposes; Sunita co-signs."
+                "text": "Inkwell Distributors is booked to deliver forty-five signed copies of Mara Quill's new novel for the reading (down from fifty). Invoice IDI-9714, 50 cents max from the register. Oliver proposes; Sunita co-signs."
               },
               {
                 "id": "soft-spot",
@@ -1938,7 +1938,7 @@
               {
                 "id": "cosign",
                 "label": "Two-signature card",
-                "text": "Sunita's event sheet: \"Signed copies: 45. Author only signed 45. Oliver proposes, Sunita signs.\""
+                "text": "Sunita's event sheet: \"Signed copies: 45. Mara Quill only signed 45 before her train. Oliver proposes, Sunita signs.\""
               },
               {
                 "id": "red-line",
@@ -1954,7 +1954,7 @@
             "title": "Events Lead",
             "sprite": "/sprites/staff-16.png",
             "personality": "Organized and protective of her authors.",
-            "softSpot": "a caller who asks about the author by name",
+            "softSpot": "a caller who asks about Mara Quill, tonight's author, by name",
             "check": "forty-five copies",
             "firstMessage": "Events, Sunita."
           },
