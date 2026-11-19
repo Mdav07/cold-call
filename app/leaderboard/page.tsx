@@ -186,7 +186,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       tx_hash: r.tx,
       daily_contract_id: null,
     }));
-  // Shared guest / default "Hunter" name aren't real board entries.
+  // Shared guest account ("Demo Hunter") isn't a real player — keep it off every board.
   const rows = ((board.data ?? []) as Row[]).filter(
     (r) => r.user_id !== demoId && isPublicBoardName(r.display_name) && (channel === "all" || r.channel === channel),
   );

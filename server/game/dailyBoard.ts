@@ -30,7 +30,7 @@ export async function dailyBoard(date: string = todayUtc(), limit = 20): Promise
   const seen = new Set<string>();
   const rows: DailyBoardRow[] = [];
   for (const r of data ?? []) {
-    // Shared guest / default "Hunter" name aren't real board entries.
+    // Shared guest account isn't a player — keep "Demo Hunter" off the board.
     if (!r.user_id || r.user_id === demoId || !isPublicBoardName(r.display_name)) continue;
     if (seen.has(r.user_id)) continue;
     seen.add(r.user_id);
