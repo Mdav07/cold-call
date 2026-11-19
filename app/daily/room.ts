@@ -101,7 +101,16 @@ const HOLDS_CLUES: Kind[] = ["counter", "desk", "shelf"];
 const DIRS: [number, number][] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
 
 /** One attempt at a room. Returns null if the layout breaks a rule (the caller reseeds). */
-function attempt(c: DailyCase, seed: string): FloorMap | null {
+/** A second, scripted character to stand somewhere in the room (the seasonal case's helper). */
+/** The off-map prop that holds a scripted character's lines: talking to them opens it like a sign. */
+export const helperPropId = (id: string) => `helper:${id}`;
+
+export interface RoomExtra {
+  id: string;
+  sprite: string;
+}
+
+function attempt(c: DailyCase, seed: string, extra?: RoomExtra): FloorMap | null {
   const r = rng(seed);
   const int = (lo: number, hi: number) => lo + Math.floor(r() * (hi - lo + 1)); // inclusive
   const pick = <U,>(a: readonly U[]): U => a[Math.floor(r() * a.length)];
@@ -320,6 +329,26 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
   // The employee can be talked to, and the way out is open.
   if (!readable(talk) || !readable(exit)) return null;
 
+  // A scripted extra (the seasonal helper): a free floor tile where, with them standing there, every
+  // open tile, clue, the employee, the exit and the extra themselves are still reachable.
+  let extraCell: Cell | null = null;
+  if (extra) {
+    // Not crowding the employee: at least three steps from them.
+    const away = (k: number) => Math.abs((k % W) - talk.x) + Math.abs(Math.floor(k / W) - talk.y) >= 3;
+    for (const k of shuffle([...seen]).filter(away)) {
+      const p = { x: k % W, y: Math.floor(k / W) };
+      if (!free(p.x, p.y) || (p.x === talk.x && p.y === talk.y)) continue;
+      blocked.add(k);
+      const ok = connected() && readable(talk) && readable(exit) && readable(p) && spots.every(readable);
+      if (ok) {
+        extraCell = p;
+        break;
+      }
+      blocked.delete(k);
+    }
+    if (!extraCell) return null;
+  }
+
   return {
     floor: DAILY_FLOOR as FloorMap["floor"],
     name: `Daily Case · ${c.title}`,
@@ -330,16 +359,20 @@ function attempt(c: DailyCase, seed: string): FloorMap | null {
     layers: { ground, walls, decor },
     blocked: [...blocked].sort((a, b) => a - b),
     spawn,
-    npcs: [{ id: DAILY_EMPLOYEE, x: talk.x, y: talk.y, facing: "down", sprite: c.employee.sprite }],
+    npcs: [
+      { id: DAILY_EMPLOYEE, x: talk.x, y: talk.y, facing: "down", sprite: c.employee.sprite },
+      // The extra isn't an AI employee: FloorGame opens their lines like a sign (see helperPropId).
+      ...(extra && extraCell ? [{ id: extra.id as typeof DAILY_EMPLOYEE, x: extraCell.x, y: extraCell.y, facing: "down" as Facing, sprite: extra.sprite }] : []),
+    ],
     // Prop ids carry the date: clue ids repeat every day, and yesterday's note mustn't count today.
     props: c.clues.map((clue, i) => ({ id: dailyPropId(c.date, clue.id), ...spots[i], label: clue.label, text: clue.text })),
     exits: [{ x: exit.x, y: exit.y, to: "/tower" }],
   };
 }
 
-export function buildDailyRoom(c: DailyCase): FloorMap {
+export function buildDailyRoom(c: DailyCase, extra?: RoomExtra): FloorMap {
   for (let i = 0; i < 500; i++) {
-    const m = attempt(c, i === 0 ? c.date : `${c.date}#${i}`);
+    const m = attempt(c, i === 0 ? c.date : `${c.date}#${i}`, extra);
     if (m) return m;
   }
   throw new Error(`No Daily Case room could be laid out for ${c.date}`);

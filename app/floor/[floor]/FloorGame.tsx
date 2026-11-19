@@ -4,6 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
+import { helperPropId } from "@/app/daily/room";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
@@ -230,12 +231,19 @@ export function FloorGame({
     (e: SceneEvent) => {
       if (e.type === "exit") return askLeave(e.to);
       if (e.type === "interact-npc") {
+        // A scripted character (the seasonal helper): their lines open like a sign, not an AI call.
+        const scripted = map.props?.find((p) => p.id === helperPropId(e.id));
+        if (scripted) {
+          setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id))); // the guide moves on
+          setOpen({ kind: "prop", id: scripted.id });
+          return;
+        }
         setFocus(e.id);
         setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id)));
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [askLeave],
+    [askLeave, map],
   );
 
   // Only "talking" is a bubble. Wary (suspicion 60+) and locked out go in the name plate instead: a "?"
@@ -291,7 +299,9 @@ export function FloorGame({
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   // A clue with a game shows its text only once the game is solved (for this run).
   const solved = useSolved(place);
-  const propGame = prop ? gameFor(map.floor, (map.props ?? []).map((p) => p.id), prop.id) : null;
+  // Scripted characters' lines (helper:…) never get a mini-game, and don't shift the clues' games.
+  const clueIds = (map.props ?? []).map((p) => p.id).filter((id) => !id.startsWith("helper:"));
+  const propGame = prop && !prop.id.startsWith("helper:") ? gameFor(map.floor, clueIds, prop.id) : null;
   const playing = prop && propGame && !solved.includes(prop.id) ? propGame : null;
   const finished = !!state?.run?.ended_at;
 

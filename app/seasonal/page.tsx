@@ -12,7 +12,7 @@ import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
 import { FloorGame } from "@/app/floor/[floor]/FloorGame";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
-import { buildDailyRoom } from "@/app/daily/room";
+import { buildDailyRoom, helperPropId } from "@/app/daily/room";
 import { EMPTY_CASE_DATA } from "@/app/casefile/data";
 import { DailyGate } from "@/app/daily/DailyGate";
 
@@ -59,9 +59,16 @@ async function SeasonalRoom() {
     );
   }
   const c = dailyCase(season.caseDate);
-  const map = buildDailyRoom(c);
+  const helper = season.helper;
+  const map = buildDailyRoom(c, helper ? { id: helper.id, sprite: helper.sprite } : undefined);
   map.name = `${season.name} · ${c.title}`;
   const npcs: NpcInfo[] = [{ id: "daily", name: c.employee.name, title: c.employee.title, sprite: c.employee.sprite }];
+  if (helper) {
+    // A second person with fixed lines (no AI): they hold a detail the case needs. Their lines live in an
+    // off-map prop, which FloorGame opens when you talk to them.
+    map.props = [...(map.props ?? []), { id: helperPropId(helper.id), x: -999, y: -999, label: `${helper.name} · ${helper.title}`, text: helper.text }];
+    npcs.push({ id: helper.id as NpcInfo["id"], name: helper.name, title: helper.title, sprite: helper.sprite });
+  }
   return (
     <FloorGame
       map={map}
