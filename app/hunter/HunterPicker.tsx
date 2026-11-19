@@ -6,6 +6,7 @@ import { SaveProgress } from "@/app/play/SaveProgress";
 import { UNLOCKS, useProgress } from "@/app/play/unlocks";
 import { StreakBadge } from "@/app/play/StreakBadge";
 import { cleanName, DEFAULT_HUNTER, getHunter, HUNTERS, MAX_NAME, saveHunter, spriteUrl, type HunterChoice } from "@/app/play/hunters";
+import { AccountBox } from "./AccountBox";
 
 /** One hunter's sprite: the idle front frame of the 16x32 sheet, scaled up crisply. */
 function SpriteFace({ sprite, size = 4 }: { sprite: string; size?: number }) {
@@ -66,9 +67,11 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
       }}
     >
       <header className="-mx-6 -mt-6 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-6 pb-3 pt-4 text-[var(--cc-edge)]">
-        <h1 className="font-pixel text-lg">Your hunter</h1>
-        <p className="mt-2 font-pixel text-[9px] leading-relaxed">Pick a look and a name. Your name floats over your head on every floor.</p>
+        <h1 className="font-pixel text-lg">Profile</h1>
+        <p className="mt-2 font-pixel text-[9px] leading-relaxed">Your account, your look and your name. Your name floats over your head on every floor.</p>
       </header>
+
+      <AccountBox />
 
       <fieldset>
         <legend className="mb-3 font-pixel text-xs text-[var(--cc-ink)]">Look</legend>

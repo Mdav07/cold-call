@@ -232,6 +232,10 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
         </>
       )}
       {message && <p className="text-sm text-[var(--cc-danger)]">{message}</p>}
+      <p className="border-t-2 border-dashed border-[var(--cc-edge)] pt-3 text-xs text-[var(--cc-muted)]">
+        Not now? <a href="/tower" className="underline">Keep playing as a guest</a>, or{" "}
+        <a href="/hunter" className="underline">change your hunter</a>.
+      </p>
     </form>
   );
 }
@@ -274,6 +278,9 @@ function SignedIn({ email, header }: { email: string; header: ReactNode }) {
         </button>
         <button type="button" className="pixel-button" onClick={() => router.push("/tower")}>
           To the lobby ▶
+        </button>
+        <button type="button" className="pixel-button" onClick={() => router.push("/hunter")}>
+          Profile
         </button>
         <button
           type="button"

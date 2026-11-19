@@ -1,6 +1,6 @@
 import { HunterPicker } from "./HunterPicker";
 
-export const metadata = { title: "Your hunter · Cold Call" };
+export const metadata = { title: "Profile · Cold Call" };
 
 export default function HunterPage() {
   return (
