@@ -892,7 +892,7 @@ function usePad(onHold: (d: Facing | null) => void) {
   return { held, handlers };
 }
 
-/** The console deck's controls: a D-pad cross on the left, the A button on the right. */
+/** The console deck's controls: a D-pad cross on the left, the interact button on the right (Space on keyboard). */
 function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => void; onA: () => void; disabled: boolean }) {
   const pad = usePad(onHold);
   const arm = "flex size-12 items-center justify-center bg-[#26252e] text-[#8d8b9a]";
@@ -924,16 +924,16 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
       <div className="flex flex-col items-center gap-1.5">
         <button
           type="button"
-          aria-label="Talk"
-          className="size-14 rounded-full bg-[#a3245a] font-pixel text-sm text-[#f3d6e2] shadow-[0_4px_0_#5e1434] active:translate-y-[3px] active:shadow-[0_1px_0_#5e1434]"
+          aria-label="Interact (same as Space)"
+          className="size-14 rounded-full bg-[#a3245a] font-pixel text-[8px] leading-none tracking-wide text-[#f3d6e2] shadow-[0_4px_0_#5e1434] active:translate-y-[3px] active:shadow-[0_1px_0_#5e1434]"
           // On the completed tap, not on touch-down: the dialogue box opens where this button is, and a
           // touch-down trigger let the same tap's click land on the box's first choice.
           onClick={onA}
         >
           A
         </button>
-        <span className="font-pixel text-[9px] tracking-widest text-[#3c3f78]" aria-hidden>
-          TALK
+        <span className="font-pixel text-[8px] tracking-widest text-[#3c3f78]" aria-hidden>
+          INTERACT
         </span>
       </div>
     </div>
@@ -980,7 +980,7 @@ function TouchControls({
       </div>
       <button
         type="button"
-        aria-label="Talk"
+        aria-label="Interact (same as Space)"
         className={`${btn} absolute bottom-10 right-6 !h-16 !w-16 rounded-full`}
         onClick={onA}
       >
