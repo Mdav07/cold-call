@@ -884,7 +884,7 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
           <div className="m-auto mt-[1rem] size-4 rounded-full bg-[#1b1a21]" />
         </div>
       </div>
-      <div className="flex -rotate-[20deg] flex-col items-center gap-1.5 pr-2">
+      <div className="flex flex-col items-center gap-1.5 pr-2">
         <button
           type="button"
           aria-label="Talk"
