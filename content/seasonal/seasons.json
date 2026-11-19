@@ -145,7 +145,7 @@
             "choices": [
               {
                 "text": "Thanks, Dev.",
-                "next": null
+                "next": "signoff"
               }
             ]
           },
@@ -156,6 +156,17 @@
             "choices": [
               {
                 "text": "Will do.",
+                "next": "signoff"
+              }
+            ]
+          },
+          {
+            "id": "signoff",
+            "line": "Happy Thanksgiving, pie person! Now get out of my kitchen before I put you on gravy duty.",
+            "audio": "seasonal-dev-signoff.mp3",
+            "choices": [
+              {
+                "text": "(Leave the kitchen)",
                 "next": null
               }
             ]

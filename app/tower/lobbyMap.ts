@@ -22,6 +22,8 @@ const T = {
   doorGlass: 158, doorWood: 159,
   // The seasonal door and its mat (tools/art/harvest_tiles.py).
   doorHarvest: 171, matHarvest: 172,
+  // Thanksgiving dressing for the lobby while that season is open (tools/art/harvest_tiles.py).
+  pumpkins: 167, haybale: 168, garland: 173,
 } as const;
 
 export const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 6, 2: 9, 3: 12 }; // x of each floor's elevator
@@ -110,10 +112,18 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   for (const x of [1, 17]) put(x, 1, T.candelabra, false);
   // Benches for visitors along the side walls, and plants by the desk.
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
-  put(6, 6, T.plantSmall);
-  put(12, 6, T.plantSmall);
-  put(14, 11, T.plant);
-  put(4, 11, T.plant);
+  // In the Thanksgiving season the lobby dresses up: pumpkins by the desk, hay bales by the doors, and a
+  // leaf garland along the back wall (below). Otherwise the usual plants.
+  const harvest = currentSeason()?.door === "harvest";
+  put(6, 6, harvest ? T.pumpkins : T.plantSmall);
+  put(12, 6, harvest ? T.pumpkins : T.plantSmall);
+  put(14, 11, harvest ? T.haybale : T.plant);
+  put(4, 11, harvest ? T.haybale : T.plant);
+  if (harvest)
+    for (let x = 1; x < W - 1; x++) {
+      const i = at(x, 1);
+      if (walls[i] !== T.elevator && decor[i] < 0) decor[i] = T.garland; // over the wall, not blocking
+    }
 
   const byFloor = (n: number) => floors.find((f) => f.floor === n);
   const exits: NonNullable<FloorMap["exits"]> = [{ x: TUTORIAL_X, y: DOOR_Y, to: "/floor/0" }];

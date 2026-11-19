@@ -104,6 +104,22 @@ def themes() -> list[tuple[str, Tile, str]]:
     ]
 
 
+def garland() -> Tile:
+    """An autumn-leaf garland to hang over the lobby's back wall in the Thanksgiving season (transparent,
+    drawn on top of the wall): a twine swag with red, orange and gold leaves."""
+    t = Tile()
+    twine = (120, 84, 46)
+    sag = [3, 3, 4, 4, 5, 5, 5, 6, 6, 5, 5, 5, 4, 4, 3, 3]  # one droop per tile, so tiles join up
+    for x, y in enumerate(sag):
+        t.put(x, y, twine)
+    leaves = [(1, RED), (4, ORANGE), (7, GOLD), (10, (200, 90, 30)), (13, RED)]
+    for x, c in leaves:
+        y = sag[x] + 1
+        t.rect(x, y, x + 1, y + 1, c)
+        t.put(x + 1, y + 2, darker(c, 0.8))
+    return t
+
+
 def harvest_door(sheet: Image.Image, catalog: dict) -> Image.Image:
     """The Daily's mahogany door, warmed up, with an autumn wreath where the brass plate was."""
     cols = catalog["columns"]
@@ -146,6 +162,7 @@ def main() -> None:
     for name, tile, kind in themes():
         sheet = append_or_replace(sheet, catalog, name, tile.im, kind)
     sheet = append_or_replace(sheet, catalog, "door_harvest", harvest_door(sheet, catalog), "walk")
+    sheet = append_or_replace(sheet, catalog, "garland_harvest", garland().im, "decor")
     sheet = append_or_replace(sheet, catalog, "mat_harvest", harvest_mat(sheet, catalog), "walk")
     sheet.save(sheet_path)
     catalog_path.write_text(json.dumps(catalog, indent=2) + "\n")
