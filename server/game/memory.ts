@@ -7,10 +7,9 @@
 // What gets recognized is the *story* (the name-drop, excuse or evidence that won them over), not
 // the vendor: each floor has one booked vendor or firm, so a replay has to reuse it with a new angle.
 //
-// Guests all share one demo account, so a guest's lines carry a key from their network address and
-// only that guest is reminded of them; otherwise one judge's win would block the next judge's route.
+// Guests all share one demo account (and often one venue Wi-Fi), so guests get no memory: every guest
+// starts fresh, and one player's win can never block another's route. Sign in and they remember you.
 
-import { createHash } from "node:crypto";
 import { db } from "@/server/chain/db";
 import { getDemoUserId } from "@/server/game/players";
 
@@ -24,21 +23,19 @@ const PLACEHOLDER_COVER = "not said yet";
 const WON = "it worked:";
 
 /** Scope for a player's memory: the user, plus a per-device key for the shared guest account. */
-export async function memoryScope(userId: string, ip: string | null | undefined): Promise<{ userId: string; guestKey: string | null }> {
-  const guest = userId === (await getDemoUserId().catch(() => null));
-  if (!guest) return { userId, guestKey: null };
-  const key = createHash("sha256").update(ip || "unknown").digest("hex").slice(0, 10);
-  return { userId, guestKey: `[guest:${key}] ` };
+export async function memoryScope(userId: string, _ip?: string | null): Promise<{ userId: string; guest: boolean }> {
+  return { userId, guest: userId === (await getDemoUserId().catch(() => null)) };
 }
 
 /** The remembered lines for this player and employee, from runs before `before` (oldest first). */
 export async function rememberedLines(
-  scope: { userId: string; guestKey: string | null },
+  scope: { userId: string; guest: boolean },
   employee: string,
   before: string,
   limit = MEMORY_LINES,
 ): Promise<string[]> {
-  let q = db()
+  if (scope.guest) return []; // guests start fresh
+  const q = db()
     .from("player_memory")
     .select("trick_summary")
     .eq("user_id", scope.userId)
@@ -46,9 +43,8 @@ export async function rememberedLines(
     .lt("created_at", before)
     .order("created_at", { ascending: false })
     .limit(limit);
-  if (scope.guestKey) q = q.like("trick_summary", `${scope.guestKey.replace(/[[\]]/g, "\\$&")}%`);
   const { data } = await q.throwOnError();
-  return [...(data ?? [])].reverse().map((m) => (scope.guestKey ? m.trick_summary.slice(scope.guestKey.length) : m.trick_summary));
+  return [...(data ?? [])].reverse().map((m) => m.trick_summary);
 }
 
 /** How many remembered lines record a trick that actually worked (lowered their guard or moved money). */
@@ -105,8 +101,8 @@ export async function writeConversationMemory(sessionId: string): Promise<string
   if (cover) parts.push(`they said they were "${cover}"`);
   if (moved) parts.push(`I put in a payment to "${moved.claimed_name ?? "a vendor"}" (${moved.status})`);
   if (allowlisted) parts.push(`I started an allowlist add for "${allowlisted.claimed_name ?? "a firm"}"`);
-  const scope = await memoryScope(run.user_id, run.client_ip);
-  const line = `${scope.guestKey ?? ""}${parts.join("; ")}`.slice(0, 420);
+  if ((await memoryScope(run.user_id)).guest) return null; // guests start fresh every run
+  const line = parts.join("; ").slice(0, 420);
 
   await db()
     .from("player_memory")

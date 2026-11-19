@@ -73,7 +73,7 @@ unique, what's next, technologies). This section adds no new facts; it restates 
 The text on Devpost is the source; update both together.
 
 **Technical summary:** the stack, the tool-call → vault → Stream path, per-floor rules (caps, multi-approval,
-the Floor 3 allowlist), memory and the Daily Case agent through dynamic variables, and the 1¢ token vs. the
+the Floor 3 allowlist), memory and the Daily Case agent through dynamic variables, and the full first-clear payout and 1¢ repeat token vs. the
 recorded cracked amount.
 
 ## Contract addresses (Arc testnet, chain ID 5042002)
@@ -108,10 +108,10 @@ The full script, with voice-over lines and sources, is `docs/demo-script.md` (ag
 cuts from one edit: voice-over, and voiceless with short text cards. Keep it under 3:00.
 
 1. **Hook (0:00–0:30).** Cold open on a voice call to Dee: live transcript, suspicion meter. She agrees; alarm,
-   VAULT BREACHED, payout and time. "That was a real phone call to an AI bank employee, and that was real money
+   VAULT BREACHED, payout and time. "That was a real phone call to an AI bank employee, and that was real USDC
    moving on chain."
 2. **Why it matters (0:30–0:50).** The Binance headline (about $6.3 billion, Oct 29, 2026, FBI: North Korea's
-   TraderTraitor), then Drift (about $280 million, Apr 2026, signers talked into pre-signing). People get
+   TraderTraitor), then Drift (about $285 million, Apr 2026, signers talked into pre-signing). People get
    talked into it, and AI agents that handle payments are next.
 3. **How it works (0:50–1:50).** Floor 2: the co-signer reads the real recipient. Floor 3: a direct payment
    bounces until two executives allowlist you. The transaction on the Arc explorer, then voice call →
