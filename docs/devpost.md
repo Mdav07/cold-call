@@ -27,14 +27,18 @@ Screenshots of the live site, in `docs/devpost/` (desktop at 1280x800, phones at
 
 1. `floor-1-walk.jpg`: Floor 1 with guide arrows
 2. `dee-dialogue.jpg`: talking to Dee, suspicion meter
-3. `briefing.jpg`: Floor 3 briefing with max bounty, difficulty and vault rule
-4. `phones.jpg`: the handheld-console layout on a phone
+3. `phones.jpg`: the handheld-console layout on a phone
+4. `briefing.jpg`: Floor 3 briefing with max bounty, difficulty and vault rule
 5. `minigame.jpg`: a clue behind a mini-game
 6. `casefile.jpg`: the case file
 7. `seasonal.jpg`: the Thanksgiving case, two people to convince
 8. `daily.jpg`: today's Daily Case
-9. `leaderboard.jpg`: fastest breaches and top earners
-10. `profile.jpg`: hunters to earn
+9. `daily-themes-gallery.jpg`: the twelve Daily Case workplaces
+10. `leaderboard.jpg`: fastest breaches and top earners
+11. `profile.jpg`: hunters to earn
+12. `memory.png`: they remember you
+13. `tracks.png`: the four tracks
+14. `intro.jpg`: Krystal's opening
 
 ## Built with (tags)
 
