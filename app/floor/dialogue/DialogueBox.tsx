@@ -283,7 +283,6 @@ export function NpcDialogue({
   const [showLog, setShowLog] = useState(false);
   const [typed, setTyped] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
-  const [evidenceHint, setEvidenceHint] = useState(false);
   const floorEvidence = evidenceForFloor(floor);
   const hasEvidence = floorEvidence.length > 0;
   const collected = useCollectedEvidence();
@@ -459,11 +458,15 @@ export function NpcDialogue({
                 <button type="button" className="pixel-button" onClick={chat.toggleMute} disabled={!live}>
                   {chat.muted ? "Unmute" : "Mute"}
                 </button>
+                {/* Evidence goes to the agent as a text message, which works on a call too. */}
                 {hasEvidence && (
-                  <button type="button" className="pixel-button" onClick={() => setEvidenceHint(true)} disabled={!live}>
+                  <button type="button" className="pixel-button" onClick={() => setEvidenceOpen(true)} disabled={!live}>
                     {evidenceLabel}
                   </button>
                 )}
+                <button type="button" className="pixel-button" onClick={onCaseFile}>
+                  Case file
+                </button>
                 <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
                   Log
                 </button>
@@ -472,11 +475,6 @@ export function NpcDialogue({
                 </button>
               </div>
             </div>
-            {evidenceHint && (
-              <p className="text-xs text-[var(--cc-warn)]" role="status">
-                Switch to Talk to show evidence: hang up, then choose Talk again.
-              </p>
-            )}
             </>
           ) : (
             <form
@@ -508,6 +506,9 @@ export function NpcDialogue({
                     {evidenceLabel}
                   </button>
                 )}
+                <button type="button" className="pixel-button" onClick={onCaseFile}>
+                  Case file
+                </button>
                 <button type="button" className="pixel-button" onClick={() => setShowLog((s) => !s)}>
                   Log
                 </button>

@@ -819,15 +819,47 @@ function Arrow({ dir }: { dir: Facing }) {
   );
 }
 
-/** The console deck's controls: a D-pad cross on the left, the A button on the right. */
-function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => void; onA: () => void; disabled: boolean }) {
-  const press = (d: Facing) => (e: React.PointerEvent) => {
-    e.preventDefault();
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+/**
+ * The D-pad as one touch area: the direction follows the thumb, so rolling from one arrow to another
+ * turns without lifting. The pad holds the pointer from touch-down to release; the middle (a small
+ * dead zone) keeps the current direction.
+ */
+function usePad(onHold: (d: Facing | null) => void) {
+  const [held, setHeld] = useState<Facing | null>(null);
+  const cur = useRef<Facing | null>(null);
+  const set = (d: Facing | null) => {
+    if (cur.current === d) return;
+    cur.current = d;
+    setHeld(d);
     onHold(d);
   };
-  const release = () => onHold(null);
-  const arm = "flex size-12 items-center justify-center bg-[#26252e] text-[#8d8b9a] active:bg-[#3a3946] active:text-[#e8e6ef]";
+  const dirAt = (e: React.PointerEvent<HTMLElement>): Facing | null => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    if (Math.hypot(dx, dy) < r.width * 0.12) return cur.current;
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
+  };
+  const handlers = {
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.currentTarget.setPointerCapture?.(e.pointerId);
+      set(dirAt(e));
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+      if (e.currentTarget.hasPointerCapture?.(e.pointerId)) set(dirAt(e));
+    },
+    onPointerUp: () => set(null),
+    onPointerCancel: () => set(null),
+    onLostPointerCapture: () => set(null),
+  };
+  return { held, handlers };
+}
+
+/** The console deck's controls: a D-pad cross on the left, the A button on the right. */
+function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => void; onA: () => void; disabled: boolean }) {
+  const pad = usePad(onHold);
+  const arm = "flex size-12 items-center justify-center bg-[#26252e] text-[#8d8b9a]";
+  const lit = "!bg-[#3a3946] !text-[#e8e6ef]";
   const keys: [Facing, string][] = [
     ["up", "col-start-2 row-start-1 rounded-t-md"],
     ["left", "col-start-1 row-start-2 rounded-l-md"],
@@ -836,17 +868,14 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
   ];
   return (
     <div className={`flex items-center justify-between px-1 ${disabled ? "pointer-events-none opacity-60" : ""}`}>
-      <div className="grid grid-cols-[repeat(3,3rem)] grid-rows-[repeat(3,3rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]">
+      <div className="grid touch-none select-none grid-cols-[repeat(3,3rem)] grid-rows-[repeat(3,3rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]" {...pad.handlers}>
         {keys.map(([d, pos]) => (
           <button
             key={d}
             type="button"
+            tabIndex={-1}
             aria-label={`Walk ${d}`}
-            className={`${arm} ${pos}`}
-            onPointerDown={press(d)}
-            onPointerUp={release}
-            onPointerCancel={release}
-            onPointerLeave={release}
+            className={`${arm} ${pos} ${pad.held === d ? lit : ""}`}
           >
             <Arrow dir={d} />
           </button>
@@ -886,14 +915,9 @@ function TouchControls({
   hidden: boolean;
 }) {
   const coarse = useMediaQuery("(pointer: coarse)");
+  const padCtl = usePad(onHold);
   if (!coarse || hidden) return null;
 
-  const press = (d: Facing) => (e: React.PointerEvent) => {
-    e.preventDefault();
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    onHold(d);
-  };
-  const release = () => onHold(null);
   const btn =
     "pixel-button flex h-12 w-12 items-center justify-center !p-0 text-base opacity-80 active:opacity-100";
   const pad: [Facing, string][] = [
@@ -904,17 +928,14 @@ function TouchControls({
   ];
   return (
     <>
-      <div className="absolute bottom-4 left-4 grid grid-cols-3 grid-rows-3 gap-1">
+      <div className="absolute bottom-4 left-4 grid touch-none select-none grid-cols-3 grid-rows-3 gap-1" {...padCtl.handlers}>
         {pad.map(([d, pos]) => (
           <button
             key={d}
             type="button"
+            tabIndex={-1}
             aria-label={`Walk ${d}`}
-            className={`${btn} ${pos}`}
-            onPointerDown={press(d)}
-            onPointerUp={release}
-            onPointerCancel={release}
-            onPointerLeave={release}
+            className={`${btn} ${pos} ${padCtl.held === d ? "!opacity-100" : ""}`}
           >
             <Arrow dir={d} />
           </button>
