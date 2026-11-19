@@ -87,7 +87,10 @@ export function Lobby({
   // floor to play (the tutorial door first). Daily opens after tutorial — account clear OR this browser.
   const cleared = useClearedHere();
   const key = cleared.join("");
-  const tutorialDone = !!tutorialCleared || !!cleared[0];
+  // Signed in: the account's own Tutorial clear, the same rule as the Daily page and /api/session (a clear
+  // made earlier as a guest in this browser doesn't count, or the door would open onto a locked page).
+  // Guests: this browser's clear.
+  const tutorialDone = tutorialCleared !== undefined ? tutorialCleared : !!cleared[0];
   useEffect(() => {
     tutorialDoneRef.current = tutorialDone;
   }, [tutorialDone]);
