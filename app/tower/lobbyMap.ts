@@ -66,9 +66,9 @@ export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean
 }
 
 /**
- * @param opts.seasonalDecor Theme on: holiday door + harvest dressing (when that season is open).
- * Theme off / omitted false: the original lobby — Tutorial + Daily only, no seasonal door or décor.
- * Server default is true so SSR matches a Theme-on first paint; Lobby rebuilds from the preference.
+ * @param opts.seasonalDecor Theme on: harvest dressing (pumpkins, hay, garland) while that season is open.
+ * Theme off: plain plants — the seasonal door and mat stay either way. Server default is true so SSR
+ * matches a Theme-on first paint; Lobby rebuilds from the preference.
  */
 export function buildLobby(
   floors: TowerFloor[],
@@ -100,12 +100,12 @@ export function buildLobby(
     ground[at(x, 0)] = T.floor;
     ground[at(x, 2)] = mat;
   }
-  // Front wall: Tutorial + Daily always; seasonal door only when Theme is on.
+  // Front wall: Tutorial, seasonal case, Daily — door + mat stay even when Theme is off.
   const frontDoors: [number, number, number][] = [
     [TUTORIAL_X, T.doorGlass, T.matTutorial],
+    [SEASONAL_X, T.doorHarvest, T.matHarvest],
     [DAILY_X, T.doorWood, T.matDaily],
   ];
-  if (seasonalDecor) frontDoors.splice(1, 0, [SEASONAL_X, T.doorHarvest, T.matHarvest]);
   for (const [x, door, mat] of frontDoors) {
     walls[at(x, DOOR_Y)] = -1;
     ground[at(x, DOOR_Y)] = door;
@@ -127,7 +127,7 @@ export function buildLobby(
   for (const x of [1, 17]) put(x, 1, T.candelabra, false);
   // Benches for visitors along the side walls, and plants by the desk.
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
-  // Theme on + harvest season: pumpkins, hay, garland. Theme off: the usual plants (original lobby).
+  // Theme on + harvest season: pumpkins, hay, garland. Theme off: the usual plants (door stays).
   const harvest = seasonalDecor && currentSeason()?.door === "harvest";
   put(6, 6, harvest ? T.pumpkins : T.plantSmall);
   put(12, 6, harvest ? T.pumpkins : T.plantSmall);
@@ -165,8 +165,8 @@ export function buildLobby(
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Max bounty ${maxBountyLabel(4)}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
-  // Seasonal door + sign only with Theme on (original lobby has Tutorial + Daily only).
-  if (seasonalDecor) {
+  // Seasonal door + sign always (Theme only toggles harvest décor / leaves, not the door).
+  {
     const season = currentSeason();
     const coming = nextSeason();
     const comingLine = coming ? ` Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "";
@@ -240,25 +240,23 @@ export function buildLobby(
 export { H as LOBBY_H, W as LOBBY_W };
 
 /** Each way out's name, printed on its mat (boxed, under the characters). LOCKED plates go on the doors. */
-export function lobbyMatNames(seasonalDecor = true): { x: number; y: number; text: string; mat: true; fit: number }[] {
-  const mats: { x: number; y: number; text: string; mat: true; fit: number }[] = [
+export function lobbyMatNames(): { x: number; y: number; text: string; mat: true; fit: number }[] {
+  return [
     ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: `FLOOR ${n}`, mat: true as const, fit: 2.8 })),
     { x: TUTORIAL_X, y: DOOR_Y - 1, text: "TUTORIAL", mat: true, fit: 3.6 },
-    { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
-  ];
-  if (seasonalDecor)
-    mats.splice(mats.length - 1, 0, {
+    {
       x: SEASONAL_X,
       y: DOOR_Y - 1,
       text: (currentSeason()?.name ?? "SEASONAL").toUpperCase(),
       mat: true,
       fit: 3.6,
-    });
-  return mats;
+    },
+    { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
+  ];
 }
 
-/** @deprecated Prefer lobbyMatNames(seasonalDecor) so Theme off matches the original lobby. */
-export const MAT_NAMES = lobbyMatNames(true);
+/** @deprecated Prefer lobbyMatNames(). */
+export const MAT_NAMES = lobbyMatNames();
 
 /** Where a player should head next from the lobby: the next elevator to ride. */
 export function lobbyGuide(floors: TowerFloor[]): {

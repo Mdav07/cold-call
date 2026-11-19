@@ -106,7 +106,7 @@ export function Lobby({
   useEffect(() => {
     tutorialDoneRef.current = tutorialDone;
   }, [tutorialDone]);
-  // Theme off → original lobby (Tutorial + Daily only). Rebuild so harvest door/decor leave with the leaves.
+  // Theme off → drop harvest décor/leaves, but keep the Thanksgiving door + mat.
   const map = useMemo(() => {
     const base = buildLobby(floors, null, { seasonalDecor: seasonThemeOn });
     base.spawn = serverMap.spawn;
@@ -162,10 +162,11 @@ export function Lobby({
     for (const [k, x] of Object.entries(ELEVATORS))
       if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 1, text: "LOCKED", always: true, fit: 2.8 });
     if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y, text: "LOCKED", always: true, fit: 2.8 });
-    if (seasonThemeOn && (!tutorialDone || !currentSeason()))
+    // Seasonal door stays with Theme off; still LOCKED until tutorial / CLOSED out of season.
+    if (!tutorialDone || !currentSeason())
       locked.push({ x: SEASONAL_X, y: DOOR_Y, text: currentSeason() ? "LOCKED" : "CLOSED", always: true, fit: 2.8 });
-    return [...lobbyMatNames(seasonThemeOn), ...shown.tags, ...locked];
-  }, [shown.tags, map, tutorialDone, seasonThemeOn]);
+    return [...lobbyMatNames(), ...shown.tags, ...locked];
+  }, [shown.tags, map, tutorialDone]);
 
   const open = map.props?.find((p) => p.id === prop);
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.

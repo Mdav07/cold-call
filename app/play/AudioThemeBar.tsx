@@ -36,9 +36,9 @@ function ThemeButton() {
       type="button"
       onClick={() => setSeasonTheme(!on)}
       className="pixel-button grid size-10 place-items-center !p-0 text-[var(--cc-edge)]"
-      aria-label={on ? "Seasonal lobby on. Switch to the original lobby" : "Original lobby on. Switch to the seasonal lobby"}
+      aria-label={on ? "Seasonal décor on. Turn off leaves and harvest dressing" : "Seasonal décor off. Turn on leaves and harvest dressing"}
       aria-pressed={on}
-      title={on ? "Seasonal lobby" : "Original lobby"}
+      title={on ? "Seasonal décor on" : "Seasonal décor off"}
     >
       <LeafIcon muted={!on} />
     </button>
