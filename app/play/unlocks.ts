@@ -20,22 +20,24 @@ export interface Progress {
 export interface Unlock {
   sprite: string;
   label: string;
-  /** How to earn it, shown on the locked card. */
+  /** How to earn it, short enough for the locked card (the tooltip spells it out). */
   how: string;
+  /** The full sentence for the tooltip. */
+  long?: string;
   /** For a streak unlock: the days needed (the streak badge shows the next one). */
   streakDays?: number;
   earned: (p: Progress) => boolean;
 }
 
 export const UNLOCKS: Unlock[] = [
-  { sprite: "hunter-6", label: "Pink Pia", how: "Clear the Tutorial", earned: (p) => p.clearedFloors.includes(0) },
-  { sprite: "hunter-1", label: "Aqua Ari", how: "3-day Daily streak", streakDays: 3, earned: (p) => p.bestStreak >= 3 },
-  { sprite: "hunter-5", label: "Lime Leo", how: "7-day Daily streak", streakDays: 7, earned: (p) => p.bestStreak >= 7 },
-  { sprite: "hunter-9", label: "Slate Sora", how: "Clear all three floors", earned: (p) => [1, 2, 3].every((f) => p.clearedFloors.includes(f)) },
-  { sprite: "hunter-10", label: "Silver Sol", how: "30-day Daily streak", streakDays: 30, earned: (p) => p.bestStreak >= 30 },
+  { sprite: "hunter-6", label: "Pink Pia", how: "Tutorial", long: "Clear the Tutorial", earned: (p) => p.clearedFloors.includes(0) },
+  { sprite: "hunter-1", label: "Aqua Ari", how: "3-day streak", long: "A 3-day Daily Case streak", streakDays: 3, earned: (p) => p.bestStreak >= 3 },
+  { sprite: "hunter-5", label: "Lime Leo", how: "7-day streak", long: "A 7-day Daily Case streak", streakDays: 7, earned: (p) => p.bestStreak >= 7 },
+  { sprite: "hunter-9", label: "Slate Sora", how: "All 3 floors", long: "Clear all three floors", earned: (p) => [1, 2, 3].every((f) => p.clearedFloors.includes(f)) },
+  { sprite: "hunter-10", label: "Silver Sol", how: "30-day streak", long: "A 30-day Daily Case streak", streakDays: 30, earned: (p) => p.bestStreak >= 30 },
   // Seasonal cases: each holiday's case unlocks its own look.
-  { sprite: "hunter-11", label: "Turkey Theo", how: "Clear the Thanksgiving case", earned: (p) => p.seasonsCleared.includes("thanksgiving-2026") },
-  { sprite: "hunter-12", label: "Holly Hal", how: "Clear the Winter Holidays case", earned: (p) => p.seasonsCleared.includes("winter-2026") },
+  { sprite: "hunter-11", label: "Turkey Theo", how: "Thanks-giving case", long: "Clear the Thanksgiving case", earned: (p) => p.seasonsCleared.includes("thanksgiving-2026") },
+  { sprite: "hunter-12", label: "Holly Hal", how: "Winter case", long: "Clear the Winter Holidays case", earned: (p) => p.seasonsCleared.includes("winter-2026") },
 ];
 
 /** Every look that can be earned (valid as a saved choice once picked). */

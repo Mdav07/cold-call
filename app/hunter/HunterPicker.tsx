@@ -92,7 +92,7 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
                 className="sr-only"
               />
               <SpriteFace sprite={h.id} size={2} />
-              <span className="text-center text-[11px] leading-tight text-[var(--cc-muted)]">{h.label}</span>
+              <span className="w-full text-center text-[11px] leading-tight text-[var(--cc-muted)] [overflow-wrap:anywhere] [hyphens:auto]">{h.label}</span>
             </label>
           ))}
           {UNLOCKS.map((r) => {
@@ -100,7 +100,7 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
             return (
               <label
                 key={r.sprite}
-                title={open ? `Earned: ${r.how}` : `Locked: ${r.how}`}
+                title={open ? `Earned: ${r.long ?? r.how}` : `Locked: ${r.long ?? r.how}`}
                 className={`pixel-frame flex flex-col items-center gap-1 bg-[var(--cc-panel-2)] p-2 ${
                   open ? "cursor-pointer" : "cursor-not-allowed opacity-50"
                 } ${sprite === r.sprite ? "outline outline-2 outline-[var(--cc-accent)]" : ""}`}
