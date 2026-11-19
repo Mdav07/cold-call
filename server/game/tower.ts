@@ -7,7 +7,7 @@ import company from "@/content/plumpurse/company.json";
 import directory from "@/content/plumpurse/directory.json";
 import { arcTestnet, deployment } from "@/server/chain/config";
 import { db } from "@/server/chain/db";
-import { getDemoUserId } from "@/server/game/players";
+import { getDemoUserId, isPublicBoardName } from "@/server/game/players";
 import type { FloorId } from "@/shared/interfaces";
 
 export interface TowerEmployee {
@@ -72,7 +72,7 @@ export async function getTower(userId: string | null): Promise<TowerFloor[]> {
   ]);
 
   const clears = mine.data ?? [];
-  const rows = (board.data ?? []).filter((r) => r.user_id !== demoId && r.display_name !== "Demo Hunter");
+  const rows = (board.data ?? []).filter((r) => r.user_id !== demoId && isPublicBoardName(r.display_name));
 
   const floors: TowerFloor[] = company.floors.map((f, i) => {
     const floor = f.floor as FloorId;

@@ -2,7 +2,7 @@
 // Rows come from the public leaderboard view, so every entry is a breach the chain confirmed.
 
 import { db } from "@/server/chain/db";
-import { getDemoUserId } from "@/server/game/players";
+import { getDemoUserId, isPublicBoardName } from "@/server/game/players";
 import { DAILY_FLOOR, todayUtc } from "@/shared/dailyCase";
 import { isSeasonalDate } from "@/shared/seasonalCase";
 
@@ -30,11 +30,11 @@ export async function dailyBoard(date: string = todayUtc(), limit = 20): Promise
   const seen = new Set<string>();
   const rows: DailyBoardRow[] = [];
   for (const r of data ?? []) {
-    // Shared guest account isn't a player — keep "Demo Hunter" off the board.
-    if (!r.user_id || r.user_id === demoId) continue;
+    // Shared guest / default "Hunter" name aren't real board entries.
+    if (!r.user_id || r.user_id === demoId || !isPublicBoardName(r.display_name)) continue;
     if (seen.has(r.user_id)) continue;
     seen.add(r.user_id);
-    rows.push({ name: r.display_name ?? "Anonymous hunter", ms: Number(r.duration_ms), channel: r.channel, tx: r.tx_hash });
+    rows.push({ name: r.display_name as string, ms: Number(r.duration_ms), channel: r.channel, tx: r.tx_hash });
     if (rows.length >= limit) break;
   }
   return rows;
