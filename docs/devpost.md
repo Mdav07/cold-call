@@ -34,7 +34,7 @@ Screenshots of the live site, in `docs/devpost/` (desktop at 1280x800, phones at
 7. `seasonal.jpg`: a holiday case (Thanksgiving), two people to convince
 8. `daily.jpg`: today's Daily Case
 9. `daily-themes-gallery.jpg`: the twelve Daily Case workplaces
-10. `holiday-calendar-gallery.jpg`: the ten holiday cases and their dates
+10. `holiday-rooms-gallery.jpg`: three rooms per holiday (Thanksgiving shown)
 11. `leaderboard.jpg`: fastest breaches and top earners
 12. `profile.jpg`: hunters to earn
 13. `memory.png`: they remember you
@@ -102,23 +102,24 @@ The earlier Floor 3 vault, `0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, is reti
 
 ---
 
-## Demo video script (outline, about 2:30)
+## Demo video script (about 2:30)
 
-Judges score technical execution, product and UX, innovation, impact and the demo. Record the call with system
-audio on.
+The full script, with voice-over lines and sources, is `docs/demo-script.md` (agreed with Audrey on Nov 19). Two
+cuts from one edit: voice-over, and voiceless with short text cards. Keep it under 3:00.
 
-1. **Hook (0:00–0:15).** Krystal's cutscene. Voice-over: "Most money isn't hacked. Someone gets talked into
-   sending it. In Cold Call, you're the one doing the talking."
-2. **The world (0:15–0:35).** Lobby, then Floor 1. Read a clue and show it filed in the case file.
-3. **The voice con (0:35–1:20).** Call Penny or Dee out loud. Show the live transcript, a lookup and the
-   suspicion meter. They agree; alarm, bounty and time.
-4. **On chain (1:20–1:45).** The transaction on the Arc explorer, then the architecture diagram: tool call →
-   vault transaction → `TransferExecuted` → QuickNode Stream → breach screen. "Nothing in our app can mark a
-   win. Only the contract event can."
-5. **The contract fights back (1:45–2:10).** Floor 2: the second signer sees the real recipient. Floor 3: a
-   direct payment bounces until both executives allowlist you. The Bybit debrief card.
-6. **They remember you (2:10–2:20).** Repeat a story on a new run and the employee calls it out.
-7. **Come back tomorrow (2:20–2:30).** The Daily Case, the streak badge, the leaderboard, and a few seconds of
-   the same game on a phone (the handheld-console layout). Tagline and link.
+1. **Hook (0:00–0:30).** Cold open on a voice call to Dee: live transcript, suspicion meter. She agrees; alarm,
+   VAULT BREACHED, payout and time. "That was a real phone call to an AI bank employee, and that was real money
+   moving on chain."
+2. **Why it matters (0:30–0:50).** The Binance headline (about $6.3 billion, Oct 29, 2026, FBI: North Korea's
+   TraderTraitor), then Drift (about $280 million, Apr 2026, signers talked into pre-signing). People get
+   talked into it, and AI agents that handle payments are next.
+3. **How it works (0:50–1:50).** Floor 2: the co-signer reads the real recipient. Floor 3: a direct payment
+   bounces until two executives allowlist you. The transaction on the Arc explorer, then voice call →
+   ElevenLabs tool call → vault on Arc → `TransferExecuted` → QuickNode Stream → breach screen. "Nothing in our
+   app can mark a win. Only the contract event can." Sponsor logos over gameplay.
+4. **A game people come back to (1:50–2:15).** The Daily Case, a holiday case (Thanksgiving, Dev co-signing),
+   the leaderboard, the phone layout.
+5. **Next steps and close (2:15–2:30).** A security-training mode for companies to red-team their own AI
+   agents, and multiplayer heists. Logo, live link, GitHub.
 
-TODO: reset the demo player before recording (`scripts/demo-reset.ts`, `agents/reset-memory.ts`).
+Reset the demo player before recording (`scripts/demo-reset.ts`, `agents/reset-memory.ts`).

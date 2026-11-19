@@ -8,7 +8,7 @@ That somebody is you.
 
 ![Inspiration](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-inspiration.png)
 
-Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. The FBI ranks business email compromise among the costliest crimes it tracks, and in February 2025 Bybit's signers approved a transaction their screens misrepresented and about $1.5 billion was stolen.
+Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. On October 29, 2026, about $6.3 billion was taken from Binance, the largest crypto theft on record; the FBI attributes it to North Korea's TraderTraitor group, and security firms report it began with a fake job interview. In April 2026, Drift's multisig signers were talked into pre-signing transactions that looked routine, and about $280 million was drained. Bybit's $1.5 billion loss in February 2025 followed the same pattern. As companies hand payments to AI agents, the agents are the next ones to be talked into it.
 
 Security training is usually a slide deck. We wanted the opposite: put you on the attacker's side of the phone, let you feel how a believable story, a deadline or a name-drop gets a careful person to sign, and then show you the contract-level control that would have stopped you.
 
@@ -35,7 +35,7 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)
 
-![Holiday case calendar: ten holidays, each open on its own dates with its own weather](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-calendar.jpg)
+![Ten holidays, three rooms each: every layout's room, its two people and the first day it plays](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-rooms.jpg)
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
