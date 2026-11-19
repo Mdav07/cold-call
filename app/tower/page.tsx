@@ -18,6 +18,7 @@ async function Floors({ searchParams }: { searchParams: PageProps<"/tower">["sea
   return (
     <Lobby
       map={buildLobby(floors, typeof at === "string" ? at : null)}
+      floors={floors}
       guide={lobbyGuide(floors)}
       guest={!signedIn}
       // The Daily Case popup: signed-in players by their account; guests by this browser (DailyPopup).

@@ -18,7 +18,7 @@ const T = {
   matTutorialL: 154, matTutorialR: 155, matDailyL: 156, matDailyR: 157, // 3-wide ends (tools/art/mat_words.py)
 } as const;
 
-const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
+export const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
 const DOOR_X = 9; // street door in the front wall
 export const DAILY_X = 15; // the Daily Case door, also in the front wall (open once the tutorial is cleared)
 
@@ -36,6 +36,20 @@ export function entranceSpawn(at: string | null | undefined): FloorMap["spawn"] 
   if (at === "daily") return { x: DAILY_X, y: H - 3, facing: "down" };
   const n = Number(at?.match(/^floor-([123])$/)?.[1]);
   return n ? { x: ELEVATORS[n as 1 | 2 | 3], y: 3, facing: "up" } : null;
+}
+
+/** The elevator sign for Floor n: its status and what it says. Guests' lobby redoes it from this browser's clears. */
+export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean, cleared: boolean): { label: string; text: string } {
+  const below = n - 1 === 0 ? "the Tutorial" : `Floor ${n - 1}`;
+  const best = f?.bestMs != null ? ` Your best: ${clock(f.bestMs)}.` : "";
+  const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
+  const status = cleared ? "CLEARED" : open ? "OPEN" : "LOCKED";
+  return {
+    label: `Floor ${n} · ${f?.name ?? ""} · ${status}`,
+    text: open
+      ? `${f?.description ?? ""} Staff: ${people}.${best} Step into the elevator to go up.`
+      : `Locked. Clear ${below} first. Staff: ${people ?? "unknown"}.`,
+  };
 }
 
 export function buildLobby(floors: TowerFloor[], entrance?: string | null): FloorMap {
@@ -104,21 +118,9 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   for (const [key, x] of Object.entries(ELEVATORS)) {
     const n = Number(key) as 1 | 2 | 3;
     const f = byFloor(n);
-    const below = n - 1 === 0 ? "the Tutorial" : `Floor ${n - 1}`;
-    const best = f?.bestMs != null ? ` Your best: ${clock(f.bestMs)}.` : "";
-    const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
-    const status = !f ? "" : f.cleared ? "CLEARED" : f.unlocked ? "OPEN" : "LOCKED";
     // Readable prop on the numbered mat (y=2): stand on / face the sparkles to learn what's upstairs.
     // Locked floors omit the exit so you can read but can't ride.
-    props.push({
-      id: `sign-${n}`,
-      x,
-      y: 2,
-      label: `Floor ${n} · ${f?.name ?? ""} · ${status}`,
-      text: f?.unlocked
-        ? `${f.description} Staff: ${people}.${best} Step into the elevator to go up.`
-        : `Locked. Clear ${below} first. Staff: ${people ?? "unknown"}.`,
-    });
+    props.push({ id: `sign-${n}`, x, y: 2, ...elevatorSign(f, n, !!f?.unlocked, !!f?.cleared) });
     if (f?.unlocked) exits.push({ x, y: 2, to: `/floor/${n}` });
   }
 

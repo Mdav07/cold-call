@@ -684,7 +684,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       if (!pausedRef.current) {
         for (const t of tagsRef.current ?? []) {
           if (t.mat) continue; // doormat words were drawn with the floor, before the characters
-          const always = t.text === "TUTORIAL" || t.text === "DAILY CASE";
+          const always = !!t.always || t.text === "TUTORIAL" || t.text === "DAILY CASE";
           const dist = Math.abs(p.x - t.x) + Math.abs(p.y - t.y);
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
