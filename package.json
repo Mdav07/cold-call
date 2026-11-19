@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "tsx --tsconfig tsconfig.json tools/seasonal/check_seasons.ts",
+    "prebuild": "tsx --tsconfig tsconfig.json tools/seasonal/check_seasons.ts && tsx --tsconfig tsconfig.json tools/cases/check_cases.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:cases": "tsx --tsconfig tsconfig.json tools/cases/check_cases.ts"
   },
   "dependencies": {
     "@circle-fin/developer-controlled-wallets": "10.8.1",
