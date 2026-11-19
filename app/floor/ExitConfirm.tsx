@@ -3,10 +3,12 @@
 // Confirm before riding an exit so stepping on a mat doesn't yank you out by accident.
 import { useEffect, useRef } from "react";
 import { confirm as confirmSound } from "@/app/floor/hud/sound";
+import { currentSeason } from "@/shared/seasonalCase";
 
 export function exitLabel(to: string): string {
   if (to === "/tower") return "Leave for the lobby?";
   if (to === "/daily") return "Enter today's Daily Case?";
+  if (to === "/seasonal") return `Step through the holiday door? ${currentSeason()?.name ?? "Seasonal"} case.`;
   if (to === "/floor/0") return "Cross the street to the Tutorial?";
   const n = to.replace("/floor/", "");
   if (/^\d+$/.test(n)) return `Take the elevator to Floor ${n}?`;

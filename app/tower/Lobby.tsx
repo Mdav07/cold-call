@@ -12,12 +12,13 @@ import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, DOOR_Y, ELEVATORS, MAT_NAMES, LOBBY_W, elevatorSign } from "./lobbyMap";
+import { DAILY_X, DOOR_Y, ELEVATORS, MAT_NAMES, LOBBY_W, elevatorSign, SEASONAL_X } from "./lobbyMap";
 import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
 import { EarnedChip } from "@/app/play/earnings";
+import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
@@ -48,6 +49,7 @@ export function Lobby({
   // The Daily door is always an exit; while the tutorial isn't cleared, walking in says so instead of
   // silently doing nothing. Every other exit asks to confirm first (ExitConfirm).
   const [dailyLocked, setDailyLocked] = useState(false);
+  const [seasonNote, setSeasonNote] = useState(false);
   const tutorialDoneRef = useRef(false);
   const pendingRef = useLatest(pending);
   const onEvent = useCallback((e: SceneEvent) => {
@@ -55,6 +57,12 @@ export function Lobby({
       if (leavingRef.current || pendingRef.current) return;
       if (e.to === "/daily" && !tutorialDoneRef.current) {
         setDailyLocked(true);
+        return;
+      }
+      // The seasonal door: locked like the Daily until the Tutorial is cleared; between seasons it says
+      // when the next one opens.
+      if (e.to === "/seasonal" && (!tutorialDoneRef.current || !currentSeason())) {
+        setSeasonNote(true);
         return;
       }
       setPending(e.to);
@@ -65,7 +73,7 @@ export function Lobby({
     setPending(null);
     setLeaving({
       to,
-      label: to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Tutorial" : `Going up · Floor ${n}`,
+      label: to === "/daily" ? "Through the side door · Daily Case" : to === "/seasonal" ? `Through the holiday door · ${currentSeason()?.name ?? "Seasonal"}` : n === "0" ? "Across the street · Tutorial" : `Going up · Floor ${n}`,
     });
   }, []);
   const arrived = useCallback(() => {
@@ -108,6 +116,8 @@ export function Lobby({
       // Guests: each elevator sign follows this browser's clears, not the shared demo player's.
       const n = Number(pr.id.match(/^sign-([123])$/)?.[1]);
       if (n && guest) return { ...pr, ...elevatorSign(floors.find((f) => f.floor === n), n, openForGuest(cleared, n), !!cleared[n]) };
+      if (pr.id === "seasonal-sign" && currentSeason())
+        return { ...pr, text: pr.text.replace(/(Walk through the door to play\.|Opens once you clear the tutorial\.)$/, tutorialDone ? "Walk through the door to play." : "Opens once you clear the tutorial.") };
       return pr.id !== "daily-sign"
         ? pr
         : {
@@ -122,7 +132,7 @@ export function Lobby({
     if (guest) {
       // Drop locked-floor exits; keep mats walkable so guests can still read the sparkles.
       exits = exits.filter((e) => {
-        if (e.to === "/daily") return true;
+        if (e.to === "/daily" || e.to === "/seasonal") return true;
         if (!e.to.startsWith("/floor/")) return true;
         const n = Number(e.to.split("/").pop());
         return openForGuest(cleared, n);
@@ -146,6 +156,7 @@ export function Lobby({
     for (const [k, x] of Object.entries(ELEVATORS))
       if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 1, text: "LOCKED", always: true, fit: 2.8 });
     if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y, text: "LOCKED", always: true, fit: 2.8 });
+    if (!tutorialDone || !currentSeason()) locked.push({ x: SEASONAL_X, y: DOOR_Y, text: currentSeason() ? "LOCKED" : "CLOSED", always: true, fit: 2.8 });
     return [...MAT_NAMES, ...shown.tags, ...locked];
   }, [shown.tags, map, tutorialDone]);
 
@@ -180,7 +191,7 @@ export function Lobby({
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked || seasonNote} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       {!consoleMode && <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">{nav}</div>}
@@ -193,6 +204,19 @@ export function Lobby({
           label="Daily Case · locked"
           text="The Daily Case opens once you've cleared the Tutorial, through the glass door. After that, a new case waits behind this door every day."
           onClose={() => setDailyLocked(false)}
+        />
+      )}
+      {seasonNote && (
+        <PropDialogue
+          label={currentSeason() ? `${currentSeason()!.name} case · locked` : "Seasonal case · closed"}
+          text={
+            currentSeason()
+              ? `The ${currentSeason()!.name} case opens once you've cleared the Tutorial, through the glass door.`
+              : nextSeason()
+                ? `No holiday case right now. Next: ${nextSeason()!.name}, opening ${shortDate(nextSeason()!.opens)}.`
+                : "No holiday case right now."
+          }
+          onClose={() => setSeasonNote(false)}
         />
       )}
       {pending && (

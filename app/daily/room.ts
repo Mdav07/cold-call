@@ -11,6 +11,7 @@ import type { DailyCase } from "@/shared/dailyCase";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, DAILY_THEMES } from "@/shared/dailyCase";
 import type { Facing, FloorMap } from "@/app/floor/types";
 import tilesFile from "@/app/floor/maps/tiles.json";
+import { SEASONAL_THEMES } from "@/shared/seasonalCase";
 
 const TILES = tilesFile.tiles as Record<string, { index: number; kind: string }>;
 const tile = (name: string): number => {
@@ -36,7 +37,7 @@ interface Skin {
 
 function skinFor(c: DailyCase): Skin {
   // An unknown theme (an old case, a typo) gets the Pocket Branch look rather than an error.
-  const theme = DAILY_THEMES.find((t) => t.id === c.theme) ?? DAILY_THEMES.find((t) => t.id === "bank-branch") ?? DAILY_THEMES[0];
+  const theme = [...DAILY_THEMES, ...SEASONAL_THEMES].find((t) => t.id === c.theme) ?? DAILY_THEMES.find((t) => t.id === "bank-branch") ?? DAILY_THEMES[0];
   const t = theme.tiles;
   const bank = theme.id.startsWith("bank-");
   return {
