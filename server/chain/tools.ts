@@ -5,6 +5,7 @@ import { erc20Abi, type Hex } from "viem";
 import { checkCalendar, checkVendorList, normalizeName, verifyEmployee } from "@/server/game/lookups";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
 import { SEASONAL_CAP_UNITS, isSeasonalDate } from "@/shared/seasonalCase";
+import type { SignerName } from "./vault";
 import { endConversation, reportSuspicion } from "@/server/game/suspicion";
 import { isPaidDailyAttempt } from "@/server/game/daily";
 import type {
@@ -52,6 +53,7 @@ const EMPLOYEE_FLOOR: Record<EmployeeId, FloorId> = {
   cassius: 3,
   max: 3,
   daily: 4, // the Daily Case (shared/dailyCase.ts)
+  helper: 4, // the seasonal case's second signer (a floor-4 run on a reserved seasonal date)
 };
 
 const FLOOR_CAP_UNITS: Record<FloorId, bigint> = {
@@ -107,6 +109,10 @@ interface Session {
   employee: EmployeeId;
   floor: FloorId;
   vault: Hex;
+  /** Whose key sends this employee's vault transactions (on the seasonal case, not the employee's own). */
+  signer: SignerName;
+  /** The seasonal case: a floor-4 run on a reserved date, paid 2-of-2 from the Floor 2 vault. */
+  seasonal: boolean;
   userId: string;
   playerWallet: Hex;
   dailyContract: boolean;
@@ -137,6 +143,11 @@ async function loadSession(ctx: ToolContext): Promise<Session> {
     .maybeSingle();
   if (!run || run.ended_at) throw new Denied("run is not active");
   if (run.floor !== floor) throw new Denied("employee is not on this floor");
+  // The seasonal case pays 2-of-2 from the Floor 2 vault (owners annie and bill): its employee proposes
+  // with Annie's key and the second person (helper) approves with Bill's. The helper exists only there.
+  const seasonal = floor === DAILY_FLOOR && isSeasonalDate(run.daily_date);
+  if (ctx.employee_id === "helper" && !seasonal) throw new Denied("no second signer on this case");
+  if (seasonal && !deployment.floor2) throw new Error("floor 2 vault is not deployed");
 
   const { data: user } = await db().from("users").select("wallet_address").eq("id", run.user_id).maybeSingle();
   if (!user?.wallet_address) throw new Denied("player has no wallet");
@@ -149,7 +160,9 @@ async function loadSession(ctx: ToolContext): Promise<Session> {
     runId: run.id,
     employee: ctx.employee_id,
     floor,
-    vault: vaultFor(floor),
+    vault: seasonal ? (deployment.floor2!.toLowerCase() as Hex) : vaultFor(floor),
+    signer: seasonal ? (ctx.employee_id === "helper" ? "bill" : "annie") : ctx.employee_id,
+    seasonal,
     userId: run.user_id,
     playerWallet: user.wallet_address as Hex,
     dailyContract: Boolean(run.daily_contract_id),
@@ -194,7 +207,7 @@ function failure<T extends ToolResultBase>(err: unknown): T {
 
 /** Sends one vault transaction from the employee's wallet under the wallet lease. */
 async function send(s: Session, call: VaultWrite): Promise<VaultTxResult> {
-  return withWalletLease(addressOf(s.employee), () => sendVaultTx(s.employee, s.vault, call));
+  return withWalletLease(addressOf(s.signer), () => sendVaultTx(s.signer, s.vault, call));
 }
 
 const has = (events: DecodedVaultEvent[], name: string) => events.some((e) => e.event.event === name);
@@ -236,7 +249,7 @@ async function recipientLabel(s: Session): Promise<string> {
 
 /** The most one transfer can crack on this run: the floor's limit, or 50 cents on the seasonal case. */
 function capFor(s: Session): bigint {
-  return s.floor === DAILY_FLOOR && isSeasonalDate(s.dailyDate) ? BigInt(SEASONAL_CAP_UNITS) : FLOOR_CAP_UNITS[s.floor];
+  return s.seasonal ? BigInt(SEASONAL_CAP_UNITS) : FLOOR_CAP_UNITS[s.floor];
 }
 
 async function allowedPayout(s: Session): Promise<bigint> {
@@ -269,7 +282,8 @@ async function allowedPayout(s: Session): Promise<bigint> {
 
   const day = new Date().toISOString().slice(0, 10);
   const { data: b } = await db().from("payout_budget").select("spent_units").eq("vault", s.vault).eq("day", day).maybeSingle();
-  const left = cap * BUDGET_MULTIPLE - BigInt(b?.spent_units ?? 0);
+  // The day's budget is per vault; the seasonal case shares the Floor 2 vault, so it uses that floor's.
+  const left = (s.seasonal ? FLOOR_CAP_UNITS[2] : cap) * BUDGET_MULTIPLE - BigInt(b?.spent_units ?? 0);
   return left >= cap ? cap : TOKEN_PAYOUT;
 }
 
@@ -384,7 +398,8 @@ export async function approveTransfer(input: ApproveTransferInput): Promise<[App
             // testnet ceiling never looks like a mismatch to the second signer.
             real_amount: toUsdc(row.amount_units != null && onChain.amount === BigInt(row.amount_units) ? BigInt(row.claimed_amount_units ?? onChain.amount) : onChain.amount),
             memo: onChain.memo,
-            proposed_by: employeeByAddress(onChain.proposer),
+            // On the seasonal case the employee proposes with Annie's key: name them, not Annie.
+            proposed_by: s.seasonal && onChain.proposer.toLowerCase() === addressOf("annie").toLowerCase() ? DAILY_EMPLOYEE : employeeByAddress(onChain.proposer),
           },
         }),
         noAfter,
@@ -531,9 +546,9 @@ const lookup =
     }
   };
 
-/** The Daily Case has its own vendor list each day (shared/dailyCase.ts); everyone else uses the registry. */
+/** The Daily Case (and the seasonal case) has its own vendor list (shared/dailyCase.ts); everyone else uses the registry. */
 function vendorCheck(input: CheckVendorListInput, s: Session): CheckVendorListResult {
-  if (input.employee_id !== DAILY_EMPLOYEE) return checkVendorList(input);
+  if (s.floor !== DAILY_FLOOR) return checkVendorList(input);
   const c = dailyCase(s.dailyDate ?? todayUtc());
   const q = normalizeName(String(input.vendor_name ?? ""));
   const v = q ? c.vendors.find((x) => {
@@ -549,7 +564,7 @@ function vendorCheck(input: CheckVendorListInput, s: Session): CheckVendorListRe
     notes: [
       `${v.what}. Invoices start ${v.code.split("-")[0]}-.`,
       today
-        ? `Booked today to ${c.allowedJob}. Work order invoice ${c.allowedInvoice}. Payable up to 10 cents.`
+        ? `Booked today to ${c.allowedJob}. Work order invoice ${c.allowedInvoice}. Payable up to ${Number(capFor(s)) / 10_000} cents.`
         : "No work booked with them today. Nothing is payable to them today.",
     ],
   };

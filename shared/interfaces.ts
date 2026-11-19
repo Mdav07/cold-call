@@ -14,7 +14,8 @@ export type EmployeeId =
   | "bill"
   | "cassius"
   | "max"
-  | "daily"; // the Daily Case: one employee whose persona changes every day (shared/dailyCase.ts)
+  | "daily" // the Daily Case: one employee whose persona changes every day (shared/dailyCase.ts)
+  | "helper"; // the seasonal case's second person, who must also sign (shared/seasonalCase.ts)
 
 export type FloorId = 0 | 1 | 2 | 3 | 4; // 0 = tutorial, 4 = the Daily Case
 export type Channel = "chat" | "voice";

@@ -28,7 +28,9 @@ export const publicClient = createPublicClient({ chain: arcTestnet, transport: t
 
 function accountFor(name: SignerName) {
   // The Daily Case pays from the Pocket Branch vault, so its one employee signs with Barry's key.
+  // (The seasonal case pays from the Floor 2 vault instead: tools.ts signs as annie and bill there.)
   if (name === "daily") name = "barry";
+  if (name === "helper") name = "bill";
   const key = process.env[`${name.toUpperCase()}_PRIVATE_KEY`];
   if (!key) throw new Error(`missing ${name.toUpperCase()}_PRIVATE_KEY`);
   return privateKeyToAccount(key as Hex);
