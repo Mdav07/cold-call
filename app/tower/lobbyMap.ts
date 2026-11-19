@@ -184,7 +184,8 @@ export function buildLobby(
             x: SEASONAL_X,
             y: DOOR_Y - 1,
             label: `${season.name} case · open until ${shortDate(season.closes)}`,
-            text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+            // Board tip lives on the mat (no floating mid-lobby prop — that left a lone twinkle on the carpet).
+            text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} Fastest clears at /leaderboard?floor=seasonal. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
           }
         : {
             id: "seasonal-sign",
@@ -216,16 +217,6 @@ export function buildLobby(
     label: `Daily Case · ${today.title}`,
     text: `A new short case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Full board at /leaderboard?floor=daily.`,
   });
-  const season = currentSeason();
-  if (season?.case) {
-    props.push({
-      id: "seasonal-board",
-      x: SEASONAL_X,
-      y: 9,
-      label: `${season.name} · ${season.case.title}`,
-      text: `${season.case.employee.name} and ${season.helper?.firstName ?? "a co-signer"} hold the tin at ${season.case.place}. Fastest clears at /leaderboard?floor=seasonal.`,
-    });
-  }
   const top = floors
     .flatMap((f) => f.board.slice(0, 1).map((b) => `${f.floor === 0 ? "Tutorial" : `Floor ${f.floor}`}: ${b.name} ${clock(b.ms)}`))
     .join(" · ");
