@@ -88,7 +88,7 @@ export function Lobby({
     setLeaving(null);
   }, [router, leavingRef]);
 
-  // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
+  // First visit: Krystal's intro, sign-in, then hunter pick if needed (/intro sets cc-intro-seen).
   useEffect(() => {
     try {
       if (!localStorage.getItem("cc-intro-seen")) router.replace("/intro");

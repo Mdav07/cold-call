@@ -1,7 +1,7 @@
 "use client";
 
 // The game opens in the tower lobby. A first-time player (no cc-intro-seen in this browser) sees
-// Krystal's intro and picks a hunter first. The check needs localStorage, so it runs in the browser.
+// Krystal's intro, then sign-in, then hunter pick if needed. The check needs localStorage, so it runs in the browser.
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
