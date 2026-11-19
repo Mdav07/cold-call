@@ -662,7 +662,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
             next.x > d.x ? "right" : next.x < d.x ? "left" : next.y > d.y ? "down" : "up";
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
           const a = (0.35 + pulse * 0.55) * (1 - i / 10);
-          // Same triangle as the mobile D-pad Arrow (tip up in local space), ~dot-sized (~3–4px).
+          // Same triangle as the mobile D-pad Arrow (tip up in local space), ~old 3px-dot footprint.
           const cx = d.x * TILE + TILE / 2;
           const cy = d.y * TILE + TILE / 2;
           const rot = { up: 0, right: Math.PI / 2, down: Math.PI, left: -Math.PI / 2 }[dir];
@@ -671,9 +671,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           c.rotate(rot);
           c.fillStyle = `rgba(255, 228, 140, ${a})`;
           c.beginPath();
-          c.moveTo(0, -2);
-          c.lineTo(2, 1.5);
-          c.lineTo(-2, 1.5);
+          c.moveTo(0, -1.5);
+          c.lineTo(1.5, 1);
+          c.lineTo(-1.5, 1);
           c.closePath();
           c.fill();
           c.restore();
