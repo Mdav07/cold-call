@@ -4,6 +4,7 @@ import { timingSafeEqual } from "node:crypto";
 import { erc20Abi, type Hex } from "viem";
 import { checkCalendar, checkVendorList, normalizeName, verifyEmployee } from "@/server/game/lookups";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
+import { SEASONAL_CAP_UNITS, isSeasonalDate } from "@/shared/seasonalCase";
 import { endConversation, reportSuspicion } from "@/server/game/suspicion";
 import { isPaidDailyAttempt } from "@/server/game/daily";
 import type {
@@ -233,8 +234,13 @@ async function recipientLabel(s: Session): Promise<string> {
 
 // ---------- propose_transfer ----------
 
+/** The most one transfer can crack on this run: the floor's limit, or 50 cents on the seasonal case. */
+function capFor(s: Session): bigint {
+  return s.floor === DAILY_FLOOR && isSeasonalDate(s.dailyDate) ? BigInt(SEASONAL_CAP_UNITS) : FLOOR_CAP_UNITS[s.floor];
+}
+
 async function allowedPayout(s: Session): Promise<bigint> {
-  const cap = FLOOR_CAP_UNITS[s.floor];
+  const cap = capFor(s);
 
   // Full pay only on the first clear of this floor, or on the day's first Daily Contract clear.
   // The Daily Case pays in full on the player's first clear of each day's case.
@@ -312,7 +318,7 @@ export async function proposeTransfer(input: ProposeTransferInput): Promise<[Pro
     if (balance < LOW_VAULT_UNITS) console.warn(`LOW VAULT floor ${s.floor} ${s.vault}: ${Number(balance) / 1e6} USDC left; run scripts/topup.ts --apply`);
     // What the player cracked: their ask, up to the floor's per-transfer limit. It's the amount the
     // employee says and the player sees; the chain sends `amount` (repeat-clear token, budget, ceiling).
-    const cap = FLOOR_CAP_UNITS[s.floor];
+    const cap = capFor(s);
     const cracked = asked < cap ? asked : cap;
     let amount = asked < allowed ? asked : allowed;
     if (PAYOUT_CEILING && amount > PAYOUT_CEILING) amount = PAYOUT_CEILING;
