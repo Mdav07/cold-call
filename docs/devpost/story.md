@@ -33,6 +33,8 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![On a phone: the lobby, Floor 2 and a conversation with Dee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/phones.jpg)
 
+[![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)](https://claude.ai/artifact/5tmcYfWHuPmAZdvwGqN2m5)
+
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
 ![How we built it](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-how-we-built-it.png)
