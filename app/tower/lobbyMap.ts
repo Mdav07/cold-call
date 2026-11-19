@@ -1,6 +1,6 @@
-// The tower lobby as a walkable map: elevators to Floors 1–3 on the back wall, the street door to the
-// The tutorial at the front, a reception desk and signs to read. Built in code from the
-// shared tileset so it follows the player's progress: a locked floor's elevator has no exit, only a sign.
+// The tower lobby as a walkable map: five elevators on the back wall (Tutorial, Floors 1–3, Daily Case),
+// each with a name plate on its door and a mat in front, a reception desk and signs to read. Built in
+// code from the shared tileset so it follows the player's progress: a locked elevator has no exit.
 import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
 import { dailyCase, todayUtc } from "@/shared/dailyCase";
@@ -13,14 +13,14 @@ const T = {
   counter: 32, counterPapers: 33, counterFiles: 35, plant: 30, plantSmall: 31,
   painting: 49, bookshelf: 39, water: 40,
   chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
-  matTutorial: 61, matDaily: 62, // cute welcome mats (tools/art/door_mats.py)
-  mat1: 63, mat2: 64, mat3: 65,
-  matTutorialL: 154, matTutorialR: 155, matDailyL: 156, matDailyR: 157, // 3-wide ends (tools/art/mat_words.py)
+  // Elevator mats: gold-framed runners (tools/art/elegant_mats.py).
+  matTutorial: 61, matDaily: 62, mat1: 63, mat2: 64, mat3: 65,
 } as const;
 
-export const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 4, 2: 9, 3: 14 }; // x of each elevator door
-const DOOR_X = 9; // street door in the front wall
-export const DAILY_X = 15; // the Daily Case door, also in the front wall (open once the tutorial is cleared)
+export const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 6, 2: 9, 3: 12 }; // x of each floor's elevator
+export const TUTORIAL_X = 3; // the Tutorial's elevator (it goes across the street to the little branch)
+export const DAILY_X = 15; // the Daily Case elevator (open once the Tutorial is cleared)
+const MID_X = 9;
 
 const clock = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
@@ -29,11 +29,11 @@ const clock = (ms: number) => {
 
 /**
  * Where to stand when you come back to the lobby from a level (RESTART sends you to /tower?at=…):
- * in front of that floor's elevator facing it, or just inside the tutorial / Daily door facing out.
+ * in front of that level's elevator, facing it.
  */
 export function entranceSpawn(at: string | null | undefined): FloorMap["spawn"] | null {
-  if (at === "floor-0") return { x: DOOR_X, y: H - 3, facing: "down" };
-  if (at === "daily") return { x: DAILY_X, y: H - 3, facing: "down" };
+  if (at === "floor-0") return { x: TUTORIAL_X, y: 3, facing: "up" };
+  if (at === "daily") return { x: DAILY_X, y: 3, facing: "up" };
   const n = Number(at?.match(/^floor-([123])$/)?.[1]);
   return n ? { x: ELEVATORS[n as 1 | 2 | 3], y: 3, facing: "up" } : null;
 }
@@ -67,25 +67,17 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
       else ground[at(x, y)] = T.floor;
     }
 
-  // Back wall: three elevators; numbered doormat on the doorway tile directly in front (y=2).
-  const elevatorMats = { 1: T.mat1, 2: T.mat2, 3: T.mat3 } as const;
-  for (const [n, x] of Object.entries(ELEVATORS)) {
+  // Back wall: five elevators, each with its mat on the tile in front (y=2), which is the exit.
+  for (const [x, mat] of [
+    [TUTORIAL_X, T.matTutorial],
+    [ELEVATORS[1], T.mat1],
+    [ELEVATORS[2], T.mat2],
+    [ELEVATORS[3], T.mat3],
+    [DAILY_X, T.matDaily],
+  ] as const) {
     walls[at(x, 1)] = T.elevator;
     ground[at(x, 0)] = T.floor;
-    ground[at(x, 2)] = elevatorMats[Number(n) as 1 | 2 | 3];
-  }
-  // Front wall: matching street / daily exits — opening in the wall (lobby carpet on the
-  // threshold), one rectangular doormat on the tile in front (not doubled on the exit itself).
-  for (const [x, l, mat, r] of [
-    [DOOR_X, T.matTutorialL, T.matTutorial, T.matTutorialR],
-    [DAILY_X, T.matDailyL, T.matDaily, T.matDailyR],
-  ] as const) {
-    walls[at(x, H - 1)] = -1;
-    ground[at(x, H - 1)] = T.floor; // threshold = same carpet as the lobby
-    // Welcome mat just inside, three tiles wide so its word fits (printed by the engine, MAT_WORDS).
-    ground[at(x - 1, H - 2)] = l;
-    ground[at(x, H - 2)] = mat;
-    ground[at(x + 1, H - 2)] = r;
+    ground[at(x, 2)] = mat;
   }
 
   const put = (x: number, y: number, tile: number, solid = true) => {
@@ -99,11 +91,8 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   put(2, 9, T.tableRound);
   put(2, 8, T.chairDown);
   put(16, 9, T.water);
-  put(15, 2, T.bookshelf);
-  put(3, 2, T.plantSmall);
-  // Portraits and candelabras on the back wall between the elevators (decor over the wall, not blocking).
-  for (const x of [7, 11]) put(x, 1, T.painting, false);
-  for (const x of [2, 16]) put(x, 1, T.candelabra, false);
+  // Candelabras on the back wall at the ends (decor over the wall, not blocking).
+  for (const x of [1, 17]) put(x, 1, T.candelabra, false);
   // Benches for visitors along the side walls, and plants by the desk.
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
   put(6, 6, T.plantSmall);
@@ -112,7 +101,7 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   put(5, 11, T.plant);
 
   const byFloor = (n: number) => floors.find((f) => f.floor === n);
-  const exits: NonNullable<FloorMap["exits"]> = [{ x: DOOR_X, y: H - 1, to: "/floor/0" }];
+  const exits: NonNullable<FloorMap["exits"]> = [{ x: TUTORIAL_X, y: 2, to: "/floor/0" }];
   const props: NonNullable<FloorMap["props"]> = [];
 
   for (const [key, x] of Object.entries(ELEVATORS)) {
@@ -125,25 +114,24 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   }
 
   const p0 = byFloor(0);
-  // Daily doorway is always physically open; Lobby.tsx adds/removes the /daily exit based on
+  // The Daily elevator is always an exit; Lobby.tsx answers it with a LOCKED note until
   // tutorial clear (account or this browser). Blocking the cell made it feel broken.
   const today = dailyCase(todayUtc());
-  exits.push({ x: DAILY_X, y: H - 1, to: "/daily" });
-  // Readable props sit on the doormats (same tile as the rug) so the SPACE highlight lines up
-  // with the T / D — not on the wall tiles beside the doors (that looked like an offset hitbox).
+  exits.push({ x: DAILY_X, y: 2, to: "/daily" });
+  // Readable props sit on the mats (the exit tiles), like the floors' elevator signs.
   props.push({
     id: "daily-sign",
     x: DAILY_X,
-    y: H - 2,
+    y: 2,
     label: `Daily Case · ${today.title}`,
-    text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+    text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Step into the elevator to play." : "Opens once you clear the tutorial."}`,
   });
   props.push({
     id: "street-sign",
-    x: DOOR_X,
-    y: H - 2,
+    x: TUTORIAL_X,
+    y: 2,
     label: `Tutorial${p0?.cleared ? " · CLEARED" : ""}`,
-    text: "The tutorial: Barry is closing up the little branch across the street. Walk out through the door to try your first con.",
+    text: "The tutorial: Barry is closing up the little branch across the street. Step into the elevator to try your first con.",
   });
   props.push({
     id: "reception",
@@ -179,7 +167,7 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     tilesetColumns: 16,
     layers: { ground, walls, decor },
     blocked,
-    spawn: entranceSpawn(entrance) ?? { x: DOOR_X, y: H - 3, facing: "up" },
+    spawn: entranceSpawn(entrance) ?? { x: MID_X, y: H - 3, facing: "up" },
     npcs: [],
     props,
     exits,
@@ -188,20 +176,20 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
 
 export { H as LOBBY_H, W as LOBBY_W };
 
-/** The words printed on the doormats, centred on each mat (FloorScene draws tags with `mat`). */
-export const MAT_WORDS: { x: number; y: number; text: string; mat: true }[] = [
-  { x: DOOR_X, y: H - 2, text: "TUTORIAL", mat: true },
-  { x: DAILY_X, y: H - 2, text: "DAILY", mat: true },
-  ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: n, mat: true as const })),
+/** Each elevator's name plate, on its door: the same boxed label the floors use for LOBBY, always shown. */
+export const ELEVATOR_NAMES: { x: number; y: number; text: string; always: true; fit: number }[] = [
+  { x: TUTORIAL_X, y: 1, text: "TUTORIAL", always: true, fit: 2.8 },
+  ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 1, text: `FLOOR ${n}`, always: true as const, fit: 2.8 })),
+  { x: DAILY_X, y: 1, text: "DAILY", always: true, fit: 2.8 },
 ];
 
-/** Where a player should head next from the lobby. Mats (T / D / 1–3) are the signs — no floating labels. */
+/** Where a player should head next from the lobby: the next elevator to ride. */
 export function lobbyGuide(floors: TowerFloor[]): {
   goal: { x: number; y: number } | null;
   tags: { x: number; y: number; text: string; endAt?: "x"; mat?: boolean }[];
 } {
   const f0 = floors.find((f) => f.floor === 0);
-  if (!f0?.cleared) return { goal: { x: DOOR_X, y: H - 1 }, tags: [] };
+  if (!f0?.cleared) return { goal: { x: TUTORIAL_X, y: 2 }, tags: [] };
   const next = floors.find((f) => f.floor > 0 && f.unlocked && !f.cleared);
   if (!next) return { goal: null, tags: [] };
   const x = ELEVATORS[next.floor as 1 | 2 | 3];

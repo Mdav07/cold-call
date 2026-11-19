@@ -546,8 +546,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       };
       // White pixel text centred in a dark plate (box = false: text only, with a dark shadow). The glyphs
       // are placed from their measured ink bounds, so they sit in the middle of the box both ways.
-      const plate = (x: number, y: number, text: string, padX: number, padY: number, opts: { box?: boolean; clamp?: boolean } = {}) => {
-        c.font = `${5 * u}px ${pixelFont}, monospace`;
+      const plate = (x: number, y: number, text: string, padX: number, padY: number, opts: { box?: boolean; clamp?: boolean; size?: number } = {}) => {
+        c.font = `${opts.size ?? 5 * u}px ${pixelFont}, monospace`;
         c.textAlign = "left";
         c.textBaseline = "alphabetic";
         const m = c.measureText(text);
@@ -689,9 +689,21 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
           c.globalAlpha = a;
-          c.font = `${5 * u}px ${pixelFont}, monospace`;
-          const wdt = c.measureText(t.text).width + 8 * u;
-          plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u, 2.5 * u, { clamp: false });
+          // `fit`: the plate stays within that many tiles, its text shrinking when the room is drawn small
+          // (the lobby's five elevator names on a phone), down to 60% of the usual size.
+          let size = 5 * u, pad = 1;
+          c.font = `${size}px ${pixelFont}, monospace`;
+          if (t.fit) {
+            const room = t.fit * TILE, need = c.measureText(t.text).width + 8 * u;
+            if (need > room) {
+              const k = Math.max(0.6, room / need);
+              size *= k;
+              pad = k;
+              c.font = `${size}px ${pixelFont}, monospace`;
+            }
+          }
+          const wdt = c.measureText(t.text).width + 8 * u * pad;
+          plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u * pad, 2.5 * u * pad, { clamp: false, size });
           c.globalAlpha = 1;
         }
       }
