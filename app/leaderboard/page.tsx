@@ -11,10 +11,20 @@ import { db } from "@/server/chain/db";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 import { dailyBoard, streakOf } from "@/server/game/dailyBoard";
 import { DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
-import { isSeasonalDate } from "@/shared/seasonalCase";
+import { SEASONS, currentSeason, isSeasonalDate, type Season } from "@/shared/seasonalCase";
 
 const FLOORS = [0, 1, 2, 3] as const;
 const PER_FLOOR = 20;
+
+/** Season to show on the board: the one open now, else the most recent with a case. */
+function boardSeason(): Season | null {
+  return (
+    currentSeason() ??
+    SEASONS.filter((s) => s.case)
+      .sort((a, b) => b.closes.localeCompare(a.closes))[0] ??
+    null
+  );
+}
 
 type Row = {
   user_id: string;
@@ -110,16 +120,20 @@ function Board({ rows, rivals = [], empty }: { rows: Row[]; rivals?: Rival[]; em
 async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard">["searchParams"] }) {
   await connection(); // today's case depends on the current date, so render per request
   const { floor: raw, channel: rawChannel } = await searchParams;
-  // "daily" is the Daily Case tab: today's case, its own board, no rival crews.
+  // "daily" / "seasonal": case boards with no rival crews (Daily uses today; Seasonal uses its reserved date).
   const isDaily = raw === "daily";
+  const isSeasonal = raw === "seasonal";
   const floor = FLOORS.includes(Number(raw) as (typeof FLOORS)[number]) ? Number(raw) : 1;
   // Spec decision 19: a voice/chat filter. A run that used voice at all counts as voice.
   const channel = rawChannel === "voice" || rawChannel === "chat" ? rawChannel : "all";
-  const href = (f: number | "daily", c: string) => `/leaderboard?floor=${f}${c === "all" ? "" : `&channel=${c}`}`;
-  const tab: number | "daily" = isDaily ? "daily" : floor;
+  const href = (f: number | "daily" | "seasonal", c: string) =>
+    `/leaderboard?floor=${f}${c === "all" ? "" : `&channel=${c}`}`;
+  const tab: number | "daily" | "seasonal" = isDaily ? "daily" : isSeasonal ? "seasonal" : floor;
 
   const today = dailyCase(todayUtc());
-  const [board, streaks, todaysBoard, paidRuns, demoId] = await Promise.all([
+  const season = boardSeason();
+  const seasonCase = season?.case ?? null;
+  const [board, streaks, todaysBoard, seasonalBoardRows, paidRuns, demoId] = await Promise.all([
     db()
       .from("leaderboard")
       .select("user_id, display_name, floor, channel, duration_ms, tx_hash, daily_contract_id")
@@ -135,6 +149,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       .not("daily_date", "is", null)
       .limit(5000),
     isDaily ? dailyBoard(today.date, PER_FLOOR) : Promise.resolve([]),
+    // Seasonal cases share the Daily floor; rows are keyed by the season's reserved caseDate.
+    isSeasonal && season ? dailyBoard(season.caseDate, PER_FLOOR) : Promise.resolve([]),
     // Winnings: every paid breach (testnet dollars), summed per player below.
     paidBreaches(),
     getDemoUserId().catch(() => null),
@@ -174,24 +190,28 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
     .filter((r) => r.longest > 0)
     .sort((a, b) => b.longest - a.longest)
     .slice(0, 10);
-  // The Daily Case board's rows, in the floor boards' shape (one per player, fastest first).
-  const dailyRows: Row[] = todaysBoard
-    .filter((r) => channel === "all" || r.channel === channel)
-    .map((r, i) => ({
-      user_id: `${r.name}-${i}`,
-      display_name: r.name,
-      floor: DAILY_FLOOR,
-      channel: r.channel,
-      duration_ms: r.ms,
-      tx_hash: r.tx,
-      daily_contract_id: null,
-    }));
+  // Case boards' rows, in the floor boards' shape (one per player, fastest first).
+  const toCaseRows = (source: typeof todaysBoard): Row[] =>
+    source
+      .filter((r) => channel === "all" || r.channel === channel)
+      .map((r, i) => ({
+        user_id: `${r.name}-${i}`,
+        display_name: r.name,
+        floor: DAILY_FLOOR,
+        channel: r.channel,
+        duration_ms: r.ms,
+        tx_hash: r.tx,
+        daily_contract_id: null,
+      }));
+  const dailyRows = toCaseRows(todaysBoard);
+  const seasonalRows = toCaseRows(seasonalBoardRows);
   // Shared guest account ("Demo Hunter") isn't a real player — keep it off every board.
   const rows = ((board.data ?? []) as Row[]).filter(
     (r) => r.user_id !== demoId && isPublicBoardName(r.display_name) && (channel === "all" || r.channel === channel),
   );
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
   const ladder = ladderFor(floor).filter((r) => channel === "all" || r.channel === channel);
+  const seasonOpen = !!currentSeason();
 
   return (
     <>
@@ -220,6 +240,15 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
             className={isDaily ? "pixel-button" : `pixel-button ${OFF}`}
           >
             Daily Case
+          </Link>
+          <Link
+            href={href("seasonal", channel)}
+            replace
+            scroll={false}
+            aria-current={isSeasonal ? "page" : undefined}
+            className={isSeasonal ? "pixel-button" : `pixel-button ${OFF}`}
+          >
+            {season?.name ?? "Seasonal"}
           </Link>
         </nav>
         <nav aria-label="Channel" className="flex flex-wrap items-center gap-2">
@@ -253,6 +282,32 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
               Play today&apos;s case ▶
             </Link>
           </>
+        ) : isSeasonal ? (
+          season && seasonCase ? (
+            <>
+              <div className="flex flex-col gap-1">
+                <p className="font-pixel text-[10px] text-[var(--cc-accent)]">
+                  {season.name} · {seasonCase.title}
+                </p>
+                <p className="font-pixel text-[9px] leading-relaxed text-[var(--cc-muted)]">
+                  {seasonCase.employee.name}, {seasonCase.employee.title.toLowerCase()}
+                  {season.helper ? ` + ${season.helper.firstName}` : ""} · {seasonCase.place}
+                  {seasonOpen ? "" : " · closed"}
+                </p>
+              </div>
+              <Board
+                rows={seasonalRows}
+                empty={`Nobody has cracked the ${season.name} case yet. Be the first.`}
+              />
+              {seasonOpen ? (
+                <Link href="/seasonal" className="pixel-button self-start">
+                  Play the {season.name} case ▶
+                </Link>
+              ) : null}
+            </>
+          ) : (
+            <p className="text-sm text-[var(--cc-muted)]">No seasonal case on the board yet.</p>
+          )
         ) : (
           <>
             <p className="font-pixel text-[10px] text-[var(--cc-muted)]">{floorName(floor)}</p>

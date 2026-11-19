@@ -212,6 +212,16 @@ export function buildLobby(
     label: `Daily Case · ${today.title}`,
     text: `A new short case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Full board at /leaderboard?floor=daily.`,
   });
+  const season = currentSeason();
+  if (season?.case) {
+    props.push({
+      id: "seasonal-board",
+      x: SEASONAL_X,
+      y: 9,
+      label: `${season.name} · ${season.case.title}`,
+      text: `${season.case.employee.name} and ${season.helper?.firstName ?? "a co-signer"} hold the tin at ${season.case.place}. Fastest clears at /leaderboard?floor=seasonal.`,
+    });
+  }
   const top = floors
     .flatMap((f) => f.board.slice(0, 1).map((b) => `${f.floor === 0 ? "Tutorial" : `Floor ${f.floor}`}: ${b.name} ${clock(b.ms)}`))
     .join(" · ");
