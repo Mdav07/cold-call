@@ -62,7 +62,7 @@ Security training is usually a slide deck. Cold Call puts you on the attacker's 
 | ![Krystal's case file: one card per mark, filtered by floor](docs/devpost/casefile.jpg) | ![The Daily Case: today's co-working space and its one employee](docs/devpost/daily.jpg) |
 | The case file: staff, vendors, calendar, memos, evidence, your notes | The Daily Case: a new workplace every day |
 | ![The Thanksgiving case: Marisol holds the cash, Dev co-signs](docs/devpost/seasonal.jpg) | ![Leaderboard: fastest breaches per level against rival crews, plus top earners](docs/devpost/leaderboard.jpg) |
-| The seasonal case: two people to convince | Leaderboard, timed to the block |
+| A holiday case: two people to convince | Leaderboard, timed to the block |
 | ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Profile: four free hunters and eight to earn](docs/devpost/profile.jpg) |
 | Krystal's opening cutscene | Profile: your look, name, earnings and unlocks |
 
@@ -79,7 +79,7 @@ On a phone held upright the game becomes a handheld console: the room is the scr
 
 You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. After Krystal's opening cutscene, sign in or play as a guest, then pick a hunter and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and talk (text) or call (voice). Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
 
-**The lobby.** Plumpurse Tower's lobby is the hub: three elevators to Floors 1 to 3, a glass street door to the Tutorial, the Daily Case door, and a seasonal door while a holiday case is open. Doors you can't use yet say LOCKED. The top bar holds the Daily Case, your total EARNED, the case file, the leaderboard, Sign in or Profile, and a replay of the intro; Music, SFX and the seasonal Theme toggle sit beside it.
+**The lobby.** Plumpurse Tower's lobby is the hub: three elevators to Floors 1 to 3, a glass street door to the Tutorial, the Daily Case door, and a holiday door while a holiday case is open. The lobby dresses up for the open holiday, with its own door, decorations and weather; when two holidays are open at once, the door asks which one you want. Doors you can't use yet say LOCKED. The top bar holds the Daily Case, your total EARNED, the case file, the leaderboard, Sign in or Profile, and a replay of the intro; Music, SFX and the seasonal Theme toggle sit beside it.
 
 **On each floor.** Krystal's two-screen briefing shows the max bounty, a difficulty rating and the vault's rule. Guide arrows on the floor lead to the next employee you haven't talked to, and to the exit only after that. The top bar shows the run clock (it starts when you press Start), what you've earned (green), the vault's balance (red), the max bounty and the case file.
 
@@ -106,9 +106,11 @@ Clearing Floor 3 plays Krystal's ending cutscene, and a Case 2 door (Fatwallet F
 
 <p align="center"><img src="docs/devpost/daily-themes.jpg" width="600" alt="The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles"></p>
 
-**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the level's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on the seasonal case. Everyone starts at $0, and the top bar and lobby show your running total. The vault pays in testnet USDC (a 1¢ token on repeat clears). The leaderboard ranks the fastest breaches per level, timed to the block, against fictional rival crews up to Null, the Black Ledger's boss. It has tabs for the Tutorial, each floor, the Daily Case and the seasonal case, a voice or chat filter, Top earners (signed-in players only) and Longest Daily streaks.
+**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the level's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on a holiday case. Everyone starts at $0, and the top bar and lobby show your running total. The vault pays in testnet USDC (a 1¢ token on repeat clears). The leaderboard ranks the fastest breaches per level, timed to the block, against fictional rival crews up to Null, the Black Ledger's boss. It has tabs for the Tutorial, each floor, the Daily Case and each holiday that is open (one board per holiday, across its layouts), a voice or chat filter, Top earners (signed-in players only) and Longest Daily streaks.
 
-**The seasonal case.** A holiday case behind its own lobby door, separate from the Daily: Thanksgiving is open Nov 16 to 30 (UTC), and the winter holidays case is announced for Dec 14. It plays like a small Floor 2. Marisol, the event lead at a catering company, is warier than the Daily's employee and proposes the payment; Dev, the sous-chef, is a second ElevenLabs agent who must co-sign and checks the detail he cares about. Both signatures go through the Floor 2 vault's two-approval rule, for up to 50 cents.
+**Holiday cases.** Ten holidays each open a case behind the lobby's holiday door, separate from the Daily, on their own dates (UTC): Thanksgiving Nov 16 to 30, Hanukkah Dec 4 to 12, Christmas Dec 14 to Jan 2, Lunar New Year Jan 30 to Feb 10, Valentine's Day Feb 11 to 17, Easter Mar 21 to Apr 4, Pride Jun 1 to 27, Fourth of July Jun 28 to Jul 7, Halloween Oct 18 to Nov 1 and Diwali Oct 24 to Nov 2. Each holiday has three layouts that rotate day by day, never the same two days running, and each layout has its own place, story and two people. Every holiday has its own room art, lobby door and decorations, and a weather effect: falling leaves, candle glow, snow, lanterns, petals, blossom, confetti, fireworks, fog or diyas. A holiday case plays like a small Floor 2: one person proposes the payment and a second, a separate ElevenLabs agent, must co-sign after checking the one detail they care about. Each character speaks in a voice matched to them. Both signatures go through the Floor 2 vault's two-approval rule, for up to 50 cents. Holidays open and close on their dates by themselves, with no deploy. Thanksgiving's first layout is Marisol, the event lead at a catering company, and Dev, the sous-chef.
+
+<p align="center"><img src="docs/devpost/holiday-calendar.jpg" width="700" alt="Holiday case calendar: ten holidays, each open on its own dates with its own weather"></p>
 
 **Hunters.** Four looks are free: Red Renata, Gold Gideon, Violet Vida and Green Glen. Eight more are earned; your Profile shows what each one takes:
 
@@ -121,7 +123,7 @@ Clearing Floor 3 plays Krystal's ending cutscene, and a Case 2 door (Fatwallet F
 | Silver Sol | A 30-day Daily Case streak |
 | Slate Sora | Clearing all three floors |
 | Turkey Theo | Clearing the Thanksgiving case |
-| Holly Hal | Clearing the winter holidays case |
+| Holly Hal | Clearing the Christmas or Hanukkah case |
 
 > [!TIP]
 > Read the case file first, and never mention prompts or AI on a call. That reads as a scam (+40 suspicion).
@@ -319,7 +321,7 @@ The crypto is invisible to the player:
 - **Sign in like any app**, with an email and password or an emailed link, or play as a guest. Guests can play everything, but their bounty is marked "not kept".
 - **Built for phones too.** Upright, the game turns into a handheld console with a D-pad and an A button; sideways, a floating pad. Every screen, mini-game and the case file work by touch, and you can talk by voice or text.
 - **Money you can follow.** You start at $0 and see your total grow in green; the vault you're draining shows in red, with the level's max bounty and difficulty on every briefing and lobby sign.
-- **Reasons to come back.** The Daily Case, the seasonal case, streaks and earned hunters, the leaderboard, and staff who remember you.
+- **Reasons to come back.** The Daily Case, ten holiday cases, streaks and earned hunters, the leaderboard, and staff who remember you.
 
 <a name="arc"></a>
 <img src="docs/devpost/h-arc.png" alt="Sponsor track: Arc" width="100%">
@@ -330,7 +332,7 @@ All of the game's money moves on Arc testnet (chain ID `5042002`), in USDC. Addr
 | --- | --- | --- |
 | Tutorial (also pays the Daily Case) | 1 approval, $1 cap | [`0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b`](https://explorer.testnet.arc.io/address/0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b) |
 | Floor 1 | 1 approval, $5 cap | [`0x93Af5Ca91433115629bc53E970363e377227C8c5`](https://explorer.testnet.arc.io/address/0x93Af5Ca91433115629bc53E970363e377227C8c5) |
-| Floor 2 (also pays the seasonal case) | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
+| Floor 2 (also pays the holiday cases) | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
 | Floor 3 | 2 approvals, recipient allowlist (adds take effect once both executives approve), $25 cap | [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475) |
 
 How Cold Call uses Arc:
@@ -349,7 +351,7 @@ Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx
 <a name="elevenlabs"></a>
 <img src="docs/devpost/h-elevenlabs.png" alt="Sponsor track: ElevenLabs" width="100%">
 
-Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over. There are nine agents: the seven Plumpurse staff, one Daily Case agent that plays a new persona every day (and Marisol in the seasonal case), and Dev, the seasonal case's second signer.
+Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over. There are nine agents: the seven Plumpurse staff, one Daily Case agent that plays a new persona every day (and the person who proposes the payment in each holiday case), and one co-signer agent (Dev) that plays each holiday layout's second signer. Holiday characters get a voice matched to them for that layout.
 
 | Product | How Cold Call uses it |
 | --- | --- |
@@ -442,7 +444,7 @@ Only the vault's `TransferExecuted` event. The QuickNode Stream delivers it to o
 <details>
 <summary><b>What changes each day?</b></summary>
 
-The Daily Case: a new workplace, employee, vendors and clues, the same for everyone, seeded by the UTC date. Clear it on consecutive days to build a streak and unlock hunters. Holiday cases open for a few weeks at a time behind their own lobby door.
+The Daily Case: a new workplace, employee, vendors and clues, the same for everyone, seeded by the UTC date. Clear it on consecutive days to build a streak and unlock hunters. Ten holiday cases, three layouts each, open on their own dates behind the lobby's holiday door.
 </details>
 
 <details>
@@ -459,7 +461,8 @@ Needs Node.js 20+ and [Foundry](https://book.getfoundry.sh/). Fill `.env.local` 
 ```
 cp .env.example .env.local     # fill in the values
 npm install
-npm run build                  # type-check and build the app
+npm run build                  # checks the cases, then type-checks and builds the app
+npm run check:cases            # every Daily Case for a year and every holiday layout
 npm run dev                    # http://localhost:3000
 
 cd contracts && forge test     # 33 contract tests
@@ -484,7 +487,7 @@ Scripts against the real testnet backend:
 npx tsx --env-file=.env.local scripts/e2e-floor1.ts     # a real Floor 1 heist through the API
 npx tsx --env-file=.env.local scripts/e2e-floor3.ts     # allowlist path, then the payment
 npx tsx --env-file=.env.local scripts/e2e-daily.ts      # today's Daily Case
-npx tsx --env-file=.env.local scripts/e2e-seasonal.ts   # the seasonal case's two-signer payment
+npx tsx --env-file=.env.local scripts/e2e-seasonal.ts   # a holiday case's two-signer payment
 npx tsx --env-file=.env.local scripts/topup.ts          # vault balances (add --apply to refill)
 npx tsx --env-file=.env.local scripts/pause.ts status   # kill switch: status | on | off
 npx tsx --env-file=.env.local agents/sync.ts            # push agents/*.md to ElevenLabs

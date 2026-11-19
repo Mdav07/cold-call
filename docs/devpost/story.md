@@ -28,12 +28,14 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
   - **Floor 2, Trading Floor:** two signatures, and the second signer sees the real recipient from the contract, not your story (the Bybit trick).
   - **Floor 3, Executive Penthouse:** a direct payment always bounces. Both executives must first add you to the vault's allowlist.
 - **A debrief after every floor** names the real attack you just ran and what the bank patched. Clear Floor 3 and Krystal's ending cutscene points to Case 2.
-- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Holiday cases open behind their own lobby door; the Thanksgiving case has two live agents to convince, an event lead who proposes the payment and a sous-chef who co-signs it. You start at $0 and watch your total grow, Daily streaks and clears unlock new hunters, and the leaderboard is timed to the block.
+- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Ten holiday cases, from Lunar New Year to Christmas, open on their own dates behind the lobby's holiday door, each with three layouts that rotate daily, its own room art, decorations and weather, and two voiced agents to convince: one proposes the payment and the other co-signs it from the Floor 2 vault. You start at $0 and watch your total grow, Daily streaks and clears unlock new hunters, and the leaderboard is timed to the block.
 - **A console in your pocket.** On a phone held upright the game becomes a handheld: the room is the screen, with a D-pad and an A button below. Every mini-game and menu works by touch, and you can call by voice or type.
 
 ![On a phone: the lobby, Floor 2 and a conversation with Dee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/phones.jpg)
 
 ![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)
+
+![Holiday case calendar: ten holidays, each open on its own dates with its own weather](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-calendar.jpg)
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
@@ -49,6 +51,8 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 Each step belongs to a sponsor: the call and the checks run on ElevenLabs, signing and the vault on Arc, and the referee on QuickNode. Remove any one and the game stops working.
 
+A case checker runs before every build: it plays out every Daily Case for the next year and every holiday layout on paper, checking that each case is winnable, every room can be walked, the lobby builds for each holiday, and every variable the agents use is one the server sends.
+
 The game is Next.js 16, React 19 and Tailwind CSS 4 on Vercel, with our own HTML canvas engine. Supabase (Postgres, auth, Realtime) stores runs, proposals, memories and the leaderboard.
 
 ![The four tracks](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-four-tracks.png)
@@ -57,7 +61,7 @@ What each track needed from us, beyond the pipeline above:
 
 - **Consumer Applications: hide the crypto.** No wallet to install, no seed phrase, no gas, no token names. A Circle developer-controlled wallet is created for each player on first play, employees pay the gas, and every amount is in dollars. Sign in with email or play as a guest, on desktop or phone.
 - **Arc: make the contract the game.** Each floor's mechanic is a rule in its own `ColdCallVault` deployment. USDC is both the prize and the gas, so there's one token to fund, and the block time of the payout is the leaderboard time. Vaults: Tutorial `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` · Floor 1 `0x93Af5Ca91433115629bc53E970363e377227C8c5` · Floor 2 `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` · Floor 3 `0x8c86dD235193d42bf4a751bA5138fF1286E28475`
-- **ElevenLabs: staff who can say no, and can sign.** One Agent per employee serves voice calls and text chat, so you can switch mid-heist. 11 server tools for lookups, suspicion and signing. Dynamic variables keep IDs out of the model's hands and give one Daily Case agent a new persona every day. Text to Speech, Sound Effects and Music voice Krystal, the PA announcer, the alarm and the floor music.
+- **ElevenLabs: staff who can say no, and can sign.** One Agent per employee serves voice calls and text chat, so you can switch mid-heist. 11 server tools for lookups, suspicion and signing. Dynamic variables keep IDs out of the model's hands and give one Daily Case agent a new persona every day; holiday characters also get a voice matched to them. Text to Speech, Sound Effects and Music voice Krystal, the PA announcer, the alarm and the floor music.
 - **QuickNode Streams: a referee we can't fake.** Arc testnet, Block with Receipts, a JavaScript filter that keeps only our vaults' 12 events, a webhook destination, and a backfill from the deploy block so the leaderboard can be rebuilt from the chain.
 
 ![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
