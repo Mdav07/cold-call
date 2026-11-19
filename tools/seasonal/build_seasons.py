@@ -71,7 +71,7 @@ def theme_for(key: str, name: str, art: dict) -> tuple[dict, dict | None]:
     if key == "thanksgiving":
         return harvest_theme(), {"door": "door_harvest", "mat": "mat_harvest", "lobby": ["pumpkins_harvest", "haybale_harvest"], "garland": "garland_harvest"}
     a = art.get(ART_KEY[key])
-    tiles = {k: a[k] for k in ("floor", "wall", "walltop", "window", "board", "station", "station_note", "decor", "seat")} if a else harvest_theme()["tiles"]
+    tiles = a["tiles"] if a else harvest_theme()["tiles"]
     lobby = {k: a[k] for k in ("door", "mat", "lobby", "garland")} if a else None
     return {"id": key, "name": name, "business": "", "float": "", "tiles": tiles}, lobby
 

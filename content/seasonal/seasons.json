@@ -291,29 +291,37 @@
       "name": "Hanukkah",
       "fx": "candles",
       "signoff": "Happy Hanukkah, kid. Save me a latke.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "hanukkah",
         "name": "Hanukkah",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_hanukkah",
+          "wall": "wall_hanukkah",
+          "walltop": "walltop_hanukkah",
+          "window": "window_hanukkah",
+          "board": "board_hanukkah",
+          "station": "station_hanukkah",
+          "station_note": "station_note_hanukkah",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "dreidel_shelf_hanukkah",
+            "doughnut_case_hanukkah",
+            "gelt_hanukkah"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_hanukkah"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_hanukkah",
+        "mat": "mat_hanukkah",
+        "lobby": [
+          "menorah_hanukkah",
+          "big_dreidel_hanukkah"
+        ],
+        "garland": "garland_hanukkah"
+      },
       "caseDate": "2000-12-04",
       "windows": [
         {
@@ -568,29 +576,37 @@
       "name": "Christmas",
       "fx": "snow",
       "signoff": "Merry Christmas, kid. That was a gift.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "christmas",
         "name": "Christmas",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_christmas",
+          "wall": "wall_christmas",
+          "walltop": "walltop_christmas",
+          "window": "window_christmas",
+          "board": "board_christmas",
+          "station": "station_christmas",
+          "station_note": "station_note_christmas",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "tree_christmas",
+            "gifts_christmas",
+            "sleigh_christmas"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_christmas"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_christmas",
+        "mat": "mat_christmas",
+        "lobby": [
+          "poinsettia_christmas",
+          "toybin_christmas"
+        ],
+        "garland": "garland_christmas"
+      },
       "caseDate": "2000-12-14",
       "windows": [
         {
@@ -845,29 +861,37 @@
       "name": "Lunar New Year",
       "fx": "lanterns",
       "signoff": "Happy Lunar New Year, kid. That's a lucky start.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "lunar-new-year",
         "name": "Lunar New Year",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_lunar",
+          "wall": "wall_lunar",
+          "walltop": "walltop_lunar",
+          "window": "window_lunar",
+          "board": "board_lunar",
+          "station": "station_lunar",
+          "station_note": "station_note_lunar",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "lanterns_lunar",
+            "banquet_table_lunar",
+            "mandarin_tree_lunar"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_lunar"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_lunar",
+        "mat": "mat_lunar",
+        "lobby": [
+          "mandarins_lunar",
+          "drum_lunar"
+        ],
+        "garland": "garland_lunar"
+      },
       "caseDate": "2000-01-30",
       "windows": [
         {
@@ -1113,29 +1137,37 @@
       "name": "Valentine's Day",
       "fx": "petals",
       "signoff": "Happy Valentine's Day, kid. They never saw it coming.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "valentines",
         "name": "Valentine's Day",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_valentine",
+          "wall": "wall_valentine",
+          "walltop": "walltop_valentine",
+          "window": "window_valentine",
+          "board": "board_valentine",
+          "station": "station_valentine",
+          "station_note": "station_note_valentine",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "flower_buckets_valentine",
+            "chocolates_valentine",
+            "heart_balloons_valentine"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_valentine"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_valentine",
+        "mat": "mat_valentine",
+        "lobby": [
+          "roses_valentine",
+          "teddy_valentine"
+        ],
+        "garland": "garland_valentine"
+      },
       "caseDate": "2000-02-11",
       "windows": [
         {
@@ -1381,29 +1413,37 @@
       "name": "Easter",
       "fx": "blossom",
       "signoff": "Happy Easter, kid. Nice find.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "easter",
         "name": "Easter",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_easter",
+          "wall": "wall_easter",
+          "walltop": "walltop_easter",
+          "window": "window_easter",
+          "board": "board_easter",
+          "station": "station_easter",
+          "station_note": "station_note_easter",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "egg_basket_easter",
+            "tulips_easter",
+            "bunny_easter"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_easter"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_easter",
+        "mat": "mat_easter",
+        "lobby": [
+          "egg_tree_easter",
+          "giant_egg_easter"
+        ],
+        "garland": "garland_easter"
+      },
       "caseDate": "2000-03-21",
       "windows": [
         {
@@ -1649,29 +1689,37 @@
       "name": "Pride",
       "fx": "confetti",
       "signoff": "Happy Pride, kid. Clean work.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "pride",
         "name": "Pride",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_pride",
+          "wall": "wall_pride",
+          "walltop": "walltop_pride",
+          "window": "window_pride",
+          "board": "board_pride",
+          "station": "station_pride",
+          "station_note": "station_note_pride",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "float_pride",
+            "glitter_shelf_pride",
+            "paint_cans_pride"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_pride"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_pride",
+        "mat": "mat_pride",
+        "lobby": [
+          "flag_pride",
+          "balloons_pride"
+        ],
+        "garland": "garland_pride"
+      },
       "caseDate": "2000-06-01",
       "windows": [
         {
@@ -1917,29 +1965,37 @@
       "name": "Fourth of July",
       "fx": "fireworks",
       "signoff": "Happy Fourth, kid. Big finish.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "fourth-of-july",
         "name": "Fourth of July",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_july4",
+          "wall": "wall_july4",
+          "walltop": "walltop_july4",
+          "window": "window_july4",
+          "board": "board_july4",
+          "station": "station_july4",
+          "station_note": "station_note_july4",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "picnic_table_july4",
+            "cooler_july4",
+            "flagpole_july4"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_july4"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_july4",
+        "mat": "mat_july4",
+        "lobby": [
+          "pinwheels_july4",
+          "melons_july4"
+        ],
+        "garland": "garland_july4"
+      },
       "caseDate": "2000-06-28",
       "windows": [
         {
@@ -2185,29 +2241,37 @@
       "name": "Halloween",
       "fx": "fog",
       "signoff": "Happy Halloween, kid. Scary good.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "halloween",
         "name": "Halloween",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_halloween",
+          "wall": "wall_halloween",
+          "walltop": "walltop_halloween",
+          "window": "window_halloween",
+          "board": "board_halloween",
+          "station": "station_halloween",
+          "station_note": "station_note_halloween",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "jack_o_lanterns_halloween",
+            "cobweb_shelf_halloween",
+            "cauldron_halloween"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_halloween"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_halloween",
+        "mat": "mat_halloween",
+        "lobby": [
+          "ghost_halloween",
+          "tombstone_halloween"
+        ],
+        "garland": "garland_halloween"
+      },
       "caseDate": "2000-10-18",
       "windows": [
         {
@@ -2453,29 +2517,37 @@
       "name": "Diwali",
       "fx": "diyas",
       "signoff": "Happy Diwali, kid. Bright work.",
-      "art": false,
+      "art": true,
       "theme": {
         "id": "diwali",
         "name": "Diwali",
         "business": "",
         "float": "",
         "tiles": {
-          "floor": "floor_harvest",
-          "wall": "wall_harvest",
-          "walltop": "walltop_harvest",
-          "window": "window_harvest",
-          "board": "board_harvest",
-          "station": "station_harvest",
-          "station_note": "station_note_harvest",
+          "floor": "floor_diwali",
+          "wall": "wall_diwali",
+          "walltop": "walltop_diwali",
+          "window": "window_diwali",
+          "board": "board_diwali",
+          "station": "station_diwali",
+          "station_note": "station_note_diwali",
           "decor": [
-            "pumpkins_harvest",
-            "haybale_harvest",
-            "cornucopia_harvest"
+            "diyas_diwali",
+            "rangoli_diwali",
+            "sweets_case_diwali"
           ],
-          "seat": "seat_harvest"
+          "seat": "seat_diwali"
         }
       },
-      "lobby": null,
+      "lobby": {
+        "door": "door_diwali",
+        "mat": "mat_diwali",
+        "lobby": [
+          "lantern_diwali",
+          "marigolds_diwali"
+        ],
+        "garland": "garland_diwali"
+      },
       "caseDate": "2000-10-24",
       "windows": [
         {
