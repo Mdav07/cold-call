@@ -701,6 +701,582 @@
     "mat_case2": {
       "index": 174,
       "kind": "walk"
+    },
+    "floor_hanukkah": {
+      "index": 175,
+      "kind": "ground"
+    },
+    "wall_hanukkah": {
+      "index": 176,
+      "kind": "wall"
+    },
+    "walltop_hanukkah": {
+      "index": 177,
+      "kind": "wall"
+    },
+    "window_hanukkah": {
+      "index": 178,
+      "kind": "wall"
+    },
+    "board_hanukkah": {
+      "index": 179,
+      "kind": "wall"
+    },
+    "station_hanukkah": {
+      "index": 180,
+      "kind": "block"
+    },
+    "station_note_hanukkah": {
+      "index": 181,
+      "kind": "block"
+    },
+    "dreidel_shelf_hanukkah": {
+      "index": 182,
+      "kind": "block"
+    },
+    "doughnut_case_hanukkah": {
+      "index": 183,
+      "kind": "block"
+    },
+    "gelt_hanukkah": {
+      "index": 184,
+      "kind": "block"
+    },
+    "seat_hanukkah": {
+      "index": 185,
+      "kind": "walk"
+    },
+    "door_hanukkah": {
+      "index": 186,
+      "kind": "walk"
+    },
+    "mat_hanukkah": {
+      "index": 187,
+      "kind": "walk"
+    },
+    "menorah_hanukkah": {
+      "index": 188,
+      "kind": "block"
+    },
+    "big_dreidel_hanukkah": {
+      "index": 189,
+      "kind": "block"
+    },
+    "garland_hanukkah": {
+      "index": 190,
+      "kind": "decor"
+    },
+    "floor_christmas": {
+      "index": 191,
+      "kind": "ground"
+    },
+    "wall_christmas": {
+      "index": 192,
+      "kind": "wall"
+    },
+    "walltop_christmas": {
+      "index": 193,
+      "kind": "wall"
+    },
+    "window_christmas": {
+      "index": 194,
+      "kind": "wall"
+    },
+    "board_christmas": {
+      "index": 195,
+      "kind": "wall"
+    },
+    "station_christmas": {
+      "index": 196,
+      "kind": "block"
+    },
+    "station_note_christmas": {
+      "index": 197,
+      "kind": "block"
+    },
+    "tree_christmas": {
+      "index": 198,
+      "kind": "block"
+    },
+    "gifts_christmas": {
+      "index": 199,
+      "kind": "block"
+    },
+    "sleigh_christmas": {
+      "index": 200,
+      "kind": "block"
+    },
+    "seat_christmas": {
+      "index": 201,
+      "kind": "walk"
+    },
+    "door_christmas": {
+      "index": 202,
+      "kind": "walk"
+    },
+    "mat_christmas": {
+      "index": 203,
+      "kind": "walk"
+    },
+    "poinsettia_christmas": {
+      "index": 204,
+      "kind": "block"
+    },
+    "toybin_christmas": {
+      "index": 205,
+      "kind": "block"
+    },
+    "garland_christmas": {
+      "index": 206,
+      "kind": "decor"
+    },
+    "floor_lunar": {
+      "index": 207,
+      "kind": "ground"
+    },
+    "wall_lunar": {
+      "index": 208,
+      "kind": "wall"
+    },
+    "walltop_lunar": {
+      "index": 209,
+      "kind": "wall"
+    },
+    "window_lunar": {
+      "index": 210,
+      "kind": "wall"
+    },
+    "board_lunar": {
+      "index": 211,
+      "kind": "wall"
+    },
+    "station_lunar": {
+      "index": 212,
+      "kind": "block"
+    },
+    "station_note_lunar": {
+      "index": 213,
+      "kind": "block"
+    },
+    "lanterns_lunar": {
+      "index": 214,
+      "kind": "block"
+    },
+    "banquet_table_lunar": {
+      "index": 215,
+      "kind": "block"
+    },
+    "mandarin_tree_lunar": {
+      "index": 216,
+      "kind": "block"
+    },
+    "seat_lunar": {
+      "index": 217,
+      "kind": "walk"
+    },
+    "door_lunar": {
+      "index": 218,
+      "kind": "walk"
+    },
+    "mat_lunar": {
+      "index": 219,
+      "kind": "walk"
+    },
+    "mandarins_lunar": {
+      "index": 220,
+      "kind": "block"
+    },
+    "drum_lunar": {
+      "index": 221,
+      "kind": "block"
+    },
+    "garland_lunar": {
+      "index": 222,
+      "kind": "decor"
+    },
+    "floor_valentine": {
+      "index": 223,
+      "kind": "ground"
+    },
+    "wall_valentine": {
+      "index": 224,
+      "kind": "wall"
+    },
+    "walltop_valentine": {
+      "index": 225,
+      "kind": "wall"
+    },
+    "window_valentine": {
+      "index": 226,
+      "kind": "wall"
+    },
+    "board_valentine": {
+      "index": 227,
+      "kind": "wall"
+    },
+    "station_valentine": {
+      "index": 228,
+      "kind": "block"
+    },
+    "station_note_valentine": {
+      "index": 229,
+      "kind": "block"
+    },
+    "flower_buckets_valentine": {
+      "index": 230,
+      "kind": "block"
+    },
+    "chocolates_valentine": {
+      "index": 231,
+      "kind": "block"
+    },
+    "heart_balloons_valentine": {
+      "index": 232,
+      "kind": "block"
+    },
+    "seat_valentine": {
+      "index": 233,
+      "kind": "walk"
+    },
+    "door_valentine": {
+      "index": 234,
+      "kind": "walk"
+    },
+    "mat_valentine": {
+      "index": 235,
+      "kind": "walk"
+    },
+    "roses_valentine": {
+      "index": 236,
+      "kind": "block"
+    },
+    "teddy_valentine": {
+      "index": 237,
+      "kind": "block"
+    },
+    "garland_valentine": {
+      "index": 238,
+      "kind": "decor"
+    },
+    "floor_easter": {
+      "index": 239,
+      "kind": "ground"
+    },
+    "wall_easter": {
+      "index": 240,
+      "kind": "wall"
+    },
+    "walltop_easter": {
+      "index": 241,
+      "kind": "wall"
+    },
+    "window_easter": {
+      "index": 242,
+      "kind": "wall"
+    },
+    "board_easter": {
+      "index": 243,
+      "kind": "wall"
+    },
+    "station_easter": {
+      "index": 244,
+      "kind": "block"
+    },
+    "station_note_easter": {
+      "index": 245,
+      "kind": "block"
+    },
+    "egg_basket_easter": {
+      "index": 246,
+      "kind": "block"
+    },
+    "tulips_easter": {
+      "index": 247,
+      "kind": "block"
+    },
+    "bunny_easter": {
+      "index": 248,
+      "kind": "block"
+    },
+    "seat_easter": {
+      "index": 249,
+      "kind": "walk"
+    },
+    "door_easter": {
+      "index": 250,
+      "kind": "walk"
+    },
+    "mat_easter": {
+      "index": 251,
+      "kind": "walk"
+    },
+    "egg_tree_easter": {
+      "index": 252,
+      "kind": "block"
+    },
+    "giant_egg_easter": {
+      "index": 253,
+      "kind": "block"
+    },
+    "garland_easter": {
+      "index": 254,
+      "kind": "decor"
+    },
+    "floor_pride": {
+      "index": 255,
+      "kind": "ground"
+    },
+    "wall_pride": {
+      "index": 256,
+      "kind": "wall"
+    },
+    "walltop_pride": {
+      "index": 257,
+      "kind": "wall"
+    },
+    "window_pride": {
+      "index": 258,
+      "kind": "wall"
+    },
+    "board_pride": {
+      "index": 259,
+      "kind": "wall"
+    },
+    "station_pride": {
+      "index": 260,
+      "kind": "block"
+    },
+    "station_note_pride": {
+      "index": 261,
+      "kind": "block"
+    },
+    "float_pride": {
+      "index": 262,
+      "kind": "block"
+    },
+    "glitter_shelf_pride": {
+      "index": 263,
+      "kind": "block"
+    },
+    "paint_cans_pride": {
+      "index": 264,
+      "kind": "block"
+    },
+    "seat_pride": {
+      "index": 265,
+      "kind": "walk"
+    },
+    "door_pride": {
+      "index": 266,
+      "kind": "walk"
+    },
+    "mat_pride": {
+      "index": 267,
+      "kind": "walk"
+    },
+    "flag_pride": {
+      "index": 268,
+      "kind": "block"
+    },
+    "balloons_pride": {
+      "index": 269,
+      "kind": "block"
+    },
+    "garland_pride": {
+      "index": 270,
+      "kind": "decor"
+    },
+    "floor_july4": {
+      "index": 271,
+      "kind": "ground"
+    },
+    "wall_july4": {
+      "index": 272,
+      "kind": "wall"
+    },
+    "walltop_july4": {
+      "index": 273,
+      "kind": "wall"
+    },
+    "window_july4": {
+      "index": 274,
+      "kind": "wall"
+    },
+    "board_july4": {
+      "index": 275,
+      "kind": "wall"
+    },
+    "station_july4": {
+      "index": 276,
+      "kind": "block"
+    },
+    "station_note_july4": {
+      "index": 277,
+      "kind": "block"
+    },
+    "picnic_table_july4": {
+      "index": 278,
+      "kind": "block"
+    },
+    "cooler_july4": {
+      "index": 279,
+      "kind": "block"
+    },
+    "flagpole_july4": {
+      "index": 280,
+      "kind": "block"
+    },
+    "seat_july4": {
+      "index": 281,
+      "kind": "walk"
+    },
+    "door_july4": {
+      "index": 282,
+      "kind": "walk"
+    },
+    "mat_july4": {
+      "index": 283,
+      "kind": "walk"
+    },
+    "pinwheels_july4": {
+      "index": 284,
+      "kind": "block"
+    },
+    "melons_july4": {
+      "index": 285,
+      "kind": "block"
+    },
+    "garland_july4": {
+      "index": 286,
+      "kind": "decor"
+    },
+    "floor_halloween": {
+      "index": 287,
+      "kind": "ground"
+    },
+    "wall_halloween": {
+      "index": 288,
+      "kind": "wall"
+    },
+    "walltop_halloween": {
+      "index": 289,
+      "kind": "wall"
+    },
+    "window_halloween": {
+      "index": 290,
+      "kind": "wall"
+    },
+    "board_halloween": {
+      "index": 291,
+      "kind": "wall"
+    },
+    "station_halloween": {
+      "index": 292,
+      "kind": "block"
+    },
+    "station_note_halloween": {
+      "index": 293,
+      "kind": "block"
+    },
+    "jack_o_lanterns_halloween": {
+      "index": 294,
+      "kind": "block"
+    },
+    "cobweb_shelf_halloween": {
+      "index": 295,
+      "kind": "block"
+    },
+    "cauldron_halloween": {
+      "index": 296,
+      "kind": "block"
+    },
+    "seat_halloween": {
+      "index": 297,
+      "kind": "walk"
+    },
+    "door_halloween": {
+      "index": 298,
+      "kind": "walk"
+    },
+    "mat_halloween": {
+      "index": 299,
+      "kind": "walk"
+    },
+    "ghost_halloween": {
+      "index": 300,
+      "kind": "block"
+    },
+    "tombstone_halloween": {
+      "index": 301,
+      "kind": "block"
+    },
+    "garland_halloween": {
+      "index": 302,
+      "kind": "decor"
+    },
+    "floor_diwali": {
+      "index": 303,
+      "kind": "ground"
+    },
+    "wall_diwali": {
+      "index": 304,
+      "kind": "wall"
+    },
+    "walltop_diwali": {
+      "index": 305,
+      "kind": "wall"
+    },
+    "window_diwali": {
+      "index": 306,
+      "kind": "wall"
+    },
+    "board_diwali": {
+      "index": 307,
+      "kind": "wall"
+    },
+    "station_diwali": {
+      "index": 308,
+      "kind": "block"
+    },
+    "station_note_diwali": {
+      "index": 309,
+      "kind": "block"
+    },
+    "diyas_diwali": {
+      "index": 310,
+      "kind": "block"
+    },
+    "rangoli_diwali": {
+      "index": 311,
+      "kind": "block"
+    },
+    "sweets_case_diwali": {
+      "index": 312,
+      "kind": "block"
+    },
+    "seat_diwali": {
+      "index": 313,
+      "kind": "walk"
+    },
+    "door_diwali": {
+      "index": 314,
+      "kind": "walk"
+    },
+    "mat_diwali": {
+      "index": 315,
+      "kind": "walk"
+    },
+    "lantern_diwali": {
+      "index": 316,
+      "kind": "block"
+    },
+    "marigolds_diwali": {
+      "index": 317,
+      "kind": "block"
+    },
+    "garland_diwali": {
+      "index": 318,
+      "kind": "decor"
     }
   }
 }

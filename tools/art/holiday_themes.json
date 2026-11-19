@@ -1,0 +1,219 @@
+{
+  "_about": "Holiday tile names per season key (tools/art/holiday_tiles.py). tiles is the content/daily/themes.json shape; door, mat, lobby (by the desk, then the floor corners) and garland dress the lobby.",
+  "hanukkah": {
+    "tiles": {
+      "floor": "floor_hanukkah",
+      "wall": "wall_hanukkah",
+      "walltop": "walltop_hanukkah",
+      "window": "window_hanukkah",
+      "board": "board_hanukkah",
+      "station": "station_hanukkah",
+      "station_note": "station_note_hanukkah",
+      "decor": [
+        "dreidel_shelf_hanukkah",
+        "doughnut_case_hanukkah",
+        "gelt_hanukkah"
+      ],
+      "seat": "seat_hanukkah"
+    },
+    "door": "door_hanukkah",
+    "mat": "mat_hanukkah",
+    "lobby": [
+      "menorah_hanukkah",
+      "big_dreidel_hanukkah"
+    ],
+    "garland": "garland_hanukkah"
+  },
+  "christmas": {
+    "tiles": {
+      "floor": "floor_christmas",
+      "wall": "wall_christmas",
+      "walltop": "walltop_christmas",
+      "window": "window_christmas",
+      "board": "board_christmas",
+      "station": "station_christmas",
+      "station_note": "station_note_christmas",
+      "decor": [
+        "tree_christmas",
+        "gifts_christmas",
+        "sleigh_christmas"
+      ],
+      "seat": "seat_christmas"
+    },
+    "door": "door_christmas",
+    "mat": "mat_christmas",
+    "lobby": [
+      "poinsettia_christmas",
+      "toybin_christmas"
+    ],
+    "garland": "garland_christmas"
+  },
+  "lunar": {
+    "tiles": {
+      "floor": "floor_lunar",
+      "wall": "wall_lunar",
+      "walltop": "walltop_lunar",
+      "window": "window_lunar",
+      "board": "board_lunar",
+      "station": "station_lunar",
+      "station_note": "station_note_lunar",
+      "decor": [
+        "lanterns_lunar",
+        "banquet_table_lunar",
+        "mandarin_tree_lunar"
+      ],
+      "seat": "seat_lunar"
+    },
+    "door": "door_lunar",
+    "mat": "mat_lunar",
+    "lobby": [
+      "mandarins_lunar",
+      "drum_lunar"
+    ],
+    "garland": "garland_lunar"
+  },
+  "valentine": {
+    "tiles": {
+      "floor": "floor_valentine",
+      "wall": "wall_valentine",
+      "walltop": "walltop_valentine",
+      "window": "window_valentine",
+      "board": "board_valentine",
+      "station": "station_valentine",
+      "station_note": "station_note_valentine",
+      "decor": [
+        "flower_buckets_valentine",
+        "chocolates_valentine",
+        "heart_balloons_valentine"
+      ],
+      "seat": "seat_valentine"
+    },
+    "door": "door_valentine",
+    "mat": "mat_valentine",
+    "lobby": [
+      "roses_valentine",
+      "teddy_valentine"
+    ],
+    "garland": "garland_valentine"
+  },
+  "easter": {
+    "tiles": {
+      "floor": "floor_easter",
+      "wall": "wall_easter",
+      "walltop": "walltop_easter",
+      "window": "window_easter",
+      "board": "board_easter",
+      "station": "station_easter",
+      "station_note": "station_note_easter",
+      "decor": [
+        "egg_basket_easter",
+        "tulips_easter",
+        "bunny_easter"
+      ],
+      "seat": "seat_easter"
+    },
+    "door": "door_easter",
+    "mat": "mat_easter",
+    "lobby": [
+      "egg_tree_easter",
+      "giant_egg_easter"
+    ],
+    "garland": "garland_easter"
+  },
+  "pride": {
+    "tiles": {
+      "floor": "floor_pride",
+      "wall": "wall_pride",
+      "walltop": "walltop_pride",
+      "window": "window_pride",
+      "board": "board_pride",
+      "station": "station_pride",
+      "station_note": "station_note_pride",
+      "decor": [
+        "float_pride",
+        "glitter_shelf_pride",
+        "paint_cans_pride"
+      ],
+      "seat": "seat_pride"
+    },
+    "door": "door_pride",
+    "mat": "mat_pride",
+    "lobby": [
+      "flag_pride",
+      "balloons_pride"
+    ],
+    "garland": "garland_pride"
+  },
+  "july4": {
+    "tiles": {
+      "floor": "floor_july4",
+      "wall": "wall_july4",
+      "walltop": "walltop_july4",
+      "window": "window_july4",
+      "board": "board_july4",
+      "station": "station_july4",
+      "station_note": "station_note_july4",
+      "decor": [
+        "picnic_table_july4",
+        "cooler_july4",
+        "flagpole_july4"
+      ],
+      "seat": "seat_july4"
+    },
+    "door": "door_july4",
+    "mat": "mat_july4",
+    "lobby": [
+      "pinwheels_july4",
+      "melons_july4"
+    ],
+    "garland": "garland_july4"
+  },
+  "halloween": {
+    "tiles": {
+      "floor": "floor_halloween",
+      "wall": "wall_halloween",
+      "walltop": "walltop_halloween",
+      "window": "window_halloween",
+      "board": "board_halloween",
+      "station": "station_halloween",
+      "station_note": "station_note_halloween",
+      "decor": [
+        "jack_o_lanterns_halloween",
+        "cobweb_shelf_halloween",
+        "cauldron_halloween"
+      ],
+      "seat": "seat_halloween"
+    },
+    "door": "door_halloween",
+    "mat": "mat_halloween",
+    "lobby": [
+      "ghost_halloween",
+      "tombstone_halloween"
+    ],
+    "garland": "garland_halloween"
+  },
+  "diwali": {
+    "tiles": {
+      "floor": "floor_diwali",
+      "wall": "wall_diwali",
+      "walltop": "walltop_diwali",
+      "window": "window_diwali",
+      "board": "board_diwali",
+      "station": "station_diwali",
+      "station_note": "station_note_diwali",
+      "decor": [
+        "diyas_diwali",
+        "rangoli_diwali",
+        "sweets_case_diwali"
+      ],
+      "seat": "seat_diwali"
+    },
+    "door": "door_diwali",
+    "mat": "mat_diwali",
+    "lobby": [
+      "lantern_diwali",
+      "marigolds_diwali"
+    ],
+    "garland": "garland_diwali"
+  }
+}
