@@ -1,6 +1,6 @@
 {
   "floor": 3,
-  "name": "Floor 3 · Executive Penthouse",
+  "name": "Floor 3 \u00b7 Executive Penthouse",
   "theme": "hotel",
   "legend": {
     "L": "desk_l",
@@ -97,7 +97,7 @@
   "exits": [
     {
       "x": 9,
-      "y": 2,
+      "y": 1,
       "to": "/tower"
     }
   ]

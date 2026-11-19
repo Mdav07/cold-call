@@ -90,7 +90,8 @@ export function buildLobby(
       else ground[at(x, y)] = T.floor;
     }
 
-  // Back wall: three elevators, each with its mat on the tile in front (y=2), which is the exit.
+  // Back wall: three elevators; the mat in front (y=2) is walkable, the exit is the elevator (y=1)
+  // so only walking into the door opens leave — walking past on the mat does not.
   for (const [x, mat] of [
     [ELEVATORS[1], T.mat1],
     [ELEVATORS[2], T.mat2],
@@ -147,9 +148,10 @@ export function buildLobby(
     const n = Number(key) as 1 | 2 | 3;
     const f = byFloor(n);
     // Readable prop on the numbered mat (y=2): stand on / face the sparkles to learn what's upstairs.
+    // Exit is the elevator door (y=1): walk into it to leave; the mat is just for reading.
     // Locked floors omit the exit so you can read but can't ride.
     props.push({ id: `sign-${n}`, x, y: 2, ...elevatorSign(f, n, !!f?.unlocked, !!f?.cleared) });
-    if (f?.unlocked) exits.push({ x, y: 2, to: `/floor/${n}` });
+    if (f?.unlocked) exits.push({ x, y: 1, to: `/floor/${n}` });
   }
 
   const p0 = byFloor(0);

@@ -424,16 +424,9 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           p.t = 0;
           p.moving = false;
           p.frame = 0;
-          const exit = map.exits?.find((e) => e.x === p.x && e.y === p.y);
-          // Exits arm only after the player has walked onto a tile that isn't an exit, so arriving
-          // next to the door (or with a key still held from the previous page) can't bounce you out.
-          // Disarm on fire so a held key / double step can't queue two rides.
-          if (esc) {
-            // Walked by the guard: doors don't fire.
-          } else if (exit && exitsArmed) {
-            exitsArmed = false;
-            onEventRef.current({ type: "exit", to: exit.to });
-          } else if (!exit) exitsArmed = true;
+          // Re-arm once you've stepped off any exit tile (or never stood on one). Landing on a mat
+          // must not open the leave prompt — only walking into the door does (below).
+          if (!map.exits?.some((e) => e.x === p.x && e.y === p.y)) exitsArmed = true;
         }
       }
       const want = held.current[held.current.length - 1] ?? tapped.current;
@@ -442,20 +435,19 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         tapped.current = null;
         p.facing = dir;
         const [dx, dy] = DELTA[dir];
-        if (walkable(p.x + dx, p.y + dy)) {
-          p.tx = p.x + dx;
-          p.ty = p.y + dy;
+        const nx = p.x + dx;
+        const ny = p.y + dy;
+        const intoExit = map.exits?.find((e) => e.x === nx && e.y === ny);
+        // Only when you try to walk into the door / elevator — not when you walk past on the mat.
+        // Wait a beat after page open so a held key from the previous page can't bounce you out.
+        if (intoExit && !esc && exitsArmed && now - loopStart > 500) {
+          exitsArmed = false;
+          onEventRef.current({ type: "exit", to: intoExit.to });
+        } else if (walkable(nx, ny) && !intoExit) {
+          p.tx = nx;
+          p.ty = ny;
           p.moving = true;
           p.t = 0;
-        } else if (now - loopStart > 500) {
-          // Standing on a door you came back through (the lobby keeps your spot): pushing on through it
-          // takes it, instead of making you step off and back on. Not in the first moments of the page,
-          // so a key still held from the previous page can't bounce you straight back out.
-          const exit = map.exits?.find((e) => e.x === p.x && e.y === p.y);
-          if (exit) {
-            exitsArmed = false;
-            onEventRef.current({ type: "exit", to: exit.to });
-          }
         }
       }
 

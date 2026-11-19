@@ -1,6 +1,7 @@
 "use client";
 
-// Confirm before riding an exit so stepping on a mat doesn't yank you out by accident.
+// Confirm before riding an exit. The engine only opens this when you walk into the door —
+// walking past on the mat does not.
 import { useEffect, useRef } from "react";
 import { confirm as confirmSound } from "@/app/floor/hud/sound";
 import { currentSeason } from "@/shared/seasonalCase";

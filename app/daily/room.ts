@@ -172,15 +172,17 @@ function attempt(c: DailyCase, seed: string, extra?: RoomExtra): FloorMap | null
   }
   for (const x of backXs) if (r() < 0.3) walls[idx(x, 1)] = skin.window;
 
-  // The spawn is one tile beside the exit column: one step up from it must not ride you straight out.
+  // The spawn is one tile beside the door column. Exit is the elevator door (y=1): walking into it
+  // leaves; the mat (y=2) is walkable so you can pass without the leave prompt.
   const spawnX = doorX + 1 <= W - 2 && (doorX - 1 < 1 || r() < 0.5) ? doorX + 1 : doorX - 1;
   const spawn = { x: spawnX, y: 3, facing: "down" as Facing };
-  const exit = { x: doorX, y: 2 };
-  // Kept clear: the exit, the spawn and the tile below it, the tile in front of each board.
-  const reserved = new Set<number>([idx(exit.x, exit.y), idx(spawn.x, spawn.y), idx(spawn.x, spawn.y + 1), ...boards.map((b) => idx(b.x, 2))]);
+  const exit = { x: doorX, y: 1 };
+  const mat = { x: doorX, y: 2 };
+  // Kept clear: the door, its mat, the spawn and the tile below it, the tile in front of each board.
+  const reserved = new Set<number>([idx(exit.x, exit.y), idx(mat.x, mat.y), idx(spawn.x, spawn.y), idx(spawn.x, spawn.y + 1), ...boards.map((b) => idx(b.x, 2))]);
   const free = (x: number, y: number) => isFloor(x, y) && !blocked.has(idx(x, y)) && !reserved.has(idx(x, y));
 
-  // BFS from the spawn. The exit counts as a wall (stepping on it leaves the room), and so does the
+  // BFS from the spawn. The door counts as a wall (you bump into it to leave), and so does the
   // employee once placed.
   let npc: Cell | null = null;
   const passable = (x: number, y: number) =>

@@ -1,6 +1,6 @@
 {
   "floor": 0,
-  "name": "Floor 0 · The Pocket Branch",
+  "name": "Floor 0 \u00b7 The Pocket Branch",
   "theme": "branch",
   "legend": {
     "t": "table_small",
@@ -80,7 +80,7 @@
   "exits": [
     {
       "x": 5,
-      "y": 2,
+      "y": 1,
       "to": "/tower"
     }
   ]

@@ -271,7 +271,7 @@ export function FloorGame({
   const nextNpc = [...map.npcs].filter((n) => !talkedTo.has(n.id) && !lockedOut.has(n.id)).sort((a, b) => dist(a) - dist(b))[0];
   const toExit = cleared && !nextNpc && !!exit;
   const goal = nextNpc ? { x: nextNpc.x, y: nextNpc.y } : toExit ? { x: exit.x, y: exit.y } : null;
-  const tags = toExit ? [{ x: exit.x, y: exit.y - 1, text: "LOBBY" }] : undefined;
+  const tags = toExit ? [{ x: exit.x, y: exit.y, text: "LOBBY" }] : undefined;
 
   useEffect(() => {
     if (!lockKey || escort) return;

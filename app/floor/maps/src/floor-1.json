@@ -1,6 +1,6 @@
 {
   "floor": 1,
-  "name": "Floor 1 · Accounts Payable",
+  "name": "Floor 1 \u00b7 Accounts Payable",
   "theme": "consulting",
   "legend": {
     "L": "desk_l",
@@ -97,7 +97,7 @@
   "exits": [
     {
       "x": 8,
-      "y": 2,
+      "y": 1,
       "to": "/tower"
     }
   ]

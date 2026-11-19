@@ -1,6 +1,6 @@
 {
   "floor": 2,
-  "name": "Floor 2 · Trading Floor",
+  "name": "Floor 2 \u00b7 Trading Floor",
   "theme": "trading",
   "legend": {
     "L": "desk_l",
@@ -82,14 +82,14 @@
       "id": "ledgerline-registry",
       "x": 3,
       "y": 11,
-      "label": "Vendor registry — Ledgerline Payroll",
+      "label": "Vendor registry \u2014 Ledgerline Payroll",
       "text": "Ledgerline Payroll is paid from Operations, and invoices start with LL-. A Nov 10 note says the new payment details arrive by phone."
     }
   ],
   "exits": [
     {
       "x": 8,
-      "y": 2,
+      "y": 1,
       "to": "/tower"
     }
   ]
