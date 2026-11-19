@@ -42,6 +42,14 @@ const CLIPS: Clip[] = [
   { file: krystal.intro.audio, kind: "tts", voice: "krystal", text: krystal.intro.text },
   ...Object.values(krystal.briefings).map((b) => ({ file: b.audio, kind: "tts" as const, voice: "krystal" as const, text: b.text })),
   { file: krystal.ending.audio, kind: "tts", voice: "krystal", text: krystal.ending.text },
+  // Ending cutscene: one clip per on-screen beat so /ending can pause between screens.
+  ...((krystal.ending as { cutscene?: { scenes?: { text: string; audio?: string }[]; tease?: string; teaseAudio?: string } }).cutscene?.scenes ?? [])
+    .filter((s): s is { text: string; audio: string } => !!s.audio)
+    .map((s) => ({ file: s.audio, kind: "tts" as const, voice: "krystal" as const, text: s.text })),
+  ...(() => {
+    const c = (krystal.ending as { cutscene?: { tease?: string; teaseAudio?: string } }).cutscene;
+    return c?.teaseAudio && c.tease ? [{ file: c.teaseAudio, kind: "tts" as const, voice: "krystal" as const, text: c.tease }] : [];
+  })(),
   // Seasonal helpers' lines (content/seasonal/seasons.json), so the scripted second person speaks too.
   ...seasons.seasons.flatMap((s) => {
     const h = (s as { helper?: { dialogue?: { line: string; audio?: string }[] } }).helper;

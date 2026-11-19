@@ -8,11 +8,26 @@
   "cutscene": {
     "_comment": "Opening cutscene on the first /tower visit, rendered by app/tower/Intro.tsx. One screen per scene, then goal, then next (which leads into the character pick). speaker null = narrator.",
     "scenes": [
-      { "speaker": null, "text": "Krystal Klear was the greatest crypto hunter alive. She cracked vaults before the thieves could, then showed the owners how." },
-      { "speaker": null, "text": "Last month she walked into Plumpurse Savings & Trust. She never walked out, and nobody knows why." },
-      { "speaker": "Krystal", "text": "If you're hearing this, kid, it's your turn. I left notes on every floor." },
-      { "speaker": null, "text": "This is Cold Call. You don't hack anything: you talk Plumpurse's employees into moving the money." },
-      { "speaker": "Krystal", "text": "And kid: they learn. Every employee remembers how you played them last time. The same con never works twice." }
+      {
+        "speaker": null,
+        "text": "Krystal Klear was the greatest crypto hunter alive. She cracked vaults before the thieves could, then showed the owners how."
+      },
+      {
+        "speaker": null,
+        "text": "Last month she walked into Plumpurse Savings & Trust. She never walked out, and nobody knows why."
+      },
+      {
+        "speaker": "Krystal",
+        "text": "If you're hearing this, kid, it's your turn. I left notes on every floor."
+      },
+      {
+        "speaker": null,
+        "text": "This is Cold Call. You don't hack anything: you talk Plumpurse's employees into moving the money."
+      },
+      {
+        "speaker": "Krystal",
+        "text": "And kid: they learn. Every employee remembers how you played them last time. The same con never works twice."
+      }
     ],
     "goal": "Breach every floor's vault before the Black Ledger does, from the bottom of the tower to the top.",
     "next": "Pick your character, then head across the street to the tutorial."
@@ -54,19 +69,40 @@
     }
   },
   "ending": {
-    "_comment": "Voice memo (audio) plus the click-through cutscene on /ending after Floor 3 clears. Ties the opening trail to a coming-soon Case 2.",
+    "_comment": "Full memo (audio/text) plus the click-through cutscene on /ending after Floor 3. Each cutscene beat has its own clip so voice matches the on-screen line and pauses between screens.",
     "audio": "krystal-ending.mp3",
     "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed. I'm not missing. I'm inside the Ledger now, and they think I'm one of them. Their next target is Fatwallet Federal. Get there first. On to the next one.",
     "cutscene": {
       "scenes": [
-        { "speaker": null, "text": "You cracked every vault in Plumpurse Tower. Krystal's trail led you here — and then it went quiet." },
-        { "speaker": "Krystal", "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed." },
-        { "speaker": "Krystal", "text": "I'm not missing. I'm inside the Ledger now, and they think I'm one of them." },
-        { "speaker": null, "text": "Her trail didn't end in the penthouse. It turned. The next note points somewhere new." },
-        { "speaker": "Krystal", "text": "Their next target is Fatwallet Federal. Get there first. On to the next one." }
+        {
+          "speaker": null,
+          "text": "You cracked every vault in Plumpurse Tower. Krystal's trail led you here — and then it went quiet.",
+          "audio": "krystal-ending-0.mp3"
+        },
+        {
+          "speaker": "Krystal",
+          "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed.",
+          "audio": "krystal-ending-1.mp3"
+        },
+        {
+          "speaker": "Krystal",
+          "text": "I'm not missing. I'm inside the Ledger now, and they think I'm one of them.",
+          "audio": "krystal-ending-2.mp3"
+        },
+        {
+          "speaker": null,
+          "text": "Her trail didn't end in the penthouse. It turned. The next note points somewhere new.",
+          "audio": "krystal-ending-3.mp3"
+        },
+        {
+          "speaker": "Krystal",
+          "text": "Their next target is Fatwallet Federal. Get there first. On to the next one.",
+          "audio": "krystal-ending-4.mp3"
+        }
       ],
       "tease": "Case 2: Fatwallet Federal. Coming soon.",
-      "next": "Back to the lobby — Daily and seasonal jobs are still open while you wait."
+      "next": "Back to the lobby — Daily and seasonal jobs are still open while you wait.",
+      "teaseAudio": "krystal-ending-tease.mp3"
     }
   },
   "season_tease": "Case 2: Fatwallet Federal. Coming soon."

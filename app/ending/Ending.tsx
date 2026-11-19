@@ -1,8 +1,8 @@
 "use client";
 
 // Closing cutscene after Floor 3: Krystal's trail seemed to end in the tower, then turns toward
-// Fatwallet Federal (Case 2, coming soon). Same click-through rhythm as /intro. Audio is the
-// pre-generated memo in public/audio/krystal-ending.mp3.
+// Fatwallet Federal (Case 2, coming soon). Same click-through rhythm as /intro. Each beat plays
+// only that screen's voice clip, then pauses until the player advances.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,11 +13,12 @@ import { blip, confirm, tick, voicePitch } from "@/app/floor/hud/sound";
 import krystal from "@/content/plumpurse/krystal.json";
 import { CoinLogo } from "@/app/play/CoinLogo";
 
-type Scene = { speaker: "Krystal" | null; text: string };
+type Scene = { speaker: "Krystal" | null; text: string; audio?: string };
 
 type EndingScript = {
   scenes: Scene[];
   tease: string;
+  teaseAudio?: string;
   next: string;
 };
 
@@ -32,8 +33,6 @@ const FALLBACK: EndingScript = {
 
 const SCRIPT: EndingScript =
   (krystal as { ending?: { cutscene?: EndingScript } }).ending?.cutscene ?? FALLBACK;
-
-const ENDING_AUDIO = (krystal as { ending?: { audio?: string } }).ending?.audio ?? "krystal-ending.mp3";
 
 function markSeen() {
   try {
@@ -82,6 +81,12 @@ function Beat({ speaker, text, onTyped }: { speaker: "Krystal" | null; text: str
   );
 }
 
+/** The clip for the current screen, if any. */
+function clipFor(i: number, beats: Scene[]): string | null {
+  if (i < beats.length) return beats[i].audio ?? null;
+  return SCRIPT.teaseAudio ?? null;
+}
+
 export function Ending() {
   const router = useRouter();
   const beats = SCRIPT.scenes;
@@ -94,15 +99,20 @@ export function Ending() {
   const [leaving, setLeaving] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // One clip per screen: play what is on screen, stop when the screen changes or we leave.
   useEffect(() => {
-    const clip = new Audio(`/audio/${ENDING_AUDIO}`);
+    audioRef.current?.pause();
+    audioRef.current = null;
+    const file = clipFor(i, beats);
+    if (!file) return;
+    const clip = new Audio(`/audio/${file}`);
     audioRef.current = clip;
     void clip.play().catch(() => {});
     return () => {
       clip.pause();
-      audioRef.current = null;
+      if (audioRef.current === clip) audioRef.current = null;
     };
-  }, []);
+  }, [i, beats]);
 
   const finish = useCallback(() => {
     if (leaving) return;
@@ -115,6 +125,8 @@ export function Ending() {
 
   const advance = useCallback(() => {
     if (i < beats.length && !typed.current.done) return typed.current.skip();
+    // Stop this screen's voice before the next beat starts (the effect also pauses on i change).
+    audioRef.current?.pause();
     tick();
     if (i < screens - 1) setI(i + 1);
     else finish();
