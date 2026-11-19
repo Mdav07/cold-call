@@ -71,7 +71,7 @@
   "ending": {
     "_comment": "Full memo (audio/text) plus the click-through cutscene on /ending after Floor 3. Each cutscene beat has its own clip so voice matches the on-screen line and pauses between screens.",
     "audio": "krystal-ending.mp3",
-    "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed. I'm not missing. I'm inside the Ledger now, and they think I'm one of them. Their next target is Fatwallet Federal. Get there first. On to the next one.",
+    "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed. I'm not missing. I'm inside the Black Ledger now, and they think I'm one of them. Their next target is Fatwallet Federal. Get there first. On to the next one.",
     "cutscene": {
       "scenes": [
         {
@@ -86,7 +86,7 @@
         },
         {
           "speaker": "Krystal",
-          "text": "I'm not missing. I'm inside the Ledger now, and they think I'm one of them.",
+          "text": "I'm not missing. I'm inside the Black Ledger now, and they think I'm one of them.",
           "audio": "krystal-ending-2.mp3"
         },
         {
