@@ -23,7 +23,7 @@ export const DRAFT_INTRO: IntroScript = {
     },
     {
       speaker: null,
-      text: "Cold Call: talk, call and bluff the bank's AI employees into moving real money. No hacking. Just people.",
+      text: "Cold Call: talk, call and bluff the bank's AI employees into paying out. No hacking. Just people.",
     },
   ],
   goal: "Breach each floor's vault before the Black Ledger does, and find what Krystal left behind.",

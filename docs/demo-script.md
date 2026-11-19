@@ -10,7 +10,7 @@ audio), QuickNode Streams. Keep it under 3:00.
 Cold open, no title. A **voice** call to Dee on Floor 1: live transcript, suspicion meter climbing and dropping.
 She agrees. Alarm → VAULT BREACHED → payout and time.
 
-> VO (after the breach): "That was a real phone call to an AI bank employee, and that was real money moving on
+> VO (after the breach): "That was a real phone call to an AI bank employee, and that was real USDC moving on
 > chain."
 
 ## 2. Why it matters (0:30–0:50)
@@ -18,7 +18,7 @@ She agrees. Alarm → VAULT BREACHED → payout and time.
 On screen: the Binance headline (Oct 29, 2026), then the Drift headline (Apr 2026).
 
 > VO: "Last month, North Korean hackers took six point three billion dollars from Binance, the biggest crypto
-> theft ever. No vault was cracked. It reportedly started with a fake job interview, and ended with Binance's own
+> theft ever. No vault was cracked. It started with phishing, and ended with Binance's own
 > signing system sending the money. That's how most crypto is stolen now: people get talked into it. And as
 > companies hand payments to AI agents, the agents are next."
 

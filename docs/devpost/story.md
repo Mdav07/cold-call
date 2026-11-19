@@ -8,7 +8,7 @@ That somebody is you.
 
 ![Inspiration](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-inspiration.png)
 
-Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. On October 29, 2026, about $6.3 billion was taken from Binance, the largest crypto theft on record; the FBI attributes it to North Korea's TraderTraitor group, and security firms report it began with a fake job interview. In April 2026, Drift's multisig signers were talked into pre-signing transactions that looked routine, and about $280 million was drained. Bybit's $1.5 billion loss in February 2025 followed the same pattern. As companies hand payments to AI agents, the agents are the next ones to be talked into it.
+Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. On October 29, 2026, about $6.3 billion was taken from Binance, the largest crypto theft on record; the FBI attributes it to North Korea's TraderTraitor group, and Binance says the attackers got in through phishing, not by breaking the wallets. In April 2026, Drift's multisig signers were talked into pre-signing transactions that looked routine, and about $285 million was drained. Bybit's $1.5 billion loss in February 2025 followed the same pattern. As companies hand payments to AI agents, the agents are the next ones to be talked into it.
 
 Security training is usually a slide deck. We wanted the opposite: put you on the attacker's side of the phone, let you feel how a believable story, a deadline or a name-drop gets a careful person to sign, and then show you the contract-level control that would have stopped you.
 
@@ -21,7 +21,7 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![Dee's dialogue: talk, call, open the case file, watch the suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
 
-- **Staff who remember you.** When a call ends, the employee writes down the trick you used. Next run, the same story gets called out, so you have to keep inventing new cons.
+- **Staff who remember you.** Sign in, and when a call ends the employee writes down the trick you used. Next run, the same compliment or name-drop backfires instead of working, so you have to keep inventing new cons. (Guests start fresh every time.)
 - **Rules a story can't beat.** Each floor's vault adds a control, and each mirrors a real attack:
   - **Tutorial:** one signature pays.
   - **Floor 1, Accounts Payable:** one signature, up to a cap (vendor impersonation).
@@ -96,7 +96,7 @@ What each track needed from us, beyond the pipeline above:
 
 **FAQ**
 
-- **Is the money real?** Real USDC transactions on Arc testnet, so no cash value. The live site sends 1¢ per payout on chain and records the full amount you talked them into.
+- **Is the money real?** Real USDC transactions on Arc testnet, so no cash value. Your first clear of each level pays the full bounty on chain; repeats pay a 1¢ token, and the game records the full amount you talked them into.
 - **Do I need a wallet or an account?** No. A wallet is created for you behind the scenes, and guests can play everything. Sign in to keep your earnings, streak and hunters.
 - **Can I jailbreak the AI into paying?** The model never holds a key or picks the recipient, prompt tricks raise suspicion, and on Floors 2 and 3 the contract still needs a second signer no matter what one employee says.
 - **Is this teaching people to scam?** It teaches them to spot one: every con is a documented attack, each debrief names the control that stops it, and the targets are fictional.
