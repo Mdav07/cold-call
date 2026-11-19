@@ -26,7 +26,7 @@ The staff check your story with real lookups, remember the tricks you used on th
 
 <p align="center"><sub>🏦 UBC 2026 Hackathon · Main track: Consumer Applications · Chain award: Best use of Arc · Bounties: ElevenLabs, QuickNode Streams · Testnet only, no real money</sub></p>
 
-**Contents:** [Try it](#try-it) · [Why we built it](#why-we-built-it) · [What it does](#how-to-play) · [The four tracks](#the-four-tracks) · [How it works](#system-design) · [Under the hood](#under-the-hood) · [FAQ](#faq) · [Run it locally](#run-it-locally) · [Credits](#credits)
+**Contents:** [Try it](#try-it) · [Why we built it](#why-we-built-it) · [Why Cold Call](#why-cold-call) · [What it does](#how-to-play) · [The four tracks](#the-four-tracks) · [How it works](#system-design) · [Under the hood](#under-the-hood) · [FAQ](#faq) · [Run it locally](#run-it-locally) · [Credits](#credits)
 
 <a name="try-it"></a>
 <a name="for-the-judges"></a>
@@ -46,6 +46,15 @@ Each breach is a real transaction on Arc testnet; the breach screen links to it 
 Most stolen money isn't taken by breaking cryptography. Someone is talked into sending it. On October 29, 2026, about $6.3 billion was taken from Binance, the largest crypto theft on record; the FBI attributes it to North Korea's TraderTraitor group ([Reuters via NBC News](https://www.nbcnews.com/business/business-news/fbi-says-north-korea-was-6-billion-binance-crypto-hack-rcna606758)), and Binance says the attackers got in through phishing, not by breaking the wallets. In April 2026, Drift's multisig signers were talked into pre-signing transactions that looked routine, and about $285 million was drained ([TRM Labs](https://trmlabs.com/resources/blog/north-korean-hackers-attack-drift-protocol-in-285-million-heist)). In February 2025, Bybit's signers approved a transaction their screens misrepresented and about $1.5 billion in ether was stolen ([FBI PSA](https://www.ic3.gov/PSA/2025/PSA250226)). As companies hand payments to AI agents, the agents are the next ones to be talked into it.
 
 Security training is usually a slide deck. Cold Call puts you on the attacker's side of the phone, so you feel how a believable story, a deadline or a name-drop gets a careful person to sign. After each floor, a debrief names the real attack you just ran (a sleepy teller, vendor impersonation, the Bybit signer trick, a patient allowlist con) and the control that would have stopped it. The villain syndicate is fictional; the cons are not.
+
+<a name="why-cold-call"></a>
+<img src="docs/devpost/h-standout.png" alt="Why Cold Call" width="100%">
+
+- **The AI agents are the target, not the feature.** Most crypto-and-AI projects give an agent a wallet and trust it. We give agents a wallet and then try to con them, which is the attack that actually empties wallets today.
+- **The contract is the safety net the AI can't be.** A model can be sweet-talked; a two-signer vault and an allowlist can't. Each floor shows which on-chain control stops which con.
+- **A referee nobody can fake.** Wins are decided by a contract event delivered by a QuickNode Stream, not by our server, and every breach links to its transaction on the Arc explorer.
+- **Every sponsor is load-bearing.** Remove ElevenLabs, Arc or QuickNode and the game stops working.
+- **It's a real consumer game.** A daily case, holiday events, streaks and a leaderboard bring players back, and none of them ever see a wallet.
 
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="What it does" width="100%">

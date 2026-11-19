@@ -20,18 +20,24 @@ And companies are now handing payments to AI agents. Those agents are the next o
 - **They remember you.** Sign in, and an employee writes down the trick that fooled them. Use it again and it backfires.
 - **A reason to come back.** A new Daily Case every day across 12 workplaces, ten holiday cases with their own rooms, weather and two voiced signers, streaks, earnable hunters and a leaderboard timed to the block. It plays like a handheld console on your phone.
 
+![Ten holidays, three rooms each: every layout's room and its two people](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-rooms.jpg)
+
 ![How we built it](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-how-we-built-it.png)
 
 **Voice call → ElevenLabs agent → our tool server → `ColdCallVault` on Arc → `TransferExecuted` → QuickNode Stream → breach screen**
 
 ![One heist in five steps: call, check, sign, vault, referee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/pipeline.png)
 
-- **ElevenLabs:** nine agents (seven staff, one Daily Case persona, one holiday co-signer) handle voice and chat. Dynamic variables carry run IDs, memory and each day's persona. 11 server tools handle lookups, suspicion and signing, and each holiday character gets a matching voice. Text to Speech, Sound Effects and Music voice Krystal, the alarm and the floor themes.
-- **Arc:** `ColdCallVault` (Solidity, 33 Foundry tests) enforces each floor's rule: a per-transfer cap, a second signer, a recipient allowlist. USDC is both the prize and the gas. Four vaults are live on Arc testnet.
-- **QuickNode Streams:** the referee. A filtered Stream of our vaults' 12 events posts `TransferExecuted` to our webhook. Nothing in our app can mark a win; only the contract event can.
-- **Consumer UX:** no wallet, seed phrase or gas. A Circle developer-controlled wallet is created for each player, employees pay the gas, and every amount is in dollars. Next.js 16 on Vercel, Supabase for runs, memory and the leaderboard.
+![The four tracks](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-four-tracks.png)
 
-## Why it stands out
+| Track | What it asks for | How Cold Call does it |
+| --- | --- | --- |
+| **Consumer Applications** | A working app on chain, crypto invisible to the user | No wallet, seed phrase or gas: a Circle developer-controlled wallet is made for each player, employees pay the gas, every amount is in dollars. Next.js 16 on Vercel, Supabase for runs, memory and the leaderboard. |
+| **Best use of Arc** | Core onchain functionality on Arc | `ColdCallVault` (Solidity, 33 Foundry tests) enforces each floor's rule: a per-transfer cap, a second signer, a recipient allowlist. USDC is the prize and the gas; four vaults live on Arc testnet. |
+| **ElevenLabs** | The API or SDK as a core feature | Nine agents (seven staff, a Daily persona, a holiday co-signer) for voice and chat, 11 server tools for lookups, suspicion and signing, dynamic variables for runs, memory and personas, a matched voice per holiday character, plus TTS, Sound Effects and Music. |
+| **QuickNode Streams** | A Stream as a core data source | The referee: a filtered Stream of our vaults' 12 events posts `TransferExecuted` to our webhook. Nothing in our app can mark a win; only the contract event can. |
+
+![Why Cold Call](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-standout.png)
 
 - **The AI agents are the target, not the feature.** Most crypto-and-AI projects give an agent a wallet and trust it. We give agents a wallet and then try to con them, which is the attack that actually empties wallets today.
 - **The contract is the safety net the AI can't be.** A model can be sweet-talked; a two-signer vault and an allowlist can't. Each floor shows exactly which on-chain control stops which con.
