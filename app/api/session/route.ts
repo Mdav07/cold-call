@@ -23,6 +23,8 @@ export async function POST(request: Request) {
     return Response.json(await startSession({ ...parsed.data, ip }));
   } catch (e) {
     if (e instanceof SessionError) return Response.json({ error: e.message }, { status: e.status });
-    throw e;
+    // Anything else: log it, and still answer with JSON so the player sees a message, not a parse error.
+    console.error("POST /api/session failed", e);
+    return Response.json({ error: "Couldn't reach them just now. Try again in a moment." }, { status: 500 });
   }
 }

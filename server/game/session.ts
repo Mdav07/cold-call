@@ -10,7 +10,7 @@ import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
 import { onRunEnded } from "@/server/chain/ingest";
 import { signedInUserId } from "@/server/game/auth";
-import { getDemoUserId } from "@/server/game/players";
+import { ensureSignedInPlayer, getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
@@ -191,6 +191,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     if (!userId) {
       if (process.env.ALLOW_DEMO_PLAYER === "false") throw new SessionError("Sign in to play", 401);
       userId = await getDemoUserId();
+    } else {
+      await ensureSignedInPlayer(userId); // a password account may have no users row or wallet yet
     }
     await checkLimits(userId, input.ip, input.channel, !input.run_id, shared);
     run_id = input.run_id

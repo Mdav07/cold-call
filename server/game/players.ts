@@ -16,6 +16,20 @@ export async function ensureUserRow(userId: string, displayName: string | null):
   await ensurePlayerWallet(userId);
 }
 
+/**
+ * Makes sure a signed-in player has their users row and wallet before anything references them.
+ * The email-link routes (/auth/confirm, /auth/callback) create them, but a password sign-up or sign-in
+ * never passes through those, and without the row every new run fails its foreign key. Cheap when the
+ * row and wallet already exist (one select).
+ */
+export async function ensureSignedInPlayer(userId: string): Promise<void> {
+  const { data } = await db().from("users").select("wallet_address").eq("id", userId).maybeSingle();
+  if (data?.wallet_address) return;
+  const { data: auth } = await db().auth.admin.getUserById(userId);
+  const handle = (auth?.user?.user_metadata as { handle?: string } | undefined)?.handle?.slice(0, 24) || null;
+  await ensureUserRow(userId, handle);
+}
+
 /** The shared demo player. Created on first use; cached per server instance. */
 export async function getDemoUserId(): Promise<string> {
   if (demoUserId) return demoUserId;
