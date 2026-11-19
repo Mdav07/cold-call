@@ -5,6 +5,7 @@
 import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
 import { dailyCase, todayUtc } from "@/shared/dailyCase";
+import { VAULT_RULE, maxBountyLabel } from "@/app/play/bounty";
 
 const W = 19;
 const H = 13;
@@ -50,10 +51,10 @@ export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean
   const people = f?.employees.map((e) => `${e.name} (${e.title})`).join(", ");
   const status = cleared ? "CLEARED" : open ? "OPEN" : "LOCKED";
   return {
-    label: `Floor ${n} · ${f?.name ?? ""} · ${status}`,
+    label: `Floor ${n} · ${f?.name ?? ""} · max ${maxBountyLabel(n)} · ${status}`,
     text: open
-      ? `${f?.description ?? ""} Staff: ${people}.${best} Step into the elevator to go up.`
-      : `Locked. Clear ${below} first. Staff: ${people ?? "unknown"}.`,
+      ? `${f?.description ?? ""} Max bounty ${maxBountyLabel(n)}; vault: ${VAULT_RULE[n]}. Staff: ${people}.${best} Step into the elevator to go up.`
+      : `Locked. Clear ${below} first. Max bounty ${maxBountyLabel(n)}; vault: ${VAULT_RULE[n]}. Staff: ${people ?? "unknown"}.`,
   };
 }
 
@@ -133,14 +134,14 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     x: DAILY_X,
     y: DOOR_Y - 1,
     label: `Daily Case · ${today.title}`,
-    text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+    text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Max bounty ${maxBountyLabel(4)}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
   props.push({
     id: "street-sign",
     x: TUTORIAL_X,
     y: DOOR_Y - 1,
     label: `Tutorial${p0?.cleared ? " · CLEARED" : ""}`,
-    text: "The tutorial: Barry is closing up the little branch across the street. Walk out through the glass door to try your first con.",
+    text: `The tutorial: Barry is closing up the little branch across the street. Max bounty ${maxBountyLabel(0)}; ${VAULT_RULE[0]}. Walk out through the glass door to try your first con.`,
   });
   props.push({
     id: "reception",

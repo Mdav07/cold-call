@@ -10,6 +10,7 @@ import { PORTRAITS } from "@/app/play/portraits";
 import { useEffect, useRef, useState } from "react";
 import { confirm, tick } from "@/app/floor/hud/sound";
 import { CoinLogo } from "@/app/play/CoinLogo";
+import { DifficultyPips, VAULT_RULE, maxBountyLabel } from "@/app/play/bounty";
 
 type BriefingText = { audio: string; text: string };
 
@@ -145,6 +146,11 @@ export function Briefing({
           <h2 id="briefing-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl [@media(max-height:500px)]:mt-1 [@media(max-height:500px)]:text-sm">
             {title}
           </h2>
+          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-pixel text-[9px] tracking-wide [@media(max-height:500px)]:mt-1">
+            <span>MAX BOUNTY {maxBountyLabel(floor)}</span>
+            <span className="flex items-center gap-1.5">DIFFICULTY <DifficultyPips floor={floor} /></span>
+            <span className="font-sans text-xs normal-case tracking-normal opacity-80">Vault: {VAULT_RULE[floor]}</span>
+          </p>
         </header>
 
         <div className="flex items-center gap-3">

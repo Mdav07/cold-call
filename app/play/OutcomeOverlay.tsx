@@ -15,6 +15,7 @@ import { useStreak } from "./streak";
 import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 import { CoinLogo } from "@/app/play/CoinLogo";
 import { formatUsd, recordGuestEarning, refreshEarnings, useEarnings } from "./earnings";
+import { maxBountyLabel } from "./bounty";
 
 type Debrief = {
   title: string;
@@ -162,6 +163,7 @@ export function OutcomeOverlay({
                 <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)] line-through" : "text-[var(--cc-ok)]"}`}>
                   {paid != null ? <CountUp to={paid} /> : "…"}
                 </p>
+                <p className="mt-1 text-xs text-[var(--cc-muted)]">of {maxBountyLabel(run.floor)} max</p>
               </div>
             )}
             {breach && earned && paid != null && (
