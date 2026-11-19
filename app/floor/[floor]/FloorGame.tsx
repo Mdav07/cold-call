@@ -307,8 +307,22 @@ export function FloorGame({
   return (
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} deck={consoleMode ? <Hud docked {...hudProps} /> : undefined} />
-        {seasonThemeOn && daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" && <FallingLeaves />}
+        <FloorScene
+          map={map}
+          playerSprite={playerSprite}
+          paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort}
+          onEvent={onEvent}
+          emotes={emotes}
+          insetBottom={boxOpen ? inset : 0}
+          goal={escort ? null : goal}
+          tags={tags}
+          names={names}
+          escort={escort ? { key: escort, onDone: escortDone } : null}
+          deck={consoleMode ? <Hud docked {...hudProps} /> : undefined}
+          screenOverlay={
+            seasonThemeOn && daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" ? <FallingLeaves /> : null
+          }
+        />
       </div>
 
       {!consoleMode && hud}

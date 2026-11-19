@@ -86,7 +86,7 @@ const FADE_MS = 700;
 /** Phones held upright: the handheld-console layout (screen on top, controls on a deck below). */
 export const CONSOLE_QUERY = "(pointer: coarse) and (orientation: portrait)";
 
-export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names, escort = null, deck }: FloorSceneProps) {
+export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, emotes, insetBottom = 0, goal = null, tags, names, escort = null, deck, screenOverlay }: FloorSceneProps) {
   const consoleMode = useMediaQuery(CONSOLE_QUERY);
   // The deck under the screen: the dialogue box covers it first, so only the rest hides the map.
   const deckRef = useRef<HTMLDivElement>(null);
@@ -819,6 +819,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
     return (
       <div ref={wrapRef} className="relative h-full w-full touch-none select-none overflow-hidden bg-[var(--cc-edge,#15141a)]">
         {canvas}
+        {screenOverlay}
         <TouchControls onHold={hold} onA={interact} hidden={paused} />
       </div>
     );
@@ -830,6 +831,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       <div className="mx-1.5 mt-1.5 flex min-h-0 flex-1 flex-col rounded-md rounded-br-[1.75rem] bg-[#4f5165] px-1.5 pb-1 pt-1.5 shadow-[inset_0_-3px_0_rgba(0,0,0,0.25)]">
         <div ref={wrapRef} className="relative min-h-0 flex-1 overflow-hidden rounded-sm bg-[var(--cc-edge,#15141a)] ring-2 ring-black/40">
           {canvas}
+          {screenOverlay}
         </div>
         {/* Where you are, printed on the bezel (the docked HUD leaves the name out to stay one row). */}
         <p className="mt-1 truncate text-center font-pixel text-[7px] tracking-[0.3em] text-[#c9c5ba]/80" aria-hidden>

@@ -63,4 +63,6 @@ export interface FloorSceneProps {
   /** Phones held upright show the room as a handheld console: the map is the screen and the controls sit
    *  on a deck below it. Whatever is passed here (the HUD bar) is docked on that deck. */
   deck?: import("react").ReactNode;
+  /** Drawn over the map screen only (clipped there on mobile so it never spills onto the console deck). */
+  screenOverlay?: import("react").ReactNode;
 }
