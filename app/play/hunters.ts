@@ -33,6 +33,15 @@ export function cleanName(name: string): string {
   return name.replace(/[^\p{L}\p{N} ._'-]/gu, "").trim().slice(0, MAX_NAME);
 }
 
+/** True when this browser has already saved a hunter look (not just the default). */
+export function hasHunter(): boolean {
+  try {
+    return typeof window !== "undefined" && !!window.localStorage.getItem(KEY);
+  } catch {
+    return false;
+  }
+}
+
 /** The saved choice, or the default. Safe on the server (returns the default). */
 export function getHunter(): HunterChoice {
   try {

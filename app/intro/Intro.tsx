@@ -1,7 +1,8 @@
 "use client";
 
-// The opening for a first-time player: Krystal's cutscene in a few click-through screens, then
-// "Pick your hunter", then the lobby. All text in the pixel font, typed out like the dialogue box.
+// The opening for a first-time player: Krystal's cutscene, then sign in (or guest), then pick a
+// hunter only if this browser has no saved profile yet. Returning players who already picked skip
+// straight to the lobby after sign-in. All text in the pixel font, typed out like the dialogue box.
 // The hunters are Audrey's (app/play/hunters.ts); the choice is saved with saveHunter, plus
 // cc-player-sprite (sprite path) and cc-intro-seen in localStorage.
 
@@ -13,15 +14,23 @@ import { themeFor, themeVars } from "@/app/floor/dialogue/themes";
 import { blip, confirm, tick, voicePitch } from "@/app/floor/hud/sound";
 import krystal from "@/content/plumpurse/krystal.json";
 import { DRAFT_INTRO, type IntroScript } from "./script";
-import { HUNTERS, MAX_NAME, cleanName, saveHunter, spriteUrl } from "@/app/play/hunters";
+import { HUNTERS, MAX_NAME, cleanName, hasHunter, saveHunter, spriteUrl } from "@/app/play/hunters";
 import { SaveProgress } from "@/app/play/SaveProgress";
 import { CoinLogo } from "@/app/play/CoinLogo";
 
 // Audrey's script lives in krystal.json under "cutscene"; the draft covers builds before it lands.
 const SCRIPT: IntroScript = (krystal as { cutscene?: IntroScript }).cutscene ?? DRAFT_INTRO;
 
-/** The same four looks as /hunter (app/play/hunters.ts). */
+/** The same looks as /hunter (app/play/hunters.ts). */
 const PICKS = HUNTERS;
+
+function markIntroSeen() {
+  try {
+    localStorage.setItem("cc-intro-seen", "1");
+  } catch {
+    // private window or blocked storage
+  }
+}
 
 function save(sprite: string, name: string) {
   const clean = cleanName(name) || "Hunter";
@@ -99,7 +108,8 @@ export function Intro() {
   const beats = SCRIPT.scenes;
   const screens = beats.length + 1; // the scenes, then the job
   const [i, setI] = useState(0);
-  const [stage, setStage] = useState<"story" | "pick" | "save">("story");
+  // Sign-in first; pick only for new accounts / guests with no saved hunter.
+  const [stage, setStage] = useState<"story" | "save" | "pick">("story");
   const typed = useRef<{ skip: () => void; done: boolean }>({ skip: () => {}, done: true });
   const onTyped = useCallback((skip: () => void, done: boolean) => {
     typed.current = { skip, done };
@@ -109,13 +119,19 @@ export function Intro() {
   const [leaving, setLeaving] = useState(false);
   const firstCard = useRef<HTMLButtonElement>(null);
 
+  const goSave = useCallback(() => {
+    // Story is done: don't replay it if the email link lands back on /tower → lobby.
+    markIntroSeen();
+    setStage("save");
+  }, []);
+
   const advance = useCallback(() => {
     if (stage !== "story") return;
     if (i < beats.length && !typed.current.done) return typed.current.skip(); // finish the line first
     tick();
     if (i < screens - 1) setI(i + 1);
-    else setStage("pick");
-  }, [stage, i, beats.length, screens]);
+    else goSave();
+  }, [stage, i, beats.length, screens, goSave]);
 
   useEffect(() => {
     if (stage !== "story") return;
@@ -129,37 +145,47 @@ export function Intro() {
         e.preventDefault();
         e.stopPropagation();
         advance();
-      } else if (e.key === "Escape") setStage("pick");
+      } else if (e.key === "Escape") goSave();
     };
     // Capture so we win over the big stage control.
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [stage, advance]);
+  }, [stage, advance, goSave]);
 
   useEffect(() => {
     if (stage === "pick") firstCard.current?.focus();
   }, [stage]);
+
+  const toTower = useCallback(() => {
+    markIntroSeen();
+    router.push("/tower");
+  }, [router]);
+
+  /** After sign-in / guest: pick only when this browser has no hunter yet. */
+  const afterSave = useCallback(() => {
+    if (hasHunter()) toTower();
+    else setStage("pick");
+  }, [toTower]);
 
   const enter = () => {
     if (!picked || leaving) return;
     confirm();
     setLeaving(true);
     save(picked, name);
-    setStage("save"); // offer sign-in to keep progress, then the lobby
+    router.push("/tower");
   };
-  const toTower = useCallback(() => router.push("/tower"), [router]);
 
   return (
     <main className="cc-floor-1 relative flex min-h-dvh flex-1 flex-col bg-[#15141a]">
       {stage === "save" ? (
         <section className="flex flex-1 items-center justify-center p-4">
-          <SaveProgress handle={cleanName(name) || "Hunter"} onContinue={toTower} />
+          <SaveProgress onContinue={afterSave} />
         </section>
       ) : stage === "story" ? (
         <>
           <div className="flex items-center justify-between p-3 sm:p-4">
             <p className="flex items-center gap-2 font-pixel text-[9px] tracking-widest text-[var(--cc-muted)]"><CoinLogo size={16} />COLD CALL</p>
-            <button type="button" className="pixel-button !px-3 !py-1.5" onClick={() => setStage("pick")}>
+            <button type="button" className="pixel-button !px-3 !py-1.5" onClick={goSave}>
               Skip ▶▶
             </button>
           </div>
@@ -168,7 +194,7 @@ export function Intro() {
             role="button"
             tabIndex={0}
             onClick={advance}
-            aria-label={i < screens - 1 ? "Next" : "Pick your hunter"}
+            aria-label={i < screens - 1 ? "Next" : "Continue"}
             className="flex flex-1 cursor-pointer flex-col items-center justify-center px-5 pb-6 outline-none"
           >
             {i < beats.length ? (
@@ -178,7 +204,7 @@ export function Intro() {
                 <p className="font-pixel text-[10px] tracking-widest text-[var(--cc-accent)]">THE JOB</p>
                 <p className="font-pixel text-[15px] leading-[1.9] text-[var(--cc-ink)] sm:text-xl">{SCRIPT.goal}</p>
                 <p className="font-pixel text-[12px] leading-[1.9] text-[var(--cc-muted)] sm:text-sm">{SCRIPT.next}</p>
-                <span className="pixel-button">Pick your hunter ▶</span>
+                <span className="pixel-button">Continue ▶</span>
               </div>
             )}
           </div>

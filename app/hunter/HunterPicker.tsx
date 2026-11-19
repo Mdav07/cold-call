@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useSyncExternalStore } from "react";
-import { SaveProgress } from "@/app/play/SaveProgress";
+import { useState, useSyncExternalStore } from "react";
 import { UNLOCKS, useProgress } from "@/app/play/unlocks";
 import { StreakBadge } from "@/app/play/StreakBadge";
 import { cleanName, DEFAULT_HUNTER, getHunter, HUNTERS, MAX_NAME, saveHunter, spriteUrl, type HunterChoice } from "@/app/play/hunters";
@@ -40,10 +39,12 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
   const router = useRouter();
   const [sprite, setSprite] = useState(initial?.sprite ?? DEFAULT_HUNTER.sprite);
   const [name, setName] = useState(initial && initial.name !== "Hunter" ? initial.name : "");
-  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const progress = useProgress();
 
   const save = async () => {
+    if (saving) return;
+    setSaving(true);
     const clean = cleanName(name) || "Hunter";
     saveHunter({ sprite, name: clean });
     // Signed-in players also get it as their leaderboard name; anonymous players just keep it locally.
@@ -52,18 +53,16 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: clean }),
     }).catch(() => {});
-    setSaved(true);
+    // Sign-in lives on AccountBox / /signin — don't re-ask after every profile save.
+    router.push("/tower");
   };
-  const toTower = useCallback(() => router.push("/tower"), [router]);
-
-  if (saved) return <SaveProgress handle={cleanName(name) || "Hunter"} onContinue={toTower} />;
 
   return (
     <form
       className="pixel-frame flex w-full max-w-xl flex-col gap-5 bg-[var(--cc-panel)] p-6"
       onSubmit={(e) => {
         e.preventDefault();
-        save();
+        void save();
       }}
     >
       <header className="-mx-6 -mt-6 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-6 pb-3 pt-4 text-[var(--cc-edge)]">
@@ -152,8 +151,8 @@ function PickerForm({ initial }: { initial: HunterChoice | null }) {
         </div>
       </div>
 
-      <button type="submit" className="pixel-button self-start" disabled={saved}>
-        {saved ? "Saved" : "Save and enter the tower"}
+      <button type="submit" className="pixel-button self-start" disabled={saving}>
+        {saving ? "Saving…" : "Save and enter the tower"}
       </button>
     </form>
   );
