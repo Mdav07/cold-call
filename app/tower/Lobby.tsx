@@ -1,6 +1,6 @@
 "use client";
 
-// The walkable tower lobby: the same engine as the floors, with five elevators (Tutorial, Floors 1–3, Daily) as exits.
+// The walkable tower lobby: the same engine as the floors, with the elevators and the two front doors (Tutorial, Daily) as exits.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, ELEVATORS, ELEVATOR_NAMES, LOBBY_W, TUTORIAL_X, elevatorSign } from "./lobbyMap";
+import { DAILY_X, DOOR_Y, ELEVATORS, ELEVATOR_NAMES, LOBBY_W, elevatorSign } from "./lobbyMap";
 import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
@@ -44,7 +44,7 @@ export function Lobby({
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
 
   const leavingRef = useLatest(leaving);
-  // The Daily elevator is always an exit; while the tutorial isn't cleared, walking in says so instead of
+  // The Daily door is always an exit; while the tutorial isn't cleared, walking in says so instead of
   // silently doing nothing. Every other exit asks to confirm first (ExitConfirm).
   const [dailyLocked, setDailyLocked] = useState(false);
   const tutorialDoneRef = useRef(false);
@@ -64,7 +64,7 @@ export function Lobby({
     setPending(null);
     setLeaving({
       to,
-      label: to === "/daily" ? "Going up · Daily Case" : n === "0" ? "Going down · Tutorial" : `Going up · Floor ${n}`,
+      label: to === "/daily" ? "Through the side door · Daily Case" : n === "0" ? "Across the street · Tutorial" : `Going up · Floor ${n}`,
     });
   }, []);
   const arrived = useCallback(() => {
@@ -93,13 +93,13 @@ export function Lobby({
   }, [tutorialDone]);
   const map = useMemo(() => {
     // Elevator mats (y=2): never block — stand/read even when locked; gating is exit-only.
-    const elevMats = new Set([TUTORIAL_X, ...Object.values(ELEVATORS), DAILY_X].map((x) => x + 2 * LOBBY_W));
+    const elevMats = new Set(Object.values(ELEVATORS).map((x) => x + 2 * LOBBY_W));
     let exits = [...(serverMap.exits ?? [])];
     const blocked = (serverMap.blocked ?? []).filter((i) => !elevMats.has(i));
 
-    // The Daily elevator is an exit whatever your progress: until the Tutorial is cleared, stepping in
-    // says it's locked (onEvent) and its mat carries a LOCKED plate.
-    if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: 2, to: "/daily" });
+    // The Daily door is an exit whatever your progress: until the Tutorial is cleared, walking into it
+    // says it's locked (onEvent), and a LOCKED plate sits just inside it.
+    if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: DOOR_Y, to: "/daily" });
     const props = (serverMap.props ?? []).map((pr) => {
       // Guests: each elevator sign follows this browser's clears, not the shared demo player's.
       const n = Number(pr.id.match(/^sign-([123])$/)?.[1]);
@@ -110,8 +110,8 @@ export function Lobby({
             ...pr,
             label: `${pr.label.replace(/ · (LOCKED|OPEN)$/, "")} · ${tutorialDone ? "OPEN" : "LOCKED"}`,
             text: tutorialDone
-              ? pr.text.replace("Opens once you clear the tutorial.", "Step into the elevator to play.")
-              : "Locked. Clear the Tutorial first (the elevator on the left). Then a new case waits up here every day.",
+              ? pr.text.replace("Opens once you clear the tutorial.", "Walk through the door to play.")
+              : "Locked. Clear the Tutorial first, through the glass door. Then a new case waits behind this door every day.",
           };
     });
 
@@ -141,7 +141,7 @@ export function Lobby({
     const locked: { x: number; y: number; text: string; always: true; fit: number }[] = [];
     for (const [k, x] of Object.entries(ELEVATORS))
       if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 2, text: "LOCKED", always: true, fit: 2.8 });
-    if (!tutorialDone) locked.push({ x: DAILY_X, y: 2, text: "LOCKED", always: true, fit: 2.8 });
+    if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y - 1.5, text: "LOCKED", always: true, fit: 2.8 });
     return [...ELEVATOR_NAMES, ...shown.tags, ...locked];
   }, [shown.tags, map, tutorialDone]);
 
@@ -185,7 +185,7 @@ export function Lobby({
       {dailyLocked && (
         <PropDialogue
           label="Daily Case · locked"
-          text="The Daily Case opens once you've cleared the Tutorial (the elevator on the left). After that, a new case waits up here every day."
+          text="The Daily Case opens once you've cleared the Tutorial, through the glass door. After that, a new case waits behind this door every day."
           onClose={() => setDailyLocked(false)}
         />
       )}

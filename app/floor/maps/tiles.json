@@ -633,6 +633,14 @@
     "mat_daily_r": {
       "index": 157,
       "kind": "walk"
+    },
+    "door_glass": {
+      "index": 158,
+      "kind": "walk"
+    },
+    "door_wood": {
+      "index": 159,
+      "kind": "walk"
     }
   }
 }

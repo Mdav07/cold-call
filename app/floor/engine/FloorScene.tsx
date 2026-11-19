@@ -535,7 +535,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       drawLayer(map.layers.decor, (i, t) => !(CHAIR_TILES.has(t) && seated.has(i)));
 
       // On-map text keeps the same size on screen whatever the zoom: sizes below are map pixels at 2x zoom.
-      const u = 2 / scale;
+      // Phones get smaller on-map text (names, LOCKED, door labels): it was crowding the small screen.
+      const u = (2 / scale) * (w < 600 ? 0.8 : 1);
 
       // Names above heads: small pixel text on a dark plate. Press Start's measureText runs short,
       // so pad generously and size the box from real glyph bounds when the browser reports them.
