@@ -22,6 +22,16 @@ export interface Season {
   door: string;
   theme?: DailyTheme;
   case?: SeasonCase;
+  /** A second person in the room with fixed lines (no AI): walk up to them for a key detail. */
+  helper?: SeasonHelper;
+}
+
+export interface SeasonHelper {
+  id: string;
+  name: string;
+  title: string;
+  sprite: string;
+  text: string;
 }
 
 export const SEASONS = seasonsFile.seasons as Season[];
