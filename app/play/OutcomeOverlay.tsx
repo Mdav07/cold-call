@@ -176,7 +176,7 @@ export function OutcomeOverlay({
                 {run.tx_hash && (
                   // The payout is a real Arc testnet transaction: let the player see it on the explorer.
                   <a
-                    href={`https://testnet.arcscan.app/tx/${run.tx_hash}`}
+                    href={`https://explorer.testnet.arc.io/tx/${run.tx_hash}`}
                     target="_blank"
                     rel="noreferrer"
                     className="mt-1 inline-block text-xs text-[var(--cc-accent)] underline underline-offset-2"
