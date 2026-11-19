@@ -102,9 +102,13 @@ export function Lobby({
     } catch {}
   }, [router]);
   useEffect(() => {
-    try {
-      setEndingSeen(localStorage.getItem("cc-ending-seen") === "1");
-    } catch {}
+    // Deferred: browser storage is read after the first render (no setState inside the effect body).
+    const t = setTimeout(() => {
+      try {
+        setEndingSeen(localStorage.getItem("cc-ending-seen") === "1");
+      } catch {}
+    }, 0);
+    return () => clearTimeout(t);
   }, []);
 
   // Guests: lock each elevator whose floor below this browser hasn't cleared, and point at the next
