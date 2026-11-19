@@ -54,8 +54,20 @@
     }
   },
   "ending": {
+    "_comment": "Voice memo (audio) plus the click-through cutscene on /ending after Floor 3 clears. Ties the opening trail to a coming-soon Case 2.",
     "audio": "krystal-ending.mp3",
-    "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed. I'm not missing. I'm inside the Ledger now, and they think I'm one of them. Their next target is Fatwallet Federal. Get there first. On to the next one."
+    "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed. I'm not missing. I'm inside the Ledger now, and they think I'm one of them. Their next target is Fatwallet Federal. Get there first. On to the next one.",
+    "cutscene": {
+      "scenes": [
+        { "speaker": null, "text": "You cracked every vault in Plumpurse Tower. Krystal's trail led you here — and then it went quiet." },
+        { "speaker": "Krystal", "text": "Good job, kid. If you're reading this, you beat them to every vault in the building, and that's more than I managed." },
+        { "speaker": "Krystal", "text": "I'm not missing. I'm inside the Ledger now, and they think I'm one of them." },
+        { "speaker": null, "text": "Her trail didn't end in the penthouse. It turned. The next note points somewhere new." },
+        { "speaker": "Krystal", "text": "Their next target is Fatwallet Federal. Get there first. On to the next one." }
+      ],
+      "tease": "Case 2: Fatwallet Federal. Coming soon.",
+      "next": "Back to the lobby — Daily and seasonal jobs are still open while you wait."
+    }
   },
   "season_tease": "Case 2: Fatwallet Federal. Coming soon."
 }
