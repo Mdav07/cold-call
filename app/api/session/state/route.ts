@@ -9,7 +9,7 @@ import { DAILY_FLOOR } from "@/shared/dailyCase";
 
 const Query = z.object({
   run_id: z.uuid(),
-  employee_id: z.enum(["barry", "penny", "dee", "annie", "bill", "cassius", "max", "daily"]),
+  employee_id: z.enum(["barry", "penny", "dee", "annie", "bill", "cassius", "max", "daily", "helper"]),
 });
 
 /**
