@@ -6,7 +6,7 @@ import { BackButton } from "@/app/ui/BackButton";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import company from "@/content/plumpurse/company.json";
-import { getDemoUserId } from "@/server/game/players";
+import { getDemoUserId, isPublicBoardName } from "@/server/game/players";
 import { db } from "@/server/chain/db";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 import { dailyBoard, streakOf } from "@/server/game/dailyBoard";
@@ -150,7 +150,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   for (const r of (paidRuns.data ?? []) as unknown as PaidRun[]) {
     if (!r.user_id || r.user_id === demoId) continue;
     const u = Array.isArray(r.users) ? r.users[0] : r.users;
-    const e = earners.get(r.user_id) ?? { name: u?.display_name ?? "Anonymous hunter", units: 0, clears: 0 };
+    if (!isPublicBoardName(u?.display_name)) continue;
+    const e = earners.get(r.user_id) ?? { name: u!.display_name as string, units: 0, clears: 0 };
     // What the employee agreed to ("cracked"), or what the chain paid where that isn't recorded.
     e.units += Number(r.cracked_units ?? r.payout_units ?? 0);
     e.clears += 1;
@@ -163,7 +164,8 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   for (const r of (streaks.data ?? []) as DailyRow[]) {
     if (!r.user_id || r.user_id === demoId || isSeasonalDate(r.daily_date)) continue;
     const u = Array.isArray(r.users) ? r.users[0] : r.users;
-    const e = dailyDays.get(r.user_id) ?? { name: u?.display_name ?? null, days: new Set<string>() };
+    if (!isPublicBoardName(u?.display_name)) continue;
+    const e = dailyDays.get(r.user_id) ?? { name: u!.display_name as string, days: new Set<string>() };
     e.days.add(r.daily_date);
     dailyDays.set(r.user_id, e);
   }
@@ -184,9 +186,9 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       tx_hash: r.tx,
       daily_contract_id: null,
     }));
-  // Shared guest account ("Demo Hunter") is not a real player — keep it off every board.
+  // Shared guest / default "Hunter" name aren't real board entries.
   const rows = ((board.data ?? []) as Row[]).filter(
-    (r) => r.user_id !== demoId && (channel === "all" || r.channel === channel),
+    (r) => r.user_id !== demoId && isPublicBoardName(r.display_name) && (channel === "all" || r.channel === channel),
   );
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
   const ladder = ladderFor(floor).filter((r) => channel === "all" || r.channel === channel);

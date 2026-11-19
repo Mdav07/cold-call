@@ -7,6 +7,12 @@ import { ensurePlayerWallet } from "@/server/chain/players";
 const DEMO_EMAIL = "demo-hunter@coldcall.test";
 let demoUserId: string | null = null;
 
+/** Names that shouldn't appear on public boards (default pick name, or the shared guest). */
+export function isPublicBoardName(name: string | null | undefined): boolean {
+  const n = (name ?? "").trim();
+  return !!n && n !== "Hunter" && n !== "Demo Hunter";
+}
+
 /** Creates the users row (and the player wallet, through A's helper) for a signed-in auth user. */
 export async function ensureUserRow(userId: string, displayName: string | null): Promise<void> {
   await db()
