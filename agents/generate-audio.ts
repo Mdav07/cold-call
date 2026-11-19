@@ -6,6 +6,7 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import krystal from "../content/plumpurse/krystal.json";
+import seasons from "../content/seasonal/seasons.json";
 import { join } from "node:path";
 
 const OUT = join(process.cwd(), "public", "audio");
@@ -15,6 +16,7 @@ const VOICES = {
   announcer: "onwK4e9ZLuTAKqWW03F9", // Daniel, Steady Broadcaster: the Plumpurse PA system
   null: "N2lVS1w4EtoT3dr4eOWO", // Callum, Husky Trickster: Null of the Black Ledger
   krystal: "EXAVITQu4vr4xnSDxMaL", // Sarah, Mature, Reassuring, Confident: the vanished mentor
+  helper: "TX3LPaxmHKxFdv7VOQHJ", // Liam: young, energetic; the seasonal case's scripted helper (Dev the sous-chef)
 };
 
 type Clip =
@@ -40,6 +42,11 @@ const CLIPS: Clip[] = [
   { file: krystal.intro.audio, kind: "tts", voice: "krystal", text: krystal.intro.text },
   ...Object.values(krystal.briefings).map((b) => ({ file: b.audio, kind: "tts" as const, voice: "krystal" as const, text: b.text })),
   { file: krystal.ending.audio, kind: "tts", voice: "krystal", text: krystal.ending.text },
+  // Seasonal helpers' lines (content/seasonal/seasons.json), so the scripted second person speaks too.
+  ...seasons.seasons.flatMap((s) => {
+    const h = (s as { helper?: { audio?: string; text: string } }).helper;
+    return h?.audio ? [{ file: h.audio, kind: "tts" as const, voice: "helper" as const, text: h.text }] : [];
+  }),
   { file: "phone-ring.mp3", kind: "sfx", seconds: 3, prompt: "Old office desk phone ringing twice, classic electronic ring" },
   { file: "hang-up.mp3", kind: "sfx", seconds: 1, prompt: "Office telephone handset hang up click and dial tone cut" },
   // Background loops for the title screen and each floor (instrumental only, seamless).

@@ -641,6 +641,58 @@
     "door_wood": {
       "index": 159,
       "kind": "walk"
+    },
+    "floor_harvest": {
+      "index": 160,
+      "kind": "ground"
+    },
+    "wall_harvest": {
+      "index": 161,
+      "kind": "wall"
+    },
+    "window_harvest": {
+      "index": 162,
+      "kind": "wall"
+    },
+    "walltop_harvest": {
+      "index": 163,
+      "kind": "wall"
+    },
+    "board_harvest": {
+      "index": 164,
+      "kind": "wall"
+    },
+    "station_harvest": {
+      "index": 165,
+      "kind": "block"
+    },
+    "station_note_harvest": {
+      "index": 166,
+      "kind": "block"
+    },
+    "pumpkins_harvest": {
+      "index": 167,
+      "kind": "block"
+    },
+    "haybale_harvest": {
+      "index": 168,
+      "kind": "block"
+    },
+    "cornucopia_harvest": {
+      "index": 169,
+      "kind": "block"
+    },
+    "seat_harvest": {
+      "index": 170,
+      "kind": "block"
+    },
+    "door_harvest": {
+      "index": 171,
+      "kind": "walk"
+    },
+    "mat_harvest": {
+      "index": 172,
+      "kind": "walk"
     }
   }
 }

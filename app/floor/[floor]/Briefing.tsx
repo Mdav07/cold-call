@@ -10,7 +10,7 @@ import { PORTRAITS } from "@/app/play/portraits";
 import { useEffect, useRef, useState } from "react";
 import { confirm, tick } from "@/app/floor/hud/sound";
 import { CoinLogo } from "@/app/play/CoinLogo";
-import { DifficultyPips, VAULT_RULE, maxBountyLabel } from "@/app/play/bounty";
+import { DifficultyPips, VAULT_RULE, maxBountyLabel, type Level } from "@/app/play/bounty";
 
 type BriefingText = { audio: string; text: string };
 
@@ -69,6 +69,7 @@ export function Briefing({
   onCaseFile,
   pages,
   storageKey,
+  level,
 }: {
   floor: number;
   /** The map's name, e.g. "Floor 1 · The Bullpen", shown as a chapter title. */
@@ -79,6 +80,8 @@ export function Briefing({
   pages?: [string, string];
   /** Where "seen" is remembered, when it isn't the floor (the Daily Case: one key per day). */
   storageKey?: string;
+  /** The bounty level when it isn't the floor (the seasonal case). */
+  level?: Level;
 }) {
   const [kicker, title] = floorName.includes(" · ") ? floorName.split(" · ") : [`Floor ${floor}`, floorName];
   const [page, setPage] = useState<0 | 1>(0);
@@ -147,9 +150,9 @@ export function Briefing({
             {title}
           </h2>
           <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-pixel text-[9px] tracking-wide [@media(max-height:500px)]:mt-1">
-            <span>MAX BOUNTY {maxBountyLabel(floor)}</span>
-            <span className="flex items-center gap-1.5">DIFFICULTY <DifficultyPips floor={floor} /></span>
-            <span className="font-sans text-xs normal-case tracking-normal opacity-80">Vault: {VAULT_RULE[floor]}</span>
+            <span>MAX BOUNTY {maxBountyLabel(level ?? floor)}</span>
+            <span className="flex items-center gap-1.5">DIFFICULTY <DifficultyPips floor={level ?? floor} /></span>
+            <span className="font-sans text-xs normal-case tracking-normal opacity-80">Vault: {VAULT_RULE[level ?? floor]}</span>
           </p>
         </header>
 

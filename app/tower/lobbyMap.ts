@@ -6,6 +6,7 @@ import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
 import { dailyCase, todayUtc } from "@/shared/dailyCase";
 import { VAULT_RULE, maxBountyLabel } from "@/app/play/bounty";
+import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
 
 const W = 19;
 const H = 13;
@@ -19,12 +20,15 @@ const T = {
   matTutorial: 61, matDaily: 62, mat1: 63, mat2: 64, mat3: 65,
   // Front doors (tools/art/lobby_doors.py).
   doorGlass: 158, doorWood: 159,
+  // The seasonal door and its mat (tools/art/harvest_tiles.py).
+  doorHarvest: 171, matHarvest: 172,
 } as const;
 
 export const ELEVATORS: Record<1 | 2 | 3, number> = { 1: 6, 2: 9, 3: 12 }; // x of each floor's elevator
-// Front-wall doors, each centred between the two plants beside it.
-export const TUTORIAL_X = 3; // glass street door: across the street to the little branch
-export const DAILY_X = 15; // mahogany door: the Daily Case (open once the Tutorial is cleared)
+// Front-wall doors, lined up under the three elevators: Tutorial, the seasonal case, the Daily Case.
+export const TUTORIAL_X = 6; // glass street door: across the street to the little branch
+export const SEASONAL_X = 9; // the holiday door (Thanksgiving first): shared/seasonalCase.ts
+export const DAILY_X = 12; // mahogany door: the Daily Case (open once the Tutorial is cleared)
 export const DOOR_Y = H - 1;
 const MID_X = 9;
 
@@ -40,6 +44,7 @@ const clock = (ms: number) => {
 export function entranceSpawn(at: string | null | undefined): FloorMap["spawn"] | null {
   if (at === "floor-0") return { x: TUTORIAL_X, y: DOOR_Y - 1, facing: "down" };
   if (at === "daily") return { x: DAILY_X, y: DOOR_Y - 1, facing: "down" };
+  if (at === "seasonal") return { x: SEASONAL_X, y: DOOR_Y - 1, facing: "down" };
   const n = Number(at?.match(/^floor-([123])$/)?.[1]);
   return n ? { x: ELEVATORS[n as 1 | 2 | 3], y: 3, facing: "up" } : null;
 }
@@ -84,7 +89,7 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     ground[at(x, 2)] = mat;
   }
   // Front wall: the two doors are openings in it; stepping onto the door is the exit. A mat just inside each.
-  for (const [x, door, mat] of [[TUTORIAL_X, T.doorGlass, T.matTutorial], [DAILY_X, T.doorWood, T.matDaily]] as const) {
+  for (const [x, door, mat] of [[TUTORIAL_X, T.doorGlass, T.matTutorial], [SEASONAL_X, T.doorHarvest, T.matHarvest], [DAILY_X, T.doorWood, T.matDaily]] as const) {
     walls[at(x, DOOR_Y)] = -1;
     ground[at(x, DOOR_Y)] = door;
     ground[at(x, DOOR_Y - 1)] = mat;
@@ -107,8 +112,8 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
   put(6, 6, T.plantSmall);
   put(12, 6, T.plantSmall);
-  put(13, 11, T.plant);
-  put(5, 11, T.plant);
+  put(14, 11, T.plant);
+  put(4, 11, T.plant);
 
   const byFloor = (n: number) => floors.find((f) => f.floor === n);
   const exits: NonNullable<FloorMap["exits"]> = [{ x: TUTORIAL_X, y: DOOR_Y, to: "/floor/0" }];
@@ -136,6 +141,28 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Max bounty ${maxBountyLabel(4)}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
+  // The seasonal door: what's on now and when it closes, or when the next one opens.
+  const season = currentSeason();
+  const coming = nextSeason();
+  const comingLine = coming ? ` Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "";
+  exits.push({ x: SEASONAL_X, y: DOOR_Y, to: "/seasonal" });
+  props.push(
+    season
+      ? {
+          id: "seasonal-sign",
+          x: SEASONAL_X,
+          y: DOOR_Y - 1,
+          label: `${season.name} case · open until ${shortDate(season.closes)}`,
+          text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+        }
+      : {
+          id: "seasonal-sign",
+          x: SEASONAL_X,
+          y: DOOR_Y - 1,
+          label: "Seasonal case · closed",
+          text: coming ? `A holiday case opens here each season. Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "A holiday case opens here each season.",
+        },
+  );
   props.push({
     id: "street-sign",
     x: TUTORIAL_X,
@@ -191,6 +218,7 @@ export const MAT_NAMES: { x: number; y: number; text: string; mat: true; fit: nu
   ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: `FLOOR ${n}`, mat: true as const, fit: 2.8 })),
   { x: TUTORIAL_X, y: DOOR_Y - 1, text: "TUTORIAL", mat: true, fit: 3.6 },
   { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
+  { x: SEASONAL_X, y: DOOR_Y - 1, text: (currentSeason()?.name ?? "SEASONAL").toUpperCase(), mat: true, fit: 3.6 },
 ];
 
 /** Where a player should head next from the lobby: the next elevator to ride. */

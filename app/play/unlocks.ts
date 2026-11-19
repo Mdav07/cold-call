@@ -7,11 +7,14 @@
 import { useEffect, useState } from "react";
 import { useClearedHere } from "@/app/floor/guestProgress";
 import { useBestStreak } from "./streak";
+import { SEASONS } from "@/shared/seasonalCase";
 
 export interface Progress {
   clearedFloors: number[];
   dailyClears: number;
   bestStreak: number;
+  /** Seasonal cases cleared, by season id (e.g. "thanksgiving-2026"). */
+  seasonsCleared: string[];
 }
 
 export interface Unlock {
@@ -31,6 +34,9 @@ export const UNLOCKS: Unlock[] = [
   { sprite: "hunter-8", label: "Teal Tiana", how: "10-day Daily streak", streakDays: 10, earned: (p) => p.bestStreak >= 10 },
   { sprite: "hunter-9", label: "Slate Sora", how: "Clear all three floors", earned: (p) => [1, 2, 3].every((f) => p.clearedFloors.includes(f)) },
   { sprite: "hunter-10", label: "Silver Sol", how: "30-day Daily streak", streakDays: 30, earned: (p) => p.bestStreak >= 30 },
+  // Seasonal cases: each holiday's case unlocks its own look.
+  { sprite: "hunter-11", label: "Turkey Theo", how: "Clear the Thanksgiving case", earned: (p) => p.seasonsCleared.includes("thanksgiving-2026") },
+  { sprite: "hunter-12", label: "Holly Hal", how: "Clear the Winter Holidays case", earned: (p) => p.seasonsCleared.includes("winter-2026") },
 ];
 
 /** Every look that can be earned (valid as a saved choice once picked). */
@@ -38,6 +44,14 @@ export const UNLOCK_IDS = UNLOCKS.map((u) => u.sprite);
 
 /** The next streak unlock still to earn, for the streak badge. */
 export const nextStreakUnlock = (best: number) => UNLOCKS.find((u) => u.streakDays != null && best < u.streakDays) ?? null;
+
+function guestSeasonsCleared(): string[] {
+  try {
+    return SEASONS.filter((s) => localStorage.getItem(`cc-season-cleared-${s.caseDate}`) === "1").map((s) => s.id);
+  } catch {
+    return [];
+  }
+}
 
 function guestDailyClears(): number {
   try {
@@ -63,10 +77,11 @@ export function useProgress(): Progress | null {
     };
   }, []);
   if (!server) return null;
-  if (!server.guest) return { ...server, bestStreak: Math.max(server.bestStreak, localBest) };
+  if (!server.guest) return { ...server, bestStreak: Math.max(server.bestStreak, localBest), seasonsCleared: server.seasonsCleared ?? [] };
   return {
     clearedFloors: cleared.flatMap((c, f) => (c ? [f] : [])),
     dailyClears: guestDailyClears(),
     bestStreak: localBest,
+    seasonsCleared: guestSeasonsCleared(),
   };
 }

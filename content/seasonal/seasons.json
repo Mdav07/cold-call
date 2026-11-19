@@ -95,7 +95,8 @@
         "name": "Dev Okafor",
         "title": "Sous-chef",
         "sprite": "/sprites/staff-12.png",
-        "text": "You with the pies? Thank goodness. Heads up: Marisol cut the order to thirty-eight last night, two tables cancelled. Say forty and she'll know you're not really from the bakery. And if you want to get on her good side, offer to carry something. She's been on her feet since five."
+        "text": "You with the pies? Thank goodness. Heads up: Marisol cut the order to thirty-eight last night, two tables cancelled. Say forty and she'll know you're not really from the bakery. And if you want to get on her good side, offer to carry something. She's been on her feet since five.",
+        "audio": "seasonal-dev-thanksgiving.mp3"
       }
     },
     {
