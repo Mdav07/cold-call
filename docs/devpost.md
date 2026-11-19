@@ -119,7 +119,7 @@ cuts from one edit: voice-over, and voiceless with short text cards. Keep it und
    app can mark a win. Only the contract event can." Sponsor logos over gameplay.
 4. **A game people come back to (1:50–2:15).** The Daily Case, a holiday case (Thanksgiving, Dev co-signing),
    the leaderboard, the phone layout.
-5. **Next steps and close (2:15–2:30).** A security-training mode for companies to red-team their own AI
-   agents, and multiplayer heists. Logo, live link, GitHub.
+5. **Next steps and close (2:15–2:30).** Multiplayer: one player runs the con while another defends as the
+   employee, live. Then new banks with new controls. Logo, live link, GitHub.
 
 Reset the demo player before recording (`scripts/demo-reset.ts`, `agents/reset-memory.ts`).
