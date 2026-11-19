@@ -15,6 +15,7 @@ import krystal from "@/content/plumpurse/krystal.json";
 import { DRAFT_INTRO, type IntroScript } from "./script";
 import { HUNTERS, MAX_NAME, cleanName, saveHunter, spriteUrl } from "@/app/play/hunters";
 import { SaveProgress } from "@/app/play/SaveProgress";
+import { CoinLogo } from "@/app/play/CoinLogo";
 
 // Audrey's script lives in krystal.json under "cutscene"; the draft covers builds before it lands.
 const SCRIPT: IntroScript = (krystal as { cutscene?: IntroScript }).cutscene ?? DRAFT_INTRO;
@@ -157,7 +158,7 @@ export function Intro() {
       ) : stage === "story" ? (
         <>
           <div className="flex items-center justify-between p-3 sm:p-4">
-            <p className="font-pixel text-[9px] tracking-widest text-[var(--cc-muted)]">COLD CALL</p>
+            <p className="flex items-center gap-2 font-pixel text-[9px] tracking-widest text-[var(--cc-muted)]"><CoinLogo size={16} />COLD CALL</p>
             <button type="button" className="pixel-button !px-3 !py-1.5" onClick={() => setStage("pick")}>
               Skip ▶▶
             </button>

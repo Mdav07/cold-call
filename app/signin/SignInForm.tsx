@@ -7,6 +7,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { CoinLogo } from "@/app/play/CoinLogo";
 
 type Mode = "link" | "password" | "signup";
 
@@ -85,7 +86,7 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
 
   const header = (
     <header className="-mx-6 -mt-6 mb-1 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-6 pb-3 pt-4 text-[var(--cc-edge)]">
-      <h1 className="font-pixel text-xl">COLD CALL</h1>
+      <h1 className="flex items-center gap-3 font-pixel text-xl"><CoinLogo size={32} />COLD CALL</h1>
       <p className="mt-2 font-pixel text-[9px] leading-relaxed">Sign in to keep your clears, streak, leaderboard times and winnings.</p>
     </header>
   );
