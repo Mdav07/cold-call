@@ -32,6 +32,8 @@ export interface SeasonHelper {
   title: string;
   sprite: string;
   text: string;
+  /** Their lines, spoken (public/audio, made by agents/generate-audio.ts). */
+  audio?: string;
 }
 
 export const SEASONS = seasonsFile.seasons as Season[];
