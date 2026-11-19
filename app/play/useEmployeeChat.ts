@@ -16,7 +16,7 @@ type Session = Awaited<ReturnType<typeof Conversation.startSession>>;
 
 function bind(
   s: StartSessionResult,
-  extra: { conversation_id?: string; first_message?: boolean; ended?: boolean },
+  extra: { conversation_id?: string; first_message?: boolean; started_at_ms?: number; ended?: boolean },
 ) {
   fetch("/api/session/bind", {
     method: "POST",
@@ -39,7 +39,12 @@ function sfx(file: string, loop = false): HTMLAudioElement | null {
 }
 
 /** `dailyDate`: the Daily Case's day (today, or an earlier day replayed as practice). */
-export function useEmployeeChat(employeeId: EmployeeId, dailyDate?: string) {
+/** `clockStart`: when the player pressed Start on the level; the run clock counts from there. */
+export function useEmployeeChat(employeeId: EmployeeId, dailyDate?: string, clockStart?: number | null) {
+  const clockStartRef = useRef(clockStart);
+  useEffect(() => {
+    clockStartRef.current = clockStart;
+  });
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [channel, setChannel] = useState<Channel>("chat");
   const [lines, setLines] = useState<ChatLine[]>([]);
@@ -66,8 +71,9 @@ export function useEmployeeChat(employeeId: EmployeeId, dailyDate?: string) {
   const markFirstMessage = useCallback((s: StartSessionResult) => {
     if (sentFirst.current) return;
     sentFirst.current = true;
-    bind(s, { first_message: true }); // starts the run clock on the server
-    setStartedAt((t) => t ?? Date.now());
+    const level = clockStartRef.current ?? undefined;
+    bind(s, { first_message: true, started_at_ms: level }); // starts the run clock on the server
+    setStartedAt((t) => t ?? level ?? Date.now());
   }, []);
 
   const start = useCallback(

@@ -6,6 +6,7 @@ const Body = z.object({
   session_id: z.uuid(),
   conversation_id: z.string().max(100).optional(),
   first_message: z.boolean().optional(),
+  started_at_ms: z.number().int().positive().optional(),
   ended: z.boolean().optional(),
 });
 

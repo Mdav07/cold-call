@@ -252,6 +252,7 @@ export function NpcDialogue({
   onCaseFile,
   onSettled,
   dailyDate,
+  clockStart,
 }: {
   npc: NpcInfo;
   /** The floor, for its evidence. */
@@ -263,6 +264,8 @@ export function NpcDialogue({
   onSettled?: () => void;
   /** The Daily Case: which day's case this conversation is about (earlier days are practice). */
   dailyDate?: string;
+  /** When the player pressed Start on the level (the run clock counts from there). */
+  clockStart?: number | null;
   runId: string | null;
   cover: string;
   /** Unused since the cover-story step was removed; kept so callers compile. */
@@ -276,7 +279,7 @@ export function NpcDialogue({
   /** Opens the case file overlay. */
   onCaseFile: () => void;
 }) {
-  const chat = useEmployeeChat(npc.id, dailyDate);
+  const chat = useEmployeeChat(npc.id, dailyDate, clockStart);
   const [stage, setStage] = useState<Stage>("menu");
   const [channel, setChannel] = useState<"chat" | "voice">("chat");
   const [draft, setDraft] = useState("");

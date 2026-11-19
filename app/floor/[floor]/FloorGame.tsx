@@ -4,7 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
 import { markDailyCleared } from "@/app/play/streak";
@@ -65,6 +65,7 @@ export function FloorGame({
   const openCaseFile = useCallback(() => setCaseFile(true), []);
   const [runId, setRunId] = useState<string | null>(null);
   const [runStartedAt, setRunStartedAt] = useState<number | null>(null);
+  const clockArmed = useRef(false); // the level clock has started this visit (see below)
   // Continue or restart: this place's open run is remembered in the browser (app/floor/ResumeRun).
   const place = daily ? `daily-${daily.date}` : `floor-${map.floor}`;
   const saved = useSavedRun(place);
@@ -154,6 +155,7 @@ export function FloorGame({
     setOpen(null);
     setRunId(null);
     setRunStartedAt(null);
+    clockArmed.current = false; // the next start of the level (coming back, or Start) starts the clock
     setLevels({});
     setEscort(null);
     if (clearLocks) setLockedOut(new Set());
@@ -207,6 +209,16 @@ export function FloorGame({
   const briefing: boolean | null = briefed ? false : needsBriefing;
   const setBriefing = (v: boolean) => setBriefed(!v);
   const showResume = !!saved && !runId && !resumeDecided && briefing === false;
+
+  // The run clock starts when the level does: Start on the briefing (or arriving, when there's none
+  // to read), or choosing to start over on the resume prompt. Continuing a saved run keeps its start.
+  const levelReady = briefing === false && !showResume;
+  useEffect(() => {
+    if (!levelReady || clockArmed.current) return;
+    clockArmed.current = true;
+    const t = setTimeout(() => setRunStartedAt((s) => s ?? Date.now()), 0);
+    return () => clearTimeout(t);
+  }, [levelReady]);
 
   const onEvent = useCallback(
     (e: SceneEvent) => {
@@ -309,6 +321,7 @@ export function FloorGame({
             setSettledKey(`${runId}:${npc.id}`);
           }}
           dailyDate={daily?.date}
+          clockStart={runStartedAt}
         />
       )}
       {prop && playing && (
@@ -328,7 +341,10 @@ export function FloorGame({
         <OutcomeOverlay
           state={state}
           employeeName={npcs.find((n) => n.id === focus)?.name.split(" ")[0] ?? "They"}
-          onRetry={() => resetRun(true)}
+          onRetry={() => {
+            resetRun(true);
+            setRunStartedAt(Date.now()); // trying again starts the clock again
+          }}
           onClose={() => {
             if (outcome === "breach") setCleared(true);
             resetRun(outcome === "breach");

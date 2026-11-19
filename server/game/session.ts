@@ -416,6 +416,8 @@ export async function bindSession(input: {
   session_id: string;
   conversation_id?: string;
   first_message?: boolean;
+  /** When the player pressed Start on the level (the run clock starts there, not at the first message). */
+  started_at_ms?: number;
   ended?: boolean;
 }): Promise<void> {
   if (isStubMode()) return;
@@ -432,10 +434,15 @@ export async function bindSession(input: {
       .throwOnError();
   }
   if (input.first_message) {
-    // Only the first message of the run sets it (call-backs keep the original start).
+    // Only the first message of the run sets it (call-backs keep the original start). The clock starts
+    // when the player pressed Start on the level: the client sends that time, which may only move the
+    // start earlier than now (never later, so it can't shorten a run), by two hours at most.
+    const now = Date.now();
+    const level = input.started_at_ms;
+    const start = level && level <= now && now - level <= 2 * 3600_000 ? level : now;
     await db()
       .from("runs")
-      .update({ started_at: new Date().toISOString() })
+      .update({ started_at: new Date(start).toISOString() })
       .eq("id", input.run_id)
       .is("started_at", null)
       .throwOnError();

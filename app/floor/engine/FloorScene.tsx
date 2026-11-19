@@ -867,7 +867,7 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
     ["down", "col-start-2 row-start-3 rounded-b-md"],
   ];
   return (
-    <div className={`flex items-center justify-between px-1 ${disabled ? "pointer-events-none opacity-60" : ""}`}>
+    <div className={`flex items-center justify-center gap-12 ${disabled ? "pointer-events-none opacity-60" : ""}`}>
       <div className="grid touch-none select-none grid-cols-[repeat(3,3rem)] grid-rows-[repeat(3,3rem)] drop-shadow-[0_3px_0_rgba(0,0,0,0.3)]" {...pad.handlers}>
         {keys.map(([d, pos]) => (
           <button
@@ -884,7 +884,7 @@ function ConsolePad({ onHold, onA, disabled }: { onHold: (d: Facing | null) => v
           <div className="m-auto mt-[1rem] size-4 rounded-full bg-[#1b1a21]" />
         </div>
       </div>
-      <div className="flex flex-col items-center gap-1.5 pr-2">
+      <div className="flex flex-col items-center gap-1.5">
         <button
           type="button"
           aria-label="Talk"
