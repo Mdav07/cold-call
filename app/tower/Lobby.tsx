@@ -1,6 +1,7 @@
 "use client";
 
 // The walkable tower lobby: the same engine as the floors, with the elevators and the two front doors (Tutorial, Daily) as exits.
+import { FallingLeaves } from "@/app/play/FallingLeaves";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatest, useMediaQuery } from "@/app/play/clientHooks";
 import { useRouter } from "next/navigation";
@@ -192,6 +193,7 @@ export function Lobby({
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
         <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked || seasonNote} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
+        {currentSeason()?.door === "harvest" && <FallingLeaves />}
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       {!consoleMode && <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">{nav}</div>}

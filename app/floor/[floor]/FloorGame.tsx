@@ -4,6 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
+import { FallingLeaves } from "@/app/play/FallingLeaves";
 import { helperPropId } from "@/app/daily/room";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
@@ -29,7 +30,7 @@ import type { CaseData } from "@/app/casefile/data";
 import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
-import { isSeasonalDate } from "@/shared/seasonalCase";
+import { currentSeason, isSeasonalDate } from "@/shared/seasonalCase";
 import { markSeasonCleared } from "@/app/tower/seasonProgress";
 
 type Open = { kind: "npc"; id: EmployeeId } | { kind: "prop"; id: string } | null;
@@ -318,6 +319,7 @@ export function FloorGame({
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
         <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} deck={consoleMode ? <Hud docked {...hudProps} /> : undefined} />
+        {daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" && <FallingLeaves />}
       </div>
 
       {!consoleMode && hud}
