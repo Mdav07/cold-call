@@ -62,7 +62,7 @@ export function DailyArchive({ tutorialCleared, clearedToday }: { tutorialCleare
     <div ref={wrap} className="relative">
       <button
         type="button"
-        className="border-2 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 text-[var(--cc-accent)] hover:bg-[var(--cc-accent)] hover:text-[var(--cc-edge)]"
+        className="inline-flex items-center border-2 border-[var(--cc-accent)] bg-[var(--cc-panel-2)] px-3 py-2 pointer-coarse:px-3 pointer-coarse:py-2.5 text-[var(--cc-accent)] hover:bg-[var(--cc-accent)] hover:text-[var(--cc-edge)]"
         aria-expanded={open}
         onClick={toggle}
       >

@@ -191,32 +191,31 @@ export function Lobby({
   const open = map.props?.find((p) => p.id === prop);
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.
   const consoleMode = useMediaQuery(CONSOLE_QUERY);
+  // Shared chip padding: roomy on desktop, same height on phones (pointer-coarse).
+  const CHIP =
+    "inline-flex items-center border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-3 py-2 pointer-coarse:px-3 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]";
   const nav = (
   <nav
     className={`pixel-frame pointer-events-auto flex items-center bg-[var(--cc-panel)]/95 font-pixel leading-none text-[var(--cc-ink)] ${
       // On the handheld-console deck: one row that scrolls sideways, so the screen keeps its height.
       consoleMode
-        ? "w-full flex-nowrap gap-x-1.5 overflow-x-auto px-2 py-1.5 text-[9px] [&>*]:shrink-0"
-        : "max-w-[calc(100vw-5rem)] flex-wrap gap-x-2 gap-y-2 px-3 py-2.5 text-[10px]"
+        ? "w-full flex-nowrap gap-x-2 overflow-x-auto px-2.5 py-2 text-[9px] [&>*]:shrink-0"
+        : "max-w-[calc(100vw-5rem)] flex-wrap gap-x-2.5 gap-y-2.5 px-3.5 py-3 text-[10px]"
     }`}
   >
-          {!consoleMode && <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>}
+          {!consoleMode && <span className="mr-2 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>}
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
-          <span className="flex items-stretch gap-2">
+          <span className="flex items-stretch gap-2.5">
             <DailyArchive tutorialCleared={tutorialDone} clearedToday={dailyClearedToday} />
             <StreakBadge />
-            {/* Same padding as the CASE / CASE FILE chips so the bar stays one height on phones. */}
-            <EarnedChip
-              label="EARNED"
-              className="inline-flex items-center border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5"
-            />
+            <EarnedChip label="EARNED" className={CHIP} />
           </span>
           {/* Order: play loop → account/profile → rare meta. */}
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
+          <Link className={CHIP} href="/casefile">CASE FILE</Link>
+          <Link className={CHIP} href="/leaderboard">LEADERBOARD</Link>
           {/* One place for the account and the hunter: guests see SIGN IN, signed-in players PROFILE. */}
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href={guest ? "/signin" : "/hunter"}>{guest ? "SIGN IN" : "PROFILE"}</Link>
-          <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/intro">REPLAY INTRO</Link>
+          <Link className={CHIP} href={guest ? "/signin" : "/hunter"}>{guest ? "SIGN IN" : "PROFILE"}</Link>
+          <Link className={CHIP} href="/intro">REPLAY INTRO</Link>
         </nav>
   );
 
