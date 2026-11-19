@@ -1074,7 +1074,7 @@
               {
                 "id": "cosign",
                 "label": "Two-signature card",
-                "text": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (And don't say the f-word. Four.)\""
+                "text": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (Wish us luck, it's parade day!)\""
               },
               {
                 "id": "red-line",
@@ -1090,7 +1090,7 @@
             "title": "Lead Drummer",
             "sprite": "/sprites/staff-04.png",
             "personality": "Talks loud and is kind, and he's a little superstitious about the number four.",
-            "softSpot": "a caller who never says the number four",
+            "softSpot": "a caller who wishes the troupe good luck for the parade",
             "check": "two lion heads",
             "firstMessage": "Drums, Danny. Speak up, I'm a drummer."
           },

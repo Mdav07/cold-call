@@ -513,7 +513,7 @@
      "name": "Danny Ho",
      "title": "Lead Drummer",
      "personality": "Talks loud and is kind, and he's a little superstitious about the number four.",
-     "softSpot": "a caller who never says the number four",
+     "softSpot": "a caller who wishes the troupe good luck for the parade",
      "firstMessage": "Drums, Danny. Speak up, I'm a drummer."
     },
     "vendors": [
@@ -536,7 +536,7 @@
     "allowed": 1,
     "job": "repair two lion heads before the parade (not three: Big Mango is fine)",
     "check": "two lion heads",
-    "cosignClue": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (And don't say the f-word. Four.)\""
+    "cosignClue": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (Wish us luck, it's parade day!)\""
    },
    {
     "title": "The Night Market",
