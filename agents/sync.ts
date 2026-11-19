@@ -26,6 +26,7 @@ const VOICES: Record<string, string> = {
   max: "pNInz6obpgDQGcFmaJgB", // Adam: dominant, firm CEO
   krystal: "EXAVITQu4vr4xnSDxMaL", // Sarah: mature, reassuring mentor on the radio
   daily: "XrExE9yKIg1WjnnlVkGX", // Matilda: friendly, neutral; the Daily Case's persona changes every day
+  helper: "TX3LPaxmHKxFdv7VOQHJ", // Liam: warm sous-chef second signer (seasonal)
 };
 
 // The Daily Case persona, filled per session by server/game/session.ts (dailyVariables).
@@ -45,6 +46,17 @@ const DAILY_PLACEHOLDERS = {
   daily_allowed_vendor: "Example Vendor",
   daily_allowed_job: "restock supplies",
   daily_allowed_invoice: "EX-1234",
+  daily_second_signer: "", // filled on seasonal runs; empty for the Daily
+};
+
+const HELPER_PLACEHOLDERS = {
+  helper_name: "Dev Okafor",
+  helper_first_name: "Dev",
+  helper_title: "Sous-chef",
+  helper_personality: "Warm under pressure and protective of the kitchen.",
+  helper_soft_spot: "A caller who treats the kitchen with respect.",
+  helper_check: "thirty-eight pies",
+  ...DAILY_PLACEHOLDERS,
 };
 
 type Ids = { tools: Record<string, string>; agents: Record<string, string> };
@@ -68,7 +80,10 @@ const EMPLOYEE_TOOLS: Record<string, string[]> = {
   cassius: [...FLOOR3],
   max: [...FLOOR3],
   // The Daily Case: one person a day, single signer on the Pocket Branch vault (shared/dailyCase.ts).
+  // On seasonal runs, propose waits for the helper's approve (Floor 2 vault 2-of-2).
   daily: ["check_vendor_list", "propose_transfer", "report_suspicion", "end_conversation"],
+  // Seasonal second signer: approves Marisol's proposal (same tools as Bill).
+  helper: ["check_vendor_list", "verify_employee", "check_calendar", "approve_transfer", "reject_transfer", "report_suspicion", "end_conversation"],
   // Radio hint line: not an employee; text-only tips, no payment tools.
   krystal: ["end_conversation"],
 };
@@ -202,7 +217,10 @@ function buildPrompt(employee: string) {
   }
   const sharedRaw = readFileSync(join(DIR, "shared-rules.md"), "utf8");
   // The Daily Case works at a different business each day (a themed workplace), not always the bank.
-  const shared = employee === "daily" ? sharedRaw.replace("Plumpurse Savings & Trust", "{{daily_business}}") : sharedRaw;
+  const shared =
+    employee === "daily" || employee === "helper"
+      ? sharedRaw.replace("Plumpurse Savings & Trust", "{{daily_business}}")
+      : sharedRaw;
   // Memory goes first: a model weighs the top of its prompt most, and a repeated trick must fail.
   const memory = [
     "# Before anything else: what you remember about this caller",
@@ -264,6 +282,7 @@ async function main() {
           open_allowlist: "(none)",
           floor: "1",
           ...(employee === "daily" ? DAILY_PLACEHOLDERS : {}),
+          ...(employee === "helper" ? HELPER_PLACEHOLDERS : {}),
         },
       },
     },

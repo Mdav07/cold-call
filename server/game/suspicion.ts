@@ -23,6 +23,7 @@ export const STARTING_SUSPICION: Record<EmployeeId, number> = {
   cassius: 40,
   daily: 10,
   max: 20,
+  helper: 20, // seasonal second signer (Floor-2 pace)
 };
 
 /** A locked-out employee warns their floor-mate, whose meter starts at least here. */
@@ -32,6 +33,9 @@ export const LOCKOUT = 100;
 const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
 
 function floorMates(employee: EmployeeId): EmployeeId[] {
+  // Seasonal 2-of-2: Marisol (daily) and Dev (helper) warn each other.
+  if (employee === "daily") return ["helper"];
+  if (employee === "helper") return ["daily"];
   const me = directory.employees.find((e) => e.id === employee);
   return directory.employees
     .filter((e) => e.is_signer && e.floor === me?.floor && e.id !== employee)

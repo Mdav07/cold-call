@@ -1,7 +1,6 @@
 // /seasonal: the holiday case behind the lobby's seasonal door (Thanksgiving first). One hand-written case
-// per season, open between its dates (shared/seasonalCase.ts). It plays like the Daily Case (same room
-// builder, the "daily" agent with the season's persona, the Pocket Branch vault) but keeps out of the
-// Daily streak and board. Closed between seasons: says when the next one opens.
+// per season, open between its dates (shared/seasonalCase.ts). Marisol is the Daily agent; Dev is a live
+// second signer (helper). Closed between seasons: says when the next one opens.
 
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
@@ -12,7 +11,7 @@ import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
 import { FloorGame } from "@/app/floor/[floor]/FloorGame";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
-import { buildDailyRoom, helperPropId } from "@/app/daily/room";
+import { buildDailyRoom } from "@/app/daily/room";
 import { EMPTY_CASE_DATA } from "@/app/casefile/data";
 import { DailyGate } from "@/app/daily/DailyGate";
 
@@ -64,10 +63,8 @@ async function SeasonalRoom() {
   map.name = `${season.name} · ${c.title}`;
   const npcs: NpcInfo[] = [{ id: "daily", name: c.employee.name, title: c.employee.title, sprite: c.employee.sprite }];
   if (helper) {
-    // A second person with fixed lines (no AI): they hold a detail the case needs. Their lines live in an
-    // off-map prop, which FloorGame opens when you talk to them.
-    map.props = [...(map.props ?? []), { id: helperPropId(helper.id), x: -999, y: -999, label: `${helper.name} · ${helper.title}`, text: helper.text }];
-    npcs.push({ id: helper.id as NpcInfo["id"], name: helper.name, title: helper.title, sprite: helper.sprite });
+    // Live second signer: same chat path as Annie/Bill (employee_id "helper").
+    npcs.push({ id: "helper", name: helper.name, title: helper.title, sprite: helper.sprite });
   }
   return (
     <FloorGame
@@ -78,7 +75,6 @@ async function SeasonalRoom() {
       unlockedFloors={[0]}
       caseData={EMPTY_CASE_DATA}
       daily={c}
-      helperTalks={helper?.dialogue ? { [helper.id]: { name: `${helper.name} · ${helper.title}`, lines: helper.dialogue } } : undefined}
       vault={
         <Suspense fallback={<span className="text-[var(--cc-muted)]">VAULT …</span>}>
           <HudVault floor={0} level="seasonal" />

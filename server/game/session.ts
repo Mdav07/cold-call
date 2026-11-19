@@ -15,7 +15,7 @@ import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
-import { isSeasonalDate, openSeasonalDate } from "@/shared/seasonalCase";
+import { isSeasonalDate, openSeasonalDate, seasonalHelper } from "@/shared/seasonalCase";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
 export const TALK_SECONDS: Record<EmployeeId, number | null> = {
@@ -27,6 +27,7 @@ export const TALK_SECONDS: Record<EmployeeId, number | null> = {
   cassius: 180,
   max: 120,
   daily: null,
+  helper: 300, // seasonal second signer: Floor-2 talk budget
 };
 
 /**
@@ -132,7 +133,8 @@ export function isStubMode(): boolean {
 }
 
 export function employeeFloor(id: EmployeeId): FloorId {
-  if (id === DAILY_EMPLOYEE) return DAILY_FLOOR;
+  // Daily Case + seasonal helper both run as floor-4 sessions.
+  if (id === DAILY_EMPLOYEE || id === "helper") return DAILY_FLOOR;
   const e = directory.employees.find((x) => x.id === id);
   if (!e || !e.is_signer) throw new SessionError(`unknown employee ${id}`, 404);
   return e.floor as FloorId;
@@ -162,6 +164,13 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   // Krystal is the radio mentor, not a staff signer — use POST /api/radio instead.
   if ((input.employee_id as string) === "krystal") {
     throw new SessionError("Krystal isn't on staff. Tune into the radio instead.", 400);
+  }
+  // Dev (helper) only exists on an open seasonal case.
+  if (input.employee_id === "helper") {
+    const seasonal = openSeasonalDate(input.daily_date) ?? (isSeasonalDate(input.daily_date) ? input.daily_date! : null);
+    if (!seasonal || !seasonalHelper(seasonal)) {
+      throw new SessionError("No second signer on this case", 400);
+    }
   }
   const floor = employeeFloor(input.employee_id);
   const agentId = agentIdFor(input.employee_id);
@@ -317,6 +326,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
       open_proposal,
       open_allowlist,
       ...(floor === DAILY_FLOOR ? dailyVariables(caseDate) : {}),
+      ...(input.employee_id === "helper" ? helperVariables(caseDate) : {}),
     },
     talk_seconds,
     stub,
@@ -326,6 +336,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
 /** Today's Daily Case persona, passed to the "daily" ElevenLabs agent (agents/daily.md). */
 function dailyVariables(date: string): Record<string, string> {
   const c = dailyCase(date);
+  const helper = seasonalHelper(date);
   return {
     daily_name: c.employee.name,
     daily_first_name: c.employee.firstName,
@@ -338,6 +349,35 @@ function dailyVariables(date: string): Record<string, string> {
     daily_tic: c.employee.tic,
     daily_soft_spot: c.employee.softSpot,
     daily_red_line: c.employee.redLine,
+    daily_vendors: c.vendors.map((v) => `${v.name} (${v.what}, invoices ${v.code.split("-")[0]}-)`).join("; "),
+    daily_allowed_vendor: c.allowedVendor,
+    daily_allowed_job: c.allowedJob,
+    daily_allowed_invoice: c.allowedInvoice,
+    // Empty on a normal Daily; on seasonal, names the co-signer Marisol must wait for.
+    daily_second_signer: helper
+      ? `${helper.name}, the ${helper.title.toLowerCase()}, must also sign off before anything pays out`
+      : "",
+  };
+}
+
+/** Seasonal helper (Dev) persona for the "helper" ElevenLabs agent (agents/helper.md). */
+function helperVariables(date: string): Record<string, string> {
+  const helper = seasonalHelper(date);
+  if (!helper) return {};
+  const c = dailyCase(date);
+  return {
+    helper_name: helper.name,
+    helper_first_name: helper.firstName,
+    helper_title: helper.title,
+    helper_personality: helper.personality,
+    helper_soft_spot: helper.softSpot,
+    helper_check: helper.check,
+    // Shared case facts (same keys as daily.md / helper.md).
+    daily_first_name: c.employee.firstName,
+    daily_title: c.employee.title,
+    daily_business: c.business,
+    daily_float: c.float,
+    daily_cap: `${Math.round(c.capUsdc * 100)} cents`,
     daily_vendors: c.vendors.map((v) => `${v.name} (${v.what}, invoices ${v.code.split("-")[0]}-)`).join("; "),
     daily_allowed_vendor: c.allowedVendor,
     daily_allowed_job: c.allowedJob,

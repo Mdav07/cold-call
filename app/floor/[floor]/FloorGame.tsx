@@ -5,7 +5,6 @@
 // conversations (call-backs, the floor-mate) continue it.
 
 import { FallingLeaves } from "@/app/play/FallingLeaves";
-import { helperPropId } from "@/app/daily/room";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
@@ -17,9 +16,9 @@ import { useMediaQuery } from "@/app/play/clientHooks";
 import type { FloorMap, FloorSceneProps, SceneEvent } from "@/app/floor/types";
 import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
-import { MusicToggle } from "@/app/play/MusicToggle";
-import { HelperDialogue, NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
-import type { HelperLine } from "@/shared/seasonalCase";
+import { AudioThemeBar } from "@/app/play/AudioThemeBar";
+import { useSeasonTheme } from "@/app/play/seasonTheme";
+import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { clearSolved, gameFor, markSolved, MiniGame, useSolved } from "@/app/floor/minigames/MiniGame";
 import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
@@ -45,7 +44,6 @@ export function FloorGame({
   unlockedFloors,
   caseData,
   daily,
-  helperTalks,
 }: {
   map: FloorMap;
   npcs: NpcInfo[];
@@ -63,9 +61,8 @@ export function FloorGame({
    * case file is the case's own small file. Everything else (talk, outcome, elevator) is the same.
    */
   daily?: DailyCase;
-  /** Scripted characters' conversations, by character id (the seasonal helper). */
-  helperTalks?: Record<string, { name: string; lines: HelperLine[] }>;
 }) {
+  const seasonThemeOn = useSeasonTheme();
   const dailyBriefKey = daily ? `cc-briefed-daily-${daily.date}` : null;
   const router = useRouter();
   const [open, setOpen] = useState<Open>(null);
@@ -236,19 +233,12 @@ export function FloorGame({
     (e: SceneEvent) => {
       if (e.type === "exit") return askLeave(e.to);
       if (e.type === "interact-npc") {
-        // A scripted character (the seasonal helper): their lines open like a sign, not an AI call.
-        const scripted = map.props?.find((p) => p.id === helperPropId(e.id));
-        if (scripted) {
-          setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id))); // the guide moves on
-          setOpen({ kind: "prop", id: scripted.id });
-          return;
-        }
         setFocus(e.id);
         setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id)));
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [askLeave, map],
+    [askLeave],
   );
 
   // Only "talking" is a bubble. Wary (suspicion 60+) and locked out go in the name plate instead: a "?"
@@ -304,9 +294,8 @@ export function FloorGame({
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   // A clue with a game shows its text only once the game is solved (for this run).
   const solved = useSolved(place);
-  // Scripted characters' lines (helper:…) never get a mini-game, and don't shift the clues' games.
-  const clueIds = (map.props ?? []).map((p) => p.id).filter((id) => !id.startsWith("helper:"));
-  const propGame = prop && !prop.id.startsWith("helper:") ? gameFor(map.floor, clueIds, prop.id) : null;
+  const clueIds = (map.props ?? []).map((p) => p.id);
+  const propGame = prop ? gameFor(map.floor, clueIds, prop.id) : null;
   const playing = prop && propGame && !solved.includes(prop.id) ? propGame : null;
   const finished = !!state?.run?.ended_at;
 
@@ -319,7 +308,7 @@ export function FloorGame({
     <main className={`cc-floor-1 cc-floor-${map.floor} relative flex h-dvh flex-col overflow-hidden`}>
       <div className="relative min-h-0 flex-1">
         <FloorScene map={map} playerSprite={playerSprite} paused={!!open || showOutcome || briefing !== false || !!leaving || !!pending || caseFile || showResume || askRestart || !!escort} onEvent={onEvent} emotes={emotes} insetBottom={boxOpen ? inset : 0} goal={escort ? null : goal} tags={tags} names={names} escort={escort ? { key: escort, onDone: escortDone } : null} deck={consoleMode ? <Hud docked {...hudProps} /> : undefined} />
-        {daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" && <FallingLeaves />}
+        {seasonThemeOn && daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" && <FallingLeaves />}
       </div>
 
       {!consoleMode && hud}
@@ -357,15 +346,9 @@ export function FloorGame({
           onCancel={() => setOpen(null)}
         />
       )}
-      {prop && !playing && (() => {
-        // A scripted character with a conversation talks it through; otherwise their lines read like a sign.
-        const talk = prop.id.startsWith("helper:") ? helperTalks?.[prop.id.slice("helper:".length)] : undefined;
-        return talk?.lines.length ? (
-          <HelperDialogue name={talk.name} lines={talk.lines} onClose={() => setOpen(null)} />
-        ) : (
-          <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />
-        );
-      })()}
+      {prop && !playing && (
+        <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />
+      )}
 
       {showOutcome && state && (
         <OutcomeOverlay
@@ -382,7 +365,7 @@ export function FloorGame({
         />
       )}
 
-      <MusicToggle track={`music-floor-${daily ? 0 : map.floor}.mp3`} />
+      <AudioThemeBar track={`music-floor-${daily ? 0 : map.floor}.mp3`} />
 
       {/* Hidden, not closed, while the case file is open: its buttons showed through the overlay. */}
       {briefing && <div className={caseFile ? "hidden" : undefined}><Briefing

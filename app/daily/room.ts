@@ -101,10 +101,7 @@ const HOLDS_CLUES: Kind[] = ["counter", "desk", "shelf"];
 const DIRS: [number, number][] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
 
 /** One attempt at a room. Returns null if the layout breaks a rule (the caller reseeds). */
-/** A second, scripted character to stand somewhere in the room (the seasonal case's helper). */
-/** The off-map prop that holds a scripted character's lines: talking to them opens it like a sign. */
-export const helperPropId = (id: string) => `helper:${id}`;
-
+/** A second NPC to place in the room (the seasonal helper / live co-signer). */
 export interface RoomExtra {
   id: string;
   sprite: string;
@@ -329,7 +326,7 @@ function attempt(c: DailyCase, seed: string, extra?: RoomExtra): FloorMap | null
   // The employee can be talked to, and the way out is open.
   if (!readable(talk) || !readable(exit)) return null;
 
-  // A scripted extra (the seasonal helper): a free floor tile where, with them standing there, every
+  // A second NPC (the seasonal helper): a free floor tile where, with them standing there, every
   // open tile, clue, the employee, the exit and the extra themselves are still reachable.
   let extraCell: Cell | null = null;
   if (extra) {
@@ -361,7 +358,7 @@ function attempt(c: DailyCase, seed: string, extra?: RoomExtra): FloorMap | null
     spawn,
     npcs: [
       { id: DAILY_EMPLOYEE, x: talk.x, y: talk.y, facing: "down", sprite: c.employee.sprite },
-      // The extra isn't an AI employee: FloorGame opens their lines like a sign (see helperPropId).
+      // Seasonal helper is a live employee (id "helper"); FloorGame starts a real chat.
       ...(extra && extraCell ? [{ id: extra.id as typeof DAILY_EMPLOYEE, x: extraCell.x, y: extraCell.y, facing: "down" as Facing, sprite: extra.sprite }] : []),
     ],
     // Prop ids carry the date: clue ids repeat every day, and yesterday's note mustn't count today.

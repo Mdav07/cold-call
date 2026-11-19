@@ -2,11 +2,9 @@
 // Daily Case. One hand-written case per season, open between two dates (UTC), from
 // content/seasonal/seasons.json. A season with no "case" yet is announced as "coming".
 //
-// A seasonal run is a Daily-floor run (floor 4, the "daily" agent, the Pocket Branch vault) whose
-// daily_date is the season's reserved caseDate (year 2000, never a real Daily Case day). dailyCase()
-// returns the seasonal case for that date, so the session, the agent's persona, the tools' vendor check
-// and the payout rule all follow without changes. Streaks, the Daily board and Daily unlocks skip these
-// dates (isSeasonalDate). Pure TS: safe to import anywhere.
+// A seasonal run is a Daily-floor run (floor 4) whose daily_date is the season's reserved caseDate
+// (year 2000). Marisol is the "daily" agent; Dev is the "helper" second signer (Floor-2 style 2-of-2).
+// Streaks, the Daily board and Daily unlocks skip these dates (isSeasonalDate). Pure TS: safe to import anywhere.
 
 import seasonsFile from "@/content/seasonal/seasons.json";
 import type { DailyCase, DailyTheme } from "@/shared/dailyCase";
@@ -22,32 +20,25 @@ export interface Season {
   door: string;
   theme?: DailyTheme;
   case?: SeasonCase;
-  /** A second person in the room with fixed lines (no AI): walk up to them for a key detail. */
+  /** Live second signer (ElevenLabs "helper" agent): walk up and convince them. */
   helper?: SeasonHelper;
 }
 
 export interface SeasonHelper {
-  id: string;
+  id: "helper";
   name: string;
+  firstName: string;
   title: string;
   sprite: string;
-  text: string; // a one-paragraph summary (the case file, and anywhere the conversation can't run)
-  /** A short back-and-forth: their line (spoken: public/audio, agents/generate-audio.ts) and your replies. */
-  dialogue?: HelperLine[];
-}
-
-export interface HelperLine {
-  id: string;
-  line: string;
-  audio?: string;
-  /** Your replies; next is the line they lead to, or null to end the conversation. */
-  choices: { text: string; next: string | null }[];
+  personality: string;
+  softSpot: string;
+  /** The verification detail they insist on (e.g. pie count). */
+  check: string;
 }
 
 export const SEASONS = seasonsFile.seasons as Season[];
 export const SEASONAL_THEMES: DailyTheme[] = SEASONS.flatMap((s) => (s.theme ? [s.theme] : []));
-/** Seasonal cases are harder than the Daily, for a medium prize: 50 cents (the Daily pays 10), from the
- *  same Pocket Branch vault ($1 per-transfer limit). server/chain/tools.ts caps seasonal runs here too. */
+/** Seasonal cases are harder than the Daily, for a medium prize: 50 cents (the Daily pays 10). */
 export const SEASONAL_CAP_USDC = 0.5;
 export const SEASONAL_CAP_UNITS = 500_000;
 /** The seasonal employee starts warier than the Daily's (10). */
@@ -86,4 +77,10 @@ export function seasonalCase(date: string): DailyCase | null {
 export function openSeasonalDate(date: string | null | undefined, ms: number = Date.now()): string | null {
   const s = currentSeason(ms);
   return s && date === s.caseDate ? date : null;
+}
+
+/** The season's live helper for this reserved date, or null. */
+export function seasonalHelper(date: string | null | undefined): SeasonHelper | null {
+  if (!date) return null;
+  return SEASONS.find((x) => x.caseDate === date)?.helper ?? null;
 }

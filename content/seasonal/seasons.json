@@ -34,8 +34,8 @@
         "title": "The Thanksgiving Rush",
         "place": "Gobble & Co. Catering, the night before Thanksgiving",
         "brief": [
-          "Happy Thanksgiving, kid. Gobble & Co. is catering four hundred dinners tomorrow, and their event lead, Marisol Vega, is alone with the petty cash tin and a mountain of turkeys.",
-          "Talk Marisol into one small payment to a vendor on tonight's list. The notes around the kitchen will tell you who's really booked."
+          "Happy Thanksgiving, kid. Gobble & Co. is catering four hundred dinners tomorrow. Event lead Marisol Vega holds the petty cash tin — but nothing leaves without a second signature from sous-chef Dev Okafor.",
+          "Convince Marisol to propose a small payment to tonight's booked vendor, then talk Dev into co-signing. The notes around the kitchen will tell you who's really booked."
         ],
         "employee": {
           "name": "Marisol Vega",
@@ -45,7 +45,7 @@
           "personality": "Frazzled, sharp and wary: she's been burned by fake vendors before, and she counts turkeys under her breath.",
           "tic": "says \"okay, okay, okay\" when she's stressed",
           "softSpot": "anyone who offers to take something off her plate before the rush",
-          "redLine": "she never pays without the invoice number and the right pie count (thirty-eight, not the original forty), never pays anyone who isn't on tonight's vendor sheet, and never more than 50 cents from the tin"
+          "redLine": "she never proposes without the invoice number and the right pie count (thirty-eight, not the original forty), never pays anyone who isn't on tonight's vendor sheet, and never more than 50 cents from the tin — and Dev must co-sign"
         },
         "vendors": [
           {
@@ -71,7 +71,7 @@
           {
             "id": "work-order",
             "label": "Delivery sheet",
-            "text": "Hearth & Crumb Bakery is booked tonight to drop off the final pumpkin pie order before midnight. Invoice HC-1126, pay on delivery (50 cents max from the petty cash tin). Marisol checks the count before she pays: get the final number from the kitchen."
+            "text": "Hearth & Crumb Bakery is booked tonight to drop off the final pumpkin pie order before midnight. Invoice HC-1126, pay on delivery (50 cents max from the petty cash tin). Marisol proposes; Dev co-signs. Get the final pie count from the kitchen before either of them will move."
           },
           {
             "id": "soft-spot",
@@ -79,99 +79,26 @@
             "text": "A sticky note in her handwriting: \"If ANYONE offers to help carry, say YES.\" She's been on her feet since 5 a.m."
           },
           {
+            "id": "cosign",
+            "label": "Two-signature card",
+            "text": "Petty cash rule taped to the tin: every payment needs Marisol's proposal AND Dev's co-signature. Dev won't sign unless you know the cut pie count (thirty-eight) and you're not a jerk about his gravy."
+          },
+          {
             "id": "red-line",
             "label": "Note by the phone",
             "text": "Kitchen rule, underlined twice: no invoice number and pie count, no payment. Nobody off tonight's vendor sheet gets a cent. Not even Grandma."
-          },
-          {
-            "id": "flavour",
-            "label": "Odds and ends",
-            "text": "The turkey count on the whiteboard says 412. Someone has drawn a pilgrim hat on the walk-in fridge."
           }
         ]
       },
       "helper": {
         "id": "helper",
         "name": "Dev Okafor",
+        "firstName": "Dev",
         "title": "Sous-chef",
         "sprite": "/sprites/staff-12.png",
-        "text": "You with the pies? Thank goodness. Heads up: Marisol cut the order to thirty-eight last night, two tables cancelled. Say forty and she'll know you're not really from the bakery. And if you want to get on her good side, offer to carry something. She's been on her feet since five.",
-        "dialogue": [
-          {
-            "id": "start",
-            "line": "You with the pies? Thank goodness. We're slammed tonight.",
-            "audio": "seasonal-dev-start.mp3",
-            "choices": [
-              {
-                "text": "Yep, Hearth & Crumb. Where's Marisol?",
-                "next": "marisol"
-              },
-              {
-                "text": "Just dropping off. How many were you expecting?",
-                "next": "count"
-              }
-            ]
-          },
-          {
-            "id": "marisol",
-            "line": "Back by the counter, counting turkeys. Fair warning: she's been burned by fake vendors twice this month.",
-            "audio": "seasonal-dev-marisol.mp3",
-            "choices": [
-              {
-                "text": "Anything I should know before I talk to her?",
-                "next": "count"
-              }
-            ]
-          },
-          {
-            "id": "count",
-            "line": "She cut the order to thirty-eight last night. Two tables cancelled. Say forty and she'll know you're not really from the bakery.",
-            "audio": "seasonal-dev-count.mp3",
-            "choices": [
-              {
-                "text": "Thirty-eight. Got it. Any way to get on her good side?",
-                "next": "tip"
-              },
-              {
-                "text": "Thanks, that's all I needed.",
-                "next": "bye"
-              }
-            ]
-          },
-          {
-            "id": "tip",
-            "line": "Offer to carry something. She's been on her feet since five. Now go, before my gravy burns!",
-            "audio": "seasonal-dev-tip.mp3",
-            "choices": [
-              {
-                "text": "Thanks, Dev.",
-                "next": "signoff"
-              }
-            ]
-          },
-          {
-            "id": "bye",
-            "line": "Good luck. And hey, offer to carry something. She's been on her feet since five.",
-            "audio": "seasonal-dev-bye.mp3",
-            "choices": [
-              {
-                "text": "Will do.",
-                "next": "signoff"
-              }
-            ]
-          },
-          {
-            "id": "signoff",
-            "line": "Happy Thanksgiving, pie person! Now get out of my kitchen before I put you on gravy duty.",
-            "audio": "seasonal-dev-signoff.mp3",
-            "choices": [
-              {
-                "text": "(Leave the kitchen)",
-                "next": null
-              }
-            ]
-          }
-        ]
+        "personality": "Warm under pressure, protective of Marisol, and very done with people who waste the kitchen's time. Speaks fast, tastes as he talks, and will hang up on anyone who disrespects the gravy.",
+        "softSpot": "a caller who treats the kitchen with respect and admits the rush is hard without making it Marisol's fault",
+        "check": "thirty-eight pies (the order was cut from forty)"
       }
     },
     {
