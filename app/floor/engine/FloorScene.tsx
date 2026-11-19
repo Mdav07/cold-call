@@ -647,11 +647,23 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         const trail = findPath(p.tx, p.ty, g);
         // When the goal has a tag, the tag marks the last stretch: no arrows under or around it.
         const tagged = tagsRef.current?.some((t) => !t.endAt && t.x === g.x && Math.abs(t.y - g.y) <= 1);
-        const show = trail.filter((d) => !tagged || Math.abs(d.x - g.x) + Math.abs(d.y - g.y) > 1).slice(0, 7);
+        // Each arrow points along the full path, at the step after it (not at the next arrow drawn, which can be
+        // further on once the trail is cut short). The last step points at the goal when it stops beside it,
+        // or the way the player arrives when it ends on the goal (a door or mat).
+        const toward = (a: { x: number; y: number }, b: { x: number; y: number }): Facing | null =>
+          b.x > a.x ? "right" : b.x < a.x ? "left" : b.y > a.y ? "down" : b.y < a.y ? "up" : null;
+        const steps = trail.map((d, k) => {
+          const after = trail[k + 1] ?? g;
+          const before = trail[k - 1] ?? { x: p.tx, y: p.ty };
+          return { ...d, dir: toward(d, after) ?? toward(before, d) ?? "up" };
+        });
+        // No arrow on a mat that carries a word (it would sit on the letters); the trail resumes after it.
+        const worded = (d: { x: number; y: number }) => !!tagsRef.current?.some((t) => t.mat && t.x === d.x && t.y === d.y);
+        const show = steps
+          .slice(0, 7)
+          .filter((d) => (!tagged || Math.abs(d.x - g.x) + Math.abs(d.y - g.y) > 1) && !worded(d));
         show.forEach((d, i) => {
-          const next = show[i + 1] ?? g;
-          const dir: Facing =
-            next.x > d.x ? "right" : next.x < d.x ? "left" : next.y > d.y ? "down" : "up";
+          const dir = d.dir;
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
           const a = (0.35 + pulse * 0.55) * (1 - i / 10);
           // Same triangle as the mobile D-pad Arrow (tip up in local space), ~old 3px-dot footprint.
