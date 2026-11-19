@@ -35,11 +35,12 @@ Screenshots of the live site, in `docs/devpost/` (desktop at 1280x800, phones at
 8. `daily.jpg`: today's Daily Case
 9. `daily-themes-gallery.jpg`: the twelve Daily Case workplaces
 10. `holiday-calendar-gallery.jpg`: the ten holiday cases and their dates
-11. `leaderboard.jpg`: fastest breaches and top earners
-12. `profile.jpg`: hunters to earn
-13. `memory.png`: they remember you
-14. `tracks.png`: the four tracks
-15. `intro.jpg`: Krystal's opening
+11. `holiday-rooms-gallery.jpg`: three rooms per holiday (Thanksgiving shown)
+12. `leaderboard.jpg`: fastest breaches and top earners
+13. `profile.jpg`: hunters to earn
+14. `memory.png`: they remember you
+15. `tracks.png`: the four tracks
+16. `intro.jpg`: Krystal's opening
 
 ## Built with (tags)
 

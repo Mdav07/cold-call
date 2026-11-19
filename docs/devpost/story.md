@@ -35,7 +35,7 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)
 
-![Holiday case calendar: ten holidays, each open on its own dates with its own weather](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-calendar.jpg)
+![Ten holidays, three rooms each: every layout's room, its two people and the first day it plays](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-rooms.jpg)
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
