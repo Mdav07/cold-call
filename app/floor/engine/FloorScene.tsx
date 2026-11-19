@@ -779,13 +779,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         } else if (!n && (propAt(fx, fy) || propAt(p.x, p.y))) {
           // Facing a readable prop, or standing on one (doormats).
           const pr = propAt(fx, fy) ?? propAt(p.x, p.y)!;
+          // Only the caption: a box around the tile read as a stray bounding box.
           const px0 = pr.x, py0 = pr.y;
-          const pulse = reduceMotion ? 0.5 : (Math.sin(now / 300) + 1) / 2;
-          c.fillStyle = `rgba(255, 240, 200, ${0.08 + pulse * 0.08})`;
-          c.fillRect(px0 * TILE, py0 * TILE, TILE, TILE);
-          c.strokeStyle = `rgba(255, 240, 200, ${0.3 + pulse * 0.25})`;
-          c.lineWidth = 1;
-          c.strokeRect(px0 * TILE + 0.5, py0 * TILE + 0.5, TILE - 1, TILE - 1);
           hint(px0, p.facing === "down" && py0 === fy ? py0 + 1.6 : py0, "SPACE · READ");
         }
         if (n && !emotesRef.current?.[n.id]) {
