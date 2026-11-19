@@ -53,8 +53,8 @@ leaves, Dev co-signing), the leaderboard, the phone layout.
 
 ## 5. Next steps and close (2:15–2:30)
 
-> VO: "Next: a security-training mode for companies, red-teaming their own AI agents before an attacker does,
-> and multiplayer heists. Cold Call: learn the con, so you can't be conned."
+> VO: "Next: multiplayer. One player runs the con, another defends as the employee, live. Then new banks with
+> new controls. Cold Call: learn the con, so you can't be conned."
 
 Logo, live link, GitHub.
 

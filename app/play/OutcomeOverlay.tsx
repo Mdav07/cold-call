@@ -173,6 +173,17 @@ export function OutcomeOverlay({
                   {paid != null ? <CountUp to={paid} /> : "…"}
                 </p>
                 <p className="mt-1 text-xs text-[var(--cc-muted)]">of {maxBountyLabel(isSeasonalDate(run.daily_date) ? "seasonal" : run.floor)} max</p>
+                {run.tx_hash && (
+                  // The payout is a real Arc testnet transaction: let the player see it on the explorer.
+                  <a
+                    href={`https://testnet.arcscan.app/tx/${run.tx_hash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-block text-xs text-[var(--cc-accent)] underline underline-offset-2"
+                  >
+                    View on Arc explorer ↗
+                  </a>
+                )}
               </div>
             )}
             {breach && earned && paid != null && (

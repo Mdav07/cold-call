@@ -90,10 +90,9 @@ What each track needed from us, beyond the pipeline above:
 
 ![What's next](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-next.png)
 
+- **Multiplayer heists.** One player runs the con while another defends as the employee, live, with the same tools, suspicion meter and vault rules. Crews can team up on the two-signer floors: one sweet-talks the first signer while the other works the second.
+- **New banks with new controls:** hardware-wallet confirmations, spending limits, time delays.
 - Employee wallets signing through Circle developer-controlled wallets, as player wallets already do.
-- New banks with new controls: hardware-wallet confirmations, spending limits, delays.
-- Multiplayer: one player attacks while another defends as the employee.
-- A training mode for companies, with their own vendors and staff, that reports which tricks their team falls for.
 
 **FAQ**
 

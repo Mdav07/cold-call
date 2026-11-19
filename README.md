@@ -33,6 +33,14 @@ The staff check your story with real lookups, remember the tricks you used on th
 
 ![Four tracks, one heist: the game hands the call to ElevenLabs, ElevenLabs signs on Arc, QuickNode referees and hands the result back to the game](docs/devpost/tracks.png)
 
+**Try it in three minutes** at [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app), no account or wallet needed:
+
+1. **Tutorial (about a minute).** Walk across the street to the little branch and talk Barry into a small payment. Clearing it unlocks everything else.
+2. **Floor 1 by voice.** Take the elevator, read a clue, then call Dee or Penny and talk them into paying a vendor. Allow the microphone, or type: chat works the same way.
+3. **The holiday door.** Back in the lobby, the middle door opens today's holiday case: two people to convince, the second one checking the real recipient.
+
+Each breach is a real transaction on Arc testnet; the breach screen links to it on the Arc explorer.
+
 Read [System design](#system-design) for how one heist uses all four tracks. Then jump to your track in [The four tracks](#the-four-tracks).
 
 | Track (UBC 2026 guide) | What it asks for | Where |
