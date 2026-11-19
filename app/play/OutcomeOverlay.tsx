@@ -14,6 +14,7 @@ import { StreakBadge } from "./StreakBadge";
 import { useStreak } from "./streak";
 import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 import { CoinLogo } from "@/app/play/CoinLogo";
+import { formatUsd, recordGuestEarning, refreshEarnings, useEarnings } from "./earnings";
 
 type Debrief = {
   title: string;
@@ -86,6 +87,7 @@ export function OutcomeOverlay({
   const played = useRef(false);
   // Guests can play everything, but only signed-in hunters keep winnings (/api/session/streak says which).
   const guest = useStreak()?.guest === true;
+  const earned = useEarnings();
   const [more, setMore] = useState(false);
   const primary = useRef<HTMLButtonElement>(null);
 
@@ -99,6 +101,17 @@ export function OutcomeOverlay({
     if (outcome === "lockout") return playSequence(["lockout-null.mp3"]);
   }, [outcome, quietWin]);
   useEffect(() => primary.current?.focus(), [outcome]);
+  // A breach adds its bounty to the running total: guests' tally in this browser (once per run),
+  // signed-in players' from the server (the breach is already recorded when this shows).
+  const bountyUnits = run?.cracked_units ?? run?.payout_units ?? null;
+  useEffect(() => {
+    if (outcome !== "breach" || !run || bountyUnits == null) return;
+    if (guest) {
+      // The breach's transaction is unique to it, so it keys the once-only add.
+      const key = run.tx_hash ?? run.ended_at;
+      if (!run.practice && key) recordGuestEarning(key, Number(bountyUnits));
+    } else refreshEarnings();
+  }, [outcome, run, bountyUnits, guest]);
 
   if (!run || (outcome !== "breach" && outcome !== "lockout")) return null;
   const debrief = (debriefs.floors as Record<string, Debrief>)[String(run.floor)];
@@ -148,6 +161,14 @@ export function OutcomeOverlay({
                 <p className="font-pixel text-[9px] text-[var(--cc-muted)]">{guest ? "BOUNTY · NOT KEPT" : "BOUNTY"}</p>
                 <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)] line-through" : "text-[var(--cc-ok)]"}`}>
                   {paid != null ? <CountUp to={paid} /> : "…"}
+                </p>
+              </div>
+            )}
+            {breach && earned && paid != null && (
+              <div title="Everyone starts at $0; each breach adds its bounty.">
+                <p className="font-pixel text-[9px] text-[var(--cc-muted)]">{guest ? "TOTAL · NOT KEPT" : "TOTAL EARNED"}</p>
+                <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)]" : "text-[var(--cc-accent)]"}`}>
+                  {formatUsd(earned.units)} <span className="text-[10px] text-[var(--cc-ok)]">+{formatUsd(paid * 1_000_000)}</span>
                 </p>
               </div>
             )}

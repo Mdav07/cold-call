@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { clock } from "../dialogue/parts";
 import { setMuted, useMuted } from "./sound";
+import { EarnedChip } from "@/app/play/earnings";
 
 /** Run clock: counts from the first message until the run ends (then shows the final time). */
 function RunClock({ startedAt, finalMs, compact = false }: { startedAt: number | null; finalMs: number | null; compact?: boolean }) {
@@ -111,6 +112,7 @@ export function Hud({
           ◀
         </a>
         <RunClock startedAt={startedAt} finalMs={finalMs} compact />
+        <EarnedChip />
         <span className="flex items-center gap-1.5">{vault}</span>
         {onCaseFile && (
           <button type="button" onClick={onCaseFile} className={`${HIT} text-[var(--cc-accent)]`} aria-label="Open the case file">
@@ -142,6 +144,7 @@ export function Hud({
         <span className="sm:hidden">{floorName.split(" · ")[0]}</span>
         <span className="hidden sm:inline">{floorName}</span>
         <RunClock startedAt={startedAt} finalMs={finalMs} />
+        <EarnedChip />
         {vault}
         {onCaseFile && (
           <button type="button" onClick={onCaseFile} className={`${HIT} text-[var(--cc-accent)]`} title="Open the case file">

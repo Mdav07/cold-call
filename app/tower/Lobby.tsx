@@ -17,6 +17,7 @@ import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
 import { StreakBadge } from "@/app/play/StreakBadge";
+import { EarnedChip } from "@/app/play/earnings";
 
 const PLAYER_SPRITE = "/sprites/hunter.png";
 
@@ -165,6 +166,7 @@ export function Lobby({
           <span className="flex items-center gap-2">
             <DailyArchive tutorialCleared={tutorialDone} clearedToday={dailyClearedToday} />
             <StreakBadge />
+            <EarnedChip label="EARNED" className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1" />
           </span>
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
