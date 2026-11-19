@@ -7,6 +7,7 @@ import company from "@/content/plumpurse/company.json";
 import directory from "@/content/plumpurse/directory.json";
 import { arcTestnet, deployment } from "@/server/chain/config";
 import { db } from "@/server/chain/db";
+import { getDemoUserId } from "@/server/game/players";
 import type { FloorId } from "@/shared/interfaces";
 
 export interface TowerEmployee {
@@ -59,18 +60,19 @@ export async function getTower(userId: string | null): Promise<TowerFloor[]> {
   const agents = agentIds.agents as Record<string, string | undefined>;
   const hasDb = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  const [balances, mine, board] = await Promise.all([
+  const [balances, mine, board, demoId] = await Promise.all([
     Promise.all(company.floors.map((f) => vaultBalance(VAULTS[f.floor as FloorId]))),
     userId && hasDb
       ? db().from("runs").select("floor, duration_ms").eq("user_id", userId).eq("outcome", "breach")
       : Promise.resolve({ data: [] as { floor: number; duration_ms: number | null }[] }),
     hasDb
-      ? db().from("leaderboard").select("floor, display_name, duration_ms, channel, tx_hash").order("duration_ms").limit(200)
-      : Promise.resolve({ data: [] as { floor: number; display_name: string | null; duration_ms: number; channel: string; tx_hash: string }[] }),
+      ? db().from("leaderboard").select("user_id, floor, display_name, duration_ms, channel, tx_hash").order("duration_ms").limit(200)
+      : Promise.resolve({ data: [] as { user_id?: string; floor: number; display_name: string | null; duration_ms: number; channel: string; tx_hash: string }[] }),
+    hasDb ? getDemoUserId().catch(() => null) : Promise.resolve(null),
   ]);
 
   const clears = mine.data ?? [];
-  const rows = board.data ?? [];
+  const rows = (board.data ?? []).filter((r) => r.user_id !== demoId && r.display_name !== "Demo Hunter");
 
   const floors: TowerFloor[] = company.floors.map((f, i) => {
     const floor = f.floor as FloorId;

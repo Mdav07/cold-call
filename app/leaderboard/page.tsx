@@ -184,7 +184,10 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
       tx_hash: r.tx,
       daily_contract_id: null,
     }));
-  const rows = ((board.data ?? []) as Row[]).filter((r) => channel === "all" || r.channel === channel);
+  // Shared guest account ("Demo Hunter") is not a real player — keep it off every board.
+  const rows = ((board.data ?? []) as Row[]).filter(
+    (r) => r.user_id !== demoId && (channel === "all" || r.channel === channel),
+  );
   const floorRows = bestPerPlayer(rows.filter((r) => r.floor === floor)).slice(0, PER_FLOOR);
   const ladder = ladderFor(floor).filter((r) => channel === "all" || r.channel === channel);
 
