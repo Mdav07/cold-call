@@ -4,6 +4,7 @@
 import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
 import { onRunEnded } from "@/server/chain/ingest";
+import { SEASONAL_START_SUSPICION, isSeasonalDate } from "@/shared/seasonalCase";
 import type {
   EmployeeId,
   EndConversationInput,
@@ -55,6 +56,11 @@ export async function currentLevel(runId: string, employee: EmployeeId): Promise
   const last = await latestLevel(runId, employee);
   if (last != null) return last;
   let start = STARTING_SUSPICION[employee];
+  // The seasonal case (a Daily-floor run on a reserved date) starts warier than the Daily.
+  if (employee === "daily") {
+    const { data: run } = await db().from("runs").select("daily_date").eq("id", runId).maybeSingle();
+    if (isSeasonalDate(run?.daily_date as string | null)) start = SEASONAL_START_SUSPICION;
+  }
   for (const mate of floorMates(employee)) {
     if ((await latestLevel(runId, mate)) === LOCKOUT) start = Math.max(start, WARNED_START);
   }

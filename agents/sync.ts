@@ -36,6 +36,7 @@ const DAILY_PLACEHOLDERS = {
   daily_place: "a small Plumpurse office",
   daily_business: "Plumpurse",
   daily_float: "the branch float",
+  daily_cap: "10 cents",
   daily_personality: "Friendly and a little tired.",
   daily_tic: "sighs before answering",
   daily_soft_spot: "A caller who is polite and patient.",

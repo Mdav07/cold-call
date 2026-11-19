@@ -11,6 +11,7 @@ import { db } from "@/server/chain/db";
 import { ladderFor, RIVALS_INTRO, type Rival } from "./rivals";
 import { dailyBoard, streakOf } from "@/server/game/dailyBoard";
 import { DAILY_FLOOR, dailyCase, todayUtc } from "@/shared/dailyCase";
+import { isSeasonalDate } from "@/shared/seasonalCase";
 
 const FLOORS = [0, 1, 2, 3] as const;
 const PER_FLOOR = 20;
@@ -160,7 +161,7 @@ async function Boards({ searchParams }: { searchParams: PageProps<"/leaderboard"
   type DailyRow = { user_id: string; daily_date: string; users: { display_name: string | null } | { display_name: string | null }[] | null };
   const dailyDays = new Map<string, { name: string | null; days: Set<string> }>();
   for (const r of (streaks.data ?? []) as DailyRow[]) {
-    if (!r.user_id || r.user_id === demoId) continue;
+    if (!r.user_id || r.user_id === demoId || isSeasonalDate(r.daily_date)) continue;
     const u = Array.isArray(r.users) ? r.users[0] : r.users;
     const e = dailyDays.get(r.user_id) ?? { name: u?.display_name ?? null, days: new Set<string>() };
     e.days.add(r.daily_date);

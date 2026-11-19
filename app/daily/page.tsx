@@ -65,7 +65,7 @@ async function DailyRoom({ searchParams }: { searchParams: PageProps<"/daily">["
       // The Daily Case pays from the Pocket Branch vault.
       vault={
         <Suspense fallback={<span className="text-[var(--cc-muted)]">VAULT …</span>}>
-          <HudVault floor={0} />
+          <HudVault floor={0} level={4} />
         </Suspense>
       }
       gate={

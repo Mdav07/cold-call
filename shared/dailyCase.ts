@@ -6,6 +6,7 @@
 
 import templates from "@/content/daily/templates.json";
 import themesFile from "@/content/daily/themes.json";
+import { seasonalCase } from "@/shared/seasonalCase";
 
 export const DAILY_FLOOR = 4;
 export const DAILY_EMPLOYEE = "daily";
@@ -156,6 +157,9 @@ export function cycled(day: string, n: number, salt: string): number {
 }
 
 export function dailyCase(date: string = todayUtc()): DailyCase {
+  // A seasonal run's reserved date (shared/seasonalCase.ts) plays the hand-written holiday case.
+  const seasonal = seasonalCase(date);
+  if (seasonal) return seasonal;
   const day = VALID_DATE.test(date) ? date : todayUtc();
   const r = rng(`coldcall-daily:${day}`);
   const pick = <T,>(xs: readonly T[]): T => xs[Math.floor(r() * xs.length)];

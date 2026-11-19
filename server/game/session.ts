@@ -15,6 +15,7 @@ import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
+import { isSeasonalDate, openSeasonalDate } from "@/shared/seasonalCase";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
 export const TALK_SECONDS: Record<EmployeeId, number | null> = {
@@ -179,7 +180,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
   let open_proposal = "(none)";
   let open_allowlist = "(none)";
   let talk_seconds = talkBudget;
-  let caseDate = archiveDate(input.daily_date) ?? todayUtc();
+  // A Daily Case day, or the reserved date of the seasonal case open now (shared/seasonalCase.ts).
+  let caseDate = archiveDate(input.daily_date) ?? openSeasonalDate(input.daily_date) ?? todayUtc();
 
   if (stub) {
     run_id = input.run_id ?? randomUUID();
@@ -197,7 +199,7 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     await checkLimits(userId, input.ip, input.channel, !input.run_id, shared);
     run_id = input.run_id
       ? await continueRun(input.run_id, userId, floor)
-      : await newRun(userId, floor, cover, input.channel, input.ip ?? null, archiveDate(input.daily_date) ?? todayUtc());
+      : await newRun(userId, floor, cover, input.channel, input.ip ?? null, caseDate);
 
     const { data: conv } = await db()
       .from("conversations")
@@ -331,6 +333,7 @@ function dailyVariables(date: string): Record<string, string> {
     daily_place: c.place,
     daily_business: c.business, // the name they answer the phone with ("Plumpurse", "Rosso's Trattoria")
     daily_float: c.float, // what they pay small bills from ("the branch float", "the till")
+    daily_cap: `${Math.round(c.capUsdc * 100)} cents`, // the most they pay: 10 cents (Daily), 50 (seasonal)
     daily_personality: c.employee.personality,
     daily_tic: c.employee.tic,
     daily_soft_spot: c.employee.softSpot,
@@ -391,7 +394,7 @@ async function newRun(
       client_ip: ip,
       daily_date: floor === DAILY_FLOOR ? caseDate : null,
       // An earlier day's case is practice: token pay, no board, no streak.
-      practice: floor === DAILY_FLOOR && caseDate !== todayUtc(),
+      practice: floor === DAILY_FLOOR && caseDate !== todayUtc() && !isSeasonalDate(caseDate), // the seasonal case counts
     })
     .select("id")
     .single()

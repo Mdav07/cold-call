@@ -3,6 +3,7 @@
 
 import { db } from "@/server/chain/db";
 import { DAILY_FLOOR, todayUtc } from "@/shared/dailyCase";
+import { isSeasonalDate } from "@/shared/seasonalCase";
 
 export interface DailyBoardRow {
   name: string;
@@ -67,7 +68,7 @@ export async function dailyStreak(userId: string, today: string = todayUtc()): P
     .eq("practice", false)
     .eq("outcome", "breach")
     .not("daily_date", "is", null);
-  const days = new Set((data ?? []).map((r) => r.daily_date as string));
+  const days = new Set((data ?? []).map((r) => r.daily_date as string).filter((d) => !isSeasonalDate(d)));
   return streakOf(days, today);
 }
 
