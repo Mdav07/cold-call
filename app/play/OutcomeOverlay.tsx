@@ -13,6 +13,7 @@ import { PORTRAITS } from "./portraits";
 import { StreakBadge } from "./StreakBadge";
 import { useStreak } from "./streak";
 import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
+import { CoinLogo } from "@/app/play/CoinLogo";
 
 type Debrief = {
   title: string;
@@ -130,7 +131,8 @@ export function OutcomeOverlay({
           className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-6 sm:-mt-6 sm:px-6"
           style={{ background: breach ? "var(--cc-accent)" : "var(--cc-danger)" }}
         >
-          <p className="font-pixel text-[9px] tracking-widest">
+          <p className="flex items-center gap-2 font-pixel text-[9px] tracking-widest">
+            <CoinLogo size={16} />
             <span className="max-sm:hidden">COLD CALL · </span>
             {daily ? `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}` : run.floor === 0 ? "TUTORIAL" : `FLOOR ${run.floor}`}
           </p>

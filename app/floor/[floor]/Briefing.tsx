@@ -9,6 +9,7 @@ import { MemoPlayButton } from "@/app/play/KrystalMemo";
 import { PORTRAITS } from "@/app/play/portraits";
 import { useEffect, useRef, useState } from "react";
 import { confirm, tick } from "@/app/floor/hud/sound";
+import { CoinLogo } from "@/app/play/CoinLogo";
 
 type BriefingText = { audio: string; text: string };
 
@@ -140,7 +141,7 @@ export function Briefing({
       >
         {/* Chapter card: a band across the top, like a level title in a handheld RPG. */}
         <header className="-mx-4 -mt-4 border-b-4 border-[var(--cc-edge)] bg-[var(--cc-accent)] px-4 pb-3 pt-4 text-[var(--cc-edge)] sm:-mx-6 sm:-mt-6 sm:px-6 [@media(max-height:500px)]:pb-2 [@media(max-height:500px)]:pt-3">
-          <p className="font-pixel text-[9px] tracking-widest">COLD CALL · {kicker.toUpperCase()}</p>
+          <p className="flex items-center gap-2 font-pixel text-[9px] tracking-widest"><CoinLogo size={16} />COLD CALL · {kicker.toUpperCase()}</p>
           <h2 id="briefing-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl [@media(max-height:500px)]:mt-1 [@media(max-height:500px)]:text-sm">
             {title}
           </h2>
