@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { clock } from "../dialogue/parts";
-import { setMuted, useMuted } from "./sound";
 import { EarnedChip } from "@/app/play/earnings";
 
 /** Run clock: counts from the first message until the run ends (then shows the final time). */
@@ -36,32 +35,7 @@ function RunClock({ startedAt, finalMs, compact = false }: { startedAt: number |
 /** The HUD's buttons are small pixel text; this grows each one's tap area to about 40px without moving it. */
 const HIT = "relative before:absolute before:-inset-x-1.5 before:-inset-y-3 before:content-['']";
 
-/** Sound effects on/off (music has its own button) for the dialogue blips and choice ticks (remembered in this browser). */
-function MuteToggle({ icon = false }: { icon?: boolean }) {
-  const muted = useMuted();
-  return (
-    <button
-      type="button"
-      onClick={() => setMuted(!muted)}
-      aria-pressed={muted}
-      aria-label={muted ? "Sound effects off. Turn them on" : "Sound effects on. Turn them off"}
-      title="Dialogue blips and menu sounds"
-      className={`${HIT} text-[var(--cc-accent)]`}
-    >
-      {icon ? <SpeakerIcon muted={muted} /> : muted ? "SFX OFF" : "SFX ON"}
-    </button>
-  );
-}
-
 /** 10x10 pixel icons for the compact (docked) HUD. */
-function SpeakerIcon({ muted }: { muted: boolean }) {
-  return (
-    <svg viewBox="0 0 10 10" width="14" height="14" aria-hidden shapeRendering="crispEdges" className="block">
-      <path d="M1 4h2l3-3v8L3 6H1z" fill="currentColor" />
-      {muted ? <path d="M7 3l3 4M10 3L7 7" stroke="currentColor" strokeWidth="1.2" /> : <path d="M7.5 3.5q1.5 1.5 0 3M8.5 2q3 3 0 6" stroke="currentColor" strokeWidth="1" fill="none" />}
-    </svg>
-  );
-}
 function RestartIcon() {
   return (
     <svg viewBox="0 0 10 10" width="14" height="14" aria-hidden className="block">
@@ -124,7 +98,6 @@ export function Hud({
             <RestartIcon />
           </button>
         )}
-        <MuteToggle icon />
       </div>
     );
   return (
@@ -157,7 +130,6 @@ export function Hud({
             RESTART
           </button>
         )}
-        <MuteToggle />
       </div>
     </div>
   );

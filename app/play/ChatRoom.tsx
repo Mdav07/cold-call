@@ -6,7 +6,7 @@ import { useEmployeeChat } from "./useEmployeeChat";
 import { useRunState, type RunState } from "./useRunState";
 import { OutcomeOverlay } from "./OutcomeOverlay";
 import { KrystalMemo } from "./KrystalMemo";
-import { MusicToggle } from "./MusicToggle";
+import { AudioThemeBar } from "./AudioThemeBar";
 import { EvidenceDrawer, type EvidenceItem } from "./EvidenceDrawer";
 import { PORTRAITS } from "./portraits";
 import { BackButton } from "@/app/ui/BackButton";
@@ -196,7 +196,7 @@ export function ChatRoom({ card }: { card: EmployeeCard }) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4">
-      <MusicToggle track={`music-floor-${card.floor}.mp3`} />
+      <AudioThemeBar track={`music-floor-${card.floor}.mp3`} />
       {showOutcome && state && (
         <OutcomeOverlay
           state={state}

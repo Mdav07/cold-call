@@ -27,11 +27,11 @@
     }
   ],
   "rivals": [
-    { "id": "pocket-lint", "name": "Pocket Lint", "crew": "petty", "channel": "chat", "times": { "0": "5:40", "1": "11:20", "2": "18:05", "3": "26:30" } },
-    { "id": "vault-rat", "name": "Vault Rat", "crew": "petty", "channel": "voice", "times": { "0": "4:10", "1": "8:45", "2": "14:30", "3": "21:10" } },
-    { "id": "caller-id", "name": "Caller ID", "crew": "phish", "channel": "voice", "times": { "0": "2:55", "1": "5:50", "2": "9:40", "3": "13:20" } },
-    { "id": "smooth-operator", "name": "Smooth Operator", "crew": "phish", "channel": "voice", "times": { "0": "2:05", "1": "4:15", "2": "7:05", "3": "9:50" } },
-    { "id": "static", "name": "Static", "crew": "ledger", "channel": "chat", "times": { "0": "1:20", "1": "2:50", "2": "5:10", "3": "6:45" } },
-    { "id": "null", "name": "Null", "crew": "ledger", "channel": "voice", "boss": true, "times": { "0": "0:52", "1": "1:58", "2": "3:35", "3": "4:40" } }
+    { "id": "pocket-lint", "name": "Pocket Lint", "crew": "petty", "channel": "chat", "times": { "0": "11:20", "1": "22:40", "2": "36:10", "3": "53:00" } },
+    { "id": "vault-rat", "name": "Vault Rat", "crew": "petty", "channel": "voice", "times": { "0": "8:20", "1": "17:30", "2": "29:00", "3": "42:20" } },
+    { "id": "caller-id", "name": "Caller ID", "crew": "phish", "channel": "voice", "times": { "0": "5:50", "1": "11:40", "2": "19:20", "3": "26:40" } },
+    { "id": "smooth-operator", "name": "Smooth Operator", "crew": "phish", "channel": "voice", "times": { "0": "4:10", "1": "8:30", "2": "14:10", "3": "19:40" } },
+    { "id": "static", "name": "Static", "crew": "ledger", "channel": "chat", "times": { "0": "2:40", "1": "5:40", "2": "10:20", "3": "13:30" } },
+    { "id": "null", "name": "Null", "crew": "ledger", "channel": "voice", "boss": true, "times": { "0": "1:45", "1": "4:00", "2": "7:10", "3": "9:20" } }
   ]
 }

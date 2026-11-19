@@ -93,7 +93,8 @@ function NoteIcon({ muted }: { muted: boolean }) {
   );
 }
 
-export function MusicToggle({ track }: { track: string }) {
+/** @param embedded Inside AudioThemeBar (no fixed positioning). */
+export function MusicToggle({ track, embedded = false }: { track: string; embedded?: boolean }) {
   const on = useSyncExternalStore(subscribe, () => playing, () => false);
 
   // This page's track. If music is playing or remembered on, keep it going across the move.
@@ -127,7 +128,11 @@ export function MusicToggle({ track }: { track: string }) {
     <button
       type="button"
       onClick={toggle}
-      className="pixel-button fixed right-3 top-3 z-50 grid size-10 place-items-center !p-0 text-[var(--cc-edge)] sm:right-4 sm:top-4"
+      className={
+        embedded
+          ? "pixel-button grid size-10 place-items-center !p-0 text-[var(--cc-edge)]"
+          : "pixel-button fixed right-3 top-3 z-50 grid size-10 place-items-center !p-0 text-[var(--cc-edge)] sm:right-4 sm:top-4"
+      }
       aria-label={on ? "Mute music" : "Play music"}
       aria-pressed={on}
       title={on ? "Music on" : "Music off"}

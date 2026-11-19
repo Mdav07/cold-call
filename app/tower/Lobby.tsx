@@ -9,7 +9,8 @@ import Link from "next/link";
 import { CONSOLE_QUERY, FloorScene } from "@/app/floor/engine/FloorScene";
 import type { FloorMap, SceneEvent } from "@/app/floor/types";
 import { PropDialogue } from "@/app/floor/dialogue/DialogueBox";
-import { MusicToggle } from "@/app/play/MusicToggle";
+import { AudioThemeBar } from "@/app/play/AudioThemeBar";
+import { useSeasonTheme } from "@/app/play/seasonTheme";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
@@ -42,6 +43,7 @@ export function Lobby({
   guide: { goal: { x: number; y: number } | null; tags: { x: number; y: number; text: string }[] };
 }) {
   const router = useRouter();
+  const seasonThemeOn = useSeasonTheme();
   const [prop, setProp] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<{ to: string; label: string } | null>(null);
@@ -193,7 +195,7 @@ export function Lobby({
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
         <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked || seasonNote} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
-        {currentSeason()?.door === "harvest" && <FallingLeaves />}
+        {seasonThemeOn && currentSeason()?.door === "harvest" && <FallingLeaves />}
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
       {!consoleMode && <div className="pointer-events-none absolute left-0 top-0 z-10 p-3 sm:p-4">{nav}</div>}
@@ -224,7 +226,7 @@ export function Lobby({
       {pending && (
         <ExitConfirm to={pending} onGo={() => startRide(pending)} onStay={() => setPending(null)} />
       )}
-      <MusicToggle track="music-floor-1.mp3" />
+      <AudioThemeBar track="music-floor-1.mp3" />
       <Elevator label="Lobby · Plumpurse Tower" leaving={leaving} onClosed={arrived} />
     </main>
   );
