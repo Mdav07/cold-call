@@ -178,7 +178,7 @@ export function OutcomeOverlay({
             {breach && earned && paid != null && (
               <div title="Everyone starts at $0; each breach adds its bounty.">
                 <p className="font-pixel text-[9px] text-[var(--cc-muted)]">{guest ? "TOTAL · NOT KEPT" : "TOTAL EARNED"}</p>
-                <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)]" : "text-[var(--cc-accent)]"}`}>
+                <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)]" : "text-[var(--cc-ok)]"}`}>
                   {formatUsd(earned.units)} <span className="text-[10px] text-[var(--cc-ok)]">+{formatUsd(paid * 1_000_000)}</span>
                 </p>
               </div>

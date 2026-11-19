@@ -69,7 +69,7 @@ export function Hud({
   docked?: boolean;
 }) {
   // On the handheld-console deck: one slim row, icons for the buttons. The floor's name is printed under
-  // the screen instead, and the word VAULT is dropped (the amount is green and needs no label).
+  // the screen instead, and vault tags are dropped (green YOU vs red vault amount is enough).
   if (docked)
     return (
       <div className="pixel-frame flex w-full items-center justify-between gap-2 bg-[var(--cc-panel)] px-2.5 py-1.5 font-pixel text-[9px] leading-none text-[var(--cc-ink)] [&_.cc-vault-label]:hidden">

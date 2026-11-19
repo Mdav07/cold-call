@@ -75,7 +75,8 @@ export function EarnedChip({ label = "YOU", className = "" }: { label?: string; 
   return (
     <span title={title} className={`whitespace-nowrap ${className}`}>
       <span className="text-[var(--cc-muted)]">{label} </span>
-      <span className={e?.guest ? "text-[var(--cc-muted)]" : "text-[var(--cc-accent)]"}>{e ? usd(e.units) : "$0.00"}</span>
+      {/* Green = your money (vault balances use red in HudVault). Guests stay muted: not kept. */}
+      <span className={e?.guest ? "text-[var(--cc-muted)]" : "text-[var(--cc-ok)]"}>{e ? usd(e.units) : "$0.00"}</span>
     </span>
   );
 }
