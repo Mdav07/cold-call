@@ -19,7 +19,7 @@ async function Floors({ searchParams }: { searchParams: PageProps<"/tower">["sea
   return (
     <>
       {/* First Floor-3 clear: Krystal's ending cutscene (Fatwallet tease) before the lobby. */}
-      <EndingRedirect floors={floors} />
+      <EndingRedirect floors={floors} guest={!signedIn} />
       <Lobby
         map={buildLobby(floors, typeof at === "string" ? at : null)}
         floors={floors}
