@@ -2,7 +2,7 @@ import { z } from "zod";
 import { SessionError, startSession } from "@/server/game/session";
 
 const Body = z.object({
-  employee_id: z.enum(["barry", "penny", "dee", "annie", "bill", "cassius", "max", "daily"]),
+  employee_id: z.enum(["barry", "penny", "dee", "annie", "bill", "cassius", "max", "daily", "helper"]),
   channel: z.enum(["chat", "voice"]).default("chat"),
   cover: z.string().max(200).default(""),
   run_id: z.uuid().optional(),

@@ -1,7 +1,7 @@
 "use client";
 
-// Shown right after a player picks their hunter: sign in by email to keep clears, streaks and
-// leaderboard times, or carry on as a guest. Players who are already signed in skip straight past it.
+// Sign in by email to keep clears, streaks and leaderboard times, or carry on as a guest.
+// Used before hunter pick on first visit; players who are already signed in skip straight past it.
 
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState } from "react";
@@ -11,12 +11,12 @@ function supabase() {
 }
 
 export function SaveProgress({
-  handle,
+  handle = "Hunter",
   next = "/tower",
   onContinue,
 }: {
-  /** The hunter name, used as the leaderboard handle. */
-  handle: string;
+  /** Optional hunter name for the leaderboard handle (filled in later on the pick step). */
+  handle?: string;
   /** Where the sign-in link lands. */
   next?: string;
   /** Play as a guest (or, when already signed in, carry on). */
@@ -55,7 +55,7 @@ export function SaveProgress({
       {state === "sent" ? (
         <>
           <p className="text-[var(--cc-ink)]">
-            Check your email. The link signs you in as <strong>{handle}</strong> and brings you back to the tower.
+            Check your email. The link signs you in{handle !== "Hunter" ? <> as <strong>{handle}</strong></> : null} and brings you back to the tower.
           </p>
           <button type="button" className="pixel-button self-start" onClick={onContinue}>
             Play now ▶
@@ -92,7 +92,7 @@ export function SaveProgress({
           }}
         >
           <p className="text-sm text-[var(--cc-ink)]">
-            Sign in to keep your clears, streak and leaderboard times as <strong>{handle}</strong> on any device. As a guest, your progress stays in this browser and winnings aren&apos;t kept.
+            Sign in to keep your clears, streak and leaderboard times{handle !== "Hunter" ? <> as <strong>{handle}</strong></> : null} on any device. As a guest, your progress stays in this browser and winnings aren&apos;t kept.
           </p>
           <label htmlFor="save-email" className="font-pixel text-[10px] text-[var(--cc-muted)]">
             Email

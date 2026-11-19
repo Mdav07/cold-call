@@ -4,6 +4,7 @@ import { getDemoUserId } from "@/server/game/players";
 import { getTower } from "@/server/game/tower";
 import { dailyCleared } from "@/server/game/dailyBoard";
 import { Lobby } from "./Lobby";
+import { EndingRedirect } from "./EndingRedirect";
 import { buildLobby, lobbyGuide } from "./lobbyMap";
 
 async function Floors({ searchParams }: { searchParams: PageProps<"/tower">["searchParams"] }) {
@@ -16,15 +17,19 @@ async function Floors({ searchParams }: { searchParams: PageProps<"/tower">["sea
     signedIn ? dailyCleared(signedIn) : Promise.resolve(false),
   ]);
   return (
-    <Lobby
-      map={buildLobby(floors, typeof at === "string" ? at : null)}
-      floors={floors}
-      guide={lobbyGuide(floors)}
-      guest={!signedIn}
-      // The Daily Case popup: signed-in players by their account; guests by this browser (DailyPopup).
-      tutorialCleared={signedIn ? !!floors.find((f) => f.floor === 0)?.cleared : undefined}
-      dailyClearedToday={caseDone}
-    />
+    <>
+      {/* First Floor-3 clear: Krystal's ending cutscene (Fatwallet tease) before the lobby. */}
+      <EndingRedirect floors={floors} guest={!signedIn} />
+      <Lobby
+        map={buildLobby(floors, typeof at === "string" ? at : null)}
+        floors={floors}
+        guide={lobbyGuide(floors)}
+        guest={!signedIn}
+        // The Daily Case popup: signed-in players by their account; guests by this browser (DailyPopup).
+        tutorialCleared={signedIn ? !!floors.find((f) => f.floor === 0)?.cleared : undefined}
+        dailyClearedToday={caseDone}
+      />
+    </>
   );
 }
 
