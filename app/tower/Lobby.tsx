@@ -202,10 +202,14 @@ export function Lobby({
   >
           {!consoleMode && <span className="mr-1 text-[var(--cc-accent)]">PLUMPURSE TOWER · LOBBY</span>}
           <span className="hidden h-4 w-px bg-[var(--cc-edge)] sm:block" aria-hidden />
-          <span className="flex items-center gap-2">
+          <span className="flex items-stretch gap-2">
             <DailyArchive tutorialCleared={tutorialDone} clearedToday={dailyClearedToday} />
             <StreakBadge />
-            <EarnedChip label="EARNED" className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1" />
+            {/* Same padding as the CASE / CASE FILE chips so the bar stays one height on phones. */}
+            <EarnedChip
+              label="EARNED"
+              className="inline-flex items-center border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5"
+            />
           </span>
           {/* Order: play loop → account/profile → rare meta. */}
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
