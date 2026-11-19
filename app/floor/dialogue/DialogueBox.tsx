@@ -16,6 +16,7 @@ import { blip, chime, voicePitch } from "@/app/floor/hud/sound";
 import { collectFromProp, useCollectedEvidence } from "@/app/play/evidence";
 import { DEFAULT_THEME, themeFor, themeVars, type BoxTheme } from "./themes";
 import { EvidenceDrawer, evidenceForFloor, type EvidenceItem } from "@/app/play/EvidenceDrawer";
+import type { HelperLine } from "@/shared/seasonalCase";
 
 export interface NpcInfo {
   id: EmployeeId;
@@ -180,6 +181,41 @@ function useEscape(onEscape: () => void) {
 /** A sign, memo or binder: text only, any confirm key closes it. */
 /** Krystal's notes left on each floor: her face, her colours and her (pixel) font. */
 const isKrystalNote = (id: string) => id.startsWith("krystal");
+
+/**
+ * A short scripted back-and-forth with a non-AI character (the seasonal helper): their line, typed out
+ * and spoken, then your replies; each reply leads to their next line or ends the talk.
+ */
+export function HelperDialogue({ name, lines, onClose }: { name: string; lines: HelperLine[]; onClose: () => void }) {
+  const [at, setAt] = useState(lines[0]?.id ?? "");
+  const [done, setDone] = useState(false);
+  useEscape(onClose);
+  const node = lines.find((l) => l.id === at) ?? lines[0];
+  // Their voice: one clip per line, stopped when the line changes or the talk ends.
+  useEffect(() => {
+    if (!node?.audio) return;
+    const a = new Audio(`/audio/${node.audio}`);
+    void a.play().catch(() => {});
+    return () => a.pause();
+  }, [node?.audio]);
+  if (!node) return null;
+  return (
+    <Frame name={name}>
+      <Say key={node.id} text={node.line} pitch={200} onDone={setDone} />
+      <Choices
+        active={done}
+        choices={node.choices.map((c) => ({
+          label: c.text,
+          onSelect: () => {
+            if (!c.next) return onClose();
+            setDone(false);
+            setAt(c.next);
+          },
+        }))}
+      />
+    </Frame>
+  );
+}
 
 export function PropDialogue({ id = "", label, text, onClose }: { id?: string; label: string; text: string; onClose: () => void }) {
   const [done, setDone] = useState(false);

@@ -16,7 +16,7 @@ import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 import { CoinLogo } from "@/app/play/CoinLogo";
 import { formatUsd, recordGuestEarning, refreshEarnings, useEarnings } from "./earnings";
 import { maxBountyLabel } from "./bounty";
-import { isSeasonalDate } from "@/shared/seasonalCase";
+import { SEASONS, isSeasonalDate } from "@/shared/seasonalCase";
 
 type Debrief = {
   title: string;
@@ -151,7 +151,13 @@ export function OutcomeOverlay({
           <p className="flex items-center gap-2 font-pixel text-[9px] tracking-widest">
             <CoinLogo size={16} />
             <span className="max-sm:hidden">COLD CALL · </span>
-            {daily ? `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}` : run.floor === 0 ? "TUTORIAL" : `FLOOR ${run.floor}`}
+            {daily
+              ? isSeasonalDate(run.daily_date)
+                ? `${(SEASONS.find((s) => s.caseDate === run.daily_date)?.name ?? "Seasonal").toUpperCase()} CASE`
+                : `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}`
+              : run.floor === 0
+                ? "TUTORIAL"
+                : `FLOOR ${run.floor}`}
           </p>
           <h2 id="outcome-title" className="mt-2 font-pixel text-base leading-snug sm:text-xl">
             <span className="cc-stamp">{breach ? "Vault breached" : "Locked out"}</span>

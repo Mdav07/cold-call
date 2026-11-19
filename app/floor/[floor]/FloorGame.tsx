@@ -17,7 +17,8 @@ import type { FloorMap, FloorSceneProps, SceneEvent } from "@/app/floor/types";
 import { useRunState, type RunState } from "@/app/play/useRunState";
 import { OutcomeOverlay } from "@/app/play/OutcomeOverlay";
 import { MusicToggle } from "@/app/play/MusicToggle";
-import { NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
+import { HelperDialogue, NpcDialogue, PropDialogue, type NpcInfo } from "@/app/floor/dialogue/DialogueBox";
+import type { HelperLine } from "@/shared/seasonalCase";
 import { clearSolved, gameFor, markSolved, MiniGame, useSolved } from "@/app/floor/minigames/MiniGame";
 import { Hud } from "@/app/floor/hud/Hud";
 import { CaseFileOverlay } from "@/app/floor/dialogue/CaseFileOverlay";
@@ -43,7 +44,7 @@ export function FloorGame({
   unlockedFloors,
   caseData,
   daily,
-  helperAudio,
+  helperTalks,
 }: {
   map: FloorMap;
   npcs: NpcInfo[];
@@ -61,8 +62,8 @@ export function FloorGame({
    * case file is the case's own small file. Everything else (talk, outcome, elevator) is the same.
    */
   daily?: DailyCase;
-  /** Scripted characters' spoken lines, by character id (the seasonal helper). */
-  helperAudio?: Record<string, string>;
+  /** Scripted characters' conversations, by character id (the seasonal helper). */
+  helperTalks?: Record<string, { name: string; lines: HelperLine[] }>;
 }) {
   const dailyBriefKey = daily ? `cc-briefed-daily-${daily.date}` : null;
   const router = useRouter();
@@ -239,13 +240,6 @@ export function FloorGame({
         if (scripted) {
           setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id))); // the guide moves on
           setOpen({ kind: "prop", id: scripted.id });
-          // They speak their lines too (everyone else in the game has a voice).
-          const file = helperAudio?.[e.id];
-          if (file) {
-            helperVoice.current?.pause();
-            helperVoice.current = new Audio(`/audio/${file}`);
-            void helperVoice.current.play().catch(() => {});
-          }
           return;
         }
         setFocus(e.id);
@@ -253,14 +247,8 @@ export function FloorGame({
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [askLeave, map, helperAudio],
+    [askLeave, map],
   );
-  // A scripted character's voice stops when their lines are closed.
-  const helperVoice = useRef<HTMLAudioElement | null>(null);
-  const helperOpen = open?.kind === "prop" && open.id.startsWith("helper:");
-  useEffect(() => {
-    if (!helperOpen) helperVoice.current?.pause();
-  }, [helperOpen]);
 
   // Only "talking" is a bubble. Wary (suspicion 60+) and locked out go in the name plate instead: a "?"
   // or "!" bubble floated a tile above the head, over desks and walls, and hid the name and talk hint.
@@ -367,7 +355,15 @@ export function FloorGame({
           onCancel={() => setOpen(null)}
         />
       )}
-      {prop && !playing && <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />}
+      {prop && !playing && (() => {
+        // A scripted character with a conversation talks it through; otherwise their lines read like a sign.
+        const talk = prop.id.startsWith("helper:") ? helperTalks?.[prop.id.slice("helper:".length)] : undefined;
+        return talk?.lines.length ? (
+          <HelperDialogue name={talk.name} lines={talk.lines} onClose={() => setOpen(null)} />
+        ) : (
+          <PropDialogue id={prop.id} label={prop.label} text={prop.text} onClose={() => setOpen(null)} />
+        );
+      })()}
 
       {showOutcome && state && (
         <OutcomeOverlay

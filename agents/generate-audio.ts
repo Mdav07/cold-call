@@ -44,8 +44,8 @@ const CLIPS: Clip[] = [
   { file: krystal.ending.audio, kind: "tts", voice: "krystal", text: krystal.ending.text },
   // Seasonal helpers' lines (content/seasonal/seasons.json), so the scripted second person speaks too.
   ...seasons.seasons.flatMap((s) => {
-    const h = (s as { helper?: { audio?: string; text: string } }).helper;
-    return h?.audio ? [{ file: h.audio, kind: "tts" as const, voice: "helper" as const, text: h.text }] : [];
+    const h = (s as { helper?: { dialogue?: { line: string; audio?: string }[] } }).helper;
+    return (h?.dialogue ?? []).flatMap((l) => (l.audio ? [{ file: l.audio, kind: "tts" as const, voice: "helper" as const, text: l.line }] : []));
   }),
   { file: "phone-ring.mp3", kind: "sfx", seconds: 3, prompt: "Old office desk phone ringing twice, classic electronic ring" },
   { file: "hang-up.mp3", kind: "sfx", seconds: 1, prompt: "Office telephone handset hang up click and dial tone cut" },

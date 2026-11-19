@@ -96,7 +96,71 @@
         "title": "Sous-chef",
         "sprite": "/sprites/staff-12.png",
         "text": "You with the pies? Thank goodness. Heads up: Marisol cut the order to thirty-eight last night, two tables cancelled. Say forty and she'll know you're not really from the bakery. And if you want to get on her good side, offer to carry something. She's been on her feet since five.",
-        "audio": "seasonal-dev-thanksgiving.mp3"
+        "dialogue": [
+          {
+            "id": "start",
+            "line": "You with the pies? Thank goodness. We're slammed tonight.",
+            "audio": "seasonal-dev-start.mp3",
+            "choices": [
+              {
+                "text": "Yep, Hearth & Crumb. Where's Marisol?",
+                "next": "marisol"
+              },
+              {
+                "text": "Just dropping off. How many were you expecting?",
+                "next": "count"
+              }
+            ]
+          },
+          {
+            "id": "marisol",
+            "line": "Back by the counter, counting turkeys. Fair warning: she's been burned by fake vendors twice this month.",
+            "audio": "seasonal-dev-marisol.mp3",
+            "choices": [
+              {
+                "text": "Anything I should know before I talk to her?",
+                "next": "count"
+              }
+            ]
+          },
+          {
+            "id": "count",
+            "line": "She cut the order to thirty-eight last night. Two tables cancelled. Say forty and she'll know you're not really from the bakery.",
+            "audio": "seasonal-dev-count.mp3",
+            "choices": [
+              {
+                "text": "Thirty-eight. Got it. Any way to get on her good side?",
+                "next": "tip"
+              },
+              {
+                "text": "Thanks, that's all I needed.",
+                "next": "bye"
+              }
+            ]
+          },
+          {
+            "id": "tip",
+            "line": "Offer to carry something. She's been on her feet since five. Now go, before my gravy burns!",
+            "audio": "seasonal-dev-tip.mp3",
+            "choices": [
+              {
+                "text": "Thanks, Dev.",
+                "next": null
+              }
+            ]
+          },
+          {
+            "id": "bye",
+            "line": "Good luck. And hey, offer to carry something. She's been on her feet since five.",
+            "audio": "seasonal-dev-bye.mp3",
+            "choices": [
+              {
+                "text": "Will do.",
+                "next": null
+              }
+            ]
+          }
+        ]
       }
     },
     {

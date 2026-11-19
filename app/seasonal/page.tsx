@@ -78,7 +78,7 @@ async function SeasonalRoom() {
       unlockedFloors={[0]}
       caseData={EMPTY_CASE_DATA}
       daily={c}
-      helperAudio={helper?.audio ? { [helper.id]: helper.audio } : undefined}
+      helperTalks={helper?.dialogue ? { [helper.id]: { name: `${helper.name} · ${helper.title}`, lines: helper.dialogue } } : undefined}
       vault={
         <Suspense fallback={<span className="text-[var(--cc-muted)]">VAULT …</span>}>
           <HudVault floor={0} level="seasonal" />

@@ -31,9 +31,17 @@ export interface SeasonHelper {
   name: string;
   title: string;
   sprite: string;
-  text: string;
-  /** Their lines, spoken (public/audio, made by agents/generate-audio.ts). */
+  text: string; // a one-paragraph summary (the case file, and anywhere the conversation can't run)
+  /** A short back-and-forth: their line (spoken: public/audio, agents/generate-audio.ts) and your replies. */
+  dialogue?: HelperLine[];
+}
+
+export interface HelperLine {
+  id: string;
+  line: string;
   audio?: string;
+  /** Your replies; next is the line they lead to, or null to end the conversation. */
+  choices: { text: string; next: string | null }[];
 }
 
 export const SEASONS = seasonsFile.seasons as Season[];
