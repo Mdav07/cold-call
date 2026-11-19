@@ -86,9 +86,12 @@ async function FloorGameWithUnlocks({
 }) {
   // Signed in: the account's clears. Guests: this browser's clears (cookie). The case file only gets
   // the contents of floors that are really unlocked, even on a floor reached by typing its URL.
+  // The floor you're standing on always counts (its staff are in the room with you); building the
+  // contents from the same list keeps a floor heading from showing up with no one under it, which a
+  // guest whose cleared-floors cookie hasn't been written yet used to see.
   const open = await unlockedFloorsForRequest();
-  const caseData = caseDataFor(open);
   const unlockedFloors = open.includes(map.floor) ? open : [...open, map.floor];
+  const caseData = caseDataFor(unlockedFloors);
   return (
     <FloorGame
       map={map}
