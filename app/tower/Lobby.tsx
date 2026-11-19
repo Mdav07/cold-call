@@ -168,6 +168,7 @@ export function Lobby({
             <StreakBadge />
             <EarnedChip label="EARNED" className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1" />
           </span>
+          {/* Order: play loop → account/profile → rare meta. */}
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/casefile">CASE FILE</Link>
           <Link className="border-2 border-[var(--cc-edge)] bg-[var(--cc-panel-2)] px-2 py-1 pointer-coarse:py-2.5 hover:border-[var(--cc-accent)] hover:text-[var(--cc-accent)]" href="/leaderboard">LEADERBOARD</Link>
           {/* One place for the account and the hunter: guests see SIGN IN, signed-in players PROFILE. */}

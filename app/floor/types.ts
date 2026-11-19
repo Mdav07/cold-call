@@ -45,7 +45,7 @@ export interface FloorSceneProps {
   emotes?: Partial<Record<EmployeeId, "talking" | "suspicious" | "alarm" | null>>;
   /** CSS pixels at the bottom covered by UI (the dialogue box). The camera keeps the player above it. */
   insetBottom?: number;
-  /** Where the player should go next: a faint trail of dots leads there. Null hides it. */
+  /** Where the player should go next: a faint trail of arrows leads there. Null hides it. */
   goal?: { x: number; y: number } | null;
   /** Door / guide labels (e.g. "TUTORIAL") — nameplate style, centred on the tile (or `endAt: "x"`). */
   /** Text labels on the map. `mat`: printed on a doormat (no plate, always shown). */

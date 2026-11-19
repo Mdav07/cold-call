@@ -253,7 +253,7 @@ export function FloorGame({
     return () => ro.disconnect();
   }, [boxOpen, open]);
 
-  // The guide's dots lead to the nearest employee you haven't talked to yet and who hasn't locked you
+  // The guide's arrows lead to the nearest employee you haven't talked to yet and who hasn't locked you
   // out (Floor 1: Dee, then Penny; Floor 2: Annie, then Bill), even after a breach: one employee paying
   // doesn't mean you're done meeting people. Only once everyone's been met do they point at the elevator,
   // and only if the level is done (a breach); otherwise they disappear.
