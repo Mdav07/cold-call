@@ -31,14 +31,15 @@ Screenshots of the live site, in `docs/devpost/` (desktop at 1280x800, phones at
 4. `briefing.jpg`: Floor 3 briefing with max bounty, difficulty and vault rule
 5. `minigame.jpg`: a clue behind a mini-game
 6. `casefile.jpg`: the case file
-7. `seasonal.jpg`: the Thanksgiving case, two people to convince
+7. `seasonal.jpg`: a holiday case (Thanksgiving), two people to convince
 8. `daily.jpg`: today's Daily Case
 9. `daily-themes-gallery.jpg`: the twelve Daily Case workplaces
-10. `leaderboard.jpg`: fastest breaches and top earners
-11. `profile.jpg`: hunters to earn
-12. `memory.png`: they remember you
-13. `tracks.png`: the four tracks
-14. `intro.jpg`: Krystal's opening
+10. `holiday-calendar-gallery.jpg`: the ten holiday cases and their dates
+11. `leaderboard.jpg`: fastest breaches and top earners
+12. `profile.jpg`: hunters to earn
+13. `memory.png`: they remember you
+14. `tracks.png`: the four tracks
+15. `intro.jpg`: Krystal's opening
 
 ## Built with (tags)
 
@@ -83,7 +84,7 @@ If Devpost asks for them separately:
 | --- | --- |
 | Tutorial and Daily Case | `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` |
 | Floor 1 | `0x93Af5Ca91433115629bc53E970363e377227C8c5` |
-| Floor 2 and the seasonal case | `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` |
+| Floor 2 and the holiday cases | `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` |
 | Floor 3 | `0x8c86dD235193d42bf4a751bA5138fF1286E28475` |
 
 The earlier Floor 3 vault, `0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, is retired.
