@@ -95,8 +95,8 @@ Only time on the call counts, and you can call back with less time each call. A 
 | Pink Pia | Clearing the Tutorial |
 | Aqua Ari | A 3-day Daily Case streak |
 | Lime Leo | A 7-day Daily Case streak |
-| Slate Sora | Clearing all three floors |
 | Silver Sol | A 30-day Daily Case streak |
+| Slate Sora | Clearing all three floors |
 | Turkey Theo | Clearing the Thanksgiving case |
 | Holly Hal | Clearing the winter holidays case |
 
