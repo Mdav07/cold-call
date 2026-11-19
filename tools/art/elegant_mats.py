@@ -1,8 +1,8 @@
-"""Lobby elevator mats, one per elevator (Tutorial, Floors 1–3, Daily): a small runner with a dark edge,
-a gold frame with corner studs and a gold diamond in the middle, laid over the lobby carpet. The engine
-puts each elevator's name on its door, so the mats carry no letters.
+"""Lobby mats (Tutorial, Floors 1–3, Daily, Case 2): a small runner with a dark edge, a gold frame with
+corner studs and a gold diamond in the middle, laid over the lobby carpet. The engine puts each
+door's name on its mat as text, so the tiles carry no letters.
 
-Redraws mat_tutorial, mat_daily and mat_1..3 in place (same indexes; nothing moves).
+Redraws mat_tutorial, mat_daily, mat_1..3 and mat_case2 in place (same indexes when they already exist).
 
     python3 -I tools/art/elegant_mats.py public/tiles/plumpurse.png app/floor/maps/tiles.json
 """
@@ -66,7 +66,16 @@ def main() -> None:
     teal: Color = (26, 92, 98, 255)
     navy: Color = (30, 44, 86, 255)
     plum: Color = (76, 38, 96, 255)
-    for name, field in [("mat_tutorial", teal), ("mat_1", navy), ("mat_2", navy), ("mat_3", navy), ("mat_daily", plum)]:
+    # Case 2 (Fatwallet tease): dark charcoal-ink, still gold-framed like the others.
+    charcoal: Color = (28, 32, 42, 255)
+    for name, field in [
+        ("mat_tutorial", teal),
+        ("mat_1", navy),
+        ("mat_2", navy),
+        ("mat_3", navy),
+        ("mat_daily", plum),
+        ("mat_case2", charcoal),
+    ]:
         sheet = append_or_replace(sheet, catalog, name, mat(floor_tile, field), "walk")
 
     sheet.save(sheet_path)

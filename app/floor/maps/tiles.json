@@ -697,6 +697,10 @@
     "garland_harvest": {
       "index": 173,
       "kind": "decor"
+    },
+    "mat_case2": {
+      "index": 174,
+      "kind": "walk"
     }
   }
 }

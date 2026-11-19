@@ -16,8 +16,8 @@ const T = {
   counter: 32, counterPapers: 33, counterFiles: 35, plant: 30, plantSmall: 31,
   painting: 49, bookshelf: 39, water: 40,
   chairDown: 24, tableRound: 23, chairLeft: 26, chairRight: 27, candelabra: 52,
-  // Elevator mats: gold-framed runners (tools/art/elegant_mats.py).
-  matTutorial: 61, matDaily: 62, mat1: 63, mat2: 64, mat3: 65,
+  // Elevator / door mats: gold-framed runners (tools/art/elegant_mats.py).
+  matTutorial: 61, matDaily: 62, mat1: 63, mat2: 64, mat3: 65, matCase2: 174,
   // Front doors (tools/art/lobby_doors.py).
   doorGlass: 158, doorWood: 159,
   // The seasonal door and its mat (tools/art/harvest_tiles.py).
@@ -241,7 +241,7 @@ export function buildLobby(
   if (opts?.case2Door) {
     walls[at(CASE2_X, CASE2_Y)] = -1;
     ground[at(CASE2_X, CASE2_Y)] = T.doorWood;
-    ground[at(CASE2_X - 1, CASE2_Y)] = T.matDaily;
+    ground[at(CASE2_X - 1, CASE2_Y)] = T.matCase2;
     // Clear any furniture that would sit on the mat.
     decor[at(CASE2_X - 1, CASE2_Y)] = -1;
     const matIdx = at(CASE2_X - 1, CASE2_Y);
