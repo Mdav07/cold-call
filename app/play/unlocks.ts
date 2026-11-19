@@ -31,7 +31,6 @@ export const UNLOCKS: Unlock[] = [
   { sprite: "hunter-6", label: "Pink Pia", how: "Clear the Tutorial", earned: (p) => p.clearedFloors.includes(0) },
   { sprite: "hunter-1", label: "Aqua Ari", how: "3-day Daily streak", streakDays: 3, earned: (p) => p.bestStreak >= 3 },
   { sprite: "hunter-5", label: "Lime Leo", how: "7-day Daily streak", streakDays: 7, earned: (p) => p.bestStreak >= 7 },
-  { sprite: "hunter-8", label: "Teal Tiana", how: "10-day Daily streak", streakDays: 10, earned: (p) => p.bestStreak >= 10 },
   { sprite: "hunter-9", label: "Slate Sora", how: "Clear all three floors", earned: (p) => [1, 2, 3].every((f) => p.clearedFloors.includes(f)) },
   { sprite: "hunter-10", label: "Silver Sol", how: "30-day Daily streak", streakDays: 30, earned: (p) => p.bestStreak >= 30 },
   // Seasonal cases: each holiday's case unlocks its own look.

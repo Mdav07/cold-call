@@ -84,18 +84,21 @@ Only time on the call counts, and you can call back with less time each call. A 
 
 **The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. Clearing it on consecutive days builds a streak, shown as a flame badge.
 
-**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, and 10 cents on the Daily Case. On chain each breach pays a 1¢ testnet token. The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest Daily streaks.
+**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on the seasonal case. The vault pays it in testnet USDC (a 1¢ token on repeat clears). The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest Daily streaks.
 
-**Hunters.** Four looks are free: Red Renata, Gold Gideon, Violet Vida and Green Glen. Six more are earned:
+**The seasonal case.** A holiday case behind its own lobby door, separate from the Daily, open for a few weeks each season (Thanksgiving first, then the winter holidays). It's a bit harder than the Daily for a bigger bounty: a warier employee, plus a second person, voiced, who holds a detail you need.
+
+**Hunters.** Five looks are free: Red Renata, Gold Gideon, Violet Vida, Green Glen and Teal Tiana. Seven more are earned:
 
 | Hunter | Unlocked by |
 | --- | --- |
 | Pink Pia | Clearing the Tutorial |
 | Aqua Ari | A 3-day Daily Case streak |
 | Lime Leo | A 7-day Daily Case streak |
-| Teal Tiana | A 10-day Daily Case streak |
 | Slate Sora | Clearing all three floors |
 | Silver Sol | A 30-day Daily Case streak |
+| Turkey Theo | Clearing the Thanksgiving case |
+| Holly Hal | Clearing the winter holidays case |
 
 > [!TIP]
 > Read the case file first, and never mention prompts or AI on a call. That reads as a scam (+40 suspicion).
