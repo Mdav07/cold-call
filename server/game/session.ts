@@ -372,10 +372,12 @@ function helperVariables(date: string): Record<string, string> {
     helper_personality: helper.personality,
     helper_soft_spot: helper.softSpot,
     helper_check: helper.check,
+    helper_first_message: helper.firstMessage,
     // Shared case facts (same keys as daily.md / helper.md).
     daily_first_name: c.employee.firstName,
     daily_title: c.employee.title,
     daily_business: c.business,
+    daily_place: c.place,
     daily_float: c.float,
     daily_cap: `${Math.round(c.capUsdc * 100)} cents`,
     daily_vendors: c.vendors.map((v) => `${v.name} (${v.what}, invoices ${v.code.split("-")[0]}-)`).join("; "),
