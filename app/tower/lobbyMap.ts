@@ -32,6 +32,9 @@ export const TUTORIAL_X = 6; // glass street door: across the street to the litt
 export const SEASONAL_X = 9; // the holiday door (Thanksgiving first): shared/seasonalCase.ts
 export const DAILY_X = 12; // mahogany door: the Daily Case (open once the Tutorial is cleared)
 export const DOOR_Y = H - 1;
+/** Case 2 (Fatwallet Federal) tease door on the right wall — only after Floor 3 + ending. */
+export const CASE2_X = W - 1;
+export const CASE2_Y = 8;
 const MID_X = 9;
 
 const clock = (ms: number) => {
@@ -69,11 +72,12 @@ export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean
  * @param opts.seasonalDecor Theme on: harvest dressing (pumpkins, hay, garland) while that season is open.
  * Theme off: plain plants — the seasonal door and mat stay either way. Server default is true so SSR
  * matches a Theme-on first paint; Lobby rebuilds from the preference.
+ * @param opts.case2Door Right-wall Fatwallet Federal tease: only after Floor 3 clear + ending seen.
  */
 export function buildLobby(
   floors: TowerFloor[],
   entrance?: string | null,
-  opts?: { seasonalDecor?: boolean },
+  opts?: { seasonalDecor?: boolean; case2Door?: boolean },
 ): FloorMap {
   const seasonalDecor = opts?.seasonalDecor ?? true;
   const ground = Array<number>(W * H).fill(-1);
@@ -233,6 +237,25 @@ export function buildLobby(
     text: top ? `${top}. Full board at /leaderboard.` : "No breaches yet. Be the first.",
   });
 
+  // Case 2 tease door (right wall): visible only after Floor 3 + ending. Not enterable yet.
+  if (opts?.case2Door) {
+    walls[at(CASE2_X, CASE2_Y)] = -1;
+    ground[at(CASE2_X, CASE2_Y)] = T.doorWood;
+    ground[at(CASE2_X - 1, CASE2_Y)] = T.matDaily;
+    // Clear any furniture that would sit on the mat.
+    decor[at(CASE2_X - 1, CASE2_Y)] = -1;
+    const matIdx = at(CASE2_X - 1, CASE2_Y);
+    for (let i = blocked.length - 1; i >= 0; i--) if (blocked[i] === matIdx) blocked.splice(i, 1);
+    exits.push({ x: CASE2_X, y: CASE2_Y, to: "/case2" });
+    props.push({
+      id: "case2-sign",
+      x: CASE2_X - 1,
+      y: CASE2_Y,
+      label: "Case 2 · Fatwallet Federal · COMING SOON",
+      text: "Krystal's trail points here next — Fatwallet Federal. Case 2 isn't open yet. Daily and seasonal jobs are still open while you wait.",
+    });
+  }
+
   return {
     floor: 0,
     name: "Lobby · Plumpurse Tower",
@@ -252,8 +275,8 @@ export function buildLobby(
 export { H as LOBBY_H, W as LOBBY_W };
 
 /** Each way out's name, printed on its mat (boxed, under the characters). LOCKED plates go on the doors. */
-export function lobbyMatNames(): { x: number; y: number; text: string; mat: true; fit: number }[] {
-  return [
+export function lobbyMatNames(opts?: { case2Door?: boolean }): { x: number; y: number; text: string; mat: true; fit: number }[] {
+  const mats: { x: number; y: number; text: string; mat: true; fit: number }[] = [
     ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: `FLOOR ${n}`, mat: true as const, fit: 2.8 })),
     { x: TUTORIAL_X, y: DOOR_Y - 1, text: "TUTORIAL", mat: true, fit: 3.6 },
     {
@@ -265,6 +288,8 @@ export function lobbyMatNames(): { x: number; y: number; text: string; mat: true
     },
     { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
   ];
+  if (opts?.case2Door) mats.push({ x: CASE2_X - 1, y: CASE2_Y, text: "CASE 2", mat: true, fit: 3.6 });
+  return mats;
 }
 
 /** @deprecated Prefer lobbyMatNames(). */

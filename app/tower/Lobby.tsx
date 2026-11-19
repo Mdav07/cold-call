@@ -14,7 +14,7 @@ import { useSeasonTheme } from "@/app/play/seasonTheme";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, DOOR_Y, ELEVATORS, LOBBY_W, buildLobby, elevatorSign, lobbyMatNames, SEASONAL_X } from "./lobbyMap";
+import { CASE2_X, CASE2_Y, DAILY_X, DOOR_Y, ELEVATORS, LOBBY_W, buildLobby, elevatorSign, lobbyMatNames, SEASONAL_X } from "./lobbyMap";
 import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
@@ -53,6 +53,8 @@ export function Lobby({
   // silently doing nothing. Every other exit asks to confirm first (ExitConfirm).
   const [dailyLocked, setDailyLocked] = useState(false);
   const [seasonNote, setSeasonNote] = useState(false);
+  const [case2Note, setCase2Note] = useState(false);
+  const [endingSeen, setEndingSeen] = useState(false);
   const tutorialDoneRef = useRef(false);
   const pendingRef = useLatest(pending);
   const onEvent = useCallback((e: SceneEvent) => {
@@ -66,6 +68,11 @@ export function Lobby({
       // when the next one opens.
       if (e.to === "/seasonal" && (!tutorialDoneRef.current || !currentSeason())) {
         setSeasonNote(true);
+        return;
+      }
+      // Case 2 door: tease only — Fatwallet Federal isn't built yet.
+      if (e.to === "/case2") {
+        setCase2Note(true);
         return;
       }
       setPending(e.to);
@@ -94,6 +101,11 @@ export function Lobby({
       if (!localStorage.getItem("cc-intro-seen")) router.replace("/intro");
     } catch {}
   }, [router]);
+  useEffect(() => {
+    try {
+      setEndingSeen(localStorage.getItem("cc-ending-seen") === "1");
+    } catch {}
+  }, []);
 
   // Guests: lock each elevator whose floor below this browser hasn't cleared, and point at the next
   // floor to play (the tutorial door first). Daily opens after tutorial — account clear OR this browser.
@@ -103,12 +115,15 @@ export function Lobby({
   // made earlier as a guest in this browser doesn't count, or the door would open onto a locked page).
   // Guests: this browser's clear.
   const tutorialDone = tutorialCleared !== undefined ? tutorialCleared : !!cleared[0];
+  // Case 2 door: Floor 3 cleared (account or this browser) and the ending cutscene already played.
+  const floor3Done = guest ? !!cleared[3] : !!floors.find((f) => f.floor === 3)?.cleared;
+  const showCase2 = endingSeen && floor3Done;
   useEffect(() => {
     tutorialDoneRef.current = tutorialDone;
   }, [tutorialDone]);
   // Theme off → drop harvest décor/leaves, but keep the Thanksgiving door + mat.
   const map = useMemo(() => {
-    const base = buildLobby(floors, null, { seasonalDecor: seasonThemeOn });
+    const base = buildLobby(floors, null, { seasonalDecor: seasonThemeOn, case2Door: showCase2 });
     base.spawn = serverMap.spawn;
     // Elevator mats (y=2): never block — stand/read even when locked; gating is exit-only.
     const elevMats = new Set(Object.values(ELEVATORS).map((x) => x + 2 * LOBBY_W));
@@ -138,7 +153,7 @@ export function Lobby({
     if (guest) {
       // Drop locked-floor exits; keep mats walkable so guests can still read the sparkles.
       exits = exits.filter((e) => {
-        if (e.to === "/daily" || e.to === "/seasonal") return true;
+        if (e.to === "/daily" || e.to === "/seasonal" || e.to === "/case2") return true;
         if (!e.to.startsWith("/floor/")) return true;
         const n = Number(e.to.split("/").pop());
         return openForGuest(cleared, n);
@@ -147,7 +162,7 @@ export function Lobby({
 
     return { ...base, exits, blocked, props };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverMap, floors, guest, key, tutorialDone, seasonThemeOn]);
+  }, [serverMap, floors, guest, key, tutorialDone, seasonThemeOn, showCase2]);
   const shown = useMemo(() => {
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
@@ -165,8 +180,9 @@ export function Lobby({
     // Seasonal door stays with Theme off; still LOCKED until tutorial / CLOSED out of season.
     if (!tutorialDone || !currentSeason())
       locked.push({ x: SEASONAL_X, y: DOOR_Y, text: currentSeason() ? "LOCKED" : "CLOSED", always: true, fit: 2.8 });
-    return [...lobbyMatNames(), ...shown.tags, ...locked];
-  }, [shown.tags, map, tutorialDone]);
+    if (showCase2) locked.push({ x: CASE2_X, y: CASE2_Y, text: "SOON", always: true, fit: 2.8 });
+    return [...lobbyMatNames({ case2Door: showCase2 }), ...shown.tags, ...locked];
+  }, [shown.tags, map, tutorialDone, showCase2]);
 
   const open = map.props?.find((p) => p.id === prop);
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.
@@ -199,7 +215,7 @@ export function Lobby({
   return (
     <main className="cc-floor-1 relative flex h-dvh flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1">
-        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked || seasonNote} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
+        <FloorScene map={map} playerSprite={PLAYER_SPRITE} paused={!!open || !!leaving || !!pending || dailyLocked || seasonNote || case2Note} onEvent={onEvent} goal={shown.goal} tags={tags} deck={consoleMode ? nav : undefined} />
         {seasonThemeOn && currentSeason()?.door === "harvest" && <FallingLeaves />}
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />
@@ -226,6 +242,13 @@ export function Lobby({
                 : "No holiday case right now."
           }
           onClose={() => setSeasonNote(false)}
+        />
+      )}
+      {case2Note && (
+        <PropDialogue
+          label="Case 2 · Fatwallet Federal · coming soon"
+          text="Krystal's trail leads to Fatwallet Federal next — but Case 2 isn't open yet. Come back when it is. Daily and seasonal jobs are still open while you wait."
+          onClose={() => setCase2Note(false)}
         />
       )}
       {pending && (

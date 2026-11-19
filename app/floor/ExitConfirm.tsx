@@ -10,6 +10,7 @@ export function exitLabel(to: string): string {
   if (to === "/tower") return "Leave for the lobby?";
   if (to === "/daily") return "Enter today's Daily Case?";
   if (to === "/seasonal") return `Step through the holiday door? ${currentSeason()?.name ?? "Seasonal"} case.`;
+  if (to === "/case2") return "Case 2: Fatwallet Federal — coming soon.";
   if (to === "/floor/0") return "Cross the street to the Tutorial?";
   const n = to.replace("/floor/", "");
   if (/^\d+$/.test(n)) return `Take the elevator to Floor ${n}?`;
