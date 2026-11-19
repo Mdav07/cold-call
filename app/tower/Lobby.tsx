@@ -14,7 +14,7 @@ import { useSeasonTheme } from "@/app/play/seasonTheme";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, DOOR_Y, ELEVATORS, MAT_NAMES, LOBBY_W, elevatorSign, SEASONAL_X } from "./lobbyMap";
+import { DAILY_X, DOOR_Y, ELEVATORS, LOBBY_W, buildLobby, elevatorSign, lobbyMatNames, SEASONAL_X } from "./lobbyMap";
 import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
@@ -88,7 +88,7 @@ export function Lobby({
     setLeaving(null);
   }, [router, leavingRef]);
 
-  // First visit: Krystal's intro and the character pick come first (/intro sets cc-intro-seen).
+  // First visit: Krystal's intro, sign-in, then hunter pick if needed (/intro sets cc-intro-seen).
   useEffect(() => {
     try {
       if (!localStorage.getItem("cc-intro-seen")) router.replace("/intro");
@@ -106,16 +106,19 @@ export function Lobby({
   useEffect(() => {
     tutorialDoneRef.current = tutorialDone;
   }, [tutorialDone]);
+  // Theme off → original lobby (Tutorial + Daily only). Rebuild so harvest door/decor leave with the leaves.
   const map = useMemo(() => {
+    const base = buildLobby(floors, null, { seasonalDecor: seasonThemeOn });
+    base.spawn = serverMap.spawn;
     // Elevator mats (y=2): never block — stand/read even when locked; gating is exit-only.
     const elevMats = new Set(Object.values(ELEVATORS).map((x) => x + 2 * LOBBY_W));
-    let exits = [...(serverMap.exits ?? [])];
-    const blocked = (serverMap.blocked ?? []).filter((i) => !elevMats.has(i));
+    let exits = [...(base.exits ?? [])];
+    const blocked = (base.blocked ?? []).filter((i) => !elevMats.has(i));
 
     // The Daily door is an exit whatever your progress: until the Tutorial is cleared, walking into it
     // says it's locked (onEvent), and a LOCKED plate sits on the door.
     if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: DOOR_Y, to: "/daily" });
-    const props = (serverMap.props ?? []).map((pr) => {
+    const props = (base.props ?? []).map((pr) => {
       // Guests: each elevator sign follows this browser's clears, not the shared demo player's.
       const n = Number(pr.id.match(/^sign-([123])$/)?.[1]);
       if (n && guest) return { ...pr, ...elevatorSign(floors.find((f) => f.floor === n), n, openForGuest(cleared, n), !!cleared[n]) };
@@ -142,9 +145,9 @@ export function Lobby({
       });
     }
 
-    return { ...serverMap, exits, blocked, props };
+    return { ...base, exits, blocked, props };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverMap, floors, guest, key, tutorialDone]);
+  }, [serverMap, floors, guest, key, tutorialDone, seasonThemeOn]);
   const shown = useMemo(() => {
     if (!guest) return guide;
     const next = [0, 1, 2, 3].find((n) => openForGuest(cleared, n) && !cleared[n]);
@@ -159,9 +162,10 @@ export function Lobby({
     for (const [k, x] of Object.entries(ELEVATORS))
       if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 1, text: "LOCKED", always: true, fit: 2.8 });
     if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y, text: "LOCKED", always: true, fit: 2.8 });
-    if (!tutorialDone || !currentSeason()) locked.push({ x: SEASONAL_X, y: DOOR_Y, text: currentSeason() ? "LOCKED" : "CLOSED", always: true, fit: 2.8 });
-    return [...MAT_NAMES, ...shown.tags, ...locked];
-  }, [shown.tags, map, tutorialDone]);
+    if (seasonThemeOn && (!tutorialDone || !currentSeason()))
+      locked.push({ x: SEASONAL_X, y: DOOR_Y, text: currentSeason() ? "LOCKED" : "CLOSED", always: true, fit: 2.8 });
+    return [...lobbyMatNames(seasonThemeOn), ...shown.tags, ...locked];
+  }, [shown.tags, map, tutorialDone, seasonThemeOn]);
 
   const open = map.props?.find((p) => p.id === prop);
   // Phones held upright: the handheld-console layout, with the lobby's bar docked on the deck.

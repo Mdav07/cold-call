@@ -65,7 +65,17 @@ export function elevatorSign(f: TowerFloor | undefined, n: number, open: boolean
   };
 }
 
-export function buildLobby(floors: TowerFloor[], entrance?: string | null): FloorMap {
+/**
+ * @param opts.seasonalDecor Theme on: holiday door + harvest dressing (when that season is open).
+ * Theme off / omitted false: the original lobby — Tutorial + Daily only, no seasonal door or décor.
+ * Server default is true so SSR matches a Theme-on first paint; Lobby rebuilds from the preference.
+ */
+export function buildLobby(
+  floors: TowerFloor[],
+  entrance?: string | null,
+  opts?: { seasonalDecor?: boolean },
+): FloorMap {
+  const seasonalDecor = opts?.seasonalDecor ?? true;
   const ground = Array<number>(W * H).fill(-1);
   const walls = Array<number>(W * H).fill(-1);
   const decor = Array<number>(W * H).fill(-1);
@@ -90,8 +100,13 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     ground[at(x, 0)] = T.floor;
     ground[at(x, 2)] = mat;
   }
-  // Front wall: the two doors are openings in it; stepping onto the door is the exit. A mat just inside each.
-  for (const [x, door, mat] of [[TUTORIAL_X, T.doorGlass, T.matTutorial], [SEASONAL_X, T.doorHarvest, T.matHarvest], [DAILY_X, T.doorWood, T.matDaily]] as const) {
+  // Front wall: Tutorial + Daily always; seasonal door only when Theme is on.
+  const frontDoors: [number, number, number][] = [
+    [TUTORIAL_X, T.doorGlass, T.matTutorial],
+    [DAILY_X, T.doorWood, T.matDaily],
+  ];
+  if (seasonalDecor) frontDoors.splice(1, 0, [SEASONAL_X, T.doorHarvest, T.matHarvest]);
+  for (const [x, door, mat] of frontDoors) {
     walls[at(x, DOOR_Y)] = -1;
     ground[at(x, DOOR_Y)] = door;
     ground[at(x, DOOR_Y - 1)] = mat;
@@ -112,9 +127,8 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
   for (const x of [1, 17]) put(x, 1, T.candelabra, false);
   // Benches for visitors along the side walls, and plants by the desk.
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
-  // In the Thanksgiving season the lobby dresses up: pumpkins by the desk, hay bales by the doors, and a
-  // leaf garland along the back wall (below). Otherwise the usual plants.
-  const harvest = currentSeason()?.door === "harvest";
+  // Theme on + harvest season: pumpkins, hay, garland. Theme off: the usual plants (original lobby).
+  const harvest = seasonalDecor && currentSeason()?.door === "harvest";
   put(6, 6, harvest ? T.pumpkins : T.plantSmall);
   put(12, 6, harvest ? T.pumpkins : T.plantSmall);
   put(14, 11, harvest ? T.haybale : T.plant);
@@ -151,28 +165,30 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
     label: `Daily Case · ${today.title}`,
     text: `A new case every day, the same for everyone. Today: ${today.employee.name}, ${today.employee.title.toLowerCase()} at ${today.place}. Max bounty ${maxBountyLabel(4)}. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
   });
-  // The seasonal door: what's on now and when it closes, or when the next one opens.
-  const season = currentSeason();
-  const coming = nextSeason();
-  const comingLine = coming ? ` Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "";
-  exits.push({ x: SEASONAL_X, y: DOOR_Y, to: "/seasonal" });
-  props.push(
-    season
-      ? {
-          id: "seasonal-sign",
-          x: SEASONAL_X,
-          y: DOOR_Y - 1,
-          label: `${season.name} case · open until ${shortDate(season.closes)}`,
-          text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
-        }
-      : {
-          id: "seasonal-sign",
-          x: SEASONAL_X,
-          y: DOOR_Y - 1,
-          label: "Seasonal case · closed",
-          text: coming ? `A holiday case opens here each season. Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "A holiday case opens here each season.",
-        },
-  );
+  // Seasonal door + sign only with Theme on (original lobby has Tutorial + Daily only).
+  if (seasonalDecor) {
+    const season = currentSeason();
+    const coming = nextSeason();
+    const comingLine = coming ? ` Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "";
+    exits.push({ x: SEASONAL_X, y: DOOR_Y, to: "/seasonal" });
+    props.push(
+      season
+        ? {
+            id: "seasonal-sign",
+            x: SEASONAL_X,
+            y: DOOR_Y - 1,
+            label: `${season.name} case · open until ${shortDate(season.closes)}`,
+            text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+          }
+        : {
+            id: "seasonal-sign",
+            x: SEASONAL_X,
+            y: DOOR_Y - 1,
+            label: "Seasonal case · closed",
+            text: coming ? `A holiday case opens here each season. Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "A holiday case opens here each season.",
+          },
+    );
+  }
   props.push({
     id: "street-sign",
     x: TUTORIAL_X,
@@ -224,12 +240,25 @@ export function buildLobby(floors: TowerFloor[], entrance?: string | null): Floo
 export { H as LOBBY_H, W as LOBBY_W };
 
 /** Each way out's name, printed on its mat (boxed, under the characters). LOCKED plates go on the doors. */
-export const MAT_NAMES: { x: number; y: number; text: string; mat: true; fit: number }[] = [
-  ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: `FLOOR ${n}`, mat: true as const, fit: 2.8 })),
-  { x: TUTORIAL_X, y: DOOR_Y - 1, text: "TUTORIAL", mat: true, fit: 3.6 },
-  { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
-  { x: SEASONAL_X, y: DOOR_Y - 1, text: (currentSeason()?.name ?? "SEASONAL").toUpperCase(), mat: true, fit: 3.6 },
-];
+export function lobbyMatNames(seasonalDecor = true): { x: number; y: number; text: string; mat: true; fit: number }[] {
+  const mats: { x: number; y: number; text: string; mat: true; fit: number }[] = [
+    ...Object.entries(ELEVATORS).map(([n, x]) => ({ x, y: 2, text: `FLOOR ${n}`, mat: true as const, fit: 2.8 })),
+    { x: TUTORIAL_X, y: DOOR_Y - 1, text: "TUTORIAL", mat: true, fit: 3.6 },
+    { x: DAILY_X, y: DOOR_Y - 1, text: "DAILY", mat: true, fit: 3.6 },
+  ];
+  if (seasonalDecor)
+    mats.splice(mats.length - 1, 0, {
+      x: SEASONAL_X,
+      y: DOOR_Y - 1,
+      text: (currentSeason()?.name ?? "SEASONAL").toUpperCase(),
+      mat: true,
+      fit: 3.6,
+    });
+  return mats;
+}
+
+/** @deprecated Prefer lobbyMatNames(seasonalDecor) so Theme off matches the original lobby. */
+export const MAT_NAMES = lobbyMatNames(true);
 
 /** Where a player should head next from the lobby: the next elevator to ride. */
 export function lobbyGuide(floors: TowerFloor[]): {
