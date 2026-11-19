@@ -12,7 +12,7 @@ import { MusicToggle } from "@/app/play/MusicToggle";
 import { Elevator } from "@/app/floor/[floor]/Elevator";
 import { ExitConfirm } from "@/app/floor/ExitConfirm";
 import { openForGuest, useClearedHere } from "@/app/floor/guestProgress";
-import { DAILY_X, DOOR_Y, ELEVATORS, ELEVATOR_NAMES, LOBBY_W, elevatorSign } from "./lobbyMap";
+import { DAILY_X, DOOR_Y, ELEVATORS, MAT_NAMES, LOBBY_W, elevatorSign } from "./lobbyMap";
 import type { TowerFloor } from "@/server/game/tower";
 import { DailyPopup } from "./DailyPopup";
 import { DailyArchive } from "./DailyArchive";
@@ -98,7 +98,7 @@ export function Lobby({
     const blocked = (serverMap.blocked ?? []).filter((i) => !elevMats.has(i));
 
     // The Daily door is an exit whatever your progress: until the Tutorial is cleared, walking into it
-    // says it's locked (onEvent), and a LOCKED plate sits just inside it.
+    // says it's locked (onEvent), and a LOCKED plate sits on the door.
     if (!exits.some((e) => e.to === "/daily")) exits.push({ x: DAILY_X, y: DOOR_Y, to: "/daily" });
     const props = (serverMap.props ?? []).map((pr) => {
       // Guests: each elevator sign follows this browser's clears, not the shared demo player's.
@@ -140,9 +140,9 @@ export function Lobby({
   const tags = useMemo(() => {
     const locked: { x: number; y: number; text: string; always: true; fit: number }[] = [];
     for (const [k, x] of Object.entries(ELEVATORS))
-      if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 2, text: "LOCKED", always: true, fit: 2.8 });
-    if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y - 1.5, text: "LOCKED", always: true, fit: 2.8 });
-    return [...ELEVATOR_NAMES, ...shown.tags, ...locked];
+      if (!map.exits?.some((e) => e.to === `/floor/${k}`)) locked.push({ x, y: 1, text: "LOCKED", always: true, fit: 2.8 });
+    if (!tutorialDone) locked.push({ x: DAILY_X, y: DOOR_Y, text: "LOCKED", always: true, fit: 2.8 });
+    return [...MAT_NAMES, ...shown.tags, ...locked];
   }, [shown.tags, map, tutorialDone]);
 
   const open = map.props?.find((p) => p.id === prop);

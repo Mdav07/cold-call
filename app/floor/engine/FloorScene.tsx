@@ -571,10 +571,27 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         c.fillStyle = "#f2efe6";
         c.fillText(text, tx, ty);
       };
-      // Doormat words are printed on the floor: drawn before the characters, so whoever stands on a mat
-      // covers its word instead of the word floating over them.
+      // A tag's text size and padding scale. `fit`: the plate stays within that many tiles, its text
+      // shrinking when the room is drawn small (the lobby's names on a phone), down to 60% of the usual size.
+      const tagFont = (t: { text: string; fit?: number }) => {
+        let size = 5 * u, pad = 1;
+        c.font = `${size}px ${pixelFont}, monospace`;
+        if (t.fit) {
+          const room = t.fit * TILE, need = c.measureText(t.text).width + 8 * u;
+          if (need > room) {
+            pad = Math.max(0.6, room / need);
+            size *= pad;
+          }
+        }
+        return { size, pad };
+      };
+
+      // Mat words are printed on the floor: drawn before the characters, so whoever stands on a mat
+      // covers its word instead of the word floating over them. Same boxed plate as the other labels.
       for (const t of tagsRef.current ?? []) {
-        if (t.mat) plate(t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 0, 0, { box: false, clamp: false });
+        if (!t.mat) continue;
+        const { size, pad } = tagFont(t);
+        plate(t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u * pad, 2.5 * u * pad, { clamp: false, size });
       }
 
       // Characters, back to front.
@@ -690,19 +707,8 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
           if (!always && dist > 3) continue;
           const a = always || reduceMotion ? 1 : Math.min(1, (4 - dist) / 2);
           c.globalAlpha = a;
-          // `fit`: the plate stays within that many tiles, its text shrinking when the room is drawn small
-          // (the lobby's five elevator names on a phone), down to 60% of the usual size.
-          let size = 5 * u, pad = 1;
+          const { size, pad } = tagFont(t);
           c.font = `${size}px ${pixelFont}, monospace`;
-          if (t.fit) {
-            const room = t.fit * TILE, need = c.measureText(t.text).width + 8 * u;
-            if (need > room) {
-              const k = Math.max(0.6, room / need);
-              size *= k;
-              pad = k;
-              c.font = `${size}px ${pixelFont}, monospace`;
-            }
-          }
           const wdt = c.measureText(t.text).width + 8 * u * pad;
           plate(t.endAt === "x" ? t.x * TILE - wdt / 2 - 2 : t.x * TILE + TILE / 2, t.y * TILE + TILE / 2, t.text, 4 * u * pad, 2.5 * u * pad, { clamp: false, size });
           c.globalAlpha = 1;
