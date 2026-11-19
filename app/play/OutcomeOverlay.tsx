@@ -16,6 +16,7 @@ import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 import { CoinLogo } from "@/app/play/CoinLogo";
 import { formatUsd, recordGuestEarning, refreshEarnings, useEarnings } from "./earnings";
 import { maxBountyLabel } from "./bounty";
+import { isSeasonalDate } from "@/shared/seasonalCase";
 
 type Debrief = {
   title: string;
@@ -66,6 +67,7 @@ function krystalLine(state: RunState, employeeName: string, debrief: Debrief | u
   if (run.floor === DAILY_FLOOR) {
     if (!breach) return `${employeeName} hung up on you. Read the notes again: one of them is the line you can't cross.`;
     if (run.practice) return "Good practice. Today's case is the one that counts.";
+    if (isSeasonalDate(run.daily_date)) return "Happy Thanksgiving, kid. Save me a slice of pie.";
     return "Clean work. A new case opens at midnight UTC. Don't break the streak.";
   }
   if (breach) return debrief?.real_world ?? `${employeeName} paid. Nicely done.`;
@@ -164,7 +166,7 @@ export function OutcomeOverlay({
                 <p className={`mt-1 font-pixel text-lg ${guest ? "text-[var(--cc-muted)] line-through" : "text-[var(--cc-ok)]"}`}>
                   {paid != null ? <CountUp to={paid} /> : "…"}
                 </p>
-                <p className="mt-1 text-xs text-[var(--cc-muted)]">of {maxBountyLabel(run.floor)} max</p>
+                <p className="mt-1 text-xs text-[var(--cc-muted)]">of {maxBountyLabel(isSeasonalDate(run.daily_date) ? "seasonal" : run.floor)} max</p>
               </div>
             )}
             {breach && earned && paid != null && (
@@ -190,7 +192,7 @@ export function OutcomeOverlay({
         )}
 
         {/* The streak badge knows guests (this browser) from signed-in players (their account). */}
-        {daily && !run.practice && <StreakBadge variant="full" />}
+        {daily && !run.practice && !isSeasonalDate(run.daily_date) && <StreakBadge variant="full" />}
 
         <div className="flex items-start gap-3">
           {Face && (

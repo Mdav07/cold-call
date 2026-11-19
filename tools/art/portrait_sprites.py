@@ -114,7 +114,8 @@ def head_from_portrait(im32: Image.Image):
 # Hunters: no portrait, so a head drawn in the same halved style. hair: short | long | curly | bun | slick | messy
 # Hunters: no portrait, so heads drawn in the same halved style. Eight player looks spanning skin tones
 # (light to deep) and gender presentations, plus two streak rewards (hunter-1, hunter-5).
-# hair: short | long | curly | bun | slick | messy | buzz | afro | braids | hijab; extras: beard, glasses, dress.
+# hair: short | long | curly | bun | slick | messy | buzz | afro | braids | hijab; extras: beard, glasses, dress,
+# hat (turkey | santa: the seasonal-case hunters).
 HUNTERS = {
     "hunter-1": dict(skin=(240, 200, 168), hair="short", hair_c=(150, 90, 50), outfit=(48, 160, 160)),
     "hunter-2": dict(skin=(226, 176, 132), hair="long", hair_c=(40, 32, 36), outfit=(196, 70, 70), dress=True),
@@ -126,6 +127,9 @@ HUNTERS = {
     "hunter-8": dict(skin=(110, 70, 46), hair="braids", hair_c=(30, 24, 28), outfit=(40, 140, 150), dress=True),
     "hunter-9": dict(skin=(238, 204, 160), hair="bun", hair_c=(28, 24, 30), outfit=(110, 110, 120)),
     "hunter-10": dict(skin=(176, 118, 80), hair="buzz", hair_c=(170, 170, 176), outfit=(200, 110, 60), glasses=True),
+    # Seasonal-case rewards (app/play/unlocks.ts): Thanksgiving's turkey hat, the winter holidays' Santa hat.
+    "hunter-11": dict(skin=(214, 164, 118), hair="short", hair_c=(90, 56, 34), outfit=(196, 110, 46), hat="turkey"),
+    "hunter-12": dict(skin=(120, 78, 52), hair="short", hair_c=(30, 24, 28), outfit=(40, 120, 70), hat="santa", beard=True),
 }
 
 
@@ -184,6 +188,21 @@ def drawn_head(p: dict) -> Image.Image:
         rect(0, 3, 1, 10, hair)
         rect(8, 3, 9, 10, hair)
         rect(1, 1, 8, 1, shade(hair, 1.2))
+    hat = p.get("hat")
+    if hat == "turkey":  # a roast-turkey hat: a golden-brown dome with drumstick bones poking out the sides
+        roast, glaze = (176, 104, 44, 255), (214, 150, 70, 255)
+        rect(1, 0, 8, 3, roast)
+        rect(2, 0, 7, 0, glaze)
+        rect(3, 1, 4, 1, glaze)
+        px[0, 2] = px[9, 2] = (244, 236, 220, 255)  # the bones
+        px[0, 1] = px[9, 1] = (244, 236, 220, 255)
+        rect(1, 3, 8, 3, shade(roast, 0.8))
+    elif hat == "santa":  # a red Santa hat with a white trim and pompom
+        red, white = (200, 40, 44, 255), (244, 244, 240, 255)
+        rect(1, 1, 8, 2, red)
+        rect(3, 0, 7, 0, red)
+        px[8, 0] = px[9, 0] = white
+        rect(1, 3, 8, 3, white)
     eye = (30, 26, 34, 255)
     px[3, 6] = eye
     px[6, 6] = eye
@@ -209,6 +228,9 @@ def back_of(head: Image.Image, skin, hair) -> Image.Image:
     for y in range(out.height):
         for x in range(out.width):
             c = px[x, y]
+            # The top rows keep what's drawn there that isn't skin (hair, or a hat), so hats show from behind.
+            if y <= 3 and c[3] > 0 and c[:3] != tuple(skin[:3]):
+                continue
             if c[3] > 0 and y >= 1:
                 px[x, y] = hair
     return out

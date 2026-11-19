@@ -4,6 +4,7 @@
 // A run belongs to the floor: the first conversation starts it with a cover story, later
 // conversations (call-backs, the floor-mate) continue it.
 
+import { helperPropId } from "@/app/daily/room";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useClientValue, useLatest } from "@/app/play/clientHooks";
 import { markClearedHere } from "@/app/floor/guestProgress";
@@ -27,6 +28,8 @@ import type { CaseData } from "@/app/casefile/data";
 import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
+import { isSeasonalDate } from "@/shared/seasonalCase";
+import { markSeasonCleared } from "@/app/tower/seasonProgress";
 
 type Open = { kind: "npc"; id: EmployeeId } | { kind: "prop"; id: string } | null;
 
@@ -68,6 +71,8 @@ export function FloorGame({
   const clockArmed = useRef(false); // the level clock has started this visit (see below)
   // Continue or restart: this place's open run is remembered in the browser (app/floor/ResumeRun).
   const place = daily ? `daily-${daily.date}` : `floor-${map.floor}`;
+  // Which lobby entrance this level comes back to (RESTART, the security escort).
+  const entranceKey = daily ? (isSeasonalDate(daily.date) ? "seasonal" : "daily") : `floor-${map.floor}`;
   const saved = useSavedRun(place);
   const savedRef = useLatest(saved);
   const [resumeDecided, setResumeDecided] = useState(false);
@@ -114,7 +119,9 @@ export function FloorGame({
   useEffect(() => {
     if (outcome !== "breach") return;
     markClearedHere(map.floor);
-    if (daily && !practice) markDailyCleared(daily.date);
+    // The seasonal case isn't a Daily Case: no streak; the lobby door remembers it as cleared instead.
+    if (daily && isSeasonalDate(daily.date)) markSeasonCleared(daily.date);
+    else if (daily && !practice) markDailyCleared(daily.date);
   }, [outcome, map.floor, daily, practice]);
   // Security comes for an employee who locked you out during this visit (not one found locked when a
   // saved run is resumed): right away if their call is closed, once their last line has played if it's
@@ -188,7 +195,7 @@ export function FloorGame({
     setCleared(false);
     resetRun(true);
     // Back to the lobby, standing at this level's entrance, to start it fresh.
-    leave(`/tower?at=${daily ? "daily" : `floor-${map.floor}`}`, "Lobby · back to the start");
+    leave(`/tower?at=${entranceKey}`, "Lobby · back to the start");
   };
   const arrived = useCallback(() => {
     const ride = leavingRef.current;
@@ -224,12 +231,19 @@ export function FloorGame({
     (e: SceneEvent) => {
       if (e.type === "exit") return askLeave(e.to);
       if (e.type === "interact-npc") {
+        // A scripted character (the seasonal helper): their lines open like a sign, not an AI call.
+        const scripted = map.props?.find((p) => p.id === helperPropId(e.id));
+        if (scripted) {
+          setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id))); // the guide moves on
+          setOpen({ kind: "prop", id: scripted.id });
+          return;
+        }
         setFocus(e.id);
         setTalkedTo((s) => (s.has(e.id) ? s : new Set(s).add(e.id)));
         setOpen({ kind: "npc", id: e.id });
       } else setOpen({ kind: "prop", id: e.id });
     },
-    [askLeave],
+    [askLeave, map],
   );
 
   // Only "talking" is a bubble. Wary (suspicion 60+) and locked out go in the name plate instead: a "?"
@@ -278,14 +292,16 @@ export function FloorGame({
   // here by the door; otherwise the guard has put you in the elevator back to the lobby.
   const escortDone = useCallback(() => {
     if (outcomeRef.current) setEscort(null);
-    else leave(`/tower?at=${daily ? "daily" : `floor-${map.floor}`}`, "Escorted out by security · the lobby");
-  }, [outcomeRef, leave, daily, map.floor]);
+    else leave(`/tower?at=${entranceKey}`, "Escorted out by security · the lobby");
+  }, [outcomeRef, leave, entranceKey]);
 
   const npc = open?.kind === "npc" ? npcs.find((n) => n.id === open.id) : null;
   const prop = open?.kind === "prop" ? map.props?.find((p) => p.id === open.id) : null;
   // A clue with a game shows its text only once the game is solved (for this run).
   const solved = useSolved(place);
-  const propGame = prop ? gameFor(map.floor, (map.props ?? []).map((p) => p.id), prop.id) : null;
+  // Scripted characters' lines (helper:…) never get a mini-game, and don't shift the clues' games.
+  const clueIds = (map.props ?? []).map((p) => p.id).filter((id) => !id.startsWith("helper:"));
+  const propGame = prop && !prop.id.startsWith("helper:") ? gameFor(map.floor, clueIds, prop.id) : null;
   const playing = prop && propGame && !solved.includes(prop.id) ? propGame : null;
   const finished = !!state?.run?.ended_at;
 
@@ -362,6 +378,7 @@ export function FloorGame({
             onCaseFile={openCaseFile}
             pages={daily?.brief}
             storageKey={dailyBriefKey ?? undefined}
+            level={daily && isSeasonalDate(daily.date) ? "seasonal" : undefined}
           /></div>}
       {caseFile && <CaseFileOverlay data={caseData} floor={map.floor} unlockedFloors={unlockedFloors} daily={daily} onClose={() => setCaseFile(false)} />}
       {gate}

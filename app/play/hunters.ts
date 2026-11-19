@@ -17,7 +17,7 @@ export const HUNTERS: HunterOption[] = [
 ];
 
 /** Earned looks (app/play/unlocks.ts UNLOCKS), valid as a saved choice once picked. */
-export const REWARD_HUNTER_IDS = ["hunter-6", "hunter-1", "hunter-5", "hunter-8", "hunter-9", "hunter-10"];
+export const REWARD_HUNTER_IDS = ["hunter-6", "hunter-1", "hunter-5", "hunter-8", "hunter-9", "hunter-10", "hunter-11", "hunter-12"];
 
 export interface HunterChoice {
   sprite: string; // e.g. "hunter-3"
