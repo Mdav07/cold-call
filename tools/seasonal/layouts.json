@@ -942,7 +942,7 @@
      "name": "Sunita Rao",
      "title": "Events Lead",
      "personality": "Organized and protective of her authors.",
-     "softSpot": "a caller who asks about the author by name",
+     "softSpot": "a caller who asks about Mara Quill, tonight's author, by name",
      "firstMessage": "Events, Sunita."
     },
     "vendors": [
@@ -963,9 +963,9 @@
      }
     ],
     "allowed": 0,
-    "job": "deliver forty-five signed copies for the reading (down from fifty)",
+    "job": "deliver forty-five signed copies of Mara Quill's new novel for the reading (down from fifty)",
     "check": "forty-five copies",
-    "cosignClue": "Sunita's event sheet: \"Signed copies: 45. Author only signed 45. Oliver proposes, Sunita signs.\""
+    "cosignClue": "Sunita's event sheet: \"Signed copies: 45. Mara Quill only signed 45 before her train. Oliver proposes, Sunita signs.\""
    },
    {
     "title": "The Block Party",
