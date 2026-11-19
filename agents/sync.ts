@@ -293,7 +293,8 @@ async function main() {
     // Private agent: sessions start only with a signed URL from our backend.
     auth: { enable_auth: true },
     // Lets a session switch to text-only chat at start (same agent for chat and voice).
-    overrides: { conversation_config_override: { conversation: { text_only: true } } },
+    // ...and lets a holiday case pick the voice matched to its character (server/game/session.ts voice_id).
+    overrides: { conversation_config_override: { conversation: { text_only: true }, tts: { voice_id: true } } },
   };
 
   const name = `Cold Call · ${employee}`;

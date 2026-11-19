@@ -30,6 +30,8 @@ export interface SeasonHelper {
 export interface SeasonLayout {
   case: SeasonCase;
   helper: SeasonHelper;
+  /** ElevenLabs voice ids for this layout's payer ("daily") and co-signer ("helper"), matched to each character. */
+  voices: { daily: string; helper: string };
 }
 
 /** Lobby dressing while the holiday is open (tile names in app/floor/maps/tiles.json), or null until its art lands. */
@@ -213,6 +215,12 @@ export function seasonalCase(date: string): DailyCase | null {
 export function openSeasonalDate(date: string | null | undefined, ms: number = Date.now()): string | null {
   const s = seasonOfDate(date);
   return s && openSeasons(ms).some((o) => o.id === s.id) ? date! : null;
+}
+
+/** The ElevenLabs voice for an employee on this reserved date (payer or co-signer), or null off a holiday case. */
+export function seasonalVoice(date: string | null | undefined, employee: string): string | null {
+  const v = find(date)?.layout.voices;
+  return v ? (employee === "helper" ? v.helper : employee === "daily" ? v.daily : null) : null;
 }
 
 /** The co-signer for this reserved date, or null. */

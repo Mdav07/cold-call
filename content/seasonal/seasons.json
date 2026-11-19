@@ -132,6 +132,10 @@
             "softSpot": "a caller who treats the kitchen with respect and admits the rush is hard without making it Marisol's fault",
             "check": "thirty-eight pies (the order was cut from forty)",
             "firstMessage": "Kitchen, Dev speaking. Make it quick, I've got gravy on."
+          },
+          "voices": {
+            "daily": "XrExE9yKIg1WjnnlVkGX",
+            "helper": "TX3LPaxmHKxFdv7VOQHJ"
           }
         },
         {
@@ -207,6 +211,10 @@
             "softSpot": "a caller who asks about the wind before asking for money",
             "check": "twelve tanks",
             "firstMessage": "Wrangler tent, Omar. Wind's at twelve knots, talk fast."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "JBFqnCBsd6RMkjVDRZzb"
           }
         },
         {
@@ -282,6 +290,10 @@
             "softSpot": "a caller who gives numbers slowly, digit by digit",
             "check": "220 boxes",
             "firstMessage": "Treasurer's desk, Tomás. Numbers first, please."
+          },
+          "voices": {
+            "daily": "Xb7hH8MSUJpSbSDYk0k2",
+            "helper": "JBFqnCBsd6RMkjVDRZzb"
           }
         }
       ]
@@ -417,6 +429,10 @@
             "softSpot": "a caller who waits patiently while he flips a batch",
             "check": "six drums",
             "firstMessage": "Fry station, Eli. Hold on, flipping. Okay, go."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "IKne3meq5aSn9XLyUdCD"
           }
         },
         {
@@ -492,6 +508,10 @@
             "softSpot": "a caller who asks whether the stage is safe before anything else",
             "check": "300 doughnuts",
             "firstMessage": "Stage, Sam. Is this about the stage?"
+          },
+          "voices": {
+            "daily": "Xb7hH8MSUJpSbSDYk0k2",
+            "helper": "TX3LPaxmHKxFdv7VOQHJ"
           }
         },
         {
@@ -567,6 +587,10 @@
             "softSpot": "a caller who doesn't rush him through his checklist",
             "check": "forty rolls",
             "firstMessage": "Stockroom, Ari. One sec, finishing my list."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "JBFqnCBsd6RMkjVDRZzb"
           }
         }
       ]
@@ -702,6 +726,10 @@
             "softSpot": "a caller who knows the route numbers",
             "check": "500 batteries",
             "firstMessage": "Dispatch, Felix. Which route?"
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         },
         {
@@ -777,6 +805,10 @@
             "softSpot": "a caller who spells names out for her",
             "check": "ten spools",
             "firstMessage": "Register, Ivy. Spell your name, please."
+          },
+          "voices": {
+            "daily": "CwhRBWXzGAHq8TQ4Fs17",
+            "helper": "pFZP5JQG7iQjIQuC4Bku"
           }
         },
         {
@@ -852,6 +884,10 @@
             "softSpot": "a caller who's polite to her before asking for anything",
             "check": "eighty cups",
             "firstMessage": "Executive office, Lorraine Pike."
+          },
+          "voices": {
+            "daily": "IKne3meq5aSn9XLyUdCD",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         }
       ]
@@ -978,6 +1014,10 @@
             "softSpot": "a caller who wishes him a happy new year first",
             "check": "eighteen fish",
             "firstMessage": "Kitchen! Kenny! Happy new year, what do you need?"
+          },
+          "voices": {
+            "daily": "Xb7hH8MSUJpSbSDYk0k2",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         },
         {
@@ -1053,6 +1093,10 @@
             "softSpot": "a caller who never says the number four",
             "check": "two lion heads",
             "firstMessage": "Drums, Danny. Speak up, I'm a drummer."
+          },
+          "voices": {
+            "daily": "XrExE9yKIg1WjnnlVkGX",
+            "helper": "TX3LPaxmHKxFdv7VOQHJ"
           }
         },
         {
@@ -1128,6 +1172,10 @@
             "softSpot": "a caller who greets him formally as Mr. Chow",
             "check": "120 lanterns",
             "firstMessage": "Chow speaking. Who is this, please?"
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "IKne3meq5aSn9XLyUdCD"
           }
         }
       ]
@@ -1254,6 +1302,10 @@
             "softSpot": "a caller who gives an exact address",
             "check": "900 roses",
             "firstMessage": "Van two, Kai. Address?"
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "JBFqnCBsd6RMkjVDRZzb"
           }
         },
         {
@@ -1329,6 +1381,10 @@
             "softSpot": "a caller who doesn't flirt with her to get their way",
             "check": "350 boxes",
             "firstMessage": "Cocoa and Co., Priya. And no, I won't do a discount."
+          },
+          "voices": {
+            "daily": "JBFqnCBsd6RMkjVDRZzb",
+            "helper": "Xb7hH8MSUJpSbSDYk0k2"
           }
         },
         {
@@ -1404,6 +1460,10 @@
             "softSpot": "a caller who remembers his name",
             "check": "twenty-four cases",
             "firstMessage": "Velvet Room bar, Marcus."
+          },
+          "voices": {
+            "daily": "Xb7hH8MSUJpSbSDYk0k2",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         }
       ]
@@ -1530,6 +1590,10 @@
             "softSpot": "a caller who asks about the tulips",
             "check": "2,400 eggs",
             "firstMessage": "Grounds, Jamal."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "TX3LPaxmHKxFdv7VOQHJ"
           }
         },
         {
@@ -1605,6 +1669,10 @@
             "softSpot": "a caller who asks how the dough is rising",
             "check": "fourteen sacks",
             "firstMessage": "Ovens, Leo. Dough's proving, keep it down."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         },
         {
@@ -1680,6 +1748,10 @@
             "softSpot": "a caller who asks whether the hollandaise held",
             "check": "sixty centerpieces",
             "firstMessage": "Kitchen, Ben. If it's about eggs, I know."
+          },
+          "voices": {
+            "daily": "XrExE9yKIg1WjnnlVkGX",
+            "helper": "iP95p4xoKVk53GoZ742B"
           }
         }
       ]
@@ -1806,6 +1878,10 @@
             "softSpot": "a caller who asks about the center's youth program",
             "check": "trailer number seven",
             "firstMessage": "Treasurer, Marisa."
+          },
+          "voices": {
+            "daily": "SAz9YHcvj6GT2YYXdXww",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         },
         {
@@ -1881,6 +1957,10 @@
             "softSpot": "a caller who asks about the author by name",
             "check": "forty-five copies",
             "firstMessage": "Events, Sunita."
+          },
+          "voices": {
+            "daily": "IKne3meq5aSn9XLyUdCD",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         },
         {
@@ -1956,6 +2036,10 @@
             "softSpot": "a caller who asks him for a sound check",
             "check": "eighty cases",
             "firstMessage": "Sound desk, Theo. Check, check."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "TX3LPaxmHKxFdv7VOQHJ"
           }
         }
       ]
@@ -2082,6 +2166,10 @@
             "softSpot": "a caller who asks about the safety perimeter",
             "check": "pier three",
             "firstMessage": "Safety, Moreno. Is the perimeter clear?"
+          },
+          "voices": {
+            "daily": "CwhRBWXzGAHq8TQ4Fs17",
+            "helper": "Xb7hH8MSUJpSbSDYk0k2"
           }
         },
         {
@@ -2157,6 +2245,10 @@
             "softSpot": "a caller who asks how he likes his burgers",
             "check": "forty bags",
             "firstMessage": "Grill, Raj. Medium rare is the answer, what's the question?"
+          },
+          "voices": {
+            "daily": "XrExE9yKIg1WjnnlVkGX",
+            "helper": "iP95p4xoKVk53GoZ742B"
           }
         },
         {
@@ -2232,6 +2324,10 @@
             "softSpot": "a caller who knows the parade permit number (P-704)",
             "check": "250 flags",
             "firstMessage": "Town Clerk's office, Carlos Ruiz speaking."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "iP95p4xoKVk53GoZ742B"
           }
         }
       ]
@@ -2358,6 +2454,10 @@
             "softSpot": "a caller who asks about his animatronic raven, Edgar",
             "check": "six fog machines",
             "firstMessage": "Effects, Gus. Edgar says hello."
+          },
+          "voices": {
+            "daily": "XrExE9yKIg1WjnnlVkGX",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         },
         {
@@ -2433,6 +2533,10 @@
             "softSpot": "a caller who asks about the tractor",
             "check": "seventy-five bales",
             "firstMessage": "Barn, Wes."
+          },
+          "voices": {
+            "daily": "pFZP5JQG7iQjIQuC4Bku",
+            "helper": "CwhRBWXzGAHq8TQ4Fs17"
           }
         },
         {
@@ -2508,6 +2612,10 @@
             "softSpot": "a caller who knows their measurements",
             "check": "400 pairs",
             "firstMessage": "Alterations, Hana. Measurements?"
+          },
+          "voices": {
+            "daily": "cjVigY5qzO86Huf0OWal",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         }
       ]
@@ -2634,6 +2742,10 @@
             "softSpot": "a caller who waits patiently while he stirs",
             "check": "600 boxes",
             "firstMessage": "Kitchen, Rohan. Hold on, stirring."
+          },
+          "voices": {
+            "daily": "Xb7hH8MSUJpSbSDYk0k2",
+            "helper": "IKne3meq5aSn9XLyUdCD"
           }
         },
         {
@@ -2709,6 +2821,10 @@
             "softSpot": "a caller who explains things step by step",
             "check": "200 garlands",
             "firstMessage": "Treasurer, Kavya."
+          },
+          "voices": {
+            "daily": "cjVigY5qzO86Huf0OWal",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         },
         {
@@ -2784,6 +2900,10 @@
             "softSpot": "a caller who asks about ladder safety",
             "check": "ninety strings",
             "firstMessage": "Install team, Meera."
+          },
+          "voices": {
+            "daily": "TX3LPaxmHKxFdv7VOQHJ",
+            "helper": "XrExE9yKIg1WjnnlVkGX"
           }
         }
       ]

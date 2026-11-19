@@ -15,7 +15,7 @@ import { recordTalkTime } from "@/server/game/suspicion";
 import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
-import { isSeasonalDate, openSeasonalDate, seasonalHelper } from "@/shared/seasonalCase";
+import { isSeasonalDate, openSeasonalDate, seasonalHelper, seasonalVoice } from "@/shared/seasonalCase";
 
 /** Talk time per employee in seconds; null = unlimited (design doc, "Talk time by rank"). */
 export const TALK_SECONDS: Record<EmployeeId, number | null> = {
@@ -120,6 +120,8 @@ export interface StartSessionResult {
   dynamic_variables: Record<string, string | number>;
   talk_seconds: number | null;
   stub: boolean;
+  /** Holiday cases: the voice matched to this layout's character (the client asks ElevenLabs for it). */
+  voice_id?: string;
 }
 
 export class SessionError extends Error {
@@ -310,7 +312,9 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     }
   }
 
+  const voice_id = floor === DAILY_FLOOR ? seasonalVoice(caseDate, input.employee_id) : null;
   return {
+    ...(voice_id ? { voice_id } : {}),
     run_id,
     session_id,
     floor,

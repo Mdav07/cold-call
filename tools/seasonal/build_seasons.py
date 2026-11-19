@@ -35,6 +35,35 @@ GREETING = {
     "halloween": "Happy Halloween, kid.",
     "diwali": "Happy Diwali, kid.",
 }
+# Which kind of voice each holiday character has (Jordan uses they/them). Voice ids per kind are in
+# shared/seasonalCase.ts; each layout's payer and co-signer get different voices.
+VOICE_KIND = {
+    "neutral": {"Jordan Ellis"},
+    "male": {
+        "Hank Delgado", "Desmond Achebe", "Henri Dubois", "Oliver Grant", "Frank Kowalski", "Ziggy Lorne", "Vikram Iyer",
+        "Sanjay Bhatt", "Dev Okafor", "Omar Haddad", "Tomás Reyes", "Eli Rosen", "Sam Okonkwo", "Ari Bloom", "Felix Mbeki",
+        "Kenny Tran", "Danny Ho", "Arthur Chow", "Kai Nakamura", "Marcus Bell", "Jamal Reed", "Leo Santos", "Ben Adeyemi",
+        "Theo Lambert", "Raj Patel", "Carlos Ruiz", "Gus Pemberton", "Wes Brennan", "Rohan Kapoor",
+    },
+}
+VOICES = {
+    "female": ["XrExE9yKIg1WjnnlVkGX", "Xb7hH8MSUJpSbSDYk0k2", "pFZP5JQG7iQjIQuC4Bku"],  # Matilda, Alice, Lily
+    "male": ["TX3LPaxmHKxFdv7VOQHJ", "iP95p4xoKVk53GoZ742B", "cjVigY5qzO86Huf0OWal", "JBFqnCBsd6RMkjVDRZzb", "IKne3meq5aSn9XLyUdCD", "CwhRBWXzGAHq8TQ4Fs17"],  # Liam, Chris, Eric, George, Charlie, Roger
+    "neutral": ["SAz9YHcvj6GT2YYXdXww"],  # River
+}
+
+
+def kind(name: str) -> str:
+    return next((k for k, names in VOICE_KIND.items() if name in names), "female")
+
+
+def voices_for(key: str, i: int, a: str, b: str) -> tuple[str, str]:
+    r = random.Random(f"coldcall-voice:{key}:{i}")
+    va = r.choice(VOICES[kind(a)])
+    vb = r.choice([v for v in VOICES[kind(b)] if v != va])
+    return va, vb
+
+
 # Krystal's line when you clear the holiday case.
 SIGNOFF = {
     "thanksgiving": "Happy Thanksgiving, kid. Save me a slice of pie.",
@@ -165,7 +194,10 @@ def main() -> None:
             if s["id"] == "thanksgiving" and i == 0:  # the live case, word for word
                 case = live["case"]
                 helper = {**live["helper"], "firstMessage": l["helper"]["firstMessage"]}
-            layouts.append({"case": case, "helper": helper})
+            va, vb = voices_for(s["id"], i, case["employee"]["name"], helper["name"])
+            if s["id"] == "thanksgiving" and i == 0:
+                va, vb = "XrExE9yKIg1WjnnlVkGX", "TX3LPaxmHKxFdv7VOQHJ"  # Marisol and Dev keep the voices they have
+            layouts.append({"case": case, "helper": helper, "voices": {"daily": va, "helper": vb}})
         windows = []
         for opens, closes in s["windows"]:
             if s["id"] == "thanksgiving" and opens == "2026-11-16":

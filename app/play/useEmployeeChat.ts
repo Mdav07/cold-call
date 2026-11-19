@@ -108,7 +108,8 @@ export function useEmployeeChat(employeeId: EmployeeId, dailyDate?: string, cloc
           signedUrl: s.signed_url,
           dynamicVariables: s.dynamic_variables,
           textOnly: ch === "chat",
-          overrides: { conversation: { textOnly: ch === "chat" } },
+          // Holiday cases: each character speaks in a voice matched to them (agent allows the tts override).
+          overrides: { conversation: { textOnly: ch === "chat" }, ...(ch === "voice" && s.voice_id ? { tts: { voiceId: s.voice_id } } : {}) },
           onConnect: ({ conversationId }) => {
             stopRing();
             setConnectedAt(Date.now());
