@@ -20,10 +20,10 @@ for y in range(N):
 # Letter bitmaps, sized so the mark is centred on the 16x16 coin (centre at 7.5, 7.5).
 MARKS = {
     "P": ["XXXXX.", "X....X", "X....X", "XXXXX.", "X.....", "X.....", "X.....", "X....."],   # 6x8 at (5, 4)
-    "CC": [".XXX...XXX", "X.....X...", "X.....X...", "X.....X...", "X.....X...", "X.....X...", "X.....X...", ".XXX...XXX"],  # 10x8 at (3, 4)
+    "CC": [".XX...XX", "X....X..", "X....X..", "X....X..", "X....X..", ".XX...XX"],  # 8x6 at (4, 5)
 }
 P = MARKS[mark]
-ox, oy = (16 - len(P[0])) // 2, 4
+ox, oy = (16 - len(P[0])) // 2, (16 - len(P)) // 2
 for j, row in enumerate(P):          # embossed: dark letter, light edge up-left
     for i, c in enumerate(row):
         if c == "X":
