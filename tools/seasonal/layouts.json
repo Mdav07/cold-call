@@ -1,0 +1,1444 @@
+[
+ {
+  "id": "thanksgiving",
+  "name": "Thanksgiving",
+  "windows": [
+   [
+    "2026-11-16",
+    "2026-11-30"
+   ],
+   [
+    "2027-11-15",
+    "2027-11-29"
+   ]
+  ],
+  "art": "Harvest kitchen (exists): plank floor, plaid chair, pumpkins, hay bale, cornucopia.",
+  "fx": "Falling leaves (exists)",
+  "layouts": [
+   {
+    "title": "The Thanksgiving Rush",
+    "business": "Gobble & Co. Catering",
+    "place": "Gobble & Co. Catering, the night before Thanksgiving",
+    "float": "the petty cash tin",
+    "hook": "Gobble & Co. is catering four hundred dinners tomorrow.",
+    "employee": {
+     "name": "Marisol Vega",
+     "title": "Event Lead",
+     "personality": "Frazzled, sharp and wary: she's been burned by fake vendors before, and she counts turkeys under her breath.",
+     "tic": "says \"okay, okay, okay\" when she's stressed",
+     "softSpot": "anyone who offers to take something off her plate before the rush",
+     "softClue": "A sticky note in her handwriting: \"If ANYONE offers to help carry, say YES.\" She's been on her feet since 5 a.m."
+    },
+    "helper": {
+     "name": "Dev Okafor",
+     "title": "Sous-chef",
+     "personality": "Warm under pressure, protective of Marisol, and done with people who waste the kitchen's time.",
+     "softSpot": "a caller who treats the kitchen with respect and admits the rush is hard",
+     "firstMessage": "Kitchen, Dev speaking. Make it quick, I've got gravy on."
+    },
+    "vendors": [
+     {
+      "name": "Hearth & Crumb Bakery",
+      "prefix": "HC",
+      "what": "pies and dinner rolls"
+     },
+     {
+      "name": "Maple Hollow Farm",
+      "prefix": "MH",
+      "what": "fresh turkeys"
+     },
+     {
+      "name": "Fold-Up Rentals",
+      "prefix": "FR",
+      "what": "folding tables and chairs"
+     }
+    ],
+    "allowed": 0,
+    "job": "drop off the last thirty-eight pumpkin pies before midnight (the order was cut from forty)",
+    "check": "thirty-eight pies",
+    "cosignClue": "Dev won't sign unless you know the cut pie count and you're not a jerk about his gravy."
+   },
+   {
+    "title": "The Parade Float",
+    "business": "Big Balloon Parade Co.",
+    "place": "the parade staging yard, 4 a.m. on Thanksgiving",
+    "float": "the cash box in the trailer",
+    "hook": "The balloons go up in three hours and the wind just changed.",
+    "employee": {
+     "name": "Rita Szabo",
+     "title": "Float Captain",
+     "personality": "An ex-drum major who runs the whole yard on a whistle and a stopwatch.",
+     "tic": "counts down from five before she answers",
+     "softSpot": "anyone who knows the turkey balloon is called Gerald",
+     "softClue": "A name tag zip-tied to a giant deflated wing: \"GERALD. Be nice to him.\" Rita's handwriting."
+    },
+    "helper": {
+     "name": "Omar Haddad",
+     "title": "Balloon Wrangler",
+     "personality": "Calm and wind-obsessed; checks the anemometer mid-sentence.",
+     "softSpot": "a caller who asks about the wind before asking for money",
+     "firstMessage": "Wrangler tent, Omar. Wind's at twelve knots, talk fast."
+    },
+    "vendors": [
+     {
+      "name": "Helium Hank's Gas Supply",
+      "prefix": "HHS",
+      "what": "helium tanks"
+     },
+     {
+      "name": "Ropes & Rigging Ltd.",
+      "prefix": "RRI",
+      "what": "tether lines"
+     },
+     {
+      "name": "Thermos Brothers Coffee",
+      "prefix": "TBC",
+      "what": "coffee urns"
+     }
+    ],
+    "allowed": 0,
+    "job": "top up Gerald with twelve helium tanks (not fifteen: the wind forecast changed)",
+    "check": "twelve tanks",
+    "cosignClue": "Omar co-signs gas orders only. He cut the order to twelve tanks when the wind picked up and wants the caller to know it."
+   },
+   {
+    "title": "The Food Drive",
+    "business": "Elm Street Community Pantry",
+    "place": "Elm Street Community Pantry, the day before Thanksgiving",
+    "float": "the donations jar",
+    "hook": "Two hundred families are picking up dinner boxes tomorrow.",
+    "employee": {
+     "name": "Bea Lindqvist",
+     "title": "Pantry Coordinator",
+     "personality": "Kind but ruthless about the sign-in sheet; owns a label maker and uses it on everything.",
+     "tic": "labels things out loud (\"that's... a stapler\")",
+     "softSpot": "anyone who says they'll volunteer next year",
+     "softClue": "The volunteer sign-up sheet for next year, with one name on it. A sticky note: \"Hug whoever signs this.\""
+    },
+    "helper": {
+     "name": "Tomás Reyes",
+     "title": "Volunteer Treasurer",
+     "personality": "A retired accountant with a dry wit who reads every number twice.",
+     "softSpot": "a caller who gives numbers slowly, digit by digit",
+     "firstMessage": "Treasurer's desk, Tomás. Numbers first, please."
+    },
+    "vendors": [
+     {
+      "name": "Pine Ridge Box Co.",
+      "prefix": "PRB",
+      "what": "cardboard boxes"
+     },
+     {
+      "name": "Valley Grocers Wholesale",
+      "prefix": "VGW",
+      "what": "canned goods"
+     },
+     {
+      "name": "Rolling Van Rentals",
+      "prefix": "RVR",
+      "what": "cargo vans"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver 220 donation boxes (up from 180 after the school drive)",
+    "check": "220 boxes",
+    "cosignClue": "Tomás's ledger: box order raised from 180 to 220 after the school drive. \"Anyone who says 180 is reading an old email.\""
+   }
+  ]
+ },
+ {
+  "id": "hanukkah",
+  "name": "Hanukkah",
+  "windows": [
+   [
+    "2026-12-04",
+    "2026-12-12"
+   ],
+   [
+    "2027-12-24",
+    "2028-01-01"
+   ]
+  ],
+  "art": "Blue-and-silver deli: checker tile floor, menorah in the window, dreidel shelf, jelly-doughnut case, blue booth seat.",
+  "fx": "Soft candle glow in the corners; a flicker each night it's open",
+  "layouts": [
+   {
+    "title": "The Eighth Night",
+    "business": "Golden Dreidel Deli",
+    "place": "Golden Dreidel Deli, the last night of the latke rush",
+    "float": "the register drawer",
+    "hook": "It's the last night of Hanukkah and the latke line is out the door.",
+    "employee": {
+     "name": "Miriam Kaplan",
+     "title": "Owner",
+     "personality": "Warm, a little theatrical, and keeping a running tally of every latke sold this week.",
+     "tic": "drops the latke count mid-sentence (\"...eleven hundred and four...\")",
+     "softSpot": "anyone who asks her verdict on applesauce versus sour cream",
+     "softClue": "A chalkboard poll by the register: APPLESAUCE 212, SOUR CREAM 209. \"Ask Miriam. She has OPINIONS.\""
+    },
+    "helper": {
+     "name": "Eli Rosen",
+     "title": "Head Fry Cook",
+     "personality": "A grease-spattered perfectionist who times every batch to the second.",
+     "softSpot": "a caller who waits patiently while he flips a batch",
+     "firstMessage": "Fry station, Eli. Hold on, flipping. Okay, go."
+    },
+    "vendors": [
+     {
+      "name": "Shtetl Spud Farms",
+      "prefix": "SSF",
+      "what": "potatoes"
+     },
+     {
+      "name": "Northside Oil & Supply",
+      "prefix": "NOS",
+      "what": "frying oil"
+     },
+     {
+      "name": "Brightwick Candle Co.",
+      "prefix": "BCA",
+      "what": "candles"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver six drums of frying oil (bumped from four: the latkes are selling)",
+    "check": "six drums",
+    "cosignClue": "Eli's note on the fryer: \"Oil order is SIX drums now. Anyone who says four didn't talk to me.\""
+   },
+   {
+    "title": "The Menorah Lighting",
+    "business": "Riverside Park Conservancy",
+    "place": "Riverside Park, setting up the public menorah lighting",
+    "float": "the events petty cash",
+    "hook": "Five hundred neighbors are coming to the park for the lighting tonight.",
+    "employee": {
+     "name": "Naomi Feld",
+     "title": "Events Manager",
+     "personality": "A brisk planner who lives in a headset and a clipboard.",
+     "tic": "says \"copy that\" to everything",
+     "softSpot": "anyone who offers to hand out the song sheets",
+     "softClue": "A stack of song sheets with a note: \"Need ONE volunteer to hand these out. Naomi will love you forever.\""
+    },
+    "helper": {
+     "name": "Sam Okonkwo",
+     "title": "Stage Tech",
+     "personality": "Laconic and safety-first; won't talk money until the stage is checked.",
+     "softSpot": "a caller who asks whether the stage is safe before anything else",
+     "firstMessage": "Stage, Sam. Is this about the stage?"
+    },
+    "vendors": [
+     {
+      "name": "Liftline Crane Hire",
+      "prefix": "LCH",
+      "what": "crane trucks"
+     },
+     {
+      "name": "Bright Night Sound",
+      "prefix": "BNS",
+      "what": "speakers"
+     },
+     {
+      "name": "Sufganiyot Sisters Bakery",
+      "prefix": "SSB",
+      "what": "jelly doughnuts"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver 300 jelly doughnuts for the crowd (raised from 250)",
+    "check": "300 doughnuts",
+    "cosignClue": "Sam's clipboard: \"Doughnut count is 300 now. If they say 250, hang up.\""
+   },
+   {
+    "title": "The Gift Wrap Table",
+    "business": "Lev's Hardware",
+    "place": "Lev's Hardware, the eight-nights gift-wrap counter",
+    "float": "the wrap-table cash box",
+    "hook": "Lev's wraps every gift for free all eight nights, and the paper is running out.",
+    "employee": {
+     "name": "Ruth Adler",
+     "title": "Store Manager",
+     "personality": "No-nonsense; knows the aisle for every bolt in the store.",
+     "tic": "gives an aisle number for everything",
+     "softSpot": "anyone who compliments the window display she built",
+     "softClue": "A photo of the front window, a menorah made of copper pipe fittings. Underneath: \"Built by R.A. Took 9 hours.\""
+    },
+    "helper": {
+     "name": "Ari Bloom",
+     "title": "Night Stock Lead",
+     "personality": "A night owl who plays chess by mail and never skips a step on his checklist.",
+     "softSpot": "a caller who doesn't rush him through his checklist",
+     "firstMessage": "Stockroom, Ari. One sec, finishing my list."
+    },
+    "vendors": [
+     {
+      "name": "Blue & Silver Paper Co.",
+      "prefix": "BSP",
+      "what": "wrapping paper"
+     },
+     {
+      "name": "Kessler Key Cutting",
+      "prefix": "KKC",
+      "what": "key blanks"
+     },
+     {
+      "name": "Twin Rivers Freight",
+      "prefix": "TRF",
+      "what": "pallet freight"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver forty rolls of blue-and-silver wrap (cut from sixty)",
+    "check": "forty rolls",
+    "cosignClue": "Ari's checklist: \"Wrap order: 40 rolls (was 60, Ruth cut it). Confirm count before signing.\""
+   }
+  ]
+ },
+ {
+  "id": "christmas",
+  "name": "Christmas",
+  "windows": [
+   [
+    "2026-12-14",
+    "2027-01-02"
+   ],
+   [
+    "2027-12-13",
+    "2028-01-02"
+   ]
+  ],
+  "art": "Cozy toy-drive warehouse: red brick wall, wreath window, tree with presents, stacked gift boxes, a sleigh-shaped cart.",
+  "fx": "Snowfall",
+  "layouts": [
+   {
+    "title": "The Toy Drive",
+    "business": "Tinsel Town Toy Drive",
+    "place": "the Tinsel Town Toy Drive warehouse, three days before Christmas",
+    "float": "the toy-drive cash box",
+    "hook": "Twelve hundred donated toys ship out tomorrow, and none of them have batteries.",
+    "employee": {
+     "name": "Gwen Hollis",
+     "title": "Warehouse Lead",
+     "personality": "Organized to the bone; every box has a barcode and a nickname.",
+     "tic": "hums carols under her breath when she's annoyed",
+     "softSpot": "anyone who asks about the scarf she's knitting",
+     "softClue": "Half a red scarf on knitting needles, with a note: \"For my nephew. Ask me about the pattern, I dare you.\""
+    },
+    "helper": {
+     "name": "Felix Mbeki",
+     "title": "Dispatch Lead",
+     "personality": "Tracks every truck on a giant whiteboard and knows every route by number.",
+     "softSpot": "a caller who knows the route numbers",
+     "firstMessage": "Dispatch, Felix. Which route?"
+    },
+    "vendors": [
+     {
+      "name": "Evergreen Box & Bow",
+      "prefix": "EBB",
+      "what": "gift boxes"
+     },
+     {
+      "name": "Sleighbell Trucking",
+      "prefix": "STR",
+      "what": "delivery trucks"
+     },
+     {
+      "name": "Jolly Jim's Batteries",
+      "prefix": "JJS",
+      "what": "batteries"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver 500 AA batteries for the donated toys (raised from 400)",
+    "check": "500 batteries",
+    "cosignClue": "Felix's whiteboard: \"Batteries: 500 (NOT 400). Route 7 drops them at 6.\""
+   },
+   {
+    "title": "The Tree Lot",
+    "business": "Pine & Dandy Tree Lot",
+    "place": "Pine & Dandy Tree Lot, two nights before Christmas Eve",
+    "float": "the cash apron",
+    "hook": "The last-minute rush has started and the netting machine is empty.",
+    "employee": {
+     "name": "Hank Delgado",
+     "title": "Lot Manager",
+     "personality": "Gruff, smells like pine, secretly sentimental.",
+     "tic": "calls every tree \"a beaut\"",
+     "softSpot": "anyone who asks which tree is his favorite (the crooked one)",
+     "softClue": "A scrawny crooked tree in the corner with a SOLD tag: \"Not for sale. Hank's.\""
+    },
+    "helper": {
+     "name": "Ivy Chen",
+     "title": "Head Cashier",
+     "personality": "Sharp-eyed; counts change twice and spells every name back.",
+     "softSpot": "a caller who spells names out for her",
+     "firstMessage": "Register, Ivy. Spell your name, please."
+    },
+    "vendors": [
+     {
+      "name": "Frostline Netting",
+      "prefix": "FNE",
+      "what": "tree netting"
+     },
+     {
+      "name": "Cedar Hollow Farms",
+      "prefix": "CHF",
+      "what": "fir trees"
+     },
+     {
+      "name": "Glowworm Lights",
+      "prefix": "GLI",
+      "what": "string lights"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver ten spools of tree netting (down from twelve)",
+    "check": "ten spools",
+    "cosignClue": "Ivy's register tape: \"Netting reorder: TEN spools. Hank changed it. Don't sign for twelve.\""
+   },
+   {
+    "title": "The Office Party",
+    "business": "Plumpurse",
+    "place": "the Plumpurse holiday party, 14th floor",
+    "float": "the party fund envelope",
+    "hook": "Plumpurse's holiday party starts in an hour, and the cocoa hasn't arrived.",
+    "employee": {
+     "name": "Desmond Achebe",
+     "title": "Party Committee Chair",
+     "personality": "Over-enthusiastic; wears a light-up sweater to every meeting in December.",
+     "tic": "rates everything out of ten",
+     "softSpot": "anyone who signs up for the ugly-sweater contest",
+     "softClue": "The ugly-sweater sign-up sheet. Only Desmond's name. \"PLEASE. Prizes!!\""
+    },
+    "helper": {
+     "name": "Lorraine Pike",
+     "title": "Executive Assistant",
+     "personality": "Has the CEO's calendar memorized and no patience for flattery.",
+     "softSpot": "a caller who's polite to her before asking for anything",
+     "firstMessage": "Executive office, Lorraine Pike."
+    },
+    "vendors": [
+     {
+      "name": "Mistletoe Music DJs",
+      "prefix": "MMD",
+      "what": "party DJs"
+     },
+     {
+      "name": "Snowdrift Catering",
+      "prefix": "SCA",
+      "what": "hot drinks and snacks"
+     },
+     {
+      "name": "Sparkle Rentals",
+      "prefix": "SRE",
+      "what": "decorations"
+     }
+    ],
+    "allowed": 1,
+    "job": "bring eighty cups of hot cocoa (cut from a hundred: half of Accounting is out sick)",
+    "check": "eighty cups",
+    "cosignClue": "Lorraine's memo: \"Cocoa order is EIGHTY. Accounting has the flu. I co-sign; Desmond doesn't count.\""
+   }
+  ]
+ },
+ {
+  "id": "lunar-new-year",
+  "name": "Lunar New Year",
+  "windows": [
+   [
+    "2027-01-30",
+    "2027-02-10"
+   ]
+  ],
+  "art": "Red-and-gold banquet hall: lacquer floor, red lanterns, round banquet table, mandarin tree, gold wall scroll.",
+  "fx": "Drifting red lanterns and a few gold sparks",
+  "layouts": [
+   {
+    "title": "The Reunion Dinner",
+    "business": "Golden Lotus Banquet Hall",
+    "place": "Golden Lotus Banquet Hall, New Year's Eve",
+    "float": "the front-desk cash box",
+    "hook": "Forty families booked reunion dinners for tonight.",
+    "employee": {
+     "name": "Grace Liu",
+     "title": "Banquet Manager",
+     "personality": "Elegant and unflappable; seats forty tables from memory.",
+     "tic": "repeats table numbers as she thinks",
+     "softSpot": "anyone who asks after her grandmother",
+     "softClue": "A framed photo at the host stand: a tiny, beaming grandmother. \"Po Po, 96, still beats me at mahjong.\""
+    },
+    "helper": {
+     "name": "Kenny Tran",
+     "title": "Head Chef",
+     "personality": "Loud, joking, and has never burned a pot of rice.",
+     "softSpot": "a caller who wishes him a happy new year first",
+     "firstMessage": "Kitchen! Kenny! Happy new year, what do you need?"
+    },
+    "vendors": [
+     {
+      "name": "Harbor Live Seafood",
+      "prefix": "HLS",
+      "what": "whole fish"
+     },
+     {
+      "name": "Red Lantern Print Shop",
+      "prefix": "RLP",
+      "what": "menus and banners"
+     },
+     {
+      "name": "Jade River Produce",
+      "prefix": "JRP",
+      "what": "vegetables"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver eighteen whole fish for the reunion tables (up from fifteen: three more families booked)",
+    "check": "eighteen fish",
+    "cosignClue": "Kenny's prep sheet: \"FISH = 18. Three more tables booked. Fish is for abundance, don't shortchange it.\""
+   },
+   {
+    "title": "The Lion Dance",
+    "business": "Eastside Lion Dance Troupe",
+    "place": "the Eastside Lion Dance Troupe practice hall",
+    "float": "the troupe kitty",
+    "hook": "The parade is tomorrow and two of the lion heads are falling apart.",
+    "employee": {
+     "name": "Mei Wong",
+     "title": "Troupe Manager",
+     "personality": "Runs practice like a drill sergeant and hugs everyone after.",
+     "tic": "taps drum rhythms on the desk while she talks",
+     "softSpot": "anyone who knows the troupe's lion is named Big Mango",
+     "softClue": "A painted sign above the gold lion head: \"BIG MANGO. Do not sit on.\""
+    },
+    "helper": {
+     "name": "Danny Ho",
+     "title": "Lead Drummer",
+     "personality": "Talks loud and is kind, and he's a little superstitious about the number four.",
+     "softSpot": "a caller who never says the number four",
+     "firstMessage": "Drums, Danny. Speak up, I'm a drummer."
+    },
+    "vendors": [
+     {
+      "name": "Thunder Drum Repair",
+      "prefix": "TDR",
+      "what": "drum repairs"
+     },
+     {
+      "name": "Silk Road Costume Co.",
+      "prefix": "SRC",
+      "what": "costume repairs"
+     },
+     {
+      "name": "Lucky Cat Printing",
+      "prefix": "LCP",
+      "what": "red envelopes"
+     }
+    ],
+    "allowed": 1,
+    "job": "repair two lion heads before the parade (not three: Big Mango is fine)",
+    "check": "two lion heads",
+    "cosignClue": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (And don't say the f-word. Four.)\""
+   },
+   {
+    "title": "The Night Market",
+    "business": "Lantern Street Night Market",
+    "place": "the Lantern Street Night Market office",
+    "float": "the market float",
+    "hook": "The New Year night market opens at dusk and the lanterns aren't up.",
+    "employee": {
+     "name": "Linh Nguyen",
+     "title": "Market Coordinator",
+     "personality": "Fast, funny and juggling three phones.",
+     "tic": "says \"next!\" like she's running a queue",
+     "softSpot": "anyone who asks about her mother's bánh chưng",
+     "softClue": "A foil-wrapped square cake on the desk: \"Mom's bánh chưng. Ask me and I'll share.\""
+    },
+    "helper": {
+     "name": "Arthur Chow",
+     "title": "Stall Treasurer",
+     "personality": "An elderly gentleman with an abacus who has kept the market's books for 30 years.",
+     "softSpot": "a caller who greets him formally as Mr. Chow",
+     "firstMessage": "Chow speaking. Who is this, please?"
+    },
+    "vendors": [
+     {
+      "name": "Moonbeam Lantern Supply",
+      "prefix": "MLS",
+      "what": "paper lanterns"
+     },
+     {
+      "name": "Steamline Dumpling Wholesale",
+      "prefix": "SDW",
+      "what": "frozen dumplings"
+     },
+     {
+      "name": "Quickpitch Tents",
+      "prefix": "QTE",
+      "what": "market tents"
+     }
+    ],
+    "allowed": 0,
+    "job": "hang 120 red lanterns down Lantern Street (down from 150: the city cut a block)",
+    "check": "120 lanterns",
+    "cosignClue": "Mr. Chow's ledger, in neat pencil: \"Lanterns 120 (city closed one block). Proposal from Linh, co-sign Chow.\""
+   }
+  ]
+ },
+ {
+  "id": "valentines",
+  "name": "Valentine's Day",
+  "windows": [
+   [
+    "2027-02-11",
+    "2027-02-17"
+   ]
+  ],
+  "art": "Pink-and-red florist: rose-pattern floor, heart window, flower bucket shelf, chocolate box stack, velvet stool.",
+  "fx": "Floating petals",
+  "layouts": [
+   {
+    "title": "The Flower Rush",
+    "business": "Petal & Stem Florist",
+    "place": "Petal & Stem Florist, the night of February 13th",
+    "float": "the till",
+    "hook": "Every rose in town is spoken for, and the big shipment is late.",
+    "employee": {
+     "name": "Rosa Bianchi",
+     "title": "Owner",
+     "personality": "Romantic, dramatic, and allergic to half her stock.",
+     "tic": "sighs \"love is pain\" at bad news",
+     "softSpot": "anyone who asks her what flowers to send",
+     "softClue": "A card pinned by the phone: \"Need flower advice? ASK ROSA. She lives for this.\""
+    },
+    "helper": {
+     "name": "Kai Nakamura",
+     "title": "Delivery Driver",
+     "personality": "A route optimizer who plans deliveries to the minute.",
+     "softSpot": "a caller who gives an exact address",
+     "firstMessage": "Van two, Kai. Address?"
+    },
+    "vendors": [
+     {
+      "name": "Dutch Valley Roses",
+      "prefix": "DVR",
+      "what": "red roses"
+     },
+     {
+      "name": "Ribbon Rapids",
+      "prefix": "RRA",
+      "what": "ribbon"
+     },
+     {
+      "name": "Zip Courier",
+      "prefix": "ZCO",
+      "what": "same-day courier"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver 900 red roses (cut from 1,000 after a frost)",
+    "check": "900 roses",
+    "cosignClue": "Kai's route sheet: \"Roses: 900. Frost got the rest. Kai co-signs flower orders.\""
+   },
+   {
+    "title": "The Chocolate Shop",
+    "business": "Cocoa & Co. Confectioners",
+    "place": "Cocoa & Co. Confectioners, Valentine's eve",
+    "float": "the cash drawer",
+    "hook": "Three hundred and fifty truffle boxes are promised by morning.",
+    "employee": {
+     "name": "Henri Dubois",
+     "title": "Chocolatier",
+     "personality": "A perfectionist who tempers chocolate like it's surgery.",
+     "tic": "describes everything in tasting notes",
+     "softSpot": "anyone who asks about his salted caramel",
+     "softClue": "A tray of salted caramels labelled \"Henri's pride. Ask him. He'll cry.\""
+    },
+    "helper": {
+     "name": "Priya Shah",
+     "title": "Shop Manager",
+     "personality": "Practical, kind and allergic to flattery.",
+     "softSpot": "a caller who doesn't flirt with her to get their way",
+     "firstMessage": "Cocoa and Co., Priya. And no, I won't do a discount."
+    },
+    "vendors": [
+     {
+      "name": "Bean There Cacao",
+      "prefix": "BTC",
+      "what": "cacao beans"
+     },
+     {
+      "name": "Heartbox Packaging",
+      "prefix": "HPA",
+      "what": "heart-shaped boxes"
+     },
+     {
+      "name": "Coldsnap Shipping",
+      "prefix": "CSH",
+      "what": "chilled shipping"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver 350 heart-shaped boxes (up from 300)",
+    "check": "350 boxes",
+    "cosignClue": "Priya's order pad: \"Heart boxes: 350 now. Henri proposes, I sign.\""
+   },
+   {
+    "title": "The Singles Mixer",
+    "business": "The Velvet Room",
+    "place": "The Velvet Room lounge, Valentine's singles night",
+    "float": "the bar float",
+    "hook": "Sixty singles are due at eight for a sober speed-dating night.",
+    "employee": {
+     "name": "Tess Monroe",
+     "title": "Event Host",
+     "personality": "A bubbly host who has set up eleven couples and counts them proudly.",
+     "tic": "rings a little bell to change the subject",
+     "softSpot": "anyone who asks how she met her wife",
+     "softClue": "A photo behind the bar: Tess and her wife at a mixer. \"Couple #1. Ask Tess how.\""
+    },
+    "helper": {
+     "name": "Marcus Bell",
+     "title": "Head Bartender",
+     "personality": "Unflappable, observant and remembers every face.",
+     "softSpot": "a caller who remembers his name",
+     "firstMessage": "Velvet Room bar, Marcus."
+    },
+    "vendors": [
+     {
+      "name": "Cupid's Arrow Printing",
+      "prefix": "CSA",
+      "what": "name tags"
+     },
+     {
+      "name": "Fizz & Co. Mixers",
+      "prefix": "FMI",
+      "what": "sparkling cider"
+     },
+     {
+      "name": "Candlelight Rentals",
+      "prefix": "CRE",
+      "what": "candles and table lamps"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver twenty-four cases of sparkling cider (no alcohol tonight: it's a sober mixer)",
+    "check": "twenty-four cases",
+    "cosignClue": "Marcus's bar note: \"Cider order: 24 cases. Sober night. Tess proposes, Marcus signs.\""
+   }
+  ]
+ },
+ {
+  "id": "easter",
+  "name": "Easter",
+  "windows": [
+   [
+    "2027-03-21",
+    "2027-04-04"
+   ]
+  ],
+  "art": "Spring park pavilion: grass-and-flagstone floor, pastel bunting window, egg baskets, tulip planter, picnic bench.",
+  "fx": "Drifting blossom petals",
+  "layouts": [
+   {
+    "title": "The Egg Hunt",
+    "business": "Meadowbrook Parks Department",
+    "place": "Meadowbrook Park, the morning of the big egg hunt",
+    "float": "the rec-office cash box",
+    "hook": "Six hundred kids are coming, and the south field is underwater.",
+    "employee": {
+     "name": "Patty Olsen",
+     "title": "Recreation Director",
+     "personality": "A cheerful whirlwind with a whistle she rarely uses.",
+     "tic": "gives a soft toot on her whistle when she agrees",
+     "softSpot": "anyone who volunteers to wear the bunny suit",
+     "softClue": "The bunny suit on a hanger: \"VOLUNTEER NEEDED. Patty will owe you.\""
+    },
+    "helper": {
+     "name": "Jamal Reed",
+     "title": "Head Groundskeeper",
+     "personality": "Quiet and proud of his tulip beds.",
+     "softSpot": "a caller who asks about the tulips",
+     "firstMessage": "Grounds, Jamal."
+    },
+    "vendors": [
+     {
+      "name": "Bunny Hop Candy",
+      "prefix": "BHC",
+      "what": "jelly beans"
+     },
+     {
+      "name": "Pastel Plastics",
+      "prefix": "PPL",
+      "what": "plastic eggs"
+     },
+     {
+      "name": "Bounce Kingdom",
+      "prefix": "BKI",
+      "what": "bounce houses"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver 2,400 plastic eggs (cut from 3,000: the south field is flooded)",
+    "check": "2,400 eggs",
+    "cosignClue": "Jamal's work log: \"South field flooded. Egg order cut to 2,400. I co-sign.\""
+   },
+   {
+    "title": "The Hot Cross Buns",
+    "business": "Hot Cross Bakehouse",
+    "place": "Hot Cross Bakehouse, Good Friday at 4 a.m.",
+    "float": "the flour tin",
+    "hook": "The Good Friday bun line forms at six and the flour is nearly gone.",
+    "employee": {
+     "name": "Agnes Murphy",
+     "title": "Owner",
+     "personality": "Kind, floury and fiercely protective of her grandmother's recipe.",
+     "tic": "calls everyone \"pet\"",
+     "softSpot": "anyone who asks for the bun recipe (she'll never share, but she loves being asked)",
+     "softClue": "A locked recipe box: \"GRAN'S BUNS. Ask nicely. Answer is still no.\""
+    },
+    "helper": {
+     "name": "Leo Santos",
+     "title": "Head Baker",
+     "personality": "Up since 3 a.m. and talks to the dough.",
+     "softSpot": "a caller who asks how the dough is rising",
+     "firstMessage": "Ovens, Leo. Dough's proving, keep it down."
+    },
+    "vendors": [
+     {
+      "name": "Mill Creek Flour",
+      "prefix": "MCF",
+      "what": "flour"
+     },
+     {
+      "name": "Sunny Side Eggs",
+      "prefix": "SSE",
+      "what": "eggs"
+     },
+     {
+      "name": "Gold Leaf Glaze",
+      "prefix": "GLG",
+      "what": "glaze and icing"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver fourteen sacks of flour for the hot cross buns (up from ten)",
+    "check": "fourteen sacks",
+    "cosignClue": "Leo's chalk tally on the oven door: \"FLOUR 14. Was 10. Agnes knows.\""
+   },
+   {
+    "title": "The Spring Brunch",
+    "business": "The Garden Terrace Hotel",
+    "place": "The Garden Terrace Hotel, Easter brunch",
+    "float": "the banquet petty cash",
+    "hook": "Three hundred guests are booked for Easter brunch on the terrace.",
+    "employee": {
+     "name": "Claire Whitfield",
+     "title": "Brunch Manager",
+     "personality": "Poised, precise and silently judging your posture.",
+     "tic": "reads the reservation list aloud",
+     "softSpot": "anyone who asks about the Easter bonnet contest",
+     "softClue": "A flyer: \"EASTER BONNET CONTEST, judged by Claire. Ask her about last year's winner.\""
+    },
+    "helper": {
+     "name": "Ben Adeyemi",
+     "title": "Sous-chef",
+     "personality": "Calm until the hollandaise breaks.",
+     "softSpot": "a caller who asks whether the hollandaise held",
+     "firstMessage": "Kitchen, Ben. If it's about eggs, I know."
+    },
+    "vendors": [
+     {
+      "name": "Lilyfield Florals",
+      "prefix": "LFL",
+      "what": "lily centerpieces"
+     },
+     {
+      "name": "Hollow Oak Ham Co.",
+      "prefix": "HOH",
+      "what": "glazed hams"
+     },
+     {
+      "name": "Tablecloth Express",
+      "prefix": "TEX",
+      "what": "linens"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver sixty lily centerpieces (down from seventy-five)",
+    "check": "sixty centerpieces",
+    "cosignClue": "Ben's note on the pass: \"Lilies: 60 not 75. Claire proposes. I sign.\""
+   }
+  ]
+ },
+ {
+  "id": "pride",
+  "name": "Pride",
+  "windows": [
+   [
+    "2027-06-01",
+    "2027-06-27"
+   ]
+  ],
+  "art": "Community center workshop: rainbow-stripe floor runner, flag-garland window, float-building table, glitter shelf, folding chair.",
+  "fx": "Gentle rainbow confetti",
+  "layouts": [
+   {
+    "title": "The Float Build",
+    "business": "Rainbow Row Community Center",
+    "place": "Rainbow Row Community Center, the night before the parade",
+    "float": "the community fund tin",
+    "hook": "The parade steps off at ten and the float doesn't have a trailer.",
+    "employee": {
+     "name": "Jordan Ellis",
+     "title": "Float Coordinator",
+     "personality": "A tireless organizer covered in glitter; uses they/them.",
+     "tic": "calls everything \"iconic\"",
+     "softSpot": "anyone who offers to help hot-glue sequins",
+     "softClue": "A glue gun and a mountain of sequins: \"Volunteers wanted. Jordan will make you a crown.\""
+    },
+    "helper": {
+     "name": "Marisa Cortez",
+     "title": "Treasurer",
+     "personality": "Steady and fond of everyone, especially the youth group.",
+     "softSpot": "a caller who asks about the center's youth program",
+     "firstMessage": "Treasurer, Marisa."
+    },
+    "vendors": [
+     {
+      "name": "Spectrum Fabric",
+      "prefix": "SFA",
+      "what": "fabric"
+     },
+     {
+      "name": "Glitterbomb Supply",
+      "prefix": "GSU",
+      "what": "glitter and sequins"
+     },
+     {
+      "name": "Big Wheel Trailers",
+      "prefix": "BWT",
+      "what": "flatbed trailers"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver flatbed trailer number seven by 6 a.m. (not number four: it has a flat)",
+    "check": "trailer number seven",
+    "cosignClue": "Marisa's note: \"Trailer is #7. #4 has a flat. Jordan proposes, I sign.\""
+   },
+   {
+    "title": "The Reading Night",
+    "business": "Lavender Leaf Books",
+    "place": "Lavender Leaf Books, Pride Month author night",
+    "float": "the register",
+    "hook": "A bestselling author is reading tonight and the signed copies are short.",
+    "employee": {
+     "name": "Oliver Grant",
+     "title": "Bookseller",
+     "personality": "Gentle and bookish; has a recommendation for everyone.",
+     "tic": "quotes a line of poetry when he's nervous",
+     "softSpot": "anyone who recommends him a book",
+     "softClue": "A notebook by the till: \"Books people told me to read.\" It's nearly empty."
+    },
+    "helper": {
+     "name": "Sunita Rao",
+     "title": "Events Lead",
+     "personality": "Organized and protective of her authors.",
+     "softSpot": "a caller who asks about the author by name",
+     "firstMessage": "Events, Sunita."
+    },
+    "vendors": [
+     {
+      "name": "Inkwell Distributors",
+      "prefix": "IDI",
+      "what": "books"
+     },
+     {
+      "name": "Paper Moon Printing",
+      "prefix": "PMP",
+      "what": "posters"
+     },
+     {
+      "name": "Rainbow Cake Co.",
+      "prefix": "RCA",
+      "what": "cakes"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver forty-five signed copies for the reading (down from fifty)",
+    "check": "forty-five copies",
+    "cosignClue": "Sunita's event sheet: \"Signed copies: 45. Author only signed 45. Oliver proposes, Sunita signs.\""
+   },
+   {
+    "title": "The Block Party",
+    "business": "Main Street Pride Committee",
+    "place": "Main Street, the Pride block party",
+    "float": "the committee cash bag",
+    "hook": "It's 34 degrees out and the water truck is late.",
+    "employee": {
+     "name": "Dee Washington",
+     "title": "Street Captain",
+     "personality": "A neighborhood legend who was at the very first block party.",
+     "tic": "calls everyone \"sugar\"",
+     "softSpot": "anyone who asks about the first block party in 1998",
+     "softClue": "A faded photo taped to the clipboard: \"Main St, 1998. Dee is the one with the megaphone.\""
+    },
+    "helper": {
+     "name": "Theo Lambert",
+     "title": "Sound Engineer",
+     "personality": "Laid-back and particular about his mixing desk.",
+     "softSpot": "a caller who asks him for a sound check",
+     "firstMessage": "Sound desk, Theo. Check, check."
+    },
+    "vendors": [
+     {
+      "name": "Loud & Proud Sound",
+      "prefix": "LPS",
+      "what": "stage sound"
+     },
+     {
+      "name": "Rainbow Barricades",
+      "prefix": "RBA",
+      "what": "crowd barriers"
+     },
+     {
+      "name": "Cool Breeze Water",
+      "prefix": "CBW",
+      "what": "bottled water"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver eighty cases of water (up from sixty: heat warning)",
+    "check": "eighty cases",
+    "cosignClue": "Theo's note on the mixer: \"WATER = 80 cases. Heat warning. Dee proposes, I sign.\""
+   }
+  ]
+ },
+ {
+  "id": "fourth-of-july",
+  "name": "Fourth of July",
+  "windows": [
+   [
+    "2027-06-28",
+    "2027-07-07"
+   ]
+  ],
+  "art": "Lakeside boardwalk: plank floor, star-spangled bunting window, picnic table, cooler, flag pole planter.",
+  "fx": "Little firework bursts in the sky",
+  "layouts": [
+   {
+    "title": "The Fireworks Barge",
+    "business": "Harborview Fireworks Show",
+    "place": "Harborview Marina, the afternoon of the Fourth",
+    "float": "the show cash box",
+    "hook": "Forty thousand people will be watching the harbor at nine.",
+    "employee": {
+     "name": "Frank Kowalski",
+     "title": "Show Producer",
+     "personality": "A showman who has run the harbor fireworks since 1989.",
+     "tic": "says \"big finish\" about everything",
+     "softSpot": "anyone who asks about his very first show",
+     "softClue": "A framed poster: \"HARBORVIEW 1989. Frank's first show. Ask him about the rain.\""
+    },
+    "helper": {
+     "name": "Alicia Moreno",
+     "title": "Pyro Safety Officer",
+     "personality": "Strict, calm, and the only person Frank listens to.",
+     "softSpot": "a caller who asks about the safety perimeter",
+     "firstMessage": "Safety, Moreno. Is the perimeter clear?"
+    },
+    "vendors": [
+     {
+      "name": "Starburst Pyrotechnics",
+      "prefix": "SPY",
+      "what": "fireworks"
+     },
+     {
+      "name": "Dockside Barge Co.",
+      "prefix": "DBA",
+      "what": "barge towing"
+     },
+     {
+      "name": "Red, White & Brew",
+      "prefix": "RWB",
+      "what": "coffee truck"
+     }
+    ],
+    "allowed": 1,
+    "job": "tow the fireworks barge to pier three by 8 p.m. (not pier five)",
+    "check": "pier three",
+    "cosignClue": "Alicia's safety memo: \"Barge goes to PIER 3. Pier 5 is closed. Frank proposes, I sign.\""
+   },
+   {
+    "title": "The Cookout",
+    "business": "Liberty Lake Campground",
+    "place": "Liberty Lake Campground, the Fourth of July cookout",
+    "float": "the camp store till",
+    "hook": "Two hundred campers are lining up for burgers and it's 98 degrees.",
+    "employee": {
+     "name": "Darlene Tucker",
+     "title": "Camp Host",
+     "personality": "A fixture of the lake for 20 years, with a blue ribbon for her pie.",
+     "tic": "ends sentences with \"y'hear?\"",
+     "softSpot": "anyone who asks about her blue-ribbon pie",
+     "softClue": "A blue ribbon pinned over the till: \"County fair, cherry pie. Ask Darlene. She'll tell you twice.\""
+    },
+    "helper": {
+     "name": "Raj Patel",
+     "title": "Grill Master",
+     "personality": "Happy, sweaty and very serious about burgers.",
+     "softSpot": "a caller who asks how he likes his burgers",
+     "firstMessage": "Grill, Raj. Medium rare is the answer, what's the question?"
+    },
+    "vendors": [
+     {
+      "name": "Smoky Ridge Charcoal",
+      "prefix": "SMR",
+      "what": "charcoal"
+     },
+     {
+      "name": "Hometown Hot Dogs",
+      "prefix": "HHD",
+      "what": "hot dogs"
+     },
+     {
+      "name": "Lakeside Ice Co.",
+      "prefix": "LIC",
+      "what": "bagged ice"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver forty bags of ice (up from thirty: it's 98 degrees)",
+    "check": "forty bags",
+    "cosignClue": "Raj's note on the cooler: \"ICE: 40 bags. Heat. Darlene proposes, I sign.\""
+   },
+   {
+    "title": "The Hometown Parade",
+    "business": "Town of Cedar Falls",
+    "place": "Cedar Falls Town Hall, parade morning",
+    "float": "the town petty cash",
+    "hook": "The whole town is lining Main Street, and the kids' flags haven't come.",
+    "employee": {
+     "name": "Bev Hartley",
+     "title": "Parade Marshal",
+     "personality": "Has marshalled the parade for 30 years and treats it like a military operation.",
+     "tic": "salutes on the phone (you can hear it)",
+     "softSpot": "anyone who asks about the tractor float",
+     "softClue": "A photo on the bulletin board: a tractor in bunting. \"Bev's tractor float, 3-time champion.\""
+    },
+    "helper": {
+     "name": "Carlos Ruiz",
+     "title": "Town Clerk",
+     "personality": "By-the-book and knows every town ordinance by number.",
+     "softSpot": "a caller who knows the parade permit number (P-704)",
+     "firstMessage": "Town Clerk's office, Carlos Ruiz speaking."
+    },
+    "vendors": [
+     {
+      "name": "Stars & Stripes Flags",
+      "prefix": "STS",
+      "what": "hand flags"
+     },
+     {
+      "name": "Brass Band Rentals",
+      "prefix": "BBR",
+      "what": "band instruments"
+     },
+     {
+      "name": "Hometown Bunting",
+      "prefix": "HBU",
+      "what": "bunting"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver 250 hand flags for the kids (cut from 300)",
+    "check": "250 flags",
+    "cosignClue": "Carlos's memo: \"Permit P-704. Flags: 250 (budget cut). Bev proposes, Clerk co-signs.\""
+   }
+  ]
+ },
+ {
+  "id": "halloween",
+  "name": "Halloween",
+  "windows": [
+   [
+    "2027-10-18",
+    "2027-11-01"
+   ]
+  ],
+  "art": "Haunted manor: cracked flagstone floor, moonlit window, jack-o'-lanterns, cobwebbed shelf, coffin bench.",
+  "fx": "Drifting fog and the odd bat",
+  "layouts": [
+   {
+    "title": "The Haunted House",
+    "business": "Hollowmere Manor",
+    "place": "Hollowmere Manor haunted attraction, opening night",
+    "float": "the ticket booth cash box",
+    "hook": "The scream line opens at dusk and the fog machines are dead.",
+    "employee": {
+     "name": "Vera Thorn",
+     "title": "Scare Director",
+     "personality": "Theatrical and a little spooky even off the clock.",
+     "tic": "whispers the important parts",
+     "softSpot": "anyone who admits they scream easily",
+     "softClue": "A scare-meter chart on the wall: \"Who screamed loudest? Tell Vera. She keeps score.\""
+    },
+    "helper": {
+     "name": "Gus Pemberton",
+     "title": "Effects Tech",
+     "personality": "A tinkerer who loves his animatronics more than people.",
+     "softSpot": "a caller who asks about his animatronic raven, Edgar",
+     "firstMessage": "Effects, Gus. Edgar says hello."
+    },
+    "vendors": [
+     {
+      "name": "Fogbank FX",
+      "prefix": "FFX",
+      "what": "fog machines"
+     },
+     {
+      "name": "Kreepy Costumes",
+      "prefix": "KCO",
+      "what": "costumes"
+     },
+     {
+      "name": "Grave Digger Pumpkins",
+      "prefix": "GDP",
+      "what": "pumpkins"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver six fog machines (not eight: Gus fixed two)",
+    "check": "six fog machines",
+    "cosignClue": "Gus's repair tag: \"Fixed 2. Order SIX fog machines, not 8. Vera proposes, Gus signs.\""
+   },
+   {
+    "title": "The Pumpkin Patch",
+    "business": "Crooked Fence Farm",
+    "place": "Crooked Fence Farm pumpkin patch, the last weekend before Halloween",
+    "float": "the farm stand till",
+    "hook": "The hayride line wraps round the barn and the bales are running out.",
+    "employee": {
+     "name": "Dot Pruitt",
+     "title": "Farm Owner",
+     "personality": "Earthy and funny; names every pumpkin on the farm.",
+     "tic": "introduces pumpkins by name",
+     "softSpot": "anyone who asks about Big Bertha, the giant pumpkin",
+     "softClue": "A blue-ribbon photo: a pumpkin the size of a car. \"BIG BERTHA, 1,140 lbs. Ask Dot.\""
+    },
+    "helper": {
+     "name": "Wes Brennan",
+     "title": "Hayride Driver",
+     "personality": "Laconic farmhand who loves his old tractor.",
+     "softSpot": "a caller who asks about the tractor",
+     "firstMessage": "Barn, Wes."
+    },
+    "vendors": [
+     {
+      "name": "Cornfield Maze Designs",
+      "prefix": "CMD",
+      "what": "corn mazes"
+     },
+     {
+      "name": "Cider Mill Co.",
+      "prefix": "CMI",
+      "what": "apple cider"
+     },
+     {
+      "name": "Hayloft Hay",
+      "prefix": "HHA",
+      "what": "hay bales"
+     }
+    ],
+    "allowed": 2,
+    "job": "deliver seventy-five hay bales for the hayride (up from sixty)",
+    "check": "seventy-five bales",
+    "cosignClue": "Wes's note on the tractor seat: \"HAY: 75 bales. Dot proposes, I sign.\""
+   },
+   {
+    "title": "The Costume Rush",
+    "business": "Masquerade Costume Emporium",
+    "place": "Masquerade Costume Emporium, two days before Halloween",
+    "float": "the register",
+    "hook": "The whole town wants to be a vampire this year.",
+    "employee": {
+     "name": "Ziggy Lorne",
+     "title": "Shop Owner",
+     "personality": "A flamboyant ex-theatre actor.",
+     "tic": "puts on a different accent every few sentences",
+     "softSpot": "anyone who tells him their costume plans",
+     "softClue": "A board by the till: \"WHAT ARE YOU GOING AS? Tell Ziggy! Best one gets 10% off.\""
+    },
+    "helper": {
+     "name": "Hana Kim",
+     "title": "Head Seamstress",
+     "personality": "Precise and unimpressed by drama.",
+     "softSpot": "a caller who knows their measurements",
+     "firstMessage": "Alterations, Hana. Measurements?"
+    },
+    "vendors": [
+     {
+      "name": "Big Wig Supply",
+      "prefix": "BWS",
+      "what": "wigs"
+     },
+     {
+      "name": "Fangtastic Novelties",
+      "prefix": "FNO",
+      "what": "plastic fangs"
+     },
+     {
+      "name": "Sequin Street Fabrics",
+      "prefix": "SES",
+      "what": "fabric"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver 400 pairs of vampire fangs (cut from 500)",
+    "check": "400 pairs",
+    "cosignClue": "Hana's order pad: \"Fangs: 400 pairs. Ziggy over-ordered last year. I sign.\""
+   }
+  ]
+ },
+ {
+  "id": "diwali",
+  "name": "Diwali",
+  "windows": [
+   [
+    "2027-10-24",
+    "2027-11-02"
+   ]
+  ],
+  "art": "Festival sweet shop: patterned tile floor, marigold-garland window, rows of diyas, rangoli on the floor, cushioned bench.",
+  "fx": "Twinkling diya lights",
+  "layouts": [
+   {
+    "title": "The Sweet Shop",
+    "business": "Mithai Mahal Sweets",
+    "place": "Mithai Mahal Sweets, the night before Diwali",
+    "float": "the cash drawer",
+    "hook": "Every family in the neighborhood has a mithai order to pick up tomorrow.",
+    "employee": {
+     "name": "Anjali Mehta",
+     "title": "Owner",
+     "personality": "Brisk and generous; remembers every family's order from last year.",
+     "tic": "asks \"have you eaten?\" to everyone",
+     "softSpot": "anyone who asks about her kaju katli",
+     "softClue": "A tray of kaju katli with a card: \"Anjali's own recipe. Ask her the secret.\""
+    },
+    "helper": {
+     "name": "Rohan Kapoor",
+     "title": "Head Sweet-maker",
+     "personality": "Patient and focused; stirs syrup like it's meditation.",
+     "softSpot": "a caller who waits patiently while he stirs",
+     "firstMessage": "Kitchen, Rohan. Hold on, stirring."
+    },
+    "vendors": [
+     {
+      "name": "Saffron Fields Dairy",
+      "prefix": "SFD",
+      "what": "milk and ghee"
+     },
+     {
+      "name": "Silver Leaf Boxes",
+      "prefix": "SLB",
+      "what": "gift boxes"
+     },
+     {
+      "name": "Diya Lights Electric",
+      "prefix": "DLE",
+      "what": "string lights"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver 600 gift boxes for the mithai orders (up from 500)",
+    "check": "600 boxes",
+    "cosignClue": "Rohan's note: \"Boxes: 600 now. Anjali proposes, I sign.\""
+   },
+   {
+    "title": "The Community Mela",
+    "business": "Riverside Community Hall",
+    "place": "Riverside Community Hall, setting up the Diwali mela",
+    "float": "the mela cash box",
+    "hook": "A thousand people are coming to the mela and the garlands are short.",
+    "employee": {
+     "name": "Vikram Iyer",
+     "title": "Mela Organizer",
+     "personality": "Enthusiastic and always mid-announcement.",
+     "tic": "makes announcements into a mic that isn't on",
+     "softSpot": "anyone who offers to help with the rangoli",
+     "softClue": "Chalk outlines on the floor: \"RANGOLI. Help Vikram finish it.\""
+    },
+    "helper": {
+     "name": "Kavya Reddy",
+     "title": "Volunteer Treasurer",
+     "personality": "A methodical student who double-checks every receipt.",
+     "softSpot": "a caller who explains things step by step",
+     "firstMessage": "Treasurer, Kavya."
+    },
+    "vendors": [
+     {
+      "name": "Rangoli Colors Co.",
+      "prefix": "RCO",
+      "what": "colored powders"
+     },
+     {
+      "name": "Marigold Garland Farm",
+      "prefix": "MGF",
+      "what": "marigold garlands"
+     },
+     {
+      "name": "Spice Route Caterers",
+      "prefix": "SPR",
+      "what": "catering"
+     }
+    ],
+    "allowed": 1,
+    "job": "deliver 200 marigold garlands (down from 250)",
+    "check": "200 garlands",
+    "cosignClue": "Kavya's spreadsheet: \"Garlands: 200 (hall can't fit more). Vikram proposes, Kavya signs.\""
+   },
+   {
+    "title": "The Lights Shop",
+    "business": "Deepak Electrics",
+    "place": "Deepak Electrics, Diwali lighting season",
+    "float": "the shop till",
+    "hook": "Thirty houses want their lights up before Diwali, and the stock is low.",
+    "employee": {
+     "name": "Sanjay Bhatt",
+     "title": "Owner",
+     "personality": "Proud of his own house, which is the brightest on the street.",
+     "tic": "tests bulbs as he talks (click, click)",
+     "softSpot": "anyone who asks about the lights on his house",
+     "softClue": "A photo pinned up: a house blazing with lights. \"Sanjay's house. He did it himself.\""
+    },
+    "helper": {
+     "name": "Meera Joshi",
+     "title": "Lead Installer",
+     "personality": "Fearless on a ladder and strict about safety.",
+     "softSpot": "a caller who asks about ladder safety",
+     "firstMessage": "Install team, Meera."
+    },
+    "vendors": [
+     {
+      "name": "Glowstring LED Supply",
+      "prefix": "GLS",
+      "what": "LED light strings"
+     },
+     {
+      "name": "Clay Diya Works",
+      "prefix": "CDW",
+      "what": "clay diyas"
+     },
+     {
+      "name": "Ladder Lords Rentals",
+      "prefix": "LLR",
+      "what": "ladders"
+     }
+    ],
+    "allowed": 0,
+    "job": "deliver ninety strings of LED lights (cut from 120)",
+    "check": "ninety strings",
+    "cosignClue": "Meera's job sheet: \"LEDs: 90 strings, not 120. Sanjay proposes, I sign.\""
+   }
+  ]
+ }
+]

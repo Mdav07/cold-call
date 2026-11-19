@@ -37,8 +37,8 @@ export const UNLOCKS: Unlock[] = [
   { sprite: "hunter-10", label: "Silver Sol", how: "30-day streak", long: "A 30-day Daily Case streak", streakDays: 30, earned: (p) => p.bestStreak >= 30 },
   { sprite: "hunter-9", label: "Slate Sora", how: "All 3 floors", long: "Clear all three floors", earned: (p) => [1, 2, 3].every((f) => p.clearedFloors.includes(f)) },
   // Seasonal cases: each holiday's case unlocks its own look.
-  { sprite: "hunter-11", label: "Turkey Theo", how: "Thanks-giving case", long: "Clear the Thanksgiving case", earned: (p) => p.seasonsCleared.includes("thanksgiving-2026") },
-  { sprite: "hunter-12", label: "Holly Hal", how: "Winter case", long: "Clear the Winter Holidays case", earned: (p) => p.seasonsCleared.includes("winter-2026") },
+  { sprite: "hunter-11", label: "Turkey Theo", how: "Thanks-giving case", long: "Clear the Thanksgiving case", earned: (p) => p.seasonsCleared.some((id) => id.startsWith("thanksgiving-")) },
+  { sprite: "hunter-12", label: "Holly Hal", how: "Winter case", long: "Clear the Christmas or Hanukkah case", earned: (p) => p.seasonsCleared.some((id) => id.startsWith("christmas-") || id.startsWith("hanukkah-")) },
 ];
 
 /** Every look that can be earned (valid as a saved choice once picked). */
@@ -49,7 +49,7 @@ export const nextStreakUnlock = (best: number) => UNLOCKS.find((u) => u.streakDa
 
 function guestSeasonsCleared(): string[] {
   try {
-    return SEASONS.filter((s) => localStorage.getItem(`cc-season-cleared-${s.caseDate}`) === "1").map((s) => s.id);
+    return SEASONS.filter((s) => s.caseDates.some((d) => localStorage.getItem(`cc-season-cleared-${d}`) === "1")).map((s) => s.id);
   } catch {
     return [];
   }

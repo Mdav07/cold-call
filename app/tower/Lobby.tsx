@@ -230,7 +230,7 @@ export function Lobby({
           goal={shown.goal}
           tags={tags}
           deck={consoleMode ? nav : undefined}
-          screenOverlay={seasonThemeOn && currentSeason()?.door === "harvest" ? <FallingLeaves /> : null}
+          screenOverlay={seasonThemeOn && currentSeason()?.fx === "leaves" ? <FallingLeaves /> : null}
         />
       </div>
       <DailyPopup tutorialCleared={tutorialCleared} clearedToday={dailyClearedToday} />

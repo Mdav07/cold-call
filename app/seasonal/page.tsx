@@ -1,13 +1,13 @@
-// /seasonal: the holiday case behind the lobby's seasonal door (Thanksgiving first). One hand-written case
-// per season, open between its dates (shared/seasonalCase.ts). Marisol is the Daily agent; Dev is a live
-// second signer (helper). Closed between seasons: says when the next one opens.
+// /seasonal: the holiday case behind the lobby's holiday door. Each holiday is open on its dates and plays one of
+// its layouts a day (shared/seasonalCase.ts): the proposer is the Daily agent, the co-signer the live "helper".
+// Two holidays open at once: the door asks which (?s=<season id>). Closed between holidays: says when the next opens.
 
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { dailyCase } from "@/shared/dailyCase";
-import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
+import { nextSeason, openSeasons, seasonById, seasonalHelper, shortDate, todaysCaseDate } from "@/shared/seasonalCase";
 import { FloorGame } from "@/app/floor/[floor]/FloorGame";
 import type { NpcInfo } from "@/app/floor/dialogue/DialogueBox";
 import { HudVault } from "@/app/floor/hud/HudVault";
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
 };
 
-export default function SeasonalPage() {
+export default function SeasonalPage({ searchParams }: PageProps<"/seasonal">) {
   return (
     <Suspense
       fallback={
@@ -33,14 +33,46 @@ export default function SeasonalPage() {
         </main>
       }
     >
-      <SeasonalRoom />
+      <SeasonalRoom searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function SeasonalRoom() {
-  await connection(); // which season is open depends on the date
-  const season = currentSeason();
+async function SeasonalRoom({ searchParams }: { searchParams: PageProps<"/seasonal">["searchParams"] }) {
+  await connection(); // which holiday is open depends on the date
+  const { s: picked } = await searchParams;
+  const open = openSeasons();
+  const chosen = seasonById(typeof picked === "string" ? picked : null);
+  const season = open.length === 1 ? open[0] : open.find((o) => o.id === chosen?.id) ?? null;
+  if (open.length > 1 && !season) {
+    // Two holidays open at once (Halloween + Diwali, Christmas + Hanukkah): the door asks which.
+    return (
+      <main className="cc-floor-1 grid min-h-dvh flex-1 place-items-center bg-[#15141a] p-4">
+        <section className="pixel-frame flex w-full max-w-md flex-col gap-4 bg-[var(--cc-panel)] p-6">
+          <h1 className="font-pixel text-sm text-[var(--cc-accent)]">Two holiday cases tonight</h1>
+          <p className="text-[var(--cc-ink)]">Pick a door. Each has its own case and its own leaderboard.</p>
+          <ul className="flex flex-col gap-3">
+            {open.map((o) => {
+              const c = dailyCase(todaysCaseDate(o));
+              return (
+                <li key={o.id}>
+                  <Link href={`/seasonal?s=${o.id}`} className="pixel-button flex w-full flex-col items-start gap-1 text-left">
+                    <span>{o.name} ▶</span>
+                    <span className="font-sans text-xs normal-case text-[var(--cc-muted)]">
+                      {c.title} · open until {shortDate(o.closes)}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <Link href="/tower" className="pixel-button self-start">
+            ◀ Back to the lobby
+          </Link>
+        </section>
+      </main>
+    );
+  }
   if (!season) {
     const next = nextSeason();
     return (
@@ -57,8 +89,9 @@ async function SeasonalRoom() {
       </main>
     );
   }
-  const c = dailyCase(season.caseDate);
-  const helper = season.helper;
+  const caseDate = todaysCaseDate(season);
+  const c = dailyCase(caseDate);
+  const helper = seasonalHelper(caseDate);
   const map = buildDailyRoom(c, helper ? { id: helper.id, sprite: helper.sprite } : undefined);
   map.name = `${season.name} · ${c.title}`;
   const npcs: NpcInfo[] = [{ id: "daily", name: c.employee.name, title: c.employee.title, sprite: c.employee.sprite }];

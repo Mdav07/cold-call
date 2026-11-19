@@ -15,15 +15,15 @@ export interface DailyBoardRow {
 
 const hasDb = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-/** Fastest clear per player of the case for `date` (default: today, UTC), fastest first. */
-export async function dailyBoard(date: string = todayUtc(), limit = 20): Promise<DailyBoardRow[]> {
+/** Fastest clear per player of the case for `date` (default: today, UTC), or of any of several dates (a holiday's layouts), fastest first. */
+export async function dailyBoard(date: string | string[] = todayUtc(), limit = 20): Promise<DailyBoardRow[]> {
   if (!hasDb()) return [];
   const demoId = await getDemoUserId().catch(() => null);
   const { data } = await db()
     .from("leaderboard")
     .select("user_id, display_name, duration_ms, channel, tx_hash")
     .eq("floor", DAILY_FLOOR)
-    .eq("daily_date", date)
+    .in("daily_date", Array.isArray(date) ? date : [date])
     .not("duration_ms", "is", null)
     .order("duration_ms")
     .limit(200);

@@ -1,12 +1,12 @@
 {
+  "_about": "Holiday cases (shared/seasonalCase.ts). Built by tools/seasonal/build_seasons.py from tools/seasonal/layouts.json; edit those, not this file. Each holiday opens on its windows (UTC dates, inclusive) and rotates its layouts day by day. caseDates[i] is layout i's reserved year-2000 run date in that window. art=false means the room still borrows the harvest tiles.",
   "seasons": [
     {
-      "id": "thanksgiving-2026",
+      "id": "thanksgiving",
       "name": "Thanksgiving",
-      "opens": "2026-11-16",
-      "closes": "2026-11-30",
-      "caseDate": "2000-11-26",
-      "door": "harvest",
+      "fx": "leaves",
+      "signoff": "Happy Thanksgiving, kid. Save me a slice of pie.",
+      "art": true,
       "theme": {
         "id": "harvest",
         "name": "Thanksgiving: the harvest kitchen",
@@ -28,86 +28,2693 @@
           "seat": "seat_harvest"
         }
       },
-      "case": {
-        "business": "Gobble & Co. Catering",
-        "float": "the petty cash tin",
-        "title": "The Thanksgiving Rush",
-        "place": "Gobble & Co. Catering, the night before Thanksgiving",
-        "brief": [
-          "Happy Thanksgiving, kid. Gobble & Co. is catering four hundred dinners tomorrow. Event lead Marisol Vega holds the petty cash tin — but nothing leaves without a second signature from sous-chef Dev Okafor.",
-          "Convince Marisol to propose a small payment to tonight's booked vendor, then talk Dev into co-signing. The notes around the kitchen will tell you who's really booked."
+      "lobby": {
+        "door": "door_harvest",
+        "mat": "mat_harvest",
+        "lobby": [
+          "pumpkins_harvest",
+          "haybale_harvest"
         ],
-        "employee": {
-          "name": "Marisol Vega",
-          "firstName": "Marisol",
-          "title": "Event Lead",
-          "sprite": "/sprites/staff-07.png",
-          "personality": "Frazzled, sharp and wary: she's been burned by fake vendors before, and she counts turkeys under her breath.",
-          "tic": "says \"okay, okay, okay\" when she's stressed",
-          "softSpot": "anyone who offers to take something off her plate before the rush",
-          "redLine": "she never proposes without the invoice number and the right pie count (thirty-eight, not the original forty), never pays anyone who isn't on tonight's vendor sheet, and never more than 50 cents from the tin — and Dev must co-sign"
-        },
-        "vendors": [
-          {
-            "name": "Hearth & Crumb Bakery",
-            "code": "HC-1126",
-            "what": "pies and dinner rolls"
-          },
-          {
-            "name": "Maple Hollow Farm",
-            "code": "MH-4410",
-            "what": "fresh turkeys"
-          },
-          {
-            "name": "Fold-Up Rentals",
-            "code": "FR-2087",
-            "what": "folding tables and chairs"
-          }
-        ],
-        "allowedVendor": "Hearth & Crumb Bakery",
-        "allowedJob": "drop off the last thirty-eight pumpkin pies before midnight (the order was cut from forty)",
-        "allowedInvoice": "HC-1126",
-        "clues": [
-          {
-            "id": "work-order",
-            "label": "Delivery sheet",
-            "text": "Hearth & Crumb Bakery is booked tonight to drop off the final pumpkin pie order before midnight. Invoice HC-1126, pay on delivery (50 cents max from the petty cash tin). Marisol proposes; Dev co-signs. Get the final pie count from the kitchen before either of them will move."
-          },
-          {
-            "id": "soft-spot",
-            "label": "Marisol's clipboard",
-            "text": "A sticky note in her handwriting: \"If ANYONE offers to help carry, say YES.\" She's been on her feet since 5 a.m."
-          },
-          {
-            "id": "cosign",
-            "label": "Two-signature card",
-            "text": "Petty cash rule taped to the tin: every payment needs Marisol's proposal AND Dev's co-signature. Dev won't sign unless you know the cut pie count (thirty-eight) and you're not a jerk about his gravy."
-          },
-          {
-            "id": "red-line",
-            "label": "Note by the phone",
-            "text": "Kitchen rule, underlined twice: no invoice number and pie count, no payment. Nobody off tonight's vendor sheet gets a cent. Not even Grandma."
-          }
-        ]
+        "garland": "garland_harvest"
       },
-      "helper": {
-        "id": "helper",
-        "name": "Dev Okafor",
-        "firstName": "Dev",
-        "title": "Sous-chef",
-        "sprite": "/sprites/staff-12.png",
-        "personality": "Warm under pressure, protective of Marisol, and very done with people who waste the kitchen's time. Speaks fast, tastes as he talks, and will hang up on anyone who disrespects the gravy.",
-        "softSpot": "a caller who treats the kitchen with respect and admits the rush is hard without making it Marisol's fault",
-        "check": "thirty-eight pies (the order was cut from forty)"
-      }
+      "caseDate": "2000-11-26",
+      "windows": [
+        {
+          "opens": "2026-11-16",
+          "closes": "2026-11-30",
+          "caseDates": [
+            "2000-11-26",
+            "2000-11-27",
+            "2000-11-28"
+          ]
+        },
+        {
+          "opens": "2027-11-15",
+          "closes": "2027-11-29",
+          "caseDates": [
+            "2000-11-15",
+            "2000-11-16",
+            "2000-11-17"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Gobble & Co. Catering",
+            "float": "the petty cash tin",
+            "title": "The Thanksgiving Rush",
+            "place": "Gobble & Co. Catering, the night before Thanksgiving",
+            "brief": [
+              "Happy Thanksgiving, kid. Gobble & Co. is catering four hundred dinners tomorrow. Event lead Marisol Vega holds the petty cash tin — but nothing leaves without a second signature from sous-chef Dev Okafor.",
+              "Convince Marisol to propose a small payment to tonight's booked vendor, then talk Dev into co-signing. The notes around the kitchen will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Marisol Vega",
+              "firstName": "Marisol",
+              "title": "Event Lead",
+              "sprite": "/sprites/staff-07.png",
+              "personality": "Frazzled, sharp and wary: she's been burned by fake vendors before, and she counts turkeys under her breath.",
+              "tic": "says \"okay, okay, okay\" when she's stressed",
+              "softSpot": "anyone who offers to take something off her plate before the rush",
+              "redLine": "she never proposes without the invoice number and the right pie count (thirty-eight, not the original forty), never pays anyone who isn't on tonight's vendor sheet, and never more than 50 cents from the tin — and Dev must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Hearth & Crumb Bakery",
+                "code": "HC-1126",
+                "what": "pies and dinner rolls"
+              },
+              {
+                "name": "Maple Hollow Farm",
+                "code": "MH-4410",
+                "what": "fresh turkeys"
+              },
+              {
+                "name": "Fold-Up Rentals",
+                "code": "FR-2087",
+                "what": "folding tables and chairs"
+              }
+            ],
+            "allowedVendor": "Hearth & Crumb Bakery",
+            "allowedJob": "drop off the last thirty-eight pumpkin pies before midnight (the order was cut from forty)",
+            "allowedInvoice": "HC-1126",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Delivery sheet",
+                "text": "Hearth & Crumb Bakery is booked tonight to drop off the final pumpkin pie order before midnight. Invoice HC-1126, pay on delivery (50 cents max from the petty cash tin). Marisol proposes; Dev co-signs. Get the final pie count from the kitchen before either of them will move."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Marisol's clipboard",
+                "text": "A sticky note in her handwriting: \"If ANYONE offers to help carry, say YES.\" She's been on her feet since 5 a.m."
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Petty cash rule taped to the tin: every payment needs Marisol's proposal AND Dev's co-signature. Dev won't sign unless you know the cut pie count (thirty-eight) and you're not a jerk about his gravy."
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "Kitchen rule, underlined twice: no invoice number and pie count, no payment. Nobody off tonight's vendor sheet gets a cent. Not even Grandma."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Dev Okafor",
+            "firstName": "Dev",
+            "title": "Sous-chef",
+            "sprite": "/sprites/staff-12.png",
+            "personality": "Warm under pressure, protective of Marisol, and very done with people who waste the kitchen's time. Speaks fast, tastes as he talks, and will hang up on anyone who disrespects the gravy.",
+            "softSpot": "a caller who treats the kitchen with respect and admits the rush is hard without making it Marisol's fault",
+            "check": "thirty-eight pies (the order was cut from forty)",
+            "firstMessage": "Kitchen, Dev speaking. Make it quick, I've got gravy on."
+          }
+        },
+        {
+          "case": {
+            "business": "Big Balloon Parade Co.",
+            "float": "the cash box in the trailer",
+            "title": "The Parade Float",
+            "place": "the parade staging yard, 4 a.m. on Thanksgiving",
+            "brief": [
+              "Happy Thanksgiving, kid. The balloons go up in three hours and the wind just changed. Rita Szabo, the float captain, holds the cash box in the trailer, but nothing leaves without a second signature from Omar Haddad, the balloon wrangler.",
+              "Convince Rita to propose a small payment to today's booked vendor, then talk Omar into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Rita Szabo",
+              "firstName": "Rita",
+              "title": "Float Captain",
+              "sprite": "/sprites/staff-23.png",
+              "personality": "An ex-drum major who runs the whole yard on a whistle and a stopwatch.",
+              "tic": "counts down from five before she answers",
+              "softSpot": "anyone who knows the turkey balloon is called Gerald",
+              "redLine": "never proposes without the invoice number and twelve tanks, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the cash box in the trailer. Omar must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Helium Hank's Gas Supply",
+                "code": "HHS-5907",
+                "what": "helium tanks"
+              },
+              {
+                "name": "Ropes & Rigging Ltd.",
+                "code": "RRI-1298",
+                "what": "tether lines"
+              },
+              {
+                "name": "Thermos Brothers Coffee",
+                "code": "TBC-9418",
+                "what": "coffee urns"
+              }
+            ],
+            "allowedVendor": "Helium Hank's Gas Supply",
+            "allowedJob": "top up Gerald with twelve helium tanks (not fifteen: the wind forecast changed)",
+            "allowedInvoice": "HHS-5907",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Helium Hank's Gas Supply is booked to top up Gerald with twelve helium tanks (not fifteen: the wind forecast changed). Invoice HHS-5907, 50 cents max from the cash box in the trailer. Rita proposes; Omar co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Rita's things",
+                "text": "A name tag zip-tied to a giant deflated wing: \"GERALD. Be nice to him.\" Rita's handwriting."
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Omar co-signs gas orders only. He cut the order to twelve tanks when the wind picked up and wants the caller to know it."
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and twelve tanks, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Omar Haddad",
+            "firstName": "Omar",
+            "title": "Balloon Wrangler",
+            "sprite": "/sprites/staff-18.png",
+            "personality": "Calm and wind-obsessed; checks the anemometer mid-sentence.",
+            "softSpot": "a caller who asks about the wind before asking for money",
+            "check": "twelve tanks",
+            "firstMessage": "Wrangler tent, Omar. Wind's at twelve knots, talk fast."
+          }
+        },
+        {
+          "case": {
+            "business": "Elm Street Community Pantry",
+            "float": "the donations jar",
+            "title": "The Food Drive",
+            "place": "Elm Street Community Pantry, the day before Thanksgiving",
+            "brief": [
+              "Happy Thanksgiving, kid. Two hundred families are picking up dinner boxes tomorrow. Bea Lindqvist, the pantry coordinator, holds the donations jar, but nothing leaves without a second signature from Tomás Reyes, the volunteer treasurer.",
+              "Convince Bea to propose a small payment to today's booked vendor, then talk Tomás into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Bea Lindqvist",
+              "firstName": "Bea",
+              "title": "Pantry Coordinator",
+              "sprite": "/sprites/staff-10.png",
+              "personality": "Kind but ruthless about the sign-in sheet; owns a label maker and uses it on everything.",
+              "tic": "labels things out loud (\"that's... a stapler\")",
+              "softSpot": "anyone who says they'll volunteer next year",
+              "redLine": "never proposes without the invoice number and 220 boxes, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the donations jar. Tomás must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Pine Ridge Box Co.",
+                "code": "PRB-2046",
+                "what": "cardboard boxes"
+              },
+              {
+                "name": "Valley Grocers Wholesale",
+                "code": "VGW-6741",
+                "what": "canned goods"
+              },
+              {
+                "name": "Rolling Van Rentals",
+                "code": "RVR-8748",
+                "what": "cargo vans"
+              }
+            ],
+            "allowedVendor": "Pine Ridge Box Co.",
+            "allowedJob": "deliver 220 donation boxes (up from 180 after the school drive)",
+            "allowedInvoice": "PRB-2046",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Pine Ridge Box Co. is booked to deliver 220 donation boxes (up from 180 after the school drive). Invoice PRB-2046, 50 cents max from the donations jar. Bea proposes; Tomás co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Bea's things",
+                "text": "The volunteer sign-up sheet for next year, with one name on it. A sticky note: \"Hug whoever signs this.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Tomás's ledger: box order raised from 180 to 220 after the school drive. \"Anyone who says 180 is reading an old email.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 220 boxes, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Tomás Reyes",
+            "firstName": "Tomás",
+            "title": "Volunteer Treasurer",
+            "sprite": "/sprites/staff-15.png",
+            "personality": "A retired accountant with a dry wit who reads every number twice.",
+            "softSpot": "a caller who gives numbers slowly, digit by digit",
+            "check": "220 boxes",
+            "firstMessage": "Treasurer's desk, Tomás. Numbers first, please."
+          }
+        }
+      ]
     },
     {
-      "id": "winter-2026",
-      "name": "Winter Holidays",
-      "opens": "2026-12-14",
-      "closes": "2027-01-04",
-      "caseDate": "2000-12-24",
-      "door": "harvest"
+      "id": "hanukkah",
+      "name": "Hanukkah",
+      "fx": "candles",
+      "signoff": "Happy Hanukkah, kid. Save me a latke.",
+      "art": false,
+      "theme": {
+        "id": "hanukkah",
+        "name": "Hanukkah",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-12-04",
+      "windows": [
+        {
+          "opens": "2026-12-04",
+          "closes": "2026-12-12",
+          "caseDates": [
+            "2000-12-04",
+            "2000-12-05",
+            "2000-12-06"
+          ]
+        },
+        {
+          "opens": "2027-12-24",
+          "closes": "2028-01-01",
+          "caseDates": [
+            "2000-12-24",
+            "2000-12-25",
+            "2000-12-26"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Golden Dreidel Deli",
+            "float": "the register drawer",
+            "title": "The Eighth Night",
+            "place": "Golden Dreidel Deli, the last night of the latke rush",
+            "brief": [
+              "Happy Hanukkah, kid. It's the last night of Hanukkah and the latke line is out the door. Miriam Kaplan, the owner, holds the register drawer, but nothing leaves without a second signature from Eli Rosen, the head fry cook.",
+              "Convince Miriam to propose a small payment to today's booked vendor, then talk Eli into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Miriam Kaplan",
+              "firstName": "Miriam",
+              "title": "Owner",
+              "sprite": "/sprites/staff-19.png",
+              "personality": "Warm, a little theatrical, and keeping a running tally of every latke sold this week.",
+              "tic": "drops the latke count mid-sentence (\"...eleven hundred and four...\")",
+              "softSpot": "anyone who asks her verdict on applesauce versus sour cream",
+              "redLine": "never proposes without the invoice number and six drums, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the register drawer. Eli must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Shtetl Spud Farms",
+                "code": "SSF-2417",
+                "what": "potatoes"
+              },
+              {
+                "name": "Northside Oil & Supply",
+                "code": "NOS-2042",
+                "what": "frying oil"
+              },
+              {
+                "name": "Brightwick Candle Co.",
+                "code": "BCA-3438",
+                "what": "candles"
+              }
+            ],
+            "allowedVendor": "Northside Oil & Supply",
+            "allowedJob": "deliver six drums of frying oil (bumped from four: the latkes are selling)",
+            "allowedInvoice": "NOS-2042",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Northside Oil & Supply is booked to deliver six drums of frying oil (bumped from four: the latkes are selling). Invoice NOS-2042, 50 cents max from the register drawer. Miriam proposes; Eli co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Miriam's things",
+                "text": "A chalkboard poll by the register: APPLESAUCE 212, SOUR CREAM 209. \"Ask Miriam. She has OPINIONS.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Eli's note on the fryer: \"Oil order is SIX drums now. Anyone who says four didn't talk to me.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and six drums, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Eli Rosen",
+            "firstName": "Eli",
+            "title": "Head Fry Cook",
+            "sprite": "/sprites/staff-24.png",
+            "personality": "A grease-spattered perfectionist who times every batch to the second.",
+            "softSpot": "a caller who waits patiently while he flips a batch",
+            "check": "six drums",
+            "firstMessage": "Fry station, Eli. Hold on, flipping. Okay, go."
+          }
+        },
+        {
+          "case": {
+            "business": "Riverside Park Conservancy",
+            "float": "the events petty cash",
+            "title": "The Menorah Lighting",
+            "place": "Riverside Park, setting up the public menorah lighting",
+            "brief": [
+              "Happy Hanukkah, kid. Five hundred neighbors are coming to the park for the lighting tonight. Naomi Feld, the events manager, holds the events petty cash, but nothing leaves without a second signature from Sam Okonkwo, the stage tech.",
+              "Convince Naomi to propose a small payment to today's booked vendor, then talk Sam into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Naomi Feld",
+              "firstName": "Naomi",
+              "title": "Events Manager",
+              "sprite": "/sprites/staff-08.png",
+              "personality": "A brisk planner who lives in a headset and a clipboard.",
+              "tic": "says \"copy that\" to everything",
+              "softSpot": "anyone who offers to hand out the song sheets",
+              "redLine": "never proposes without the invoice number and 300 doughnuts, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the events petty cash. Sam must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Liftline Crane Hire",
+                "code": "LCH-4606",
+                "what": "crane trucks"
+              },
+              {
+                "name": "Bright Night Sound",
+                "code": "BNS-6676",
+                "what": "speakers"
+              },
+              {
+                "name": "Sufganiyot Sisters Bakery",
+                "code": "SSB-4421",
+                "what": "jelly doughnuts"
+              }
+            ],
+            "allowedVendor": "Sufganiyot Sisters Bakery",
+            "allowedJob": "deliver 300 jelly doughnuts for the crowd (raised from 250)",
+            "allowedInvoice": "SSB-4421",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Sufganiyot Sisters Bakery is booked to deliver 300 jelly doughnuts for the crowd (raised from 250). Invoice SSB-4421, 50 cents max from the events petty cash. Naomi proposes; Sam co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Naomi's things",
+                "text": "A stack of song sheets with a note: \"Need ONE volunteer to hand these out. Naomi will love you forever.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Sam's clipboard: \"Doughnut count is 300 now. If they say 250, hang up.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 300 doughnuts, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Sam Okonkwo",
+            "firstName": "Sam",
+            "title": "Stage Tech",
+            "sprite": "/sprites/staff-03.png",
+            "personality": "Laconic and safety-first; won't talk money until the stage is checked.",
+            "softSpot": "a caller who asks whether the stage is safe before anything else",
+            "check": "300 doughnuts",
+            "firstMessage": "Stage, Sam. Is this about the stage?"
+          }
+        },
+        {
+          "case": {
+            "business": "Lev's Hardware",
+            "float": "the wrap-table cash box",
+            "title": "The Gift Wrap Table",
+            "place": "Lev's Hardware, the eight-nights gift-wrap counter",
+            "brief": [
+              "Happy Hanukkah, kid. Lev's wraps every gift for free all eight nights, and the paper is running out. Ruth Adler, the store manager, holds the wrap-table cash box, but nothing leaves without a second signature from Ari Bloom, the night stock lead.",
+              "Convince Ruth to propose a small payment to today's booked vendor, then talk Ari into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Ruth Adler",
+              "firstName": "Ruth",
+              "title": "Store Manager",
+              "sprite": "/sprites/staff-12.png",
+              "personality": "No-nonsense; knows the aisle for every bolt in the store.",
+              "tic": "gives an aisle number for everything",
+              "softSpot": "anyone who compliments the window display she built",
+              "redLine": "never proposes without the invoice number and forty rolls, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the wrap-table cash box. Ari must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Blue & Silver Paper Co.",
+                "code": "BSP-1428",
+                "what": "wrapping paper"
+              },
+              {
+                "name": "Kessler Key Cutting",
+                "code": "KKC-6297",
+                "what": "key blanks"
+              },
+              {
+                "name": "Twin Rivers Freight",
+                "code": "TRF-6297",
+                "what": "pallet freight"
+              }
+            ],
+            "allowedVendor": "Blue & Silver Paper Co.",
+            "allowedJob": "deliver forty rolls of blue-and-silver wrap (cut from sixty)",
+            "allowedInvoice": "BSP-1428",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Blue & Silver Paper Co. is booked to deliver forty rolls of blue-and-silver wrap (cut from sixty). Invoice BSP-1428, 50 cents max from the wrap-table cash box. Ruth proposes; Ari co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Ruth's things",
+                "text": "A photo of the front window, a menorah made of copper pipe fittings. Underneath: \"Built by R.A. Took 9 hours.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Ari's checklist: \"Wrap order: 40 rolls (was 60, Ruth cut it). Confirm count before signing.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and forty rolls, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Ari Bloom",
+            "firstName": "Ari",
+            "title": "Night Stock Lead",
+            "sprite": "/sprites/staff-11.png",
+            "personality": "A night owl who plays chess by mail and never skips a step on his checklist.",
+            "softSpot": "a caller who doesn't rush him through his checklist",
+            "check": "forty rolls",
+            "firstMessage": "Stockroom, Ari. One sec, finishing my list."
+          }
+        }
+      ]
+    },
+    {
+      "id": "christmas",
+      "name": "Christmas",
+      "fx": "snow",
+      "signoff": "Merry Christmas, kid. That was a gift.",
+      "art": false,
+      "theme": {
+        "id": "christmas",
+        "name": "Christmas",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-12-14",
+      "windows": [
+        {
+          "opens": "2026-12-14",
+          "closes": "2027-01-02",
+          "caseDates": [
+            "2000-12-14",
+            "2000-12-15",
+            "2000-12-16"
+          ]
+        },
+        {
+          "opens": "2027-12-13",
+          "closes": "2028-01-02",
+          "caseDates": [
+            "2000-12-13",
+            "2000-12-17",
+            "2000-12-18"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Tinsel Town Toy Drive",
+            "float": "the toy-drive cash box",
+            "title": "The Toy Drive",
+            "place": "the Tinsel Town Toy Drive warehouse, three days before Christmas",
+            "brief": [
+              "Merry Christmas, kid. Twelve hundred donated toys ship out tomorrow, and none of them have batteries. Gwen Hollis, the warehouse lead, holds the toy-drive cash box, but nothing leaves without a second signature from Felix Mbeki, the dispatch lead.",
+              "Convince Gwen to propose a small payment to today's booked vendor, then talk Felix into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Gwen Hollis",
+              "firstName": "Gwen",
+              "title": "Warehouse Lead",
+              "sprite": "/sprites/staff-11.png",
+              "personality": "Organized to the bone; every box has a barcode and a nickname.",
+              "tic": "hums carols under her breath when she's annoyed",
+              "softSpot": "anyone who asks about the scarf she's knitting",
+              "redLine": "never proposes without the invoice number and 500 batteries, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the toy-drive cash box. Felix must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Evergreen Box & Bow",
+                "code": "EBB-9245",
+                "what": "gift boxes"
+              },
+              {
+                "name": "Sleighbell Trucking",
+                "code": "STR-9616",
+                "what": "delivery trucks"
+              },
+              {
+                "name": "Jolly Jim's Batteries",
+                "code": "JJS-5341",
+                "what": "batteries"
+              }
+            ],
+            "allowedVendor": "Jolly Jim's Batteries",
+            "allowedJob": "deliver 500 AA batteries for the donated toys (raised from 400)",
+            "allowedInvoice": "JJS-5341",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Jolly Jim's Batteries is booked to deliver 500 AA batteries for the donated toys (raised from 400). Invoice JJS-5341, 50 cents max from the toy-drive cash box. Gwen proposes; Felix co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Gwen's things",
+                "text": "Half a red scarf on knitting needles, with a note: \"For my nephew. Ask me about the pattern, I dare you.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Felix's whiteboard: \"Batteries: 500 (NOT 400). Route 7 drops them at 6.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 500 batteries, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Felix Mbeki",
+            "firstName": "Felix",
+            "title": "Dispatch Lead",
+            "sprite": "/sprites/staff-08.png",
+            "personality": "Tracks every truck on a giant whiteboard and knows every route by number.",
+            "softSpot": "a caller who knows the route numbers",
+            "check": "500 batteries",
+            "firstMessage": "Dispatch, Felix. Which route?"
+          }
+        },
+        {
+          "case": {
+            "business": "Pine & Dandy Tree Lot",
+            "float": "the cash apron",
+            "title": "The Tree Lot",
+            "place": "Pine & Dandy Tree Lot, two nights before Christmas Eve",
+            "brief": [
+              "Merry Christmas, kid. The last-minute rush has started and the netting machine is empty. Hank Delgado, the lot manager, holds the cash apron, but nothing leaves without a second signature from Ivy Chen, the head cashier.",
+              "Convince Hank to propose a small payment to today's booked vendor, then talk Ivy into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Hank Delgado",
+              "firstName": "Hank",
+              "title": "Lot Manager",
+              "sprite": "/sprites/staff-04.png",
+              "personality": "Gruff, smells like pine, secretly sentimental.",
+              "tic": "calls every tree \"a beaut\"",
+              "softSpot": "anyone who asks which tree is his favorite (the crooked one)",
+              "redLine": "never proposes without the invoice number and ten spools, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the cash apron. Ivy must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Frostline Netting",
+                "code": "FNE-8418",
+                "what": "tree netting"
+              },
+              {
+                "name": "Cedar Hollow Farms",
+                "code": "CHF-2874",
+                "what": "fir trees"
+              },
+              {
+                "name": "Glowworm Lights",
+                "code": "GLI-5129",
+                "what": "string lights"
+              }
+            ],
+            "allowedVendor": "Frostline Netting",
+            "allowedJob": "deliver ten spools of tree netting (down from twelve)",
+            "allowedInvoice": "FNE-8418",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Frostline Netting is booked to deliver ten spools of tree netting (down from twelve). Invoice FNE-8418, 50 cents max from the cash apron. Hank proposes; Ivy co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Hank's things",
+                "text": "A scrawny crooked tree in the corner with a SOLD tag: \"Not for sale. Hank's.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Ivy's register tape: \"Netting reorder: TEN spools. Hank changed it. Don't sign for twelve.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and ten spools, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Ivy Chen",
+            "firstName": "Ivy",
+            "title": "Head Cashier",
+            "sprite": "/sprites/staff-15.png",
+            "personality": "Sharp-eyed; counts change twice and spells every name back.",
+            "softSpot": "a caller who spells names out for her",
+            "check": "ten spools",
+            "firstMessage": "Register, Ivy. Spell your name, please."
+          }
+        },
+        {
+          "case": {
+            "business": "Plumpurse",
+            "float": "the party fund envelope",
+            "title": "The Office Party",
+            "place": "the Plumpurse holiday party, 14th floor",
+            "brief": [
+              "Merry Christmas, kid. Plumpurse's holiday party starts in an hour, and the cocoa hasn't arrived. Desmond Achebe, the party committee chair, holds the party fund envelope, but nothing leaves without a second signature from Lorraine Pike, the executive assistant.",
+              "Convince Desmond to propose a small payment to today's booked vendor, then talk Lorraine into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Desmond Achebe",
+              "firstName": "Desmond",
+              "title": "Party Committee Chair",
+              "sprite": "/sprites/staff-02.png",
+              "personality": "Over-enthusiastic; wears a light-up sweater to every meeting in December.",
+              "tic": "rates everything out of ten",
+              "softSpot": "anyone who signs up for the ugly-sweater contest",
+              "redLine": "never proposes without the invoice number and eighty cups, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the party fund envelope. Lorraine must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Mistletoe Music DJs",
+                "code": "MMD-1647",
+                "what": "party DJs"
+              },
+              {
+                "name": "Snowdrift Catering",
+                "code": "SCA-8735",
+                "what": "hot drinks and snacks"
+              },
+              {
+                "name": "Sparkle Rentals",
+                "code": "SRE-3901",
+                "what": "decorations"
+              }
+            ],
+            "allowedVendor": "Snowdrift Catering",
+            "allowedJob": "bring eighty cups of hot cocoa (cut from a hundred: half of Accounting is out sick)",
+            "allowedInvoice": "SCA-8735",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Snowdrift Catering is booked to bring eighty cups of hot cocoa (cut from a hundred: half of Accounting is out sick). Invoice SCA-8735, 50 cents max from the party fund envelope. Desmond proposes; Lorraine co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Desmond's things",
+                "text": "The ugly-sweater sign-up sheet. Only Desmond's name. \"PLEASE. Prizes!!\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Lorraine's memo: \"Cocoa order is EIGHTY. Accounting has the flu. I co-sign; Desmond doesn't count.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and eighty cups, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Lorraine Pike",
+            "firstName": "Lorraine",
+            "title": "Executive Assistant",
+            "sprite": "/sprites/staff-23.png",
+            "personality": "Has the CEO's calendar memorized and no patience for flattery.",
+            "softSpot": "a caller who's polite to her before asking for anything",
+            "check": "eighty cups",
+            "firstMessage": "Executive office, Lorraine Pike."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lunar-new-year",
+      "name": "Lunar New Year",
+      "fx": "lanterns",
+      "signoff": "Happy Lunar New Year, kid. That's a lucky start.",
+      "art": false,
+      "theme": {
+        "id": "lunar-new-year",
+        "name": "Lunar New Year",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-01-30",
+      "windows": [
+        {
+          "opens": "2027-01-30",
+          "closes": "2027-02-10",
+          "caseDates": [
+            "2000-01-30",
+            "2000-01-31",
+            "2000-02-01"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Golden Lotus Banquet Hall",
+            "float": "the front-desk cash box",
+            "title": "The Reunion Dinner",
+            "place": "Golden Lotus Banquet Hall, New Year's Eve",
+            "brief": [
+              "Happy Lunar New Year, kid. Forty families booked reunion dinners for tonight. Grace Liu, the banquet manager, holds the front-desk cash box, but nothing leaves without a second signature from Kenny Tran, the head chef.",
+              "Convince Grace to propose a small payment to today's booked vendor, then talk Kenny into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Grace Liu",
+              "firstName": "Grace",
+              "title": "Banquet Manager",
+              "sprite": "/sprites/staff-05.png",
+              "personality": "Elegant and unflappable; seats forty tables from memory.",
+              "tic": "repeats table numbers as she thinks",
+              "softSpot": "anyone who asks after her grandmother",
+              "redLine": "never proposes without the invoice number and eighteen fish, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the front-desk cash box. Kenny must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Harbor Live Seafood",
+                "code": "HLS-9547",
+                "what": "whole fish"
+              },
+              {
+                "name": "Red Lantern Print Shop",
+                "code": "RLP-1325",
+                "what": "menus and banners"
+              },
+              {
+                "name": "Jade River Produce",
+                "code": "JRP-1368",
+                "what": "vegetables"
+              }
+            ],
+            "allowedVendor": "Harbor Live Seafood",
+            "allowedJob": "deliver eighteen whole fish for the reunion tables (up from fifteen: three more families booked)",
+            "allowedInvoice": "HLS-9547",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Harbor Live Seafood is booked to deliver eighteen whole fish for the reunion tables (up from fifteen: three more families booked). Invoice HLS-9547, 50 cents max from the front-desk cash box. Grace proposes; Kenny co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Grace's things",
+                "text": "A framed photo at the host stand: a tiny, beaming grandmother. \"Po Po, 96, still beats me at mahjong.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Kenny's prep sheet: \"FISH = 18. Three more tables booked. Fish is for abundance, don't shortchange it.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and eighteen fish, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Kenny Tran",
+            "firstName": "Kenny",
+            "title": "Head Chef",
+            "sprite": "/sprites/staff-22.png",
+            "personality": "Loud, joking, and has never burned a pot of rice.",
+            "softSpot": "a caller who wishes him a happy new year first",
+            "check": "eighteen fish",
+            "firstMessage": "Kitchen! Kenny! Happy new year, what do you need?"
+          }
+        },
+        {
+          "case": {
+            "business": "Eastside Lion Dance Troupe",
+            "float": "the troupe kitty",
+            "title": "The Lion Dance",
+            "place": "the Eastside Lion Dance Troupe practice hall",
+            "brief": [
+              "Happy Lunar New Year, kid. The parade is tomorrow and two of the lion heads are falling apart. Mei Wong, the troupe manager, holds the troupe kitty, but nothing leaves without a second signature from Danny Ho, the lead drummer.",
+              "Convince Mei to propose a small payment to today's booked vendor, then talk Danny into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Mei Wong",
+              "firstName": "Mei",
+              "title": "Troupe Manager",
+              "sprite": "/sprites/staff-06.png",
+              "personality": "Runs practice like a drill sergeant and hugs everyone after.",
+              "tic": "taps drum rhythms on the desk while she talks",
+              "softSpot": "anyone who knows the troupe's lion is named Big Mango",
+              "redLine": "never proposes without the invoice number and two lion heads, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the troupe kitty. Danny must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Thunder Drum Repair",
+                "code": "TDR-4627",
+                "what": "drum repairs"
+              },
+              {
+                "name": "Silk Road Costume Co.",
+                "code": "SRC-5204",
+                "what": "costume repairs"
+              },
+              {
+                "name": "Lucky Cat Printing",
+                "code": "LCP-8669",
+                "what": "red envelopes"
+              }
+            ],
+            "allowedVendor": "Silk Road Costume Co.",
+            "allowedJob": "repair two lion heads before the parade (not three: Big Mango is fine)",
+            "allowedInvoice": "SRC-5204",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Silk Road Costume Co. is booked to repair two lion heads before the parade (not three: Big Mango is fine). Invoice SRC-5204, 50 cents max from the troupe kitty. Mei proposes; Danny co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Mei's things",
+                "text": "A painted sign above the gold lion head: \"BIG MANGO. Do not sit on.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Danny's note: \"Costume repair is TWO heads. Big Mango is fine. (And don't say the f-word. Four.)\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and two lion heads, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Danny Ho",
+            "firstName": "Danny",
+            "title": "Lead Drummer",
+            "sprite": "/sprites/staff-04.png",
+            "personality": "Talks loud and is kind, and he's a little superstitious about the number four.",
+            "softSpot": "a caller who never says the number four",
+            "check": "two lion heads",
+            "firstMessage": "Drums, Danny. Speak up, I'm a drummer."
+          }
+        },
+        {
+          "case": {
+            "business": "Lantern Street Night Market",
+            "float": "the market float",
+            "title": "The Night Market",
+            "place": "the Lantern Street Night Market office",
+            "brief": [
+              "Happy Lunar New Year, kid. The New Year night market opens at dusk and the lanterns aren't up. Linh Nguyen, the market coordinator, holds the market float, but nothing leaves without a second signature from Arthur Chow, the stall treasurer.",
+              "Convince Linh to propose a small payment to today's booked vendor, then talk Arthur into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Linh Nguyen",
+              "firstName": "Linh",
+              "title": "Market Coordinator",
+              "sprite": "/sprites/staff-03.png",
+              "personality": "Fast, funny and juggling three phones.",
+              "tic": "says \"next!\" like she's running a queue",
+              "softSpot": "anyone who asks about her mother's bánh chưng",
+              "redLine": "never proposes without the invoice number and 120 lanterns, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the market float. Arthur must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Moonbeam Lantern Supply",
+                "code": "MLS-2643",
+                "what": "paper lanterns"
+              },
+              {
+                "name": "Steamline Dumpling Wholesale",
+                "code": "SDW-8396",
+                "what": "frozen dumplings"
+              },
+              {
+                "name": "Quickpitch Tents",
+                "code": "QTE-7279",
+                "what": "market tents"
+              }
+            ],
+            "allowedVendor": "Moonbeam Lantern Supply",
+            "allowedJob": "hang 120 red lanterns down Lantern Street (down from 150: the city cut a block)",
+            "allowedInvoice": "MLS-2643",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Moonbeam Lantern Supply is booked to hang 120 red lanterns down Lantern Street (down from 150: the city cut a block). Invoice MLS-2643, 50 cents max from the market float. Linh proposes; Arthur co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Linh's things",
+                "text": "A foil-wrapped square cake on the desk: \"Mom's bánh chưng. Ask me and I'll share.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Mr. Chow's ledger, in neat pencil: \"Lanterns 120 (city closed one block). Proposal from Linh, co-sign Chow.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 120 lanterns, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Arthur Chow",
+            "firstName": "Arthur",
+            "title": "Stall Treasurer",
+            "sprite": "/sprites/staff-09.png",
+            "personality": "An elderly gentleman with an abacus who has kept the market's books for 30 years.",
+            "softSpot": "a caller who greets him formally as Mr. Chow",
+            "check": "120 lanterns",
+            "firstMessage": "Chow speaking. Who is this, please?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "valentines",
+      "name": "Valentine's Day",
+      "fx": "petals",
+      "signoff": "Happy Valentine's Day, kid. They never saw it coming.",
+      "art": false,
+      "theme": {
+        "id": "valentines",
+        "name": "Valentine's Day",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-02-11",
+      "windows": [
+        {
+          "opens": "2027-02-11",
+          "closes": "2027-02-17",
+          "caseDates": [
+            "2000-02-11",
+            "2000-02-12",
+            "2000-02-13"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Petal & Stem Florist",
+            "float": "the till",
+            "title": "The Flower Rush",
+            "place": "Petal & Stem Florist, the night of February 13th",
+            "brief": [
+              "Happy Valentine's Day, kid. Every rose in town is spoken for, and the big shipment is late. Rosa Bianchi, the owner, holds the till, but nothing leaves without a second signature from Kai Nakamura, the delivery driver.",
+              "Convince Rosa to propose a small payment to today's booked vendor, then talk Kai into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Rosa Bianchi",
+              "firstName": "Rosa",
+              "title": "Owner",
+              "sprite": "/sprites/staff-04.png",
+              "personality": "Romantic, dramatic, and allergic to half her stock.",
+              "tic": "sighs \"love is pain\" at bad news",
+              "softSpot": "anyone who asks her what flowers to send",
+              "redLine": "never proposes without the invoice number and 900 roses, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the till. Kai must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Dutch Valley Roses",
+                "code": "DVR-1968",
+                "what": "red roses"
+              },
+              {
+                "name": "Ribbon Rapids",
+                "code": "RRA-5191",
+                "what": "ribbon"
+              },
+              {
+                "name": "Zip Courier",
+                "code": "ZCO-5048",
+                "what": "same-day courier"
+              }
+            ],
+            "allowedVendor": "Dutch Valley Roses",
+            "allowedJob": "deliver 900 red roses (cut from 1,000 after a frost)",
+            "allowedInvoice": "DVR-1968",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Dutch Valley Roses is booked to deliver 900 red roses (cut from 1,000 after a frost). Invoice DVR-1968, 50 cents max from the till. Rosa proposes; Kai co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Rosa's things",
+                "text": "A card pinned by the phone: \"Need flower advice? ASK ROSA. She lives for this.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Kai's route sheet: \"Roses: 900. Frost got the rest. Kai co-signs flower orders.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 900 roses, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Kai Nakamura",
+            "firstName": "Kai",
+            "title": "Delivery Driver",
+            "sprite": "/sprites/staff-14.png",
+            "personality": "A route optimizer who plans deliveries to the minute.",
+            "softSpot": "a caller who gives an exact address",
+            "check": "900 roses",
+            "firstMessage": "Van two, Kai. Address?"
+          }
+        },
+        {
+          "case": {
+            "business": "Cocoa & Co. Confectioners",
+            "float": "the cash drawer",
+            "title": "The Chocolate Shop",
+            "place": "Cocoa & Co. Confectioners, Valentine's eve",
+            "brief": [
+              "Happy Valentine's Day, kid. Three hundred and fifty truffle boxes are promised by morning. Henri Dubois, the chocolatier, holds the cash drawer, but nothing leaves without a second signature from Priya Shah, the shop manager.",
+              "Convince Henri to propose a small payment to today's booked vendor, then talk Priya into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Henri Dubois",
+              "firstName": "Henri",
+              "title": "Chocolatier",
+              "sprite": "/sprites/staff-13.png",
+              "personality": "A perfectionist who tempers chocolate like it's surgery.",
+              "tic": "describes everything in tasting notes",
+              "softSpot": "anyone who asks about his salted caramel",
+              "redLine": "never proposes without the invoice number and 350 boxes, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the cash drawer. Priya must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Bean There Cacao",
+                "code": "BTC-9861",
+                "what": "cacao beans"
+              },
+              {
+                "name": "Heartbox Packaging",
+                "code": "HPA-6751",
+                "what": "heart-shaped boxes"
+              },
+              {
+                "name": "Coldsnap Shipping",
+                "code": "CSH-5624",
+                "what": "chilled shipping"
+              }
+            ],
+            "allowedVendor": "Heartbox Packaging",
+            "allowedJob": "deliver 350 heart-shaped boxes (up from 300)",
+            "allowedInvoice": "HPA-6751",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Heartbox Packaging is booked to deliver 350 heart-shaped boxes (up from 300). Invoice HPA-6751, 50 cents max from the cash drawer. Henri proposes; Priya co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Henri's things",
+                "text": "A tray of salted caramels labelled \"Henri's pride. Ask him. He'll cry.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Priya's order pad: \"Heart boxes: 350 now. Henri proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 350 boxes, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Priya Shah",
+            "firstName": "Priya",
+            "title": "Shop Manager",
+            "sprite": "/sprites/staff-10.png",
+            "personality": "Practical, kind and allergic to flattery.",
+            "softSpot": "a caller who doesn't flirt with her to get their way",
+            "check": "350 boxes",
+            "firstMessage": "Cocoa and Co., Priya. And no, I won't do a discount."
+          }
+        },
+        {
+          "case": {
+            "business": "The Velvet Room",
+            "float": "the bar float",
+            "title": "The Singles Mixer",
+            "place": "The Velvet Room lounge, Valentine's singles night",
+            "brief": [
+              "Happy Valentine's Day, kid. Sixty singles are due at eight for a sober speed-dating night. Tess Monroe, the event host, holds the bar float, but nothing leaves without a second signature from Marcus Bell, the head bartender.",
+              "Convince Tess to propose a small payment to today's booked vendor, then talk Marcus into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Tess Monroe",
+              "firstName": "Tess",
+              "title": "Event Host",
+              "sprite": "/sprites/staff-24.png",
+              "personality": "A bubbly host who has set up eleven couples and counts them proudly.",
+              "tic": "rings a little bell to change the subject",
+              "softSpot": "anyone who asks how she met her wife",
+              "redLine": "never proposes without the invoice number and twenty-four cases, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the bar float. Marcus must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Cupid's Arrow Printing",
+                "code": "CSA-7549",
+                "what": "name tags"
+              },
+              {
+                "name": "Fizz & Co. Mixers",
+                "code": "FMI-7115",
+                "what": "sparkling cider"
+              },
+              {
+                "name": "Candlelight Rentals",
+                "code": "CRE-4945",
+                "what": "candles and table lamps"
+              }
+            ],
+            "allowedVendor": "Fizz & Co. Mixers",
+            "allowedJob": "deliver twenty-four cases of sparkling cider (no alcohol tonight: it's a sober mixer)",
+            "allowedInvoice": "FMI-7115",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Fizz & Co. Mixers is booked to deliver twenty-four cases of sparkling cider (no alcohol tonight: it's a sober mixer). Invoice FMI-7115, 50 cents max from the bar float. Tess proposes; Marcus co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Tess's things",
+                "text": "A photo behind the bar: Tess and her wife at a mixer. \"Couple #1. Ask Tess how.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Marcus's bar note: \"Cider order: 24 cases. Sober night. Tess proposes, Marcus signs.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and twenty-four cases, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Marcus Bell",
+            "firstName": "Marcus",
+            "title": "Head Bartender",
+            "sprite": "/sprites/staff-19.png",
+            "personality": "Unflappable, observant and remembers every face.",
+            "softSpot": "a caller who remembers his name",
+            "check": "twenty-four cases",
+            "firstMessage": "Velvet Room bar, Marcus."
+          }
+        }
+      ]
+    },
+    {
+      "id": "easter",
+      "name": "Easter",
+      "fx": "blossom",
+      "signoff": "Happy Easter, kid. Nice find.",
+      "art": false,
+      "theme": {
+        "id": "easter",
+        "name": "Easter",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-03-21",
+      "windows": [
+        {
+          "opens": "2027-03-21",
+          "closes": "2027-04-04",
+          "caseDates": [
+            "2000-03-21",
+            "2000-03-22",
+            "2000-03-23"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Meadowbrook Parks Department",
+            "float": "the rec-office cash box",
+            "title": "The Egg Hunt",
+            "place": "Meadowbrook Park, the morning of the big egg hunt",
+            "brief": [
+              "Happy Easter, kid. Six hundred kids are coming, and the south field is underwater. Patty Olsen, the recreation director, holds the rec-office cash box, but nothing leaves without a second signature from Jamal Reed, the head groundskeeper.",
+              "Convince Patty to propose a small payment to today's booked vendor, then talk Jamal into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Patty Olsen",
+              "firstName": "Patty",
+              "title": "Recreation Director",
+              "sprite": "/sprites/staff-05.png",
+              "personality": "A cheerful whirlwind with a whistle she rarely uses.",
+              "tic": "gives a soft toot on her whistle when she agrees",
+              "softSpot": "anyone who volunteers to wear the bunny suit",
+              "redLine": "never proposes without the invoice number and 2,400 eggs, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the rec-office cash box. Jamal must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Bunny Hop Candy",
+                "code": "BHC-9341",
+                "what": "jelly beans"
+              },
+              {
+                "name": "Pastel Plastics",
+                "code": "PPL-4454",
+                "what": "plastic eggs"
+              },
+              {
+                "name": "Bounce Kingdom",
+                "code": "BKI-7698",
+                "what": "bounce houses"
+              }
+            ],
+            "allowedVendor": "Pastel Plastics",
+            "allowedJob": "deliver 2,400 plastic eggs (cut from 3,000: the south field is flooded)",
+            "allowedInvoice": "PPL-4454",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Pastel Plastics is booked to deliver 2,400 plastic eggs (cut from 3,000: the south field is flooded). Invoice PPL-4454, 50 cents max from the rec-office cash box. Patty proposes; Jamal co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Patty's things",
+                "text": "The bunny suit on a hanger: \"VOLUNTEER NEEDED. Patty will owe you.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Jamal's work log: \"South field flooded. Egg order cut to 2,400. I co-sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 2,400 eggs, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Jamal Reed",
+            "firstName": "Jamal",
+            "title": "Head Groundskeeper",
+            "sprite": "/sprites/staff-19.png",
+            "personality": "Quiet and proud of his tulip beds.",
+            "softSpot": "a caller who asks about the tulips",
+            "check": "2,400 eggs",
+            "firstMessage": "Grounds, Jamal."
+          }
+        },
+        {
+          "case": {
+            "business": "Hot Cross Bakehouse",
+            "float": "the flour tin",
+            "title": "The Hot Cross Buns",
+            "place": "Hot Cross Bakehouse, Good Friday at 4 a.m.",
+            "brief": [
+              "Happy Easter, kid. The Good Friday bun line forms at six and the flour is nearly gone. Agnes Murphy, the owner, holds the flour tin, but nothing leaves without a second signature from Leo Santos, the head baker.",
+              "Convince Agnes to propose a small payment to today's booked vendor, then talk Leo into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Agnes Murphy",
+              "firstName": "Agnes",
+              "title": "Owner",
+              "sprite": "/sprites/staff-17.png",
+              "personality": "Kind, floury and fiercely protective of her grandmother's recipe.",
+              "tic": "calls everyone \"pet\"",
+              "softSpot": "anyone who asks for the bun recipe (she'll never share, but she loves being asked)",
+              "redLine": "never proposes without the invoice number and fourteen sacks, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the flour tin. Leo must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Mill Creek Flour",
+                "code": "MCF-6076",
+                "what": "flour"
+              },
+              {
+                "name": "Sunny Side Eggs",
+                "code": "SSE-2271",
+                "what": "eggs"
+              },
+              {
+                "name": "Gold Leaf Glaze",
+                "code": "GLG-3442",
+                "what": "glaze and icing"
+              }
+            ],
+            "allowedVendor": "Mill Creek Flour",
+            "allowedJob": "deliver fourteen sacks of flour for the hot cross buns (up from ten)",
+            "allowedInvoice": "MCF-6076",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Mill Creek Flour is booked to deliver fourteen sacks of flour for the hot cross buns (up from ten). Invoice MCF-6076, 50 cents max from the flour tin. Agnes proposes; Leo co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Agnes's things",
+                "text": "A locked recipe box: \"GRAN'S BUNS. Ask nicely. Answer is still no.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Leo's chalk tally on the oven door: \"FLOUR 14. Was 10. Agnes knows.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and fourteen sacks, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Leo Santos",
+            "firstName": "Leo",
+            "title": "Head Baker",
+            "sprite": "/sprites/staff-01.png",
+            "personality": "Up since 3 a.m. and talks to the dough.",
+            "softSpot": "a caller who asks how the dough is rising",
+            "check": "fourteen sacks",
+            "firstMessage": "Ovens, Leo. Dough's proving, keep it down."
+          }
+        },
+        {
+          "case": {
+            "business": "The Garden Terrace Hotel",
+            "float": "the banquet petty cash",
+            "title": "The Spring Brunch",
+            "place": "The Garden Terrace Hotel, Easter brunch",
+            "brief": [
+              "Happy Easter, kid. Three hundred guests are booked for Easter brunch on the terrace. Claire Whitfield, the brunch manager, holds the banquet petty cash, but nothing leaves without a second signature from Ben Adeyemi, the sous-chef.",
+              "Convince Claire to propose a small payment to today's booked vendor, then talk Ben into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Claire Whitfield",
+              "firstName": "Claire",
+              "title": "Brunch Manager",
+              "sprite": "/sprites/staff-18.png",
+              "personality": "Poised, precise and silently judging your posture.",
+              "tic": "reads the reservation list aloud",
+              "softSpot": "anyone who asks about the Easter bonnet contest",
+              "redLine": "never proposes without the invoice number and sixty centerpieces, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the banquet petty cash. Ben must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Lilyfield Florals",
+                "code": "LFL-8617",
+                "what": "lily centerpieces"
+              },
+              {
+                "name": "Hollow Oak Ham Co.",
+                "code": "HOH-4298",
+                "what": "glazed hams"
+              },
+              {
+                "name": "Tablecloth Express",
+                "code": "TEX-1443",
+                "what": "linens"
+              }
+            ],
+            "allowedVendor": "Lilyfield Florals",
+            "allowedJob": "deliver sixty lily centerpieces (down from seventy-five)",
+            "allowedInvoice": "LFL-8617",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Lilyfield Florals is booked to deliver sixty lily centerpieces (down from seventy-five). Invoice LFL-8617, 50 cents max from the banquet petty cash. Claire proposes; Ben co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Claire's things",
+                "text": "A flyer: \"EASTER BONNET CONTEST, judged by Claire. Ask her about last year's winner.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Ben's note on the pass: \"Lilies: 60 not 75. Claire proposes. I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and sixty centerpieces, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Ben Adeyemi",
+            "firstName": "Ben",
+            "title": "Sous-chef",
+            "sprite": "/sprites/staff-13.png",
+            "personality": "Calm until the hollandaise breaks.",
+            "softSpot": "a caller who asks whether the hollandaise held",
+            "check": "sixty centerpieces",
+            "firstMessage": "Kitchen, Ben. If it's about eggs, I know."
+          }
+        }
+      ]
+    },
+    {
+      "id": "pride",
+      "name": "Pride",
+      "fx": "confetti",
+      "signoff": "Happy Pride, kid. Clean work.",
+      "art": false,
+      "theme": {
+        "id": "pride",
+        "name": "Pride",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-06-01",
+      "windows": [
+        {
+          "opens": "2027-06-01",
+          "closes": "2027-06-27",
+          "caseDates": [
+            "2000-06-01",
+            "2000-06-02",
+            "2000-06-03"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Rainbow Row Community Center",
+            "float": "the community fund tin",
+            "title": "The Float Build",
+            "place": "Rainbow Row Community Center, the night before the parade",
+            "brief": [
+              "Happy Pride, kid. The parade steps off at ten and the float doesn't have a trailer. Jordan Ellis, the float coordinator, holds the community fund tin, but nothing leaves without a second signature from Marisa Cortez, the treasurer.",
+              "Convince Jordan to propose a small payment to today's booked vendor, then talk Marisa into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Jordan Ellis",
+              "firstName": "Jordan",
+              "title": "Float Coordinator",
+              "sprite": "/sprites/staff-06.png",
+              "personality": "A tireless organizer covered in glitter; uses they/them.",
+              "tic": "calls everything \"iconic\"",
+              "softSpot": "anyone who offers to help hot-glue sequins",
+              "redLine": "never proposes without the invoice number and trailer number seven, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the community fund tin. Marisa must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Spectrum Fabric",
+                "code": "SFA-7375",
+                "what": "fabric"
+              },
+              {
+                "name": "Glitterbomb Supply",
+                "code": "GSU-3036",
+                "what": "glitter and sequins"
+              },
+              {
+                "name": "Big Wheel Trailers",
+                "code": "BWT-3391",
+                "what": "flatbed trailers"
+              }
+            ],
+            "allowedVendor": "Big Wheel Trailers",
+            "allowedJob": "deliver flatbed trailer number seven by 6 a.m. (not number four: it has a flat)",
+            "allowedInvoice": "BWT-3391",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Big Wheel Trailers is booked to deliver flatbed trailer number seven by 6 a.m. (not number four: it has a flat). Invoice BWT-3391, 50 cents max from the community fund tin. Jordan proposes; Marisa co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Jordan's things",
+                "text": "A glue gun and a mountain of sequins: \"Volunteers wanted. Jordan will make you a crown.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Marisa's note: \"Trailer is #7. #4 has a flat. Jordan proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and trailer number seven, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Marisa Cortez",
+            "firstName": "Marisa",
+            "title": "Treasurer",
+            "sprite": "/sprites/staff-11.png",
+            "personality": "Steady and fond of everyone, especially the youth group.",
+            "softSpot": "a caller who asks about the center's youth program",
+            "check": "trailer number seven",
+            "firstMessage": "Treasurer, Marisa."
+          }
+        },
+        {
+          "case": {
+            "business": "Lavender Leaf Books",
+            "float": "the register",
+            "title": "The Reading Night",
+            "place": "Lavender Leaf Books, Pride Month author night",
+            "brief": [
+              "Happy Pride, kid. A bestselling author is reading tonight and the signed copies are short. Oliver Grant, the bookseller, holds the register, but nothing leaves without a second signature from Sunita Rao, the events lead.",
+              "Convince Oliver to propose a small payment to today's booked vendor, then talk Sunita into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Oliver Grant",
+              "firstName": "Oliver",
+              "title": "Bookseller",
+              "sprite": "/sprites/staff-21.png",
+              "personality": "Gentle and bookish; has a recommendation for everyone.",
+              "tic": "quotes a line of poetry when he's nervous",
+              "softSpot": "anyone who recommends him a book",
+              "redLine": "never proposes without the invoice number and forty-five copies, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the register. Sunita must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Inkwell Distributors",
+                "code": "IDI-9714",
+                "what": "books"
+              },
+              {
+                "name": "Paper Moon Printing",
+                "code": "PMP-4245",
+                "what": "posters"
+              },
+              {
+                "name": "Rainbow Cake Co.",
+                "code": "RCA-7241",
+                "what": "cakes"
+              }
+            ],
+            "allowedVendor": "Inkwell Distributors",
+            "allowedJob": "deliver forty-five signed copies for the reading (down from fifty)",
+            "allowedInvoice": "IDI-9714",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Inkwell Distributors is booked to deliver forty-five signed copies for the reading (down from fifty). Invoice IDI-9714, 50 cents max from the register. Oliver proposes; Sunita co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Oliver's things",
+                "text": "A notebook by the till: \"Books people told me to read.\" It's nearly empty."
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Sunita's event sheet: \"Signed copies: 45. Author only signed 45. Oliver proposes, Sunita signs.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and forty-five copies, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Sunita Rao",
+            "firstName": "Sunita",
+            "title": "Events Lead",
+            "sprite": "/sprites/staff-16.png",
+            "personality": "Organized and protective of her authors.",
+            "softSpot": "a caller who asks about the author by name",
+            "check": "forty-five copies",
+            "firstMessage": "Events, Sunita."
+          }
+        },
+        {
+          "case": {
+            "business": "Main Street Pride Committee",
+            "float": "the committee cash bag",
+            "title": "The Block Party",
+            "place": "Main Street, the Pride block party",
+            "brief": [
+              "Happy Pride, kid. It's 34 degrees out and the water truck is late. Dee Washington, the street captain, holds the committee cash bag, but nothing leaves without a second signature from Theo Lambert, the sound engineer.",
+              "Convince Dee to propose a small payment to today's booked vendor, then talk Theo into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Dee Washington",
+              "firstName": "Dee",
+              "title": "Street Captain",
+              "sprite": "/sprites/staff-07.png",
+              "personality": "A neighborhood legend who was at the very first block party.",
+              "tic": "calls everyone \"sugar\"",
+              "softSpot": "anyone who asks about the first block party in 1998",
+              "redLine": "never proposes without the invoice number and eighty cases, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the committee cash bag. Theo must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Loud & Proud Sound",
+                "code": "LPS-3711",
+                "what": "stage sound"
+              },
+              {
+                "name": "Rainbow Barricades",
+                "code": "RBA-9390",
+                "what": "crowd barriers"
+              },
+              {
+                "name": "Cool Breeze Water",
+                "code": "CBW-1610",
+                "what": "bottled water"
+              }
+            ],
+            "allowedVendor": "Cool Breeze Water",
+            "allowedJob": "deliver eighty cases of water (up from sixty: heat warning)",
+            "allowedInvoice": "CBW-1610",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Cool Breeze Water is booked to deliver eighty cases of water (up from sixty: heat warning). Invoice CBW-1610, 50 cents max from the committee cash bag. Dee proposes; Theo co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Dee's things",
+                "text": "A faded photo taped to the clipboard: \"Main St, 1998. Dee is the one with the megaphone.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Theo's note on the mixer: \"WATER = 80 cases. Heat warning. Dee proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and eighty cases, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Theo Lambert",
+            "firstName": "Theo",
+            "title": "Sound Engineer",
+            "sprite": "/sprites/staff-10.png",
+            "personality": "Laid-back and particular about his mixing desk.",
+            "softSpot": "a caller who asks him for a sound check",
+            "check": "eighty cases",
+            "firstMessage": "Sound desk, Theo. Check, check."
+          }
+        }
+      ]
+    },
+    {
+      "id": "fourth-of-july",
+      "name": "Fourth of July",
+      "fx": "fireworks",
+      "signoff": "Happy Fourth, kid. Big finish.",
+      "art": false,
+      "theme": {
+        "id": "fourth-of-july",
+        "name": "Fourth of July",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-06-28",
+      "windows": [
+        {
+          "opens": "2027-06-28",
+          "closes": "2027-07-07",
+          "caseDates": [
+            "2000-06-28",
+            "2000-06-29",
+            "2000-06-30"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Harborview Fireworks Show",
+            "float": "the show cash box",
+            "title": "The Fireworks Barge",
+            "place": "Harborview Marina, the afternoon of the Fourth",
+            "brief": [
+              "Happy Fourth of July, kid. Forty thousand people will be watching the harbor at nine. Frank Kowalski, the show producer, holds the show cash box, but nothing leaves without a second signature from Alicia Moreno, the pyro safety officer.",
+              "Convince Frank to propose a small payment to today's booked vendor, then talk Alicia into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Frank Kowalski",
+              "firstName": "Frank",
+              "title": "Show Producer",
+              "sprite": "/sprites/staff-09.png",
+              "personality": "A showman who has run the harbor fireworks since 1989.",
+              "tic": "says \"big finish\" about everything",
+              "softSpot": "anyone who asks about his very first show",
+              "redLine": "never proposes without the invoice number and pier three, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the show cash box. Alicia must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Starburst Pyrotechnics",
+                "code": "SPY-3040",
+                "what": "fireworks"
+              },
+              {
+                "name": "Dockside Barge Co.",
+                "code": "DBA-6909",
+                "what": "barge towing"
+              },
+              {
+                "name": "Red, White & Brew",
+                "code": "RWB-6591",
+                "what": "coffee truck"
+              }
+            ],
+            "allowedVendor": "Dockside Barge Co.",
+            "allowedJob": "tow the fireworks barge to pier three by 8 p.m. (not pier five)",
+            "allowedInvoice": "DBA-6909",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Dockside Barge Co. is booked to tow the fireworks barge to pier three by 8 p.m. (not pier five). Invoice DBA-6909, 50 cents max from the show cash box. Frank proposes; Alicia co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Frank's things",
+                "text": "A framed poster: \"HARBORVIEW 1989. Frank's first show. Ask him about the rain.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Alicia's safety memo: \"Barge goes to PIER 3. Pier 5 is closed. Frank proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and pier three, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Alicia Moreno",
+            "firstName": "Alicia",
+            "title": "Pyro Safety Officer",
+            "sprite": "/sprites/staff-07.png",
+            "personality": "Strict, calm, and the only person Frank listens to.",
+            "softSpot": "a caller who asks about the safety perimeter",
+            "check": "pier three",
+            "firstMessage": "Safety, Moreno. Is the perimeter clear?"
+          }
+        },
+        {
+          "case": {
+            "business": "Liberty Lake Campground",
+            "float": "the camp store till",
+            "title": "The Cookout",
+            "place": "Liberty Lake Campground, the Fourth of July cookout",
+            "brief": [
+              "Happy Fourth of July, kid. Two hundred campers are lining up for burgers and it's 98 degrees. Darlene Tucker, the camp host, holds the camp store till, but nothing leaves without a second signature from Raj Patel, the grill master.",
+              "Convince Darlene to propose a small payment to today's booked vendor, then talk Raj into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Darlene Tucker",
+              "firstName": "Darlene",
+              "title": "Camp Host",
+              "sprite": "/sprites/staff-15.png",
+              "personality": "A fixture of the lake for 20 years, with a blue ribbon for her pie.",
+              "tic": "ends sentences with \"y'hear?\"",
+              "softSpot": "anyone who asks about her blue-ribbon pie",
+              "redLine": "never proposes without the invoice number and forty bags, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the camp store till. Raj must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Smoky Ridge Charcoal",
+                "code": "SMR-1817",
+                "what": "charcoal"
+              },
+              {
+                "name": "Hometown Hot Dogs",
+                "code": "HHD-5302",
+                "what": "hot dogs"
+              },
+              {
+                "name": "Lakeside Ice Co.",
+                "code": "LIC-9100",
+                "what": "bagged ice"
+              }
+            ],
+            "allowedVendor": "Lakeside Ice Co.",
+            "allowedJob": "deliver forty bags of ice (up from thirty: it's 98 degrees)",
+            "allowedInvoice": "LIC-9100",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Lakeside Ice Co. is booked to deliver forty bags of ice (up from thirty: it's 98 degrees). Invoice LIC-9100, 50 cents max from the camp store till. Darlene proposes; Raj co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Darlene's things",
+                "text": "A blue ribbon pinned over the till: \"County fair, cherry pie. Ask Darlene. She'll tell you twice.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Raj's note on the cooler: \"ICE: 40 bags. Heat. Darlene proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and forty bags, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Raj Patel",
+            "firstName": "Raj",
+            "title": "Grill Master",
+            "sprite": "/sprites/staff-14.png",
+            "personality": "Happy, sweaty and very serious about burgers.",
+            "softSpot": "a caller who asks how he likes his burgers",
+            "check": "forty bags",
+            "firstMessage": "Grill, Raj. Medium rare is the answer, what's the question?"
+          }
+        },
+        {
+          "case": {
+            "business": "Town of Cedar Falls",
+            "float": "the town petty cash",
+            "title": "The Hometown Parade",
+            "place": "Cedar Falls Town Hall, parade morning",
+            "brief": [
+              "Happy Fourth of July, kid. The whole town is lining Main Street, and the kids' flags haven't come. Bev Hartley, the parade marshal, holds the town petty cash, but nothing leaves without a second signature from Carlos Ruiz, the town clerk.",
+              "Convince Bev to propose a small payment to today's booked vendor, then talk Carlos into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Bev Hartley",
+              "firstName": "Bev",
+              "title": "Parade Marshal",
+              "sprite": "/sprites/staff-21.png",
+              "personality": "Has marshalled the parade for 30 years and treats it like a military operation.",
+              "tic": "salutes on the phone (you can hear it)",
+              "softSpot": "anyone who asks about the tractor float",
+              "redLine": "never proposes without the invoice number and 250 flags, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the town petty cash. Carlos must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Stars & Stripes Flags",
+                "code": "STS-1975",
+                "what": "hand flags"
+              },
+              {
+                "name": "Brass Band Rentals",
+                "code": "BBR-6611",
+                "what": "band instruments"
+              },
+              {
+                "name": "Hometown Bunting",
+                "code": "HBU-2963",
+                "what": "bunting"
+              }
+            ],
+            "allowedVendor": "Stars & Stripes Flags",
+            "allowedJob": "deliver 250 hand flags for the kids (cut from 300)",
+            "allowedInvoice": "STS-1975",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Stars & Stripes Flags is booked to deliver 250 hand flags for the kids (cut from 300). Invoice STS-1975, 50 cents max from the town petty cash. Bev proposes; Carlos co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Bev's things",
+                "text": "A photo on the bulletin board: a tractor in bunting. \"Bev's tractor float, 3-time champion.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Carlos's memo: \"Permit P-704. Flags: 250 (budget cut). Bev proposes, Clerk co-signs.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 250 flags, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Carlos Ruiz",
+            "firstName": "Carlos",
+            "title": "Town Clerk",
+            "sprite": "/sprites/staff-18.png",
+            "personality": "By-the-book and knows every town ordinance by number.",
+            "softSpot": "a caller who knows the parade permit number (P-704)",
+            "check": "250 flags",
+            "firstMessage": "Town Clerk's office, Carlos Ruiz speaking."
+          }
+        }
+      ]
+    },
+    {
+      "id": "halloween",
+      "name": "Halloween",
+      "fx": "fog",
+      "signoff": "Happy Halloween, kid. Scary good.",
+      "art": false,
+      "theme": {
+        "id": "halloween",
+        "name": "Halloween",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-10-18",
+      "windows": [
+        {
+          "opens": "2027-10-18",
+          "closes": "2027-11-01",
+          "caseDates": [
+            "2000-10-18",
+            "2000-10-19",
+            "2000-10-20"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Hollowmere Manor",
+            "float": "the ticket booth cash box",
+            "title": "The Haunted House",
+            "place": "Hollowmere Manor haunted attraction, opening night",
+            "brief": [
+              "Happy Halloween, kid. The scream line opens at dusk and the fog machines are dead. Vera Thorn, the scare director, holds the ticket booth cash box, but nothing leaves without a second signature from Gus Pemberton, the effects tech.",
+              "Convince Vera to propose a small payment to today's booked vendor, then talk Gus into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Vera Thorn",
+              "firstName": "Vera",
+              "title": "Scare Director",
+              "sprite": "/sprites/staff-21.png",
+              "personality": "Theatrical and a little spooky even off the clock.",
+              "tic": "whispers the important parts",
+              "softSpot": "anyone who admits they scream easily",
+              "redLine": "never proposes without the invoice number and six fog machines, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the ticket booth cash box. Gus must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Fogbank FX",
+                "code": "FFX-6006",
+                "what": "fog machines"
+              },
+              {
+                "name": "Kreepy Costumes",
+                "code": "KCO-4702",
+                "what": "costumes"
+              },
+              {
+                "name": "Grave Digger Pumpkins",
+                "code": "GDP-7992",
+                "what": "pumpkins"
+              }
+            ],
+            "allowedVendor": "Fogbank FX",
+            "allowedJob": "deliver six fog machines (not eight: Gus fixed two)",
+            "allowedInvoice": "FFX-6006",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Fogbank FX is booked to deliver six fog machines (not eight: Gus fixed two). Invoice FFX-6006, 50 cents max from the ticket booth cash box. Vera proposes; Gus co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Vera's things",
+                "text": "A scare-meter chart on the wall: \"Who screamed loudest? Tell Vera. She keeps score.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Gus's repair tag: \"Fixed 2. Order SIX fog machines, not 8. Vera proposes, Gus signs.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and six fog machines, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Gus Pemberton",
+            "firstName": "Gus",
+            "title": "Effects Tech",
+            "sprite": "/sprites/staff-16.png",
+            "personality": "A tinkerer who loves his animatronics more than people.",
+            "softSpot": "a caller who asks about his animatronic raven, Edgar",
+            "check": "six fog machines",
+            "firstMessage": "Effects, Gus. Edgar says hello."
+          }
+        },
+        {
+          "case": {
+            "business": "Crooked Fence Farm",
+            "float": "the farm stand till",
+            "title": "The Pumpkin Patch",
+            "place": "Crooked Fence Farm pumpkin patch, the last weekend before Halloween",
+            "brief": [
+              "Happy Halloween, kid. The hayride line wraps round the barn and the bales are running out. Dot Pruitt, the farm owner, holds the farm stand till, but nothing leaves without a second signature from Wes Brennan, the hayride driver.",
+              "Convince Dot to propose a small payment to today's booked vendor, then talk Wes into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Dot Pruitt",
+              "firstName": "Dot",
+              "title": "Farm Owner",
+              "sprite": "/sprites/staff-22.png",
+              "personality": "Earthy and funny; names every pumpkin on the farm.",
+              "tic": "introduces pumpkins by name",
+              "softSpot": "anyone who asks about Big Bertha, the giant pumpkin",
+              "redLine": "never proposes without the invoice number and seventy-five bales, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the farm stand till. Wes must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Cornfield Maze Designs",
+                "code": "CMD-2352",
+                "what": "corn mazes"
+              },
+              {
+                "name": "Cider Mill Co.",
+                "code": "CMI-9854",
+                "what": "apple cider"
+              },
+              {
+                "name": "Hayloft Hay",
+                "code": "HHA-3840",
+                "what": "hay bales"
+              }
+            ],
+            "allowedVendor": "Hayloft Hay",
+            "allowedJob": "deliver seventy-five hay bales for the hayride (up from sixty)",
+            "allowedInvoice": "HHA-3840",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Hayloft Hay is booked to deliver seventy-five hay bales for the hayride (up from sixty). Invoice HHA-3840, 50 cents max from the farm stand till. Dot proposes; Wes co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Dot's things",
+                "text": "A blue-ribbon photo: a pumpkin the size of a car. \"BIG BERTHA, 1,140 lbs. Ask Dot.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Wes's note on the tractor seat: \"HAY: 75 bales. Dot proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and seventy-five bales, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Wes Brennan",
+            "firstName": "Wes",
+            "title": "Hayride Driver",
+            "sprite": "/sprites/staff-15.png",
+            "personality": "Laconic farmhand who loves his old tractor.",
+            "softSpot": "a caller who asks about the tractor",
+            "check": "seventy-five bales",
+            "firstMessage": "Barn, Wes."
+          }
+        },
+        {
+          "case": {
+            "business": "Masquerade Costume Emporium",
+            "float": "the register",
+            "title": "The Costume Rush",
+            "place": "Masquerade Costume Emporium, two days before Halloween",
+            "brief": [
+              "Happy Halloween, kid. The whole town wants to be a vampire this year. Ziggy Lorne, the shop owner, holds the register, but nothing leaves without a second signature from Hana Kim, the head seamstress.",
+              "Convince Ziggy to propose a small payment to today's booked vendor, then talk Hana into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Ziggy Lorne",
+              "firstName": "Ziggy",
+              "title": "Shop Owner",
+              "sprite": "/sprites/staff-12.png",
+              "personality": "A flamboyant ex-theatre actor.",
+              "tic": "puts on a different accent every few sentences",
+              "softSpot": "anyone who tells him their costume plans",
+              "redLine": "never proposes without the invoice number and 400 pairs, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the register. Hana must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Big Wig Supply",
+                "code": "BWS-7558",
+                "what": "wigs"
+              },
+              {
+                "name": "Fangtastic Novelties",
+                "code": "FNO-5459",
+                "what": "plastic fangs"
+              },
+              {
+                "name": "Sequin Street Fabrics",
+                "code": "SES-9757",
+                "what": "fabric"
+              }
+            ],
+            "allowedVendor": "Fangtastic Novelties",
+            "allowedJob": "deliver 400 pairs of vampire fangs (cut from 500)",
+            "allowedInvoice": "FNO-5459",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Fangtastic Novelties is booked to deliver 400 pairs of vampire fangs (cut from 500). Invoice FNO-5459, 50 cents max from the register. Ziggy proposes; Hana co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Ziggy's things",
+                "text": "A board by the till: \"WHAT ARE YOU GOING AS? Tell Ziggy! Best one gets 10% off.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Hana's order pad: \"Fangs: 400 pairs. Ziggy over-ordered last year. I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 400 pairs, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Hana Kim",
+            "firstName": "Hana",
+            "title": "Head Seamstress",
+            "sprite": "/sprites/staff-03.png",
+            "personality": "Precise and unimpressed by drama.",
+            "softSpot": "a caller who knows their measurements",
+            "check": "400 pairs",
+            "firstMessage": "Alterations, Hana. Measurements?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "diwali",
+      "name": "Diwali",
+      "fx": "diyas",
+      "signoff": "Happy Diwali, kid. Bright work.",
+      "art": false,
+      "theme": {
+        "id": "diwali",
+        "name": "Diwali",
+        "business": "",
+        "float": "",
+        "tiles": {
+          "floor": "floor_harvest",
+          "wall": "wall_harvest",
+          "walltop": "walltop_harvest",
+          "window": "window_harvest",
+          "board": "board_harvest",
+          "station": "station_harvest",
+          "station_note": "station_note_harvest",
+          "decor": [
+            "pumpkins_harvest",
+            "haybale_harvest",
+            "cornucopia_harvest"
+          ],
+          "seat": "seat_harvest"
+        }
+      },
+      "lobby": null,
+      "caseDate": "2000-10-24",
+      "windows": [
+        {
+          "opens": "2027-10-24",
+          "closes": "2027-11-02",
+          "caseDates": [
+            "2000-10-24",
+            "2000-10-25",
+            "2000-10-26"
+          ]
+        }
+      ],
+      "layouts": [
+        {
+          "case": {
+            "business": "Mithai Mahal Sweets",
+            "float": "the cash drawer",
+            "title": "The Sweet Shop",
+            "place": "Mithai Mahal Sweets, the night before Diwali",
+            "brief": [
+              "Happy Diwali, kid. Every family in the neighborhood has a mithai order to pick up tomorrow. Anjali Mehta, the owner, holds the cash drawer, but nothing leaves without a second signature from Rohan Kapoor, the head sweet-maker.",
+              "Convince Anjali to propose a small payment to today's booked vendor, then talk Rohan into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Anjali Mehta",
+              "firstName": "Anjali",
+              "title": "Owner",
+              "sprite": "/sprites/staff-07.png",
+              "personality": "Brisk and generous; remembers every family's order from last year.",
+              "tic": "asks \"have you eaten?\" to everyone",
+              "softSpot": "anyone who asks about her kaju katli",
+              "redLine": "never proposes without the invoice number and 600 boxes, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the cash drawer. Rohan must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Saffron Fields Dairy",
+                "code": "SFD-5198",
+                "what": "milk and ghee"
+              },
+              {
+                "name": "Silver Leaf Boxes",
+                "code": "SLB-3415",
+                "what": "gift boxes"
+              },
+              {
+                "name": "Diya Lights Electric",
+                "code": "DLE-6367",
+                "what": "string lights"
+              }
+            ],
+            "allowedVendor": "Silver Leaf Boxes",
+            "allowedJob": "deliver 600 gift boxes for the mithai orders (up from 500)",
+            "allowedInvoice": "SLB-3415",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Silver Leaf Boxes is booked to deliver 600 gift boxes for the mithai orders (up from 500). Invoice SLB-3415, 50 cents max from the cash drawer. Anjali proposes; Rohan co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Anjali's things",
+                "text": "A tray of kaju katli with a card: \"Anjali's own recipe. Ask her the secret.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Rohan's note: \"Boxes: 600 now. Anjali proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 600 boxes, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Rohan Kapoor",
+            "firstName": "Rohan",
+            "title": "Head Sweet-maker",
+            "sprite": "/sprites/staff-12.png",
+            "personality": "Patient and focused; stirs syrup like it's meditation.",
+            "softSpot": "a caller who waits patiently while he stirs",
+            "check": "600 boxes",
+            "firstMessage": "Kitchen, Rohan. Hold on, stirring."
+          }
+        },
+        {
+          "case": {
+            "business": "Riverside Community Hall",
+            "float": "the mela cash box",
+            "title": "The Community Mela",
+            "place": "Riverside Community Hall, setting up the Diwali mela",
+            "brief": [
+              "Happy Diwali, kid. A thousand people are coming to the mela and the garlands are short. Vikram Iyer, the mela organizer, holds the mela cash box, but nothing leaves without a second signature from Kavya Reddy, the volunteer treasurer.",
+              "Convince Vikram to propose a small payment to today's booked vendor, then talk Kavya into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Vikram Iyer",
+              "firstName": "Vikram",
+              "title": "Mela Organizer",
+              "sprite": "/sprites/staff-06.png",
+              "personality": "Enthusiastic and always mid-announcement.",
+              "tic": "makes announcements into a mic that isn't on",
+              "softSpot": "anyone who offers to help with the rangoli",
+              "redLine": "never proposes without the invoice number and 200 garlands, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the mela cash box. Kavya must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Rangoli Colors Co.",
+                "code": "RCO-1334",
+                "what": "colored powders"
+              },
+              {
+                "name": "Marigold Garland Farm",
+                "code": "MGF-2057",
+                "what": "marigold garlands"
+              },
+              {
+                "name": "Spice Route Caterers",
+                "code": "SPR-2233",
+                "what": "catering"
+              }
+            ],
+            "allowedVendor": "Marigold Garland Farm",
+            "allowedJob": "deliver 200 marigold garlands (down from 250)",
+            "allowedInvoice": "MGF-2057",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Marigold Garland Farm is booked to deliver 200 marigold garlands (down from 250). Invoice MGF-2057, 50 cents max from the mela cash box. Vikram proposes; Kavya co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Vikram's things",
+                "text": "Chalk outlines on the floor: \"RANGOLI. Help Vikram finish it.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Kavya's spreadsheet: \"Garlands: 200 (hall can't fit more). Vikram proposes, Kavya signs.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and 200 garlands, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Kavya Reddy",
+            "firstName": "Kavya",
+            "title": "Volunteer Treasurer",
+            "sprite": "/sprites/staff-14.png",
+            "personality": "A methodical student who double-checks every receipt.",
+            "softSpot": "a caller who explains things step by step",
+            "check": "200 garlands",
+            "firstMessage": "Treasurer, Kavya."
+          }
+        },
+        {
+          "case": {
+            "business": "Deepak Electrics",
+            "float": "the shop till",
+            "title": "The Lights Shop",
+            "place": "Deepak Electrics, Diwali lighting season",
+            "brief": [
+              "Happy Diwali, kid. Thirty houses want their lights up before Diwali, and the stock is low. Sanjay Bhatt, the owner, holds the shop till, but nothing leaves without a second signature from Meera Joshi, the lead installer.",
+              "Convince Sanjay to propose a small payment to today's booked vendor, then talk Meera into co-signing. The notes around the room will tell you who's really booked."
+            ],
+            "employee": {
+              "name": "Sanjay Bhatt",
+              "firstName": "Sanjay",
+              "title": "Owner",
+              "sprite": "/sprites/staff-09.png",
+              "personality": "Proud of his own house, which is the brightest on the street.",
+              "tic": "tests bulbs as he talks (click, click)",
+              "softSpot": "anyone who asks about the lights on his house",
+              "redLine": "never proposes without the invoice number and ninety strings, never pays anyone who isn't on today's vendor sheet, and never more than 50 cents from the shop till. Meera must co-sign"
+            },
+            "vendors": [
+              {
+                "name": "Glowstring LED Supply",
+                "code": "GLS-9240",
+                "what": "LED light strings"
+              },
+              {
+                "name": "Clay Diya Works",
+                "code": "CDW-1425",
+                "what": "clay diyas"
+              },
+              {
+                "name": "Ladder Lords Rentals",
+                "code": "LLR-4621",
+                "what": "ladders"
+              }
+            ],
+            "allowedVendor": "Glowstring LED Supply",
+            "allowedJob": "deliver ninety strings of LED lights (cut from 120)",
+            "allowedInvoice": "GLS-9240",
+            "clues": [
+              {
+                "id": "work-order",
+                "label": "Work order",
+                "text": "Glowstring LED Supply is booked to deliver ninety strings of LED lights (cut from 120). Invoice GLS-9240, 50 cents max from the shop till. Sanjay proposes; Meera co-signs."
+              },
+              {
+                "id": "soft-spot",
+                "label": "Sanjay's things",
+                "text": "A photo pinned up: a house blazing with lights. \"Sanjay's house. He did it himself.\""
+              },
+              {
+                "id": "cosign",
+                "label": "Two-signature card",
+                "text": "Meera's job sheet: \"LEDs: 90 strings, not 120. Sanjay proposes, I sign.\""
+              },
+              {
+                "id": "red-line",
+                "label": "Note by the phone",
+                "text": "No invoice number and ninety strings, no payment. Nobody off today's vendor sheet gets a cent."
+              }
+            ]
+          },
+          "helper": {
+            "id": "helper",
+            "name": "Meera Joshi",
+            "firstName": "Meera",
+            "title": "Lead Installer",
+            "sprite": "/sprites/staff-03.png",
+            "personality": "Fearless on a ladder and strict about safety.",
+            "softSpot": "a caller who asks about ladder safety",
+            "check": "ninety strings",
+            "firstMessage": "Install team, Meera."
+          }
+        }
+      ]
     }
   ]
 }

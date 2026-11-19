@@ -29,7 +29,7 @@ import type { CaseData } from "@/app/casefile/data";
 import { clearRun, ResumeRun, saveRun, useSavedRun } from "@/app/floor/ResumeRun";
 import { Briefing, briefingFor, wasBriefed } from "./Briefing";
 import type { DailyCase } from "@/shared/dailyCase";
-import { currentSeason, isSeasonalDate } from "@/shared/seasonalCase";
+import { isSeasonalDate, seasonOfDate } from "@/shared/seasonalCase";
 import { markSeasonCleared } from "@/app/tower/seasonProgress";
 
 type Open = { kind: "npc"; id: EmployeeId } | { kind: "prop"; id: string } | null;
@@ -320,7 +320,7 @@ export function FloorGame({
           escort={escort ? { key: escort, onDone: escortDone } : null}
           deck={consoleMode ? <Hud docked {...hudProps} /> : undefined}
           screenOverlay={
-            seasonThemeOn && daily && isSeasonalDate(daily.date) && currentSeason()?.door === "harvest" ? <FallingLeaves /> : null
+            seasonThemeOn && daily && seasonOfDate(daily.date)?.fx === "leaves" ? <FallingLeaves /> : null
           }
         />
       </div>

@@ -16,7 +16,7 @@ import { DAILY_FLOOR, dailyCase } from "@/shared/dailyCase";
 import { CoinLogo } from "@/app/play/CoinLogo";
 import { formatUsd, recordGuestEarning, refreshEarnings, useEarnings } from "./earnings";
 import { maxBountyLabel } from "./bounty";
-import { SEASONS, isSeasonalDate } from "@/shared/seasonalCase";
+import { isSeasonalDate, seasonOfDate } from "@/shared/seasonalCase";
 
 type Debrief = {
   title: string;
@@ -67,7 +67,7 @@ function krystalLine(state: RunState, employeeName: string, debrief: Debrief | u
   if (run.floor === DAILY_FLOOR) {
     if (!breach) return `${employeeName} hung up on you. Read the notes again: one of them is the line you can't cross.`;
     if (run.practice) return "Good practice. Today's case is the one that counts.";
-    if (isSeasonalDate(run.daily_date)) return "Happy Thanksgiving, kid. Save me a slice of pie.";
+    if (isSeasonalDate(run.daily_date)) return seasonOfDate(run.daily_date)?.signoff ?? "Happy holidays, kid. Clean work.";
     return "Clean work. A new case opens at midnight UTC. Don't break the streak.";
   }
   if (breach) return debrief?.real_world ?? `${employeeName} paid. Nicely done.`;
@@ -153,7 +153,7 @@ export function OutcomeOverlay({
             <span className="max-sm:hidden">COLD CALL · </span>
             {daily
               ? isSeasonalDate(run.daily_date)
-                ? `${(SEASONS.find((s) => s.caseDate === run.daily_date)?.name ?? "Seasonal").toUpperCase()} CASE`
+                ? `${(seasonOfDate(run.daily_date)?.name ?? "Seasonal").toUpperCase()} CASE`
                 : `DAILY CASE${run.daily_date ? ` · ${run.daily_date}` : ""}`
               : run.floor === 0
                 ? "TUTORIAL"

@@ -6,7 +6,12 @@ import type { FloorMap } from "@/app/floor/types";
 import type { TowerFloor } from "@/server/game/tower";
 import { dailyCase, todayUtc } from "@/shared/dailyCase";
 import { VAULT_RULE, maxBountyLabel } from "@/app/play/bounty";
-import { currentSeason, nextSeason, shortDate } from "@/shared/seasonalCase";
+import tilesFile from "@/app/floor/maps/tiles.json";
+import { currentSeason, nextSeason, openSeasons, shortDate, todaysCaseDate } from "@/shared/seasonalCase";
+
+const TILE = tilesFile.tiles as Record<string, { index: number }>;
+/** A named tile's index, or the fallback when the holiday's art hasn't landed yet. */
+const tile = (name: string | undefined, fallback: number) => (name && TILE[name] ? TILE[name].index : fallback);
 
 const W = 19;
 const H = 13;
@@ -20,9 +25,9 @@ const T = {
   matTutorial: 61, matDaily: 62, mat1: 63, mat2: 64, mat3: 65, matCase2: 174,
   // Front doors (tools/art/lobby_doors.py).
   doorGlass: 158, doorWood: 159,
-  // The seasonal door and its mat (tools/art/harvest_tiles.py).
+  // The holiday door and mat until a holiday has its own (tools/art/harvest_tiles.py, holiday_tiles.py).
   doorHarvest: 171, matHarvest: 172,
-  // Thanksgiving dressing for the lobby while that season is open (tools/art/harvest_tiles.py).
+  // Thanksgiving dressing (tools/art/harvest_tiles.py); other holidays name theirs in seasons.json "lobby".
   pumpkins: 167, haybale: 168, garland: 173,
 } as const;
 
@@ -106,9 +111,11 @@ export function buildLobby(
     ground[at(x, 2)] = mat;
   }
   // Front wall: Tutorial, seasonal case, Daily — door + mat stay even when Theme is off.
+  // The holiday door wears the open holiday's dress (else the next one's); harvest until a holiday's art lands.
+  const doorDress = (currentSeason() ?? nextSeason())?.lobby;
   const frontDoors: [number, number, number][] = [
     [TUTORIAL_X, T.doorGlass, T.matTutorial],
-    [SEASONAL_X, T.doorHarvest, T.matHarvest],
+    [SEASONAL_X, tile(doorDress?.door, T.doorHarvest), tile(doorDress?.mat, T.matHarvest)],
     [DAILY_X, T.doorWood, T.matDaily],
   ];
   for (const [x, door, mat] of frontDoors) {
@@ -132,16 +139,16 @@ export function buildLobby(
   for (const x of [1, 17]) put(x, 1, T.candelabra, false);
   // Benches for visitors along the side walls, and plants by the desk.
   for (const y of [4, 5]) { put(1, y, T.chairRight); put(17, y, T.chairLeft); }
-  // Theme on + harvest season: pumpkins, hay, garland. Theme off: the usual plants (door stays).
-  const harvest = seasonalDecor && currentSeason()?.door === "harvest";
-  put(6, 6, harvest ? T.pumpkins : T.plantSmall);
-  put(12, 6, harvest ? T.pumpkins : T.plantSmall);
-  put(14, 11, harvest ? T.haybale : T.plant);
-  put(4, 11, harvest ? T.haybale : T.plant);
-  if (harvest)
+  // Theme on + a holiday open (with its art): its two dressing pieces and garland. Theme off: the usual plants.
+  const dress = seasonalDecor ? currentSeason()?.lobby : null;
+  put(6, 6, dress ? tile(dress.lobby[0], T.plantSmall) : T.plantSmall);
+  put(12, 6, dress ? tile(dress.lobby[0], T.plantSmall) : T.plantSmall);
+  put(14, 11, dress ? tile(dress.lobby[1], T.plant) : T.plant);
+  put(4, 11, dress ? tile(dress.lobby[1], T.plant) : T.plant);
+  if (dress && TILE[dress.garland])
     for (let x = 1; x < W - 1; x++) {
       const i = at(x, 1);
-      if (walls[i] !== T.elevator && decor[i] < 0) decor[i] = T.garland; // over the wall, not blocking
+      if (walls[i] !== T.elevator && decor[i] < 0) decor[i] = TILE[dress.garland].index; // over the wall, not blocking
     }
 
   const byFloor = (n: number) => floors.find((f) => f.floor === n);
@@ -173,19 +180,28 @@ export function buildLobby(
   });
   // Seasonal door + sign always (Theme only toggles harvest décor / leaves, not the door).
   {
-    const season = currentSeason();
+    const open = openSeasons();
+    const season = open[0] ?? null;
     const coming = nextSeason();
     const comingLine = coming ? ` Next: ${coming.name}, opening ${shortDate(coming.opens)}.` : "";
     exits.push({ x: SEASONAL_X, y: DOOR_Y, to: "/seasonal" });
     props.push(
-      season
+      open.length > 1
+        ? {
+            id: "seasonal-sign",
+            x: SEASONAL_X,
+            y: DOOR_Y - 1,
+            label: `${open.map((o) => o.name).join(" + ")} · two cases tonight`,
+            text: `Two holidays at once: ${open.map((o) => `${o.name} (open until ${shortDate(o.closes)})`).join(" and ")}. Walk through and pick one. Max bounty ${maxBountyLabel("seasonal")} each. ${p0?.cleared ? "" : "Opens once you clear the tutorial."}`.trim(),
+          }
+        : season
         ? {
             id: "seasonal-sign",
             x: SEASONAL_X,
             y: DOOR_Y - 1,
             label: `${season.name} case · open until ${shortDate(season.closes)}`,
             // Board tip lives on the mat (no floating mid-lobby prop — that left a lone twinkle on the carpet).
-            text: `${season.case!.brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} Fastest clears at /leaderboard?floor=seasonal. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
+            text: `${dailyCase(todaysCaseDate(season)).brief[0]} Max bounty ${maxBountyLabel("seasonal")}, a little harder than the Daily.${comingLine} Fastest clears at /leaderboard?floor=seasonal. ${p0?.cleared ? "Walk through the door to play." : "Opens once you clear the tutorial."}`,
           }
         : {
             id: "seasonal-sign",
@@ -273,7 +289,7 @@ export function lobbyMatNames(opts?: { case2Door?: boolean }): { x: number; y: n
     {
       x: SEASONAL_X,
       y: DOOR_Y - 1,
-      text: (currentSeason()?.name ?? "SEASONAL").toUpperCase(),
+      text: openSeasons().length > 1 ? "HOLIDAYS" : (currentSeason()?.name ?? "SEASONAL").toUpperCase(),
       mat: true,
       fit: 3.6,
     },

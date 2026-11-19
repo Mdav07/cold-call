@@ -3,7 +3,7 @@ import { db } from "@/server/chain/db";
 import { signedInUserId } from "@/server/game/auth";
 import { dailyStreak } from "@/server/game/dailyBoard";
 import { DAILY_FLOOR } from "@/shared/dailyCase";
-import { SEASONS, isSeasonalDate } from "@/shared/seasonalCase";
+import { isSeasonalDate, seasonOfDate } from "@/shared/seasonalCase";
 
 /**
  * GET /api/session/progress : what the signed-in player has achieved, for hunter unlocks (app/play/unlocks.ts):
@@ -24,7 +24,7 @@ export async function GET() {
   for (const r of runs ?? []) {
     if (r.floor === DAILY_FLOOR) {
       if (isSeasonalDate(r.daily_date as string)) {
-        const s = SEASONS.find((x) => x.caseDate === r.daily_date);
+        const s = seasonOfDate(r.daily_date as string);
         if (s) seasons.add(s.id);
       } else if (!r.practice && r.daily_date) days.add(r.daily_date as string);
     } else floors.add(r.floor as number);
