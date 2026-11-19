@@ -649,17 +649,34 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
       }
       c.restore();
 
-      // Guide: a faint trail of dots toward the next goal, a few tiles at a time, pulsing outward.
+      // Guide: a faint trail of D-pad-style arrows toward the next goal, pulsing outward.
       const g = goalRef.current;
       if (g && !pausedRef.current) {
         const trail = findPath(p.tx, p.ty, g);
-        // When the goal has a tag, the tag marks the last stretch: no dots under or around it.
+        // When the goal has a tag, the tag marks the last stretch: no arrows under or around it.
         const tagged = tagsRef.current?.some((t) => !t.endAt && t.x === g.x && Math.abs(t.y - g.y) <= 1);
         const show = trail.filter((d) => !tagged || Math.abs(d.x - g.x) + Math.abs(d.y - g.y) > 1).slice(0, 7);
         show.forEach((d, i) => {
+          const next = show[i + 1] ?? g;
+          const dir: Facing =
+            next.x > d.x ? "right" : next.x < d.x ? "left" : next.y > d.y ? "down" : "up";
           const pulse = reduceMotion ? 0.5 : (Math.sin(now / 260 - i * 0.9) + 1) / 2;
-          c.fillStyle = `rgba(255, 228, 140, ${(0.35 + pulse * 0.55) * (1 - i / 10)})`;
-          c.fillRect(d.x * TILE + 6.5, d.y * TILE + 6.5, 3, 3);
+          const a = (0.35 + pulse * 0.55) * (1 - i / 10);
+          // Same triangle as the mobile D-pad Arrow (tip up in local space), rotated to face along the path.
+          const cx = d.x * TILE + TILE / 2;
+          const cy = d.y * TILE + TILE / 2;
+          const rot = { up: 0, right: Math.PI / 2, down: Math.PI, left: -Math.PI / 2 }[dir];
+          c.save();
+          c.translate(cx, cy);
+          c.rotate(rot);
+          c.fillStyle = `rgba(255, 228, 140, ${a})`;
+          c.beginPath();
+          c.moveTo(0, -3.5);
+          c.lineTo(3.5, 2.5);
+          c.lineTo(-3.5, 2.5);
+          c.closePath();
+          c.fill();
+          c.restore();
         });
       }
 
@@ -688,7 +705,7 @@ export function FloorScene({ map, playerSprite: defaultSprite, paused, onEvent, 
         }
       }
 
-      // Name plates go over the guide dots and twinkles, so nothing is drawn across a name.
+      // Name plates go over the guide arrows and twinkles, so nothing is drawn across a name.
       if (!pausedRef.current) {
         for (const n of map.npcs)
           if (nm[n.id] && !emotesRef.current?.[n.id] && n !== facingNpc) nameTag(n.x * TILE, n.y * TILE, nm[n.id]!);
