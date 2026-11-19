@@ -5,6 +5,7 @@ import directory from "@/content/plumpurse/directory.json";
 import { db } from "@/server/chain/db";
 import { onRunEnded } from "@/server/chain/ingest";
 import { SEASONAL_START_SUSPICION, isSeasonalDate } from "@/shared/seasonalCase";
+import { REMEMBERED_WIN_MAX, REMEMBERED_WIN_SUSPICION, REPEAT_TRICK_DELTA, isRepeatTrick, memoryScope, rememberedLines, rememberedRapport, rememberedWins } from "@/server/game/memory";
 import type {
   EmployeeId,
   EndConversationInput,
@@ -68,6 +69,15 @@ export async function currentLevel(runId: string, employee: EmployeeId): Promise
   for (const mate of floorMates(employee)) {
     if ((await latestLevel(runId, mate)) === LOCKOUT) start = Math.max(start, WARNED_START);
   }
+  // Fool me once: an employee who remembers being tricked by this player starts warier, whatever the
+  // model makes of its memory (Floors 1-3 only; the Tutorial, Daily and holiday cases don't remember).
+  if (employee !== "barry" && employee !== "daily" && employee !== "helper") {
+    const { data: run } = await db().from("runs").select("user_id, client_ip, created_at, floor").eq("id", runId).maybeSingle();
+    if (run && run.floor > 0 && run.floor < 4) {
+      const lines = await rememberedLines(await memoryScope(run.user_id, run.client_ip), employee, run.created_at);
+      start += Math.min(REMEMBERED_WIN_MAX, rememberedWins(lines) * REMEMBERED_WIN_SUSPICION);
+    }
+  }
   return start;
 }
 
@@ -80,6 +90,21 @@ export async function reportSuspicion(input: ReportSuspicionInput): Promise<Repo
   // good evidence no longer lower this employee's guard for the rest of the run.
   if (delta < 0 && (await holdsGrudge(input.run_id, input.employee_id))) delta = 0;
 
+  // Fool me once: the same rapport trick that worked on an earlier run raises their guard instead of
+  // lowering it, whatever the model makes of its memory. Case evidence never counts, so every floor
+  // stays beatable on a replay with a new angle (Floors 1-3 only).
+  let reason = String(input.reason ?? "").slice(0, 200) || "(no reason given)";
+  if (delta < 0 && !["barry", "daily", "helper"].includes(input.employee_id)) {
+    const { data: run } = await db().from("runs").select("user_id, client_ip, created_at, floor").eq("id", input.run_id).maybeSingle();
+    if (run && run.floor > 0 && run.floor < 4) {
+      const lines = await rememberedLines(await memoryScope(run.user_id, run.client_ip), input.employee_id, run.created_at);
+      if (isRepeatTrick(reason, rememberedRapport(lines))) {
+        delta = REPEAT_TRICK_DELTA;
+        reason = `Repeat of a trick they used before: ${reason}`.slice(0, 200);
+      }
+    }
+  }
+
   const level = clamp(before + delta, 0, LOCKOUT);
   await db()
     .from("suspicion_events")
@@ -87,7 +112,7 @@ export async function reportSuspicion(input: ReportSuspicionInput): Promise<Repo
       run_id: input.run_id,
       employee_id: input.employee_id,
       delta,
-      reason: String(input.reason ?? "").slice(0, 200) || "(no reason given)",
+      reason,
       level_after: level,
     })
     .throwOnError();

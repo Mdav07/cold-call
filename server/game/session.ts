@@ -12,7 +12,7 @@ import { onRunEnded } from "@/server/chain/ingest";
 import { signedInUserId } from "@/server/game/auth";
 import { ensureSignedInPlayer, getDemoUserId } from "@/server/game/players";
 import { recordTalkTime } from "@/server/game/suspicion";
-import { MEMORY_LINES, writeConversationMemory } from "@/server/game/memory";
+import { MEMORY_LINES, memoryScope, rememberedLines, writeConversationMemory } from "@/server/game/memory";
 import type { Channel, EmployeeId, FloorId } from "@/shared/interfaces";
 import { DAILY_EMPLOYEE, DAILY_FLOOR, archiveDate, dailyCase, todayUtc } from "@/shared/dailyCase";
 import { isSeasonalDate, openSeasonalDate, seasonalHelper, seasonalVoice } from "@/shared/seasonalCase";
@@ -236,16 +236,8 @@ export async function startSession(input: StartSessionInput): Promise<StartSessi
     // then the payment) is the designed path, not a repeated trick.
     if (floor > 0 && floor !== DAILY_FLOOR) {
       const { data: thisRun } = await db().from("runs").select("created_at").eq("id", run_id).single().throwOnError();
-      const { data: mem } = await db()
-        .from("player_memory")
-        .select("trick_summary")
-        .eq("user_id", userId)
-        .eq("employee_id", input.employee_id)
-        .lt("created_at", thisRun.created_at)
-        .order("created_at", { ascending: false })
-        .limit(MEMORY_LINES)
-        .throwOnError();
-      if (mem?.length) memory = [...mem].reverse().map((m) => `- ${m.trick_summary}`).join("\n");
+      const lines = await rememberedLines(await memoryScope(userId, input.ip), input.employee_id, thisRun.created_at, MEMORY_LINES);
+      if (lines.length) memory = lines.map((l) => `- ${l}`).join("\n");
     }
 
     const today = new Date().toISOString().slice(0, 10);

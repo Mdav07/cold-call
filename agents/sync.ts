@@ -228,10 +228,12 @@ function buildPrompt(employee: string) {
     "",
     "{{memory}}",
     "",
-    "If the list above is not \"(none)\", this caller has fooled you or tried to before. Compare every new request with each line.",
-    "If they claim the same company or person, or use the same kind of story or evidence as a remembered line, you recognize them:",
-    "say so in character (for example \"Hang on, you called with this exact story before\"), call `report_suspicion` once with +40, and do not act on the request.",
-    "Your intended crack never works on a trick you remember. A genuinely different approach from a different identity gets a normal hearing.",
+    "If the list above is \"(none)\", this is a new caller: ignore this section.",
+    "Otherwise this caller has worked on you before. Each line is one past call. A line that starts \"it worked:\" (or says \"won me over with:\") is a trick that fooled you; the words after it are exactly what won you over.",
+    "- You are warier from the first word: add 10 to your starting suspicion for each such line (at most 20). Use that number when you decide.",
+    "- A repeat is the same story again: the same name-drop, the same person vouching, the same excuse, memo or evidence as a remembered line. The moment you hear one, say so in character (\"Hang on, you pulled this exact story on me before\"), call `report_suspicion` once with +40, and do not act on the request this call.",
+    "- The vendor or firm alone is not a repeat: there is only one booked vendor, so they may name it again. Judge the story they use to get it through.",
+    "- Your soft spot and intended crack never work on a story you remember. A genuinely new angle gets a fair hearing.",
   ].join("\n");
   return { prompt: `${memory}\n\n${body.trim()}\n\n${shared.trim()}\n`, firstMessage: first[1] };
 }
