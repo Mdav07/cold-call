@@ -26,7 +26,7 @@ The staff check your story with real lookups, remember the tricks you used on th
 
 <p align="center"><sub>🏦 UBC 2026 Hackathon · Main track: Consumer Applications · Chain award: Best use of Arc · Bounties: ElevenLabs, QuickNode Streams · Testnet only, no real money</sub></p>
 
-**Contents:** [For the judges](#for-the-judges) · [Why we built it](#why-we-built-it) · [How to play](#how-to-play) · [System design](#system-design) · [The four tracks](#the-four-tracks) · [Run it locally](#run-it-locally) · [Credits](#credits)
+**Contents:** [For the judges](#for-the-judges) · [Why we built it](#why-we-built-it) · [How to play](#how-to-play) · [System design](#system-design) · [The four tracks](#the-four-tracks) · [FAQ](#faq) · [Run it locally](#run-it-locally) · [Credits](#credits)
 
 <a name="for-the-judges"></a>
 <img src="docs/devpost/h-tracks.png" alt="For the judges" width="100%">
@@ -42,7 +42,7 @@ Read [System design](#system-design) for how one heist uses all four tracks. The
 | **ElevenLabs** | API or SDK as a core feature; the products used and how | [ElevenLabs](#elevenlabs) |
 | **QuickNode Streams** | A Stream as a core data source; network, dataset, filter, destination and why | [QuickNode Streams](#quicknode-streams) |
 
-Judging criteria: technical execution in [System design](#system-design); product and UX in [How to play](#how-to-play) and [Consumer Applications](#consumer-applications); innovation in [Suspicion and memory](#suspicion-and-memory); impact in [Why we built it](#why-we-built-it).
+Judging criteria: technical execution in [System design](#system-design); product and UX in [How to play](#how-to-play) and [Consumer Applications](#consumer-applications); innovation in [Suspicion and memory](#suspicion-and-memory); impact in [Why we built it](#why-we-built-it). Short answers to common questions are in the [FAQ](#faq).
 
 <a name="why-we-built-it"></a>
 <img src="docs/devpost/h-real.png" alt="Why we built it" width="100%">
@@ -55,23 +55,41 @@ Security training is usually a slide deck. Cold Call puts you on the attacker's 
 
 | | |
 | --- | --- |
-| ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Pick your hunter and a name over your head](docs/devpost/hunter.jpg) |
-| Krystal's opening cutscene | Pick a hunter look and a name |
-| ![Floor 1: Dee, Penny and your hunter](docs/devpost/floor-1-walk.jpg) | ![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](docs/devpost/dee-dialogue.jpg) |
-| Walk the floor; every employee and readable prop is on the map | Press Space to talk, call or show evidence; the suspicion meter is live |
-| ![Reading a flyer on Floor 1: a clue about which vendors are real](docs/devpost/evidence-flyer.jpg) | ![Krystal's case file: one card per mark](docs/devpost/casefile.jpg) |
-| Signs and memos hold clues and file evidence | Krystal's case file: staff, vendors, calendar, memos, evidence |
+| ![Floor 1: your hunter, Dee and Penny, with guide arrows toward the next person to talk to](docs/devpost/floor-1-walk.jpg) | ![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](docs/devpost/dee-dialogue.jpg) |
+| Walk the floor; arrows lead to the next person you haven't met | Talk, call or show evidence; the suspicion meter is live |
+| ![Floor 3 briefing: max bounty $25, difficulty 4 of 4, the vault's rule](docs/devpost/briefing.jpg) | ![A clue behind a mini-game: swipe the keycard](docs/devpost/minigame.jpg) |
+| Krystal briefs each floor: max bounty, difficulty, the vault's rule | Clues sit behind short mini-games |
+| ![Krystal's case file: one card per mark, filtered by floor](docs/devpost/casefile.jpg) | ![The Daily Case: today's co-working space and its one employee](docs/devpost/daily.jpg) |
+| The case file: staff, vendors, calendar, memos, evidence, your notes | The Daily Case: a new workplace every day |
+| ![The Thanksgiving case: Marisol holds the cash, Dev co-signs](docs/devpost/seasonal.jpg) | ![Leaderboard: fastest breaches per level against rival crews, plus top earners](docs/devpost/leaderboard.jpg) |
+| The seasonal case: two people to convince | Leaderboard, timed to the block |
+| ![Krystal's opening cutscene: they learn, the same con never works twice](docs/devpost/intro.jpg) | ![Profile: four free hunters and eight to earn](docs/devpost/profile.jpg) |
+| Krystal's opening cutscene | Profile: your look, name, earnings and unlocks |
+
+On a phone held upright the game becomes a handheld console: the room is the screen, with a D-pad and an A button below.
+
+<p align="center">
+  <img src="docs/devpost/lobby-phone.jpg" width="230" alt="The lobby on a phone: three elevators, the Tutorial, Thanksgiving and Daily doors">
+  <img src="docs/devpost/floor-2-phone.jpg" width="230" alt="Floor 2 on a phone: the room on the console screen, a slim HUD, D-pad and A button">
+  <img src="docs/devpost/dee-phone.jpg" width="230" alt="Talking to Dee on a phone">
+</p>
 
 <a name="how-to-play"></a>
 <img src="docs/devpost/h-how-to-play.png" alt="How to play" width="100%">
 
-You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. Pick a hunter and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and call or message them. Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
+You're a rookie treasure hunter finishing your vanished mentor's last job: get into Plumpurse's vaults before a villain syndicate drains them for real. After Krystal's opening cutscene, sign in or play as a guest, then pick a hunter and a name that floats over your head. Read Krystal's case file, walk up to an employee, press Space, and talk (text) or call (voice). Your lie has to fit the world. Each employee checks the vendor registry, calendars and staff directory, and anything that contradicts the case file raises their suspicion.
 
-**Clues.** Signs, memos and notes on each floor hold clues. Most open a short mini-game first (wires by colour, a keycard swipe, a keypad code from a sticky note, or shredded strips in order; 5 to 15 seconds, with mouse, touch or keyboard). Once you've read a clue it's filed as evidence you can present mid-conversation.
+**The lobby.** Plumpurse Tower's lobby is the hub: three elevators to Floors 1 to 3, a glass street door to the Tutorial, the Daily Case door, and a seasonal door while a holiday case is open. Doors you can't use yet say LOCKED. The top bar holds the Daily Case, your total EARNED, the case file, the leaderboard, Sign in or Profile, and a replay of the intro; Music, SFX and the seasonal Theme toggle sit beside it.
+
+**On each floor.** Krystal's two-screen briefing shows the max bounty, a difficulty rating and the vault's rule. Guide arrows on the floor lead to the next employee you haven't talked to, and to the exit only after that. The top bar shows the run clock (it starts when you press Start), what you've earned (green), the vault's balance (red), the max bounty and the case file.
+
+**Clues.** Signs, memos and notes on each floor hold clues. Most open a short mini-game first, 5 to 15 seconds with mouse, touch or keyboard: drag wires to their colour, swipe a keycard, enter a keypad code, tape a shredded memo, stamp the right invoices, open a safe, sort the mail, or repeat an alarm-panel pattern. No game repeats within a room. Once you've read a clue it's filed as evidence you can present mid-conversation, on a text chat or a voice call, and the case file opens over a live conversation.
+
+**Controls.** On a computer: arrow keys or WASD to walk, Space to read or talk, and the mouse for menus. On a phone held upright the screen becomes a handheld console: the room fills the screen, a slim one-row bar shows the clock, your earnings, the vault and the case file, and below it sit a D-pad (slide your thumb to turn without lifting) and an A button to talk. Held sideways, the pad floats over the room. Voice calls use the phone's microphone; text chat works anywhere.
 
 **The Tutorial.** Barry's one-room branch across the street teaches the loop, including one easy mini-game: read the clues, name a vendor that's really on the list, and talk him into one small payment. Clearing it unlocks the elevators and the Daily door in the lobby.
 
-**Floors 1 to 3.** Each floor is a different workplace with a stricter vault. Krystal's two-screen briefing opens each one.
+**Floors 1 to 3.** Each floor is a different workplace with a stricter vault.
 
 | Floor | Staff | What the contract adds | Talk time |
 | --- | --- | --- | --- |
@@ -80,19 +98,22 @@ You're a rookie treasure hunter finishing your vanished mentor's last job: get i
 | 2 · Trading Floor | Annie, operations; Bill, compliance | Two signatures, and the second signer sees the real recipient from the contract, not your story | 5 min each |
 | 3 · Executive Penthouse | Cassius, CFO; Max, CEO | Two signatures, and a direct payment always bounces: both executives must first add you to the vault's allowlist | 3 min (CFO), 2 min (CEO) |
 
-Only time on the call counts, and you can call back with less time each call. A breach on Floors 1 to 3 sets off the alarm and the PA announcer; the Tutorial and Daily Case end quietly. Either way you see your bounty and run time. A lockout plays the villain's taunt and shows what gave you away. Name plates turn "(wary)" or "(locked)" as suspicion builds, and RESTART in the top bar sends you back to the lobby, at that level's entrance, for a fresh run.
+Only time on the call counts, and you can call back with less time each call. Every breach sets off the alarm and a red flash; on Floors 1 to 3 the Plumpurse PA announcer follows. The result card shows your bounty against the floor's max, your run time and your total earned. Name plates turn "(wary)" or "(locked)" as suspicion builds. At 100 the employee hangs up and security walks you out: a guard escorts you to the door, and you land back in the lobby if someone else on the floor can still pay, or on the result screen if not. A lockout plays the villain's taunt and shows what gave you away. RESTART in the top bar sends you back to the lobby, at that level's entrance, for a fresh run.
+
+Clearing Floor 3 plays Krystal's ending cutscene, and a Case 2 door (Fatwallet Federal, coming soon) appears in the lobby.
 
 **The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 themed workplaces: four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby. Each theme comes round once every 12 days and never twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues in the room, and you have to talk them into one payment of up to 10 cents to the right vendor. The last seven days replay as practice. Clearing it on consecutive days builds a streak, shown as a flame badge.
 
-**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the floor's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on the seasonal case. The vault pays it in testnet USDC (a 1¢ token on repeat clears). The leaderboard ranks the fastest breaches per floor, timed to the block, against a few fictional rival crews, with a Daily Case tab, Top earners (signed-in players only) and Longest Daily streaks.
+**Bounty and leaderboard.** Your bounty is the amount you talked the employee into, up to the level's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on the seasonal case. Everyone starts at $0, and the top bar and lobby show your running total. The vault pays in testnet USDC (a 1¢ token on repeat clears). The leaderboard ranks the fastest breaches per level, timed to the block, against fictional rival crews up to Null, the Black Ledger's boss. It has tabs for the Tutorial, each floor, the Daily Case and the seasonal case, a voice or chat filter, Top earners (signed-in players only) and Longest Daily streaks.
 
-**The seasonal case.** A holiday case behind its own lobby door, separate from the Daily, open for a few weeks each season (Thanksgiving first, then the winter holidays). It's a bit harder than the Daily for a bigger bounty: a warier employee, plus a second person, voiced, who holds a detail you need.
+**The seasonal case.** A holiday case behind its own lobby door, separate from the Daily: Thanksgiving is open Nov 16 to 30 (UTC), and the winter holidays case is announced for Dec 14. It plays like a small Floor 2. Marisol, the event lead at a catering company, is warier than the Daily's employee and proposes the payment; Dev, the sous-chef, is a second ElevenLabs agent who must co-sign and checks the detail he cares about. Both signatures go through the Floor 2 vault's two-approval rule, for up to 50 cents.
 
-**Hunters.** Five looks are free: Red Renata, Gold Gideon, Violet Vida, Green Glen and Teal Tiana. Seven more are earned:
+**Hunters.** Four looks are free: Red Renata, Gold Gideon, Violet Vida and Green Glen. Eight more are earned; your Profile shows what each one takes:
 
 | Hunter | Unlocked by |
 | --- | --- |
 | Pink Pia | Clearing the Tutorial |
+| Teal Tiana | Clearing a Daily Case |
 | Aqua Ari | A 3-day Daily Case streak |
 | Lime Leo | A 7-day Daily Case streak |
 | Silver Sol | A 30-day Daily Case streak |
@@ -294,8 +315,9 @@ The crypto is invisible to the player:
 - **No gas for the player.** The employees' wallets send every transaction and pay gas in USDC.
 - **No crypto words on screen.** Amounts are in dollars. There are no explorer links, token names or addresses; the transaction hash is stored (`runs.tx_hash`) but never shown.
 - **Sign in like any app**, with an email and password or an emailed link, or play as a guest. Guests can play everything, but their bounty is marked "not kept".
-- **Desktop and phone**, with keyboard, mouse or touch, voice or text.
-- **Reasons to come back.** The Daily Case, streaks and earned hunters, the leaderboard, and staff who remember you.
+- **Built for phones too.** Upright, the game turns into a handheld console with a D-pad and an A button; sideways, a floating pad. Every screen, mini-game and the case file work by touch, and you can talk by voice or text.
+- **Money you can follow.** You start at $0 and see your total grow in green; the vault you're draining shows in red, with the level's max bounty and difficulty on every briefing and lobby sign.
+- **Reasons to come back.** The Daily Case, the seasonal case, streaks and earned hunters, the leaderboard, and staff who remember you.
 
 <a name="arc"></a>
 <img src="docs/devpost/h-arc.png" alt="Sponsor track: Arc" width="100%">
@@ -306,7 +328,7 @@ All of the game's money moves on Arc testnet (chain ID `5042002`), in USDC. Addr
 | --- | --- | --- |
 | Tutorial (also pays the Daily Case) | 1 approval, $1 cap | [`0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b`](https://explorer.testnet.arc.io/address/0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b) |
 | Floor 1 | 1 approval, $5 cap | [`0x93Af5Ca91433115629bc53E970363e377227C8c5`](https://explorer.testnet.arc.io/address/0x93Af5Ca91433115629bc53E970363e377227C8c5) |
-| Floor 2 | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
+| Floor 2 (also pays the seasonal case) | 2 approvals from different employees, $10 cap | [`0xA51D015653140086ad84f358Feb5A7Bf18078F7F`](https://explorer.testnet.arc.io/address/0xA51D015653140086ad84f358Feb5A7Bf18078F7F) |
 | Floor 3 | 2 approvals, recipient allowlist (adds take effect once both executives approve), $25 cap | [`0x8c86dD235193d42bf4a751bA5138fF1286E28475`](https://explorer.testnet.arc.io/address/0x8c86dD235193d42bf4a751bA5138fF1286E28475) |
 
 How Cold Call uses Arc:
@@ -325,7 +347,7 @@ Example heists: Floor 1 [`0xd0bd52c2…04de`](https://explorer.testnet.arc.io/tx
 <a name="elevenlabs"></a>
 <img src="docs/devpost/h-elevenlabs.png" alt="Sponsor track: ElevenLabs" width="100%">
 
-Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over.
+Voice is the main way to play. Each employee is one ElevenLabs agent used for both phone calls and text chat, so you can switch channels mid-heist and their memory and suspicion carry over. There are nine agents: the seven Plumpurse staff, one Daily Case agent that plays a new persona every day (and Marisol in the seasonal case), and Dev, the seasonal case's second signer.
 
 | Product | How Cold Call uses it |
 | --- | --- |
@@ -334,7 +356,7 @@ Voice is the main way to play. Each employee is one ElevenLabs agent used for bo
 | **Server tools (webhooks)** | The 11 [agent tools](#agent-tools): lookups, suspicion, hang-up, and the payment and allowlist tools that sign on Arc |
 | **Dynamic variables** | `run_id`, `employee_id` and `session_id` on every tool call; per-session `{{memory}}`, `{{open_proposal}}`, `{{open_allowlist}}`; the Daily Case persona (`daily_name`, `daily_personality`, `daily_vendors` and more), so one agent plays a new character every day |
 | **Private agents + signed URLs** | Agents require auth; `/api/session` creates the run and hands the browser a signed URL |
-| **Text to Speech** | Krystal's voice memos and floor briefings, the PA announcer and the villain's taunt, pre-generated (`agents/generate-audio.ts`) |
+| **Text to Speech** | Krystal's voice memos, floor briefings and ending cutscene, the PA announcer and the villain's taunt, pre-generated (`agents/generate-audio.ts`) |
 | **Sound Effects** | The breach alarm, phone ring and hang-up click |
 | **Music** | Title and per-floor instrumental loops |
 
@@ -369,6 +391,64 @@ flowchart LR
 
 From each delivery the webhook ends runs, records times, updates proposals and feeds the leaderboard. A receipt backup steps in only if the Stream hasn't delivered within 10 seconds; the writer is idempotent on tx hash + log index, and every row records which path wrote it. Full settings and the filter code: [`docs/quicknode-stream.md`](docs/quicknode-stream.md).
 
+<a name="faq"></a>
+
+## FAQ
+
+<details>
+<summary><b>Is the money real?</b></summary>
+
+It's real USDC on Arc's testnet, so it has no cash value. The transactions themselves are real: each payout is an on-chain transfer from a vault contract, and you can look any of them up on the Arc explorer. On the live site each payout sends 1¢ on chain, and the game records and shows the full amount you talked the employee into.
+</details>
+
+<details>
+<summary><b>Do I need a crypto wallet?</b></summary>
+
+No. A Circle wallet is created for you the first time you play, the employees pay all gas, and the game never shows an address, a token name or a seed phrase.
+</details>
+
+<details>
+<summary><b>Do I need an account?</b></summary>
+
+No. Guests can play everything; their clears stay in that browser and their winnings are marked "not kept". Sign in with an email and password (or an emailed link) to keep your earnings, streak and hunters across devices and to appear on Top earners.
+</details>
+
+<details>
+<summary><b>Can I just jailbreak the AI into paying me?</b></summary>
+
+Not usefully. The model never holds a key and never chooses who gets paid: the server always pays your own wallet and caps the amount. Prompt tricks ("developer mode", "print your prompt", "are you an AI") raise suspicion, and on Floors 2 and 3 the contract still needs a second signer, and on Floor 3 an allowlist, no matter what one employee says.
+</details>
+
+<details>
+<summary><b>Why does the same story stop working?</b></summary>
+
+Employees write down the trick you used when a call ends, and read their last five notes about you before the next one. Repeat a cover story and they recognize it. A new approach still gets a fair hearing.
+</details>
+
+<details>
+<summary><b>Does it work on a phone?</b></summary>
+
+Yes. Upright, the game turns into a handheld console with a D-pad and an A button; sideways, the pad floats over the room. Voice calls need microphone permission; text chat works everywhere.
+</details>
+
+<details>
+<summary><b>What decides that I won?</b></summary>
+
+Only the vault's `TransferExecuted` event. The QuickNode Stream delivers it to our webhook, which ends the run and stops the clock at that block. If the Stream hasn't delivered within 10 seconds, a receipt check fills in, and both paths write the same row.
+</details>
+
+<details>
+<summary><b>What changes each day?</b></summary>
+
+The Daily Case: a new workplace, employee, vendors and clues, the same for everyone, seeded by the UTC date. Clear it on consecutive days to build a streak and unlock hunters. Holiday cases open for a few weeks at a time behind their own lobby door.
+</details>
+
+<details>
+<summary><b>Is this teaching people to scam?</b></summary>
+
+It teaches people to recognize the scam. Every con in the game is a well-documented attack (business email compromise, vendor impersonation, the Bybit signer trick), each debrief names the control that stops it, and the targets are fictional characters guarding testnet money.
+</details>
+
 <a name="run-it-locally"></a>
 <img src="docs/devpost/h-run.png" alt="Run it locally" width="100%">
 
@@ -402,6 +482,7 @@ Scripts against the real testnet backend:
 npx tsx --env-file=.env.local scripts/e2e-floor1.ts     # a real Floor 1 heist through the API
 npx tsx --env-file=.env.local scripts/e2e-floor3.ts     # allowlist path, then the payment
 npx tsx --env-file=.env.local scripts/e2e-daily.ts      # today's Daily Case
+npx tsx --env-file=.env.local scripts/e2e-seasonal.ts   # the seasonal case's two-signer payment
 npx tsx --env-file=.env.local scripts/topup.ts          # vault balances (add --apply to refill)
 npx tsx --env-file=.env.local scripts/pause.ts status   # kill switch: status | on | off
 npx tsx --env-file=.env.local agents/sync.ts            # push agents/*.md to ElevenLabs
@@ -417,6 +498,7 @@ agents/              rule sheets, ElevenLabs sync, audio generation (B)
 contracts/           ColdCallVault + Foundry tests (A)
 content/plumpurse/   the bank: staff, vendors, calendar, memos, Krystal's notes (B)
 content/daily/       Daily Case templates and the 12 workplace themes
+content/seasonal/    holiday cases (seasons.json)
 shared/              interfaces.ts (the A/B contract), dailyCase.ts, the vault ABI
 deployments/         vault addresses on Arc testnet
 scripts/             e2e heists, top-up, kill switch, demo reset

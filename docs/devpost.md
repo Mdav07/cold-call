@@ -21,6 +21,21 @@ rule a good story can't beat.
 
 TODO: YouTube or Google Drive link, viewable by anyone with the link.
 
+## Image gallery (upload in this order)
+
+Screenshots of the live site, in `docs/devpost/` (desktop at 1280x800, phones at 390x844):
+
+1. `floor-1-walk.jpg`: Floor 1 with guide arrows
+2. `dee-dialogue.jpg`: talking to Dee, suspicion meter
+3. `briefing.jpg`: Floor 3 briefing with max bounty, difficulty and vault rule
+4. `phones.jpg`: the handheld-console layout on a phone
+5. `minigame.jpg`: a clue behind a mini-game
+6. `casefile.jpg`: the case file
+7. `seasonal.jpg`: the Thanksgiving case, two people to convince
+8. `daily.jpg`: today's Daily Case
+9. `leaderboard.jpg`: fastest breaches and top earners
+10. `profile.jpg`: hunters to earn
+
 ## Built with (tags)
 
 typescript, next.js, react, tailwindcss, html5-canvas, solidity, foundry, viem, arc, usdc, circle,
@@ -64,7 +79,7 @@ If Devpost asks for them separately:
 | --- | --- |
 | Tutorial and Daily Case | `0x1f74b2082b504746A6948c95cEC0b0986E00Ce8b` |
 | Floor 1 | `0x93Af5Ca91433115629bc53E970363e377227C8c5` |
-| Floor 2 | `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` |
+| Floor 2 and the seasonal case | `0xA51D015653140086ad84f358Feb5A7Bf18078F7F` |
 | Floor 3 | `0x8c86dD235193d42bf4a751bA5138fF1286E28475` |
 
 The earlier Floor 3 vault, `0x2DD6d208b41875b97aA3eDCec1F8DbE3941AE670`, is retired.
@@ -98,6 +113,7 @@ audio on.
 5. **The contract fights back (1:45–2:10).** Floor 2: the second signer sees the real recipient. Floor 3: a
    direct payment bounces until both executives allowlist you. The Bybit debrief card.
 6. **They remember you (2:10–2:20).** Repeat a story on a new run and the employee calls it out.
-7. **Come back tomorrow (2:20–2:30).** The Daily Case, the streak badge, the leaderboard. Tagline and link.
+7. **Come back tomorrow (2:20–2:30).** The Daily Case, the streak badge, the leaderboard, and a few seconds of
+   the same game on a phone (the handheld-console layout). Tagline and link.
 
 TODO: reset the demo player before recording (`scripts/demo-reset.ts`, `agents/reset-memory.ts`).

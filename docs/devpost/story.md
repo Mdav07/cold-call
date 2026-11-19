@@ -14,18 +14,24 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
 
 ![What it does](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-what-it-does.png)
 
-![Floor 1: Dee, Penny and your hunter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
+![Floor 1: your hunter, Dee and Penny, with guide arrows toward the next person to talk to](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/floor-1-walk.jpg)
 
-- **A bank you can walk.** Pick a hunter (four to start, six more to earn) and explore a tower of top-down floors. Clues hide in signs and memos behind short mini-games (wires, a keycard swipe, a keypad, shredded strips), and each one you read becomes evidence you can present on a call.
-- **Staff who fight back.** Every employee is an ElevenLabs agent with its own voice, rule sheet and suspicion meter. They check your story against a vendor registry, calendars and a staff directory. Slip up and suspicion rises; at 100 they hang up and warn their colleague.
+- **A bank you can walk.** Pick a hunter (four to start, eight more to earn) and explore a tower of top-down floors from a lobby hub. Each briefing shows the floor's max bounty, difficulty and vault rule, and guide arrows lead you to the next person you haven't met. Clues hide in signs and memos behind eight kinds of short mini-games (drag the wires, swipe a keycard, crack a safe, sort the mail and more), and each one you read becomes evidence you can present mid-call.
+- **Staff who fight back.** Every employee is an ElevenLabs agent with its own voice, rule sheet and suspicion meter. They check your story against a vendor registry, calendars and a staff directory. Slip up and suspicion rises; at 100 they hang up, warn their colleague, and security walks you out.
+
+![Dee's dialogue: talk, call, open the case file, watch the suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
+
 - **Staff who remember you.** When a call ends, the employee writes down the trick you used. Next run, the same story gets called out, so you have to keep inventing new cons.
 - **Rules a story can't beat.** Each floor's vault adds a control, and each mirrors a real attack:
   - **Tutorial:** one signature pays.
   - **Floor 1, Accounts Payable:** one signature, up to a cap (vendor impersonation).
   - **Floor 2, Trading Floor:** two signatures, and the second signer sees the real recipient from the contract, not your story (the Bybit trick).
   - **Floor 3, Executive Penthouse:** a direct payment always bounces. Both executives must first add you to the vault's allowlist.
-- **A debrief after every floor** names the real attack you just ran and what the bank patched.
-- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Your bounty is the amount you talked them into, Daily streaks and finished floors unlock new hunters, and the leaderboard is timed to the block.
+- **A debrief after every floor** names the real attack you just ran and what the bank patched. Clear Floor 3 and Krystal's ending cutscene points to Case 2.
+- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Holiday cases open behind their own lobby door; the Thanksgiving case has two live agents to convince, an event lead who proposes the payment and a sous-chef who co-signs it. You start at $0 and watch your total grow, Daily streaks and clears unlock new hunters, and the leaderboard is timed to the block.
+- **A console in your pocket.** On a phone held upright the game becomes a handheld: the room is the screen, with a D-pad and an A button below. Every mini-game and menu works by touch, and you can call by voice or type.
+
+![On a phone: the lobby, Floor 2 and a conversation with Dee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/phones.jpg)
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
@@ -82,6 +88,13 @@ What each track needed from us, beyond the pipeline above:
 - New banks with new controls: hardware-wallet confirmations, spending limits, delays.
 - Multiplayer: one player attacks while another defends as the employee.
 - A training mode for companies, with their own vendors and staff, that reports which tricks their team falls for.
+
+**FAQ**
+
+- **Is the money real?** Real USDC transactions on Arc testnet, so no cash value. The live site sends 1¢ per payout on chain and records the full amount you talked them into.
+- **Do I need a wallet or an account?** No. A wallet is created for you behind the scenes, and guests can play everything. Sign in to keep your earnings, streak and hunters.
+- **Can I jailbreak the AI into paying?** The model never holds a key or picks the recipient, prompt tricks raise suspicion, and on Floors 2 and 3 the contract still needs a second signer no matter what one employee says.
+- **Is this teaching people to scam?** It teaches them to spot one: every con is a documented attack, each debrief names the control that stops it, and the targets are fictional.
 
 Try it at [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app). And kid? Don't trust anyone who sounds too sure.
 
