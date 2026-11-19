@@ -28,12 +28,12 @@ Security training is usually a slide deck. We wanted the opposite: put you on th
   - **Floor 2, Trading Floor:** two signatures, and the second signer sees the real recipient from the contract, not your story (the Bybit trick).
   - **Floor 3, Executive Penthouse:** a direct payment always bounces. Both executives must first add you to the vault's allowlist.
 - **A debrief after every floor** names the real attack you just ran and what the bank patched. Clear Floor 3 and Krystal's ending cutscene points to Case 2.
-- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office ([see all 12 workplaces and the coming cases](https://claude.ai/artifact/5tmcYfWHuPmAZdvwGqN2m5)). Holiday cases open behind their own lobby door; the Thanksgiving case has two live agents to convince, an event lead who proposes the payment and a sous-chef who co-signs it. You start at $0 and watch your total grow, Daily streaks and clears unlock new hunters, and the leaderboard is timed to the block.
+- **A reason to come back.** The Daily Case is a new case each day, the same for everyone, rotating through 12 themed workplaces from a coffee shop to a law office. Holiday cases open behind their own lobby door; the Thanksgiving case has two live agents to convince, an event lead who proposes the payment and a sous-chef who co-signs it. You start at $0 and watch your total grow, Daily streaks and clears unlock new hunters, and the leaderboard is timed to the block.
 - **A console in your pocket.** On a phone held upright the game becomes a handheld: the room is the screen, with a D-pad and an A button below. Every mini-game and menu works by touch, and you can call by voice or type.
 
 ![On a phone: the lobby, Floor 2 and a conversation with Dee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/phones.jpg)
 
-[![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)](https://claude.ai/artifact/5tmcYfWHuPmAZdvwGqN2m5)
+![The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/daily-themes.jpg)
 
 ![They remember you: Penny falls for a story on run 1, writes it down when the call ends, and calls it out on run 2](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/memory.png)
 
