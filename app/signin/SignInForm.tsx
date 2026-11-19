@@ -8,6 +8,8 @@ import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+const RESEND_AFTER = 60; // seconds; Supabase allows one email per address about once a minute
+
 type Mode = "link" | "password" | "signup";
 
 function supabase() {
@@ -26,6 +28,13 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState<string | null>(null);
+  const [sentKind, setSentKind] = useState<"magiclink" | "signup">("magiclink");
+  const [wait, setWait] = useState(0); // seconds until Resend is allowed
+  useEffect(() => {
+    if (wait <= 0) return;
+    const t = setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => clearTimeout(t);
+  }, [wait]);
   const [message, setMessage] = useState<string | null>(linkError ? "That link expired or was already used. Send a new one." : null);
 
   useEffect(() => {
@@ -40,21 +49,27 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
   }, []);
 
   /** Our branded email if the server has a key; otherwise Supabase's own. Returns an error message or null. */
-  const sendLink = async (kind: "magiclink" | "signup") => {
+  const sendLink = async (kind: "magiclink" | "signup", resend = false): Promise<string | null | "in"> => {
     const res = await fetch("/api/auth/link", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, handle: handle.trim() || undefined, kind, password: kind === "signup" ? password : undefined, next: "/tower" }),
+      body: JSON.stringify({ email, handle: handle.trim() || undefined, kind: resend ? "magiclink" : kind, password: kind === "signup" && !resend ? password : undefined, next: "/tower" }),
     });
     const data = (await res.json().catch(() => ({}))) as { sent?: boolean; fallback?: boolean; error?: string };
     if (data.sent) return null;
     if (!data.fallback) return data.error ?? "Something went wrong. Try again.";
     const redirect = `${window.location.origin}/auth/callback?next=/tower`;
     const meta = { handle: handle.trim().slice(0, 24) || undefined };
-    const { error } =
-      kind === "signup"
-        ? await supabase().auth.signUp({ email, password, options: { emailRedirectTo: redirect, data: meta } })
-        : await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, data: meta } });
+    if (kind === "signup" && resend) {
+      const { error } = await supabase().auth.resend({ type: "signup", email, options: { emailRedirectTo: redirect } });
+      return error?.message ?? null;
+    }
+    if (kind === "signup") {
+      const { data, error } = await supabase().auth.signUp({ email, password, options: { emailRedirectTo: redirect, data: meta } });
+      if (error) return error.message;
+      return data.session ? "in" : null; // no confirmation needed: they're signed in already
+    }
+    const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, data: meta } });
     return error?.message ?? null;
   };
 
@@ -72,12 +87,20 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
         router.refresh();
         return;
       }
-      const error = await sendLink(mode === "signup" ? "signup" : "magiclink");
-      if (error) {
-        setMessage(error);
+      const kind = mode === "signup" ? "signup" : "magiclink";
+      const result = await sendLink(kind);
+      if (result === "in") {
+        router.push("/tower");
+        router.refresh();
         return;
       }
-      setSent(mode === "signup" ? "Check your email to confirm your account, then you're in." : "Check your email. The link signs you in and drops you in the lobby.");
+      if (result) {
+        setMessage(result);
+        return;
+      }
+      setSentKind(kind);
+      setWait(RESEND_AFTER);
+      setSent(kind === "signup" ? "Check your email to confirm your account, then you're in." : "Check your email. The link signs you in and drops you in the lobby.");
     } finally {
       setBusy(false);
     }
@@ -103,7 +126,42 @@ export function SignInForm({ linkError }: { linkError: boolean }) {
     >
       {header}
       {sent ? (
-        <p className="text-[var(--cc-ink)]">{sent}</p>
+        <>
+          <p className="text-[var(--cc-ink)]">{sent}</p>
+          <p className="text-xs text-[var(--cc-muted)]">
+            Sent to <strong>{email}</strong> from Supabase Auth. Not there? Check spam, or Gmail&apos;s Updates tab.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="pixel-button"
+              disabled={busy || wait > 0}
+              onClick={async () => {
+                setBusy(true);
+                setMessage(null);
+                try {
+                  const result = await sendLink(sentKind, true);
+                  if (result && result !== "in") setMessage(result);
+                  else setWait(RESEND_AFTER);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              {busy ? "Sending…" : wait > 0 ? `Resend in ${wait}s` : "Resend email"}
+            </button>
+            <button
+              type="button"
+              className="pixel-button !bg-[var(--cc-panel-2)] !text-[var(--cc-ink)]"
+              onClick={() => {
+                setSent(null);
+                setMessage(null);
+              }}
+            >
+              Use a different email
+            </button>
+          </div>
+        </>
       ) : (
         <>
           <div role="tablist" aria-label="How to sign in" className="flex flex-wrap gap-2">
