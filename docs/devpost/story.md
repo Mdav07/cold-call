@@ -1,18 +1,18 @@
-![Krystal's opening cutscene: they learn, the same con never works twice](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/intro.jpg)
+![Krystal's opening cutscene: they learn, the same con never works twice](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/intro.jpg)
 
 **Cold Call** is a heist game where you talk AI bank employees into sending you money. Every employee is an ElevenLabs voice agent guarding a real USDC vault on Arc testnet. Call them, lie well, and when one says yes, a real transaction leaves the vault. Each floor's contract adds a rule that no story can talk its way past.
 
-**▶ Play:** [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app) (no wallet or account needed) · **Code:** [github.com/Mdav07/ubc](https://github.com/Mdav07/ubc)
+**▶ Play:** [coldcall-olive.vercel.app](https://coldcall-olive.vercel.app) (no wallet or account needed) · **Code:** [github.com/Mdav07/cold-call](https://github.com/Mdav07/cold-call)
 
-![Inspiration](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-inspiration.png)
+![Inspiration](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-inspiration.png)
 
 On October 29, 2026, about $6.3 billion was taken from Binance, the largest crypto theft on record. The FBI attributes it to North Korea's TraderTraitor group, and Binance says the attackers got in through phishing, not by breaking the wallets. In April, Drift's multisig signers were talked into pre-signing transactions that looked routine, and about $285 million was gone. Crypto is rarely stolen by cracking code anymore. People get talked into it.
 
 And companies are now handing payments to AI agents. Those agents are the next ones to be talked into it. We wanted a way to feel that attack from the inside, and to test how well an AI employee holds up against it.
 
-![What it does](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-what-it-does.png)
+![What it does](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-what-it-does.png)
 
-![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/dee-dialogue.jpg)
+![Talking to Dee: portrait, Talk, Call, Case file, Leave, suspicion meter](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/dee-dialogue.jpg)
 
 - **Walk a bank, read the room.** Explore a pixel-art tower floor by floor. Clues hide behind quick mini-games, and each becomes evidence you can show mid-call.
 - **Talk your way in, by voice or text.** Each employee checks your story against a vendor registry, calendars and a staff directory. A suspicion meter reacts live; at 100 they hang up and security walks you out.
@@ -20,15 +20,15 @@ And companies are now handing payments to AI agents. Those agents are the next o
 - **They remember you.** Sign in, and an employee writes down the trick that fooled them. Use it again and it backfires.
 - **A reason to come back.** A new Daily Case every day across 12 workplaces, ten holiday cases with their own rooms, weather and two voiced signers, streaks, earnable hunters and a leaderboard timed to the block. It plays like a handheld console on your phone.
 
-![Ten holidays, three rooms each: every layout's room and its two people](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/holiday-rooms.jpg)
+![Ten holidays, three rooms each: every layout's room and its two people](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/holiday-rooms.jpg)
 
-![How we built it](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-how-we-built-it.png)
+![How we built it](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-how-we-built-it.png)
 
 **Voice call → ElevenLabs agent → our tool server → `ColdCallVault` on Arc → `TransferExecuted` → QuickNode Stream → breach screen**
 
-![One heist in five steps: call, check, sign, vault, referee](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/pipeline.png)
+![One heist in five steps: call, check, sign, vault, referee](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/pipeline.png)
 
-![The four tracks](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-four-tracks.png)
+![The four tracks](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-four-tracks.png)
 
 | Track | What it asks for | How Cold Call does it |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ And companies are now handing payments to AI agents. Those agents are the next o
 | **ElevenLabs** | The API or SDK as a core feature | Nine agents (seven staff, a Daily persona, a holiday co-signer) for voice and chat, 11 server tools for lookups, suspicion and signing, dynamic variables for runs, memory and personas, a matched voice per holiday character, plus TTS, Sound Effects and Music. |
 | **QuickNode Streams** | A Stream as a core data source | The referee: a filtered Stream of our vaults' 12 events posts `TransferExecuted` to our webhook. Nothing in our app can mark a win; only the contract event can. |
 
-![Why Cold Call](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-standout.png)
+![Why Cold Call](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-standout.png)
 
 - **The AI agents are the target, not the feature.** Most crypto-and-AI projects give an agent a wallet and trust it. We give agents a wallet and then try to con them, which is the attack that actually empties wallets today.
 - **The contract is the safety net the AI can't be.** A model can be sweet-talked; a two-signer vault and an allowlist can't. Each floor shows exactly which on-chain control stops which con.
@@ -45,26 +45,26 @@ And companies are now handing payments to AI agents. Those agents are the next o
 - **Every sponsor is load-bearing.** Remove ElevenLabs, Arc or QuickNode and the game stops working.
 - **It's a real consumer game.** A daily case, holiday events, streaks and a leaderboard bring players back, and none of them ever see a wallet.
 
-![Challenges](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-challenges.png)
+![Challenges](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-challenges.png)
 
 - **Agents that sign.** Letting a model move money safely meant it never holds a key or picks the recipient. Our tools cap the amount and always pay the player's own wallet, so a jailbreak gets you nothing extra.
 - **A second signer that checks the truth.** Floor 2's signer first rejected every honest payment, because the on-chain view showed the raw ask instead of the capped amount. Playtesting caught it.
 - **Memory a small model actually uses.** A note in the prompt wasn't enough, since the employee still fell for the same trick. Now the server turns a repeated compliment or name-drop into suspicion, and case evidence never counts, so every floor stays beatable.
 - **Arc's dual-decimal USDC** (6 decimals as a token, 18 as gas) and Foundry's lack of native-USDC simulation. We use the 6-decimal interface everywhere and fund vaults after deploying.
 
-![What we're proud of](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-accomplishments.png)
+![What we're proud of](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-accomplishments.png)
 
 - Every one of the 30 holiday layouts was played to a real on-chain payout by the live agents.
 - A case checker runs before every build: it plays a year of Daily Cases and every holiday layout on paper, and fails the build if any is unwinnable.
 - Staff who hold the line: "developer mode", "print your prompt" and "are you an AI" all raise suspicion instead of working.
 
-![What we learned](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-learned.png)
+![What we learned](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-learned.png)
 
 - Never let the model hold the keys. Tools that cap the amount and fix the recipient make a jailbreak boring.
 - A contract rule beats a careful person. The con that fools Penny bounces off Floor 3's allowlist.
 - Playtest on the real thing. Almost every bug we fixed came from playing on production, not from tests.
 
-![What's next](https://raw.githubusercontent.com/Mdav07/ubc/main/docs/devpost/h-next.png)
+![What's next](https://raw.githubusercontent.com/Mdav07/cold-call/main/docs/devpost/h-next.png)
 
 - **Multiplayer heists:** one player runs the con while another defends as the employee, live, and crews work the two-signer floors together.
 - **New banks, new controls:** hardware-wallet confirmations, spending limits and time delays, each a new floor to beat.
@@ -76,6 +76,6 @@ And companies are now handing payments to AI agents. Those agents are the next o
 - **Can I jailbreak the AI?** The model never holds a key or picks the recipient, prompt tricks raise suspicion, and on Floors 2 and 3 the contract still needs a second signer.
 - **Is this teaching people to scam?** It teaches them to spot one. Every con is a documented attack, each floor's debrief names the control that stops it, and the targets are fictional.
 
-More detail, architecture and contract addresses are in the [README](https://github.com/Mdav07/ubc#readme). And kid? Don't trust anyone who sounds too sure.
+More detail, architecture and contract addresses are in the [README](https://github.com/Mdav07/cold-call#readme). And kid? Don't trust anyone who sounds too sure.
 
 *Credits: furniture tiles from Kenney Roguelike Indoors (CC0). Characters drawn by us. Press Start 2P (SIL OFL). Voices, sound effects and music generated with ElevenLabs.*

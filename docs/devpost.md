@@ -15,7 +15,7 @@ rule a good story can't beat.
 ## Try it out
 
 - https://coldcall-olive.vercel.app
-- https://github.com/Mdav07/ubc
+- https://github.com/Mdav07/cold-call
 
 ## Video demo link
 
