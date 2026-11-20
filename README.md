@@ -101,25 +101,42 @@ Sign in, and an employee writes down the trick that fooled them when the call en
 
 ### A reason to come back
 
-**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date. It rotates through 12 workplaces (four Plumpurse looks, a restaurant, a coffee shop, a consulting firm, a trading desk, a tech startup, a health clinic, a law office and a hotel lobby), never the same one twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues, and one payment of up to 10 cents to win. Clear it on consecutive days for a streak.
+**The Daily Case.** One short case a day, the same for everyone, seeded by the UTC date, never the same workplace twice in a week. You get one employee whose persona changes daily, three vendors, a short case file and four clues, and one payment of up to 10 cents to win. Clear it on consecutive days for a streak.
+
+| Plumpurse (4) | Out in town (8) |
+| --- | --- |
+| Pocket Branch · Bullpen · Management · Executive | Restaurant · Coffee shop · Consulting firm · Trading desk · Tech startup · Health clinic · Law office · Hotel lobby |
 
 <p align="center"><img src="docs/readme/daily-row.jpg" width="800" alt="Three days of the Daily Case: a hotel lobby, a tech startup and a Plumpurse branch, each with its room, its employee and its tiles"></p>
-<p align="center"><sub>Three days of the Daily Case. <a href="docs/devpost/daily-themes.jpg">All twelve workplaces</a>.</sub></p>
 
-**Holiday cases.** Ten holidays each open a case behind the lobby's holiday door on their own dates (UTC):
+<details>
+<summary><b>All twelve workplaces</b>: each one's room, case and tiles</summary>
+<p align="center"><a href="docs/devpost/daily-themes.jpg"><img src="docs/devpost/daily-themes.jpg" alt="The Daily Case: twelve workplaces, one a day, each with its room, its case and its tiles"></a></p>
+</details>
 
-| Holiday | Open | Holiday | Open |
-| --- | --- | --- | --- |
-| Thanksgiving | Nov 16 to 30 | Easter | Mar 21 to Apr 4 |
-| Hanukkah | Dec 4 to 12 | Pride | Jun 1 to 27 |
-| Christmas | Dec 14 to Jan 2 | Fourth of July | Jun 28 to Jul 7 |
-| Lunar New Year | Jan 30 to Feb 10 | Halloween | Oct 18 to Nov 1 |
-| Valentine's Day | Feb 11 to 17 | Diwali | Oct 24 to Nov 2 |
+**Holiday cases.** Ten holidays each open a case behind the lobby's holiday door on their own dates (UTC), with three layouts that rotate daily:
 
-Each holiday has three layouts that rotate daily, its own room art, lobby door and decorations, and a weather effect (falling leaves, snow, lanterns, fireworks, diyas and more). A holiday case plays like a small Floor 2: one person proposes the payment, and a second, separate ElevenLabs agent co-signs only after checking the one detail they care about. Each character has a voice matched to them. Payment is up to 50 cents through the Floor 2 vault's two-approval rule, and holidays open and close by themselves with no deploy.
+| Holiday | Open | Three rooms |
+| --- | --- | --- |
+| Thanksgiving | Nov 16 to 30 | The Thanksgiving Rush · The Parade Float · The Food Drive |
+| Hanukkah | Dec 4 to 12 | The Eighth Night · The Menorah Lighting · The Gift Wrap Table |
+| Christmas | Dec 14 to Jan 2 | The Toy Drive · The Tree Lot · The Office Party |
+| Lunar New Year | Jan 30 to Feb 10 | The Reunion Dinner · The Lion Dance · The Night Market |
+| Valentine's Day | Feb 11 to 17 | The Flower Rush · The Chocolate Shop · The Singles Mixer |
+| Easter | Mar 21 to Apr 4 | The Egg Hunt · The Hot Cross Buns · The Spring Brunch |
+| Pride | Jun 1 to 27 | The Float Build · The Reading Night · The Block Party |
+| Fourth of July | Jun 28 to Jul 7 | The Fireworks Barge · The Cookout · The Hometown Parade |
+| Halloween | Oct 18 to Nov 1 | The Haunted House · The Pumpkin Patch · The Costume Rush |
+| Diwali | Oct 24 to Nov 2 | The Sweet Shop · The Community Mela · The Lights Shop |
+
+Each holiday has its own room art, lobby door and decorations, and a weather effect (falling leaves, snow, lanterns, fireworks, diyas and more). A holiday case plays like a small Floor 2: one person proposes the payment, and a second, separate ElevenLabs agent co-signs only after checking the one detail they care about. Each character has a voice matched to them. Payment is up to 50 cents through the Floor 2 vault's two-approval rule, and holidays open and close by themselves with no deploy.
 
 <p align="center"><img src="docs/readme/holiday-thanksgiving.jpg" width="800" alt="Thanksgiving's three layouts: the Thanksgiving Rush, the Parade Float and the Food Drive, each with its room, payer and co-signer"></p>
-<p align="center"><sub>Thanksgiving's three layouts. <a href="docs/devpost/holiday-rooms.jpg">All ten holidays, thirty rooms</a>.</sub></p>
+
+<details>
+<summary><b>All ten holidays, thirty rooms</b>: each layout's room, its two people and the holiday's tiles</summary>
+<p align="center"><a href="docs/devpost/holiday-rooms.jpg"><img src="docs/devpost/holiday-rooms.jpg" alt="Ten holidays, three rooms each: every layout's room, its two people, its first day and the holiday's tiles"></a></p>
+</details>
 
 **Bounty and leaderboard.** Your bounty is what you talked the employee into, up to the level's cap: $1 in the Tutorial, $5, $10 and $25 on Floors 1 to 3, 10 cents on the Daily Case and 50 cents on a holiday case. The vault pays the full bounty on your first clear of a level and a 1¢ token on repeats. The leaderboard ranks the fastest breaches per level, timed to the block, against fictional rival crews up to Null, the Black Ledger's boss. It has a tab for each level and for each open holiday, a voice or chat filter, Top earners and Longest Daily streaks.
 
